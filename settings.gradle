@@ -9,10 +9,11 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 }
 rootProject.name = "paymong"
 include ':app'
 include ':watch'
+include ':ui'
+include ':common'

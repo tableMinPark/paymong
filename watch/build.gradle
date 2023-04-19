@@ -4,19 +4,18 @@ plugins {
 }
 
 android {
-    namespace 'com.app.watch'
+    namespace 'com.paymong.watch'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.app.watch"
-        minSdk 26
+        applicationId "com.paymong.watch"
+        minSdk 30
         targetSdk 33
         versionCode 1
         versionName "1.0"
         vectorDrawables {
             useSupportLibrary true
         }
-
     }
 
     buildTypes {
@@ -74,4 +73,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+
+    implementation project(path: ':common')
+    implementation project(path: ':ui')
 }

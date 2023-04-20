@@ -48,17 +48,22 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-//task copyPrivate(type: Copy) {
-//    copy {
-//        from '../S08P31E103-submodule/back-end/eureka'
-//        include "*.yml"
-//        into 'src/main/resources'
-//    }
-//}
+task copyPrivate(type: Copy) {
+    copy {
+        from '../../s08p31e103-sub/backend/eureka'
+        include "*.yml"
+        into 'src/main/resources'
+    }
+    copy {
+        from '../../s08p31e103-sub/backend/eureka'
+        include "*.yml"
+        into 'src/test/resources'
+    }
+}
 
 //task copyPrivate(type: Copy) {
 //    copy {
-//        from '../S08P31E103-submodule/back-end/eureka'
+//        from '../s08p31e103-sub/backend/eureka'
 //        include "*.yml"
 //        into 'src/test/resources'
 //    }

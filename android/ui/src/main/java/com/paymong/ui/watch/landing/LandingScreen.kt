@@ -33,7 +33,7 @@ fun Landing(navController: NavController){
         //3초 후 메인화면으로 전환
         Handler(Looper.getMainLooper()).postDelayed({
             navController.navigate(WatchNavItem.Main.route)
-        },3000)
+        },2000)
     }
 }
 

@@ -13,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PageIndicatorDefaults
+import androidx.wear.compose.material.PageIndicatorStyle
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
@@ -52,7 +54,7 @@ fun Main(
                 pagerState = pagerState,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = 7.dp)
             )
         }
     }

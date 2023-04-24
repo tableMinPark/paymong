@@ -8,6 +8,7 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
 val PayMongRed = Color(0xFFFF6B6B)
+val PayMongRed200 = Color(0xFFFED9D9)
 val PayMongGreen = Color(0xFF3BE368)
 val PayMongYellow = Color(0xFFFFDA2D)
 val PayMongBlue = Color(0xFF8DCEFE)

@@ -12,6 +12,7 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.domain.watch.feed.FeedBuyListViewModel
 import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun MainInfo(

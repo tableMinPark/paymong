@@ -11,22 +11,19 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
+import com.paymong.common.code.AnimationCode
 import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(
-    animationState: MutableState<String>,
+    animationState: MutableState<AnimationCode>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
-    Column(
-        modifier = Modifier
-//            .padding(30.dp),
-    ) {
-
+    Column {
         HorizontalPager(
             count = 4,
             state = pagerState,
@@ -34,10 +31,10 @@ fun Main(
         ) {
             page: Int ->
             when (page) {
-                0 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
+                0 -> MainCondition()
                 1 -> MainInfo(animationState)
-                2 -> MainCondition()
-                3 -> MainEnding(navController)
+                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
+                3 -> MainInfoDetail()
             }
         }
         HorizontalPagerIndicator(
@@ -56,12 +53,12 @@ fun Main(
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun MainPreview() {
-    val animationState = remember { mutableStateOf("") }
+    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
     PaymongTheme {
-        Main(animationState = animationState, pagerState = pagerState, coroutineScope = coroutineScope, navController = navController)
+        Main(animationState, pagerState, coroutineScope, navController)
     }
 }

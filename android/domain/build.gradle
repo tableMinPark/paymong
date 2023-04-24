@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.paymong.ui'
+    namespace 'com.paymong.domain'
     compileSdk 33
 
     defaultConfig {
@@ -12,6 +12,7 @@ android {
         targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -42,30 +43,18 @@ android {
         }
     }
 }
+
 dependencies {
-    // compose-ui
+    // android
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.3.1'
+
+    implementation project(path: ':data')
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    implementation "androidx.compose.material:material:$compose_ui_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
-    implementation "androidx.navigation:navigation-compose:$compose_nav_version"
-    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
-
-    // compose-wear-ui
-    implementation "androidx.wear.compose:compose-material:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
-
-    // viewPager
-    implementation "com.google.accompanist:accompanist-pager:0.20.1"
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
-
-    testImplementation 'junit:junit:4.12'
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    implementation 'androidx.compose.material:material:1.2.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-
-    implementation project(path: ':common')
-    implementation project(path: ':domain')
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }

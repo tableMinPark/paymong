@@ -1,11 +1,15 @@
 package com.paymong.ui.watch.feed
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -17,7 +21,9 @@ import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.feed.FeedBuyListViewModel
+import com.paymong.ui.R
 import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.theme.dalmoori
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -56,7 +62,8 @@ fun FeedBuyListUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = viewModel.name, textAlign = TextAlign.Center)
+            Text(text = viewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
+                fontSize = 24.sp)
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -77,12 +84,20 @@ fun FeedBuyListUI(
             Button(
                 onClick = { viewModel.prevButtonClick() },
             ) {
-                Text(text = "이전")
+                Image(
+                    painter = painterResource(id = R.drawable.leftbnt ),
+                    contentDescription = "leftbnt",
+                    modifier = Modifier.size(30.dp)
+                )
             }
             Button(
                 onClick = { viewModel.nextButtonClick() },
             ) {
-                Text(text = "다음")
+                Image(
+                    painter = painterResource(id = R.drawable.rightbnt ),
+                    contentDescription = "rightbnt",
+                    modifier = Modifier.size(30.dp)
+                )
             }
         }
         Row(

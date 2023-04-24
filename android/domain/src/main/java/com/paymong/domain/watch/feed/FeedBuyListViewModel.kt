@@ -33,7 +33,7 @@ class FeedBuyListViewModel constructor(
             val foodCategory = stateHandle.get<String>("foodCategory") ?: throw IllegalStateException("No categoryId was passed to destination.")
             println(foodCategory)
             payPoint = 10000
-            foodList.add(Food("사과", "FD100", 100, LocalDateTime.now()))
+            foodList.add(Food("별사탕", "FD100", 3, LocalDateTime.now()))
             foodList.add(Food("닭다리", "FD101", 500, LocalDateTime.now()))
             foodList.add(Food("케이크", "FD102", 1000, LocalDateTime.now()))
             changeCurrentFoodPosition()

@@ -1,8 +1,11 @@
 package com.paymong.ui.watch.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -11,6 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -20,7 +24,8 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.main.MainConditionViewModel
 import com.paymong.domain.watch.main.MainInteractionViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.R
+import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -47,23 +52,33 @@ fun MainInteractionUI(
     viewModel: MainInteractionViewModel
 ) {
     Column(
-        modifier = Modifier.padding(35.dp)//, bottom = 15.dp)
+        modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongRed.copy(alpha = 0.8f)),
+                border = ButtonDefaults.outlinedButtonBorder(PayMongRed),
+                modifier = Modifier.height(55.dp).width(55.dp),
                 // nav -> BattleScreen()
                 onClick = { navController.navigate(WatchNavItem.Battle.route) }
             ) {
-                Text(text = "Battle", textAlign = TextAlign.Center)
+//                Text(text = "Battle", textAlign = TextAlign.Center)
+                val battle = painterResource(R.drawable.battle)
+                Image(painter = battle, contentDescription = null)
             }
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongGreen.copy(alpha = 0.8f)),
+                border = ButtonDefaults.outlinedButtonBorder(PayMongGreen),
+                modifier = Modifier.height(55.dp).width(55.dp),
                 // nav -> ActivityScreen()
                 onClick = { navController.navigate(WatchNavItem.Activity.route) }
             ) {
-                Text(text = "Activity", textAlign = TextAlign.Center)
+//                Text(text = "Activity", textAlign = TextAlign.Center)
+                val activity = painterResource(R.drawable.activity)
+                Image(painter = activity, contentDescription = null)
             }
         }
         Row(
@@ -71,10 +86,15 @@ fun MainInteractionUI(
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongYellow.copy(alpha = 0.8f)),
+                border = ButtonDefaults.outlinedButtonBorder(PayMongYellow),
+                modifier = Modifier.height(55.dp).width(55.dp),
                 // nav -> FeedScreen()
                 onClick = { navController.navigate(WatchNavItem.Feed.route) }
             ) {
-                Text(text = "FEED", textAlign = TextAlign.Center)
+//                Text(text = "FEED", textAlign = TextAlign.Center)
+                val feed = painterResource(R.drawable.feed)
+                Image(painter = feed, contentDescription = null)
             }
         }
         Row(
@@ -82,6 +102,9 @@ fun MainInteractionUI(
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongBlue.copy(alpha = 0.8f)),
+                border = ButtonDefaults.outlinedButtonBorder(PayMongBlue),
+                modifier = Modifier.height(55.dp).width(55.dp),
                 onClick = {
                     animationState.value = AnimationCode.Sleep
                     navController.navigate(WatchNavItem.Main.route){
@@ -91,9 +114,14 @@ fun MainInteractionUI(
                     }
                 }
             ) {
-                Text(text = "SLEEP", textAlign = TextAlign.Center)
+//                Text(text = "SLEEP", textAlign = TextAlign.Center)
+                val sleep = painterResource(R.drawable.sleep)
+                Image(painter = sleep, contentDescription = null)
             }
             Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongPurple.copy(alpha = 0.8f)),
+                border = ButtonDefaults.outlinedButtonBorder(PayMongPurple),
+                modifier = Modifier.height(55.dp).width(55.dp),
                 onClick = {
                     animationState.value = AnimationCode.Poop
                     navController.navigate(WatchNavItem.Main.route){
@@ -103,7 +131,9 @@ fun MainInteractionUI(
                     }
                 }
             ) {
-                Text(text = "POOP", textAlign = TextAlign.Center)
+//                Text(text = "POOP", textAlign = TextAlign.Center)
+                val poop = painterResource(R.drawable.poop)
+                Image(painter = poop, contentDescription = null)
             }
         }
     }

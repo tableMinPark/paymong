@@ -1,6 +1,8 @@
 package com.paymong.common.navigation
 
 sealed class WatchNavItem(val route: String) {
+
+    object Landing: WatchNavItem("landing")
     object Main: WatchNavItem("main")
 
     object Feed: WatchNavItem("feed")

@@ -1,14 +1,17 @@
 package com.paymong.domain.watch.activity
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.LocationManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -22,6 +25,7 @@ class WalkingViewModel : ViewModel() {
     var minute by mutableStateOf(0)
     var second by mutableStateOf(0)
     var count by mutableStateOf(0)
+    var startCount : Int = 0
 
     private lateinit var timer : Job
     private var nowTime : Long = 0
@@ -43,22 +47,21 @@ class WalkingViewModel : ViewModel() {
     }
 
     fun setSensor(context : Context) {
-        //println(String.format("permit ::::::::: %s", ContextCompat.checkSelfPermission(LocalContext.current, android.Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED))
-
         // 센서 설정
         ctx = context
-        sensorManager = ctx.getSystemService(android.content.Context.SENSOR_SERVICE) as SensorManager
-        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        sensorManager = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+//        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
         stepSensorEventListener = object : SensorEventListener {
-            override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-                // 미세조정
-            }
+            override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) { }
             override fun onSensorChanged(event: SensorEvent) {
-                // 센서 값 변경 시
                 event?.let {
-                    println("step: ${event.values[0]}")
-                    count = event.values[0].toInt()
-//                    count++;
+                    if (startCount == 0) {
+                        startCount = event.values[0].toInt()
+                    }
+                    var nowCount = event.values[0].toInt()
+                    count = nowCount - startCount
+//                    count += event.values[0].toInt()
                 }
             }
         }
@@ -105,5 +108,4 @@ class WalkingViewModel : ViewModel() {
             walkingEnd()
         }
     }
-
 }

@@ -2,8 +2,13 @@ package com.paymong.ui.watch.feed
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -48,41 +53,108 @@ fun FeedBuyListUI(
     navController: NavHostController,
     viewModel: FeedBuyListViewModel
 ) {
+
+    val img = painterResource(R.drawable.main_bg)
+    Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = String.format("%d", viewModel.payPoint), textAlign = TextAlign.Center)
+
+
+        // * User Point *
+
+//        Box(modifier = Modifier.width(100.dp)
+//            .fillMaxWidth()
+//            .align(Alignment.CenterHorizontally) ){
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.Start,
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.pointlogo ),
+//                contentDescription = "pointlogo",
+//                modifier = Modifier.size(20.dp)
+//            )
+//        }
+//
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.End,
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text(text = String.format("%d", viewModel.payPoint), textAlign = TextAlign.Center, fontFamily = dalmoori,
+//                fontSize = 15.sp)
+//        }
+//        }
+
+        Box(modifier = Modifier.fillMaxHeight(0.1f)
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+        )
+            {
+
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.pointlogo ),
+                    contentDescription = "pointlogo",
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = String.format("%d", viewModel.payPoint),
+                    textAlign = TextAlign.Center,
+                    fontFamily = dalmoori,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+
+            }
         }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+        // * name *
+
+        Box(
+//            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.2f)
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
         ) {
             Text(text = viewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
-                fontSize = 24.sp)
+                fontSize = 25.sp)
         }
+
+        // * foodCode *
+
+//        Row(
+//            horizontalArrangement = Arrangement.Center,
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text(text = viewModel.foodCode, textAlign = TextAlign.Center)
+//        }
+
+
+
+        // * foodImg & button *
+
+        Box(modifier = Modifier.fillMaxHeight(0.5f)
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)){
         Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = viewModel.foodCode, textAlign = TextAlign.Center)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = String.format("+ %d", viewModel.price), textAlign = TextAlign.Center)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
                 onClick = { viewModel.prevButtonClick() },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.leftbnt ),
@@ -90,19 +162,87 @@ fun FeedBuyListUI(
                     modifier = Modifier.size(30.dp)
                 )
             }
-            Button(
-                onClick = { viewModel.nextButtonClick() },
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rightbnt ),
-                    contentDescription = "rightbnt",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
+
         }
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.starcandy ),
+                    contentDescription = "starcandy",
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Button(
+            onClick = { viewModel.nextButtonClick() },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.rightbnt ),
+                contentDescription = "rightbnt",
+                modifier = Modifier.size(30.dp)
+            )
+            }
+        }
+        }
+
+        // * price *
+//        Row(
+//            horizontalArrangement = Arrangement.Center,
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text(text = String.format("- %d", viewModel.price), textAlign = TextAlign.Center, fontFamily = dalmoori,
+//                fontSize = 20.sp)
+//        }
+
+
+        Box(   modifier = Modifier.fillMaxWidth(0.95f)
+            .fillMaxHeight(0.3f)
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .padding(bottom = 5.dp)
+        )
+        {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.pointlogo ),
+                    contentDescription = "pointlogo",
+                    modifier = Modifier.size(30.dp)
+                        .padding(bottom= 2.dp)
+
+                )
+                Text(text = String.format(" %d", viewModel.price), textAlign = TextAlign.Center, fontFamily = dalmoori,
+                    fontSize = 20.sp)
+
+            }
+        }
+
+        // * button *
+        Box(
+
+            modifier = Modifier.fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+
         ) {
             Button(
                 onClick = {
@@ -115,12 +255,17 @@ fun FeedBuyListUI(
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "선택")
+                Text(text = "구매 ", fontFamily = dalmoori,
+                    fontSize = 15.sp)
             }
         }
     }
 }
+
+
 
 @OptIn(ExperimentalPagerApi::class)
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)

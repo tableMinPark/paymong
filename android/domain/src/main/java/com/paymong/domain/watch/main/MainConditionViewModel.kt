@@ -6,15 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class MainConditionViewModel : ViewModel() {
-    var health by mutableStateOf(0.0)
-    var satiety by mutableStateOf(0.0)
-    var strength by mutableStateOf(0.0)
-    var sleep by mutableStateOf(0.0)
+    var health by mutableStateOf(0.0F)
+    var satiety by mutableStateOf(0.0F)
+    var strength by mutableStateOf(0.0F)
+    var sleep by mutableStateOf(0.0F)
 
-    fun reload() {
-        health = 10.0
-        satiety = 20.0
-        strength = 30.0
-        sleep = 40.0
+    init {
+        health = 0.5F
+        satiety = 0.2F
+        strength = 0.3F
+        sleep = 0.4F
     }
 }

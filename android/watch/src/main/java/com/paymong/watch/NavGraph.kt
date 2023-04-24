@@ -17,6 +17,7 @@ import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
 import com.paymong.ui.watch.feed.Feed
 import com.paymong.ui.watch.feed.FeedBuyList
+import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
 
 @OptIn(ExperimentalPagerApi::class)
@@ -29,8 +30,13 @@ fun NavGraph (){
 
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = WatchNavItem.Main.route
+        startDestination = WatchNavItem.Landing.route
     ) {
+        // Landing
+        composable( route = WatchNavItem.Landing.route) {
+            Landing(navController)
+        }
+
         // Main
         composable( route = WatchNavItem.Main.route) {
             Main(animationState, pagerState, coroutineScope, navController)

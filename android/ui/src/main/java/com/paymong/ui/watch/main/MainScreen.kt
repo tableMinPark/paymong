@@ -1,9 +1,13 @@
 package com.paymong.ui.watch.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -12,6 +16,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
+import com.paymong.ui.R
 import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.CoroutineScope
 
@@ -23,30 +28,35 @@ fun Main(
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
-    Column {
-        HorizontalPager(
-            count = 4,
-            state = pagerState,
-            modifier = Modifier.weight(1f)
-        ) {
-            page: Int ->
-            when (page) {
-                0 -> MainCondition()
-                1 -> MainInfo(animationState)
-                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
-                3 -> MainInfoDetail()
+    val img = painterResource(R.drawable.main_bg)
+    Box{
+        Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
+        Column {
+            HorizontalPager(
+                count = 4,
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) {
+                    page: Int ->
+                when (page) {
+                    0 -> MainCondition()
+                    1 -> MainInfo(animationState)
+                    2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
+                    3 -> MainInfoDetail()
+                }
             }
+            HorizontalPagerIndicator(
+                activeColor = MaterialTheme.colors.primary,
+                inactiveColor = MaterialTheme.colors.secondary,
+                indicatorWidth = 6.dp,
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 10.dp)
+            )
         }
-        HorizontalPagerIndicator(
-            activeColor = MaterialTheme.colors.primary,
-            inactiveColor = MaterialTheme.colors.secondary,
-            indicatorWidth = 6.dp,
-            pagerState = pagerState,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 10.dp)
-        )
     }
+
 }
 
 @OptIn(ExperimentalPagerApi::class)

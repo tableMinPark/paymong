@@ -1,23 +1,32 @@
 package com.paymong.ui.watch.activity
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.ActivityViewModel
 import com.paymong.domain.watch.feed.FeedBuyListViewModel
 import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.feed.FeedBuyListUI
 import kotlinx.coroutines.CoroutineScope
 
@@ -32,6 +41,9 @@ fun ActivityUI(
     navController: NavHostController,
     viewModel: ActivityViewModel
 ) {
+    val img = painterResource(R.drawable.main_bg)
+    Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -43,11 +55,22 @@ fun ActivityUI(
         ) {
             Button(
                 onClick = { navController.navigate(WatchNavItem.Training.route) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "훈련")
+                Text(text = "훈련",
+                    fontFamily = dalmoori,
+                    fontSize = 24.sp)
             }
         }
+        // * Line *
+        Image(
+            painter = painterResource(id = R.drawable.line ),
+            contentDescription = "line",
+            modifier = Modifier,
+        )
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
@@ -56,9 +79,13 @@ fun ActivityUI(
         ){
             Button(
                 onClick = { navController.navigate(WatchNavItem.Walking.route) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "산책")
+                Text(text = "산책",
+                    fontFamily = dalmoori,
+                    fontSize = 24.sp)
             }
         }
     }

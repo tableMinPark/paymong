@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 class MainInfoViewModel : ViewModel() {
     var characterCode by mutableStateOf("")
-    var backgroundCode by mutableStateOf("")
     var poopCount by mutableStateOf(0)
 
     private lateinit var load : Job
@@ -20,7 +19,6 @@ class MainInfoViewModel : ViewModel() {
 
         load = viewModelScope.launch {
             characterCode = "CH100"
-            backgroundCode = "BG100"
             poopCount = 1
         }
     }

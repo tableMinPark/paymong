@@ -75,7 +75,7 @@ fun BattleActive(
             }
             var findCode = viewModel.characterIdForA
             var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
+            var chA = painterResource(chCode.code)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
         }
         Row(
@@ -125,7 +125,7 @@ fun BattleActive(
 //            Text(text = "B", textAlign = TextAlign.Center)
             var findCode = viewModel.characterIdForB
             var chCode = CharacterCode.valueOf(findCode)
-            val chB = painterResource(chCode.code)
+            var chB = painterResource(chCode.code)
             Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
 
             if (viewModel.order == "A") {
@@ -144,7 +144,7 @@ fun BattleActive(
 
 //    var cnt by remember { mutableStateOf(viewModel.count) }
     Handler(Looper.getMainLooper()).postDelayed({
-        navController.navigate(WatchNavItem.BattleSelect.route)
+        navController.navigate(WatchNavItem.BattleSelectBefore.route)
     },2000)
 }
 

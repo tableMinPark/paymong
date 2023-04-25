@@ -17,7 +17,7 @@ class MainViewModel : ViewModel() {
         if(::load.isInitialized) load.cancel()
 
         load = viewModelScope.launch {
-            background = "BG100"
+            background = "MP000"
         }
     }
 }

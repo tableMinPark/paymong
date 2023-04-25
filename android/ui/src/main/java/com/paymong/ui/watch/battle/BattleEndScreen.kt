@@ -52,7 +52,7 @@ fun BattleEnd(
         ) {
             var findCode = viewModel.characterCode
             var chCode = CharacterCode.valueOf(findCode)
-            val charac = painterResource(chCode.code)
+            var charac = painterResource(chCode.code)
             Image(painter = charac, contentDescription = null, modifier = Modifier.width(150.dp))
         }
     }

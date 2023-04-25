@@ -24,6 +24,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
+import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +35,14 @@ fun BattleWait(
 ) {
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+
+    Button(
+        onClick = { navController.navigate(WatchNavItem.BattleFind.route) },
+        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+    ) {
+    }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -56,18 +65,6 @@ fun BattleWait(
         ) {
             Text(text = "기기를 태그 해주세요.", textAlign = TextAlign.Center,
                     fontFamily = dalmoori,)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                onClick = { navController.navigate(WatchNavItem.BattleFind.route) },
-                modifier = Modifier.height(45.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-            ) {
-                Text(text = "다음")
-            }
         }
     }
 }

@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 
 class BattleActiveViewModel : ViewModel() {
     // 고정 상수
-    private var order = ""
+    var order = "A"
 
     // 초기 상수값
-    var totalTurn by mutableStateOf(0)
-    var characterIdForA by mutableStateOf("")
-    var characterIdForB by mutableStateOf("")
+    var totalTurn by mutableStateOf(10)
+    var characterIdForA by mutableStateOf("CH102")
+    var characterIdForB by mutableStateOf("CH100")
 
     var nowTurn by mutableStateOf(0)
     var healthA by mutableStateOf(0.0)
@@ -23,9 +23,9 @@ class BattleActiveViewModel : ViewModel() {
     fun init() {
         order = "A"
         totalTurn = 10
-        characterIdForA = "CH100"
-        characterIdForB = "CH101"
+        characterIdForA = "CH102"
+        characterIdForB = "CH100"
     }
 
-    
+
 }

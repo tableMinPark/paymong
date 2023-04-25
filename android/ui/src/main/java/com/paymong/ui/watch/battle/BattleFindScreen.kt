@@ -19,6 +19,7 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleFindViewModel
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
+import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
@@ -29,7 +30,6 @@ fun BattleFind(
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
 
     val viewModel : BattleFindViewModel = viewModel()
-
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -57,14 +57,17 @@ fun BattleFind(
 //            modifier = Modifier.fillMaxWidth()
         ) {
 //            Text(text = "B", textAlign = TextAlign.Center)
-            val chB = painterResource(R.drawable.ch100)
+            var findCode = viewModel.characterIdForB
+            var chCode = CharacterCode.valueOf(findCode)
+            val chB = painterResource(chCode.code)
             Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
         }
     }
+
     Button(
         onClick = { navController.navigate(WatchNavItem.BattleActive.route) },
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+        colors = ButtonDefaults.buttonColors(backgroundColor = PayMongPurple.copy(alpha = 0.3f))
     ) {
 //      Text(text = "다음으로")
     }

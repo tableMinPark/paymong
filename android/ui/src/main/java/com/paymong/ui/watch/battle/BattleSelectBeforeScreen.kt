@@ -1,9 +1,12 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +35,7 @@ fun BattleSelectBefore(
 ) {
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -46,13 +50,10 @@ fun BattleSelectBefore(
         }
     }
 
-    Button(
-        onClick = { navController.navigate(WatchNavItem.BattleSelect.route) },
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(backgroundColor = PayMongPurple.copy(alpha = 0.3f))
-    ) {
-//      Text(text = "다음으로")
-    }
+    Handler(Looper.getMainLooper()).postDelayed({
+        navController.navigate(WatchNavItem.BattleSelect.route)
+    },1000)
+
 }
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)

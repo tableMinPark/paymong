@@ -29,6 +29,13 @@ fun BattleFind(
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
 
+    Button(
+        onClick = { navController.navigate(WatchNavItem.BattleActive.route) },
+        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+    ) {
+    }
+
     val viewModel : BattleFindViewModel = viewModel()
     Column(
         verticalArrangement = Arrangement.Center,
@@ -62,14 +69,6 @@ fun BattleFind(
             val chB = painterResource(chCode.code)
             Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
         }
-    }
-
-    Button(
-        onClick = { navController.navigate(WatchNavItem.BattleActive.route) },
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(backgroundColor = PayMongPurple.copy(alpha = 0.3f))
-    ) {
-//      Text(text = "다음으로")
     }
 }
 

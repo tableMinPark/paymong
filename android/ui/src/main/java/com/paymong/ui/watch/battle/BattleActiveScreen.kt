@@ -1,5 +1,7 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +31,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.domain.watch.battle.BattleActiveViewModel
 import com.paymong.domain.watch.battle.BattleFindViewModel
-import com.paymong.ui.theme.PayMongGreen
-import com.paymong.ui.theme.PayMongRed
-import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.theme.*
 
 @Composable
 fun BattleActive(
@@ -50,6 +52,7 @@ fun BattleActive(
     val attack = painterResource(R.drawable.attack)
 
     val viewModel : BattleActiveViewModel = viewModel()
+    var cnt by remember { mutableStateOf(viewModel.count) }
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -81,25 +84,37 @@ fun BattleActive(
             modifier = Modifier.fillMaxWidth()
         ) {
             //게이지 바
+            var damA = viewModel.damageA
             Box(modifier = Modifier
                 .width(60.dp)
                 .height(20.dp)
                 .clip(CircleShape)
                 .background(Color.White)){
-                Row(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.1f).clip(CircleShape).background(color = PayMongRed).padding(8.dp)) {}
+                Row(modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(fraction = damA)
+                    .clip(CircleShape)
+                    .background(color = PayMongRed)
+                    .padding(8.dp)) {}
             }
-            Text(text="${viewModel.nowTurn}/${viewModel.totalTurn}",
+            Text(text=String.format("%d/%d",cnt,viewModel.totalTurn),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = 24.sp,
                 modifier = Modifier.padding(horizontal = 10.dp))
             //게이지 바
+            var damB = viewModel.damageB
             Box(modifier = Modifier
                 .width(60.dp)
                 .height(20.dp)
                 .clip(CircleShape)
                 .background(Color.White)){
-                Row(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.4f).clip(CircleShape).background(color = PayMongRed).padding(8.dp)) {}
+                Row(modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(fraction = damB)
+                    .clip(CircleShape)
+                    .background(color = PayMongRed)
+                    .padding(8.dp)) {}
             }
         }
         Row(
@@ -126,45 +141,11 @@ fun BattleActive(
             }
         }
     }
-//    Column(
-//        verticalArrangement = Arrangement.Center,
-//        modifier = Modifier.fillMaxHeight()
-//    ) {
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(text = "배틀 진행 화면", textAlign = TextAlign.Center)
-//        }
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(text = selectState.value, textAlign = TextAlign.Center)
-//        }
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Button(
-//                onClick = { navController.navigate(WatchNavItem.BattleSelectBefore.route) },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text(text = "선택")
-//            }
-//        }
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Button(
-//                onClick = { navController.navigate(WatchNavItem.BattleEnd.route) },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text(text = "배틀 끝")
-//            }
-//        }
-//    }
+
+//    var cnt by remember { mutableStateOf(viewModel.count) }
+    Handler(Looper.getMainLooper()).postDelayed({
+        navController.navigate(WatchNavItem.BattleSelect.route)
+    },2000)
 }
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)

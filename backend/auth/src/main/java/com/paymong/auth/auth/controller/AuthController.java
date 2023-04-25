@@ -83,4 +83,19 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/detail")
+    public ResponseEntity<Object> findMember() {
+        log.info("findMember - Call");
+        try {
+            return ResponseEntity.ok().body(authService.findMemberId());
+        } catch (NotFoundException e) {
+            return ResponseEntity.badRequest()
+                .body(ErrorStateCode.NOTFOUNDUSER_EXCEPTION.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ErrorStateCode.RUNTIME_EXCEPTION.getMessage());
+
+        }
+    }
+
+
 }

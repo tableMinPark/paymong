@@ -15,6 +15,7 @@ import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,8 +105,15 @@ public class AuthService {
     }
 
     @Transactional
-    public Member findByMemberEmail(String email){
+    public Member findByMemberEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow();
+    }
+
+    @Transactional
+    public Long findMemberId() throws RuntimeException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NotFoundException());
+        return member.getMemberId();
     }
 
 }

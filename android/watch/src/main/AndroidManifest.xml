@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature android:name="android.hardware.type.watch" />
-    <uses-permission android:name="android.permission.NFC" />
-    <uses-feature android:name="android.hardware.nfc" android:required="true" />
+    <!-- 네트워크 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 스텝 센서 -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <!-- 배틀을 위한 GPS -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"

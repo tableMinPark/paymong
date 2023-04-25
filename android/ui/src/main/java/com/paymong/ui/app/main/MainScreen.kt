@@ -1,5 +1,6 @@
 package com.paymong.ui.app.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -10,14 +11,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.app.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun Main(navController: NavController) {
+    val viewModel: MainViewModel = viewModel()
+    MainUI(navController, viewModel)
+}
+
+@Composable
+fun MainUI(
+    navController: NavController,
+    viewModel: MainViewModel
+) {
     // state 는 모두 공통 코드화 시켜야함
     val characterState = remember { mutableStateOf(CharacterCode.CH100) }
 
@@ -30,31 +42,19 @@ fun Main(navController: NavController) {
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = {
-                    /*
-                        도움말 모달 호출
-                    */
-                },
+                onClick = { navController.navigate(AppNavItem.Help.route) },
                 modifier = Modifier.size(60.dp)
             ) {
                 Text(text = "?", textAlign = TextAlign.Center)
             }
             Button(
-                onClick = {
-                    /*
-                        캐릭터 상태 모달 호출
-                    */
-                },
+                onClick = { navController.navigate(AppNavItem.InfoDetail.route + "/characterId") },
                 modifier = Modifier.size(60.dp)
             ) {
                 Text(text = "i", textAlign = TextAlign.Center)
             }
             Button(
-                onClick = {
-                    /*
-                        포인트 목록 모달 호출
-                    */
-                },
+                onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId") },
                 modifier = Modifier.size(60.dp)
             ) {
                 Text(text = "P 10,000", textAlign = TextAlign.Center)
@@ -88,7 +88,7 @@ fun Main(navController: NavController) {
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { navController.navigate(AppNavItem.Ending.route) },
+                onClick = { navController.navigate(AppNavItem.Collect.route + "/memberId") },
                 modifier = Modifier.size(60.dp)
             ) {
                 Text(text = "도감", textAlign = TextAlign.Center)
@@ -96,11 +96,7 @@ fun Main(navController: NavController) {
 
             if (characterState.value != CharacterCode.CH100){
                 Button(
-                    onClick = {
-                        /*
-                            지수 모달 호출
-                        */
-                    },
+                    onClick = { navController.navigate(AppNavItem.Condition.route + "/characterId") },
                     modifier = Modifier.size(60.dp)
                 ) {
                     Text(text = "지수", textAlign = TextAlign.Center)

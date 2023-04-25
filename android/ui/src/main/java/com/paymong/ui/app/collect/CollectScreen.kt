@@ -1,4 +1,4 @@
-package com.paymong.ui.app.ending
+package com.paymong.ui.app.collect
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -9,16 +9,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.app.collect.CollectViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PaymongTheme
 
+
 @Composable
-fun Ending(navController: NavController) {
+fun Collect(navController: NavController) {
+    val viewModel: CollectViewModel = viewModel()
+    CollectUI(navController, viewModel)
+}
+
+@Composable
+fun CollectUI(
+    navController: NavController,
+    viewModel: CollectViewModel
+) {
     Scaffold(
-        topBar = { TopBar(msg = "Paymong 컬렉션", navController = navController) }
+        topBar = { TopBar(msg = "컬렉션", navController = navController) }
     ) {
         Box(Modifier.padding(it)){
             Column(
@@ -37,10 +49,16 @@ fun Ending(navController: NavController) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { navController.navigate(AppNavItem.EndingDetail.route + "/ID") },
+                    onClick = { navController.navigate(AppNavItem.CollectDetail.route + "/paymong/${viewModel.memberId}") },
                     modifier = Modifier.size(60.dp)
                 ) {
-                    Text(text = "컬렉션 목록", textAlign = TextAlign.Center)
+                    Text(text = "Paymong", textAlign = TextAlign.Center)
+                }
+                Button(
+                    onClick = { navController.navigate(AppNavItem.CollectDetail.route + "/map/${viewModel.memberId}") },
+                    modifier = Modifier.size(60.dp)
+                    ) {
+                    Text(text = "Map", textAlign = TextAlign.Center)
                 }
             }
         }
@@ -49,9 +67,9 @@ fun Ending(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun EndingPreview() {
+fun CollectPreview() {
     val navController = rememberNavController()
     PaymongTheme {
-        Ending(navController)
+        Collect(navController)
     }
 }

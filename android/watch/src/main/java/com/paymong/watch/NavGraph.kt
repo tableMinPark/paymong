@@ -43,7 +43,7 @@ fun NavGraph (){
         }
 
         // Feed
-        composable( route = WatchNavItem.Feed.route ){
+        composable( route = WatchNavItem.Feed.route){
             Feed(navController)
         }
         composable(

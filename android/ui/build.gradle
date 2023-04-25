@@ -41,6 +41,13 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    sourceSets {
+        main {
+            res {
+                srcDirs 'src\\main\\res', 'src\\main\\res\\drawable\\character'
+            }
+        }
+    }
 }
 dependencies {
     // compose-ui

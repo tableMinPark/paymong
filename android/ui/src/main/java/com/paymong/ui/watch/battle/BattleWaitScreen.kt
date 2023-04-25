@@ -32,43 +32,41 @@ import kotlinx.coroutines.CoroutineScope
 fun BattleWait(
     navController: NavHostController
 ) {
-    val img = painterResource(R.drawable.main_bg)
-    Box{
-        Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxHeight()
+    val bg = painterResource(R.drawable.main_bg)
+    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+            Text(
+                text = "...배틀을 찾는 중...",
+                textAlign = TextAlign.Center,
+                fontFamily = dalmoori,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(vertical = 20.dp),
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "기기를 태그 해주세요.", textAlign = TextAlign.Center,
+                    fontFamily = dalmoori,)
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                onClick = { navController.navigate(WatchNavItem.BattleFind.route) },
+                modifier = Modifier.height(45.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(
-                    text = "...배틀을 찾는 중...",
-                    textAlign = TextAlign.Center,
-                    fontFamily = dalmoori,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(vertical = 20.dp),
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "기기를 태그 해주세요.", textAlign = TextAlign.Center,
-                        fontFamily = dalmoori,)
-            }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(
-                    onClick = { navController.navigate(WatchNavItem.BattleFind.route) },
-                    modifier = Modifier.height(45.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-                ) {
-                    Text(text = "다음")
-                }
+                Text(text = "다음")
             }
         }
     }

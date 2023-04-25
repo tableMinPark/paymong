@@ -12,14 +12,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.paymong.ui.code.CharacterCode
+import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun Main(navController: NavController) {
     // state 는 모두 공통 코드화 시켜야함
-    val characterState = remember { mutableStateOf(CharacterCode.CH000) }
+    val characterState = remember { mutableStateOf(CharacterCode.CH100) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +65,7 @@ fun Main(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            if (characterState.value != CharacterCode.CH000){
+            if (characterState.value != CharacterCode.CH100){
                 Text(text = "대충 알 생성되서 캐릭터 서있는 거", textAlign = TextAlign.Center)
             }
             else {
@@ -74,7 +74,7 @@ fun Main(navController: NavController) {
                         /*
                             알 생성 로직 호출
                         */
-                        characterState.value = CharacterCode.CH000
+                        characterState.value = CharacterCode.CH100
                     },
                     modifier = Modifier.size(60.dp)
                 ) {
@@ -94,7 +94,7 @@ fun Main(navController: NavController) {
                 Text(text = "도감", textAlign = TextAlign.Center)
             }
 
-            if (characterState.value != CharacterCode.CH000){
+            if (characterState.value != CharacterCode.CH100){
                 Button(
                     onClick = {
                         /*

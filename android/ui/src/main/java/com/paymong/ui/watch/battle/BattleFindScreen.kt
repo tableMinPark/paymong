@@ -17,8 +17,8 @@ import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleFindViewModel
-import com.paymong.ui.R
-import com.paymong.ui.code.CharacterCode
+import com.paymong.common.R
+import com.paymong.common.code.CharacterCode
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable

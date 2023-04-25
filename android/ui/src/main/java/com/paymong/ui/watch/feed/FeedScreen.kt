@@ -20,7 +20,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.feed.FeedBuyListViewModel
 import com.paymong.domain.watch.feed.FeedViewModel
-import com.paymong.ui.R
+import com.paymong.common.R
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 

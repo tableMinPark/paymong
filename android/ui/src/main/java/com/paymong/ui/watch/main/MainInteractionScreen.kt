@@ -24,7 +24,7 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.main.MainConditionViewModel
 import com.paymong.domain.watch.main.MainInteractionViewModel
-import com.paymong.ui.R
+import com.paymong.common.R
 import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

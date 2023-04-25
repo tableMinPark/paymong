@@ -1,12 +1,12 @@
-package com.paymong.ui.code
+package com.paymong.common.code
 
-import com.paymong.ui.R
+import com.paymong.common.R
 
 enum class CharacterCode(
     val code: Int,
     val codeName: String,
 ) {
-    CH000(R.drawable.feed, "알"),
+//    CH000(R.drawable.ch000, "알"),
     CH100(R.drawable.ch100, "별몽"),
     CH101(R.drawable.ch101, "동글몽"),
     CH102(R.drawable.ch102, "네몽"),

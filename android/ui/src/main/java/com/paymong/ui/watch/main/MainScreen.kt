@@ -18,7 +18,7 @@ import androidx.wear.compose.material.PageIndicatorStyle
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
-import com.paymong.ui.R
+import com.paymong.common.R
 import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.CoroutineScope
 
@@ -30,35 +30,32 @@ fun Main(
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
-    val img = painterResource(R.drawable.main_bg)
-    Box{
-        Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-        Column {
-            HorizontalPager(
-                count = 4,
-                state = pagerState,
-                modifier = Modifier.weight(1f)
-            ) {
-                    page: Int ->
-                when (page) {
-                    0 -> MainCondition()
-                    1 -> MainInfo(animationState)
-                    2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
-                    3 -> MainInfoDetail()
-                }
+    val bg = painterResource(R.drawable.main_bg)
+    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+    Column {
+        HorizontalPager(
+            count = 4,
+            state = pagerState,
+            modifier = Modifier.weight(1f)
+        ) {
+                page: Int ->
+            when (page) {
+                0 -> MainCondition()
+                1 -> MainInfo(animationState)
+                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
+                3 -> MainInfoDetail()
             }
-            HorizontalPagerIndicator(
-                activeColor = MaterialTheme.colors.primary,
-                inactiveColor = MaterialTheme.colors.secondary,
-                indicatorWidth = 6.dp,
-                pagerState = pagerState,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 7.dp)
-            )
         }
+        HorizontalPagerIndicator(
+            activeColor = MaterialTheme.colors.primary,
+            inactiveColor = MaterialTheme.colors.secondary,
+            indicatorWidth = 6.dp,
+            pagerState = pagerState,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 7.dp)
+        )
     }
-
 }
 
 @OptIn(ExperimentalPagerApi::class)

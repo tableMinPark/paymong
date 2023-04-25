@@ -32,6 +32,9 @@ public class FeedController {
     public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         try {
+            if(feedFoodReqVo.getFoodCode() == null){
+                throw new NullPointerException();
+            }
             feedService.feedFood(feedFoodReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
         }catch (NullPointerException e){
@@ -51,6 +54,9 @@ public class FeedController {
     public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         try {
+            if(feedSnackReqVo.getSnackCode() == null){
+                throw new NullPointerException();
+            }
             feedService.feedSnack(feedSnackReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
         }catch (NullPointerException e){

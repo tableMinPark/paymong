@@ -21,9 +21,6 @@ public class FeedService {
 
     @Transactional
     public void feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
-        if(feedFoodReqVo.getFoodCode() == null){
-            throw new NullPointerException();
-        }
         // auth에서 mongId 받아오기
 
         // mongId로 해당 mong 찾기
@@ -55,9 +52,6 @@ public class FeedService {
 
     @Transactional
     public void feedSnack(FeedSnackReqVo feedSnackReqVo) throws Exception{
-        if(feedSnackReqVo.getSnackCode() == null){
-            throw new NullPointerException();
-        }
         // auth에서 mongId 받아오기
 
         // mongId로 해당 mong 찾기

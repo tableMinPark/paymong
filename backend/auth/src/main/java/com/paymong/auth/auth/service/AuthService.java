@@ -1,8 +1,8 @@
 package com.paymong.auth.auth.service;
 
-import com.paymong.auth.auth.dto.request.LoginRequestDto;
-import com.paymong.auth.auth.dto.request.RegisterRequestDto;
-import com.paymong.auth.auth.dto.response.LoginResponseDto;
+import com.paymong.auth.auth.dto.request.LoginReqDto;
+import com.paymong.auth.auth.dto.request.RegisterReqDto;
+import com.paymong.auth.auth.dto.response.LoginResDto;
 import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.repository.AuthRepository;
@@ -32,7 +32,7 @@ public class AuthService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @Transactional
-    public LoginResponseDto login(LoginRequestDto loginRequestDto)
+    public LoginResDto login(LoginReqDto loginRequestDto)
         throws RuntimeException {
 
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
@@ -60,7 +60,7 @@ public class AuthService {
                 .build()
         );
 
-        return LoginResponseDto.builder()
+        return LoginResDto.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .role(auth.getRole())
@@ -68,7 +68,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void register(RegisterRequestDto registerRequestDto) {
+    public void register(RegisterReqDto registerRequestDto) {
         Member member = registerRequestDto.toMember();
         memberRepository.save(member);
         Auth auth = Auth.of("USER", member);
@@ -76,7 +76,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponseDto reissue(String refreshToken) throws RuntimeException {
+    public LoginResDto reissue(String refreshToken) throws RuntimeException {
         refreshToken = refreshToken.substring(7);
 
         String email = tokenProvider.getUsername(refreshToken);
@@ -94,7 +94,7 @@ public class AuthService {
             redisRefreshToken.setAccessToken(accessToken);
             refreshTokenRedisRepository.save(redisRefreshToken);
 
-            return LoginResponseDto.builder()
+            return LoginResDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

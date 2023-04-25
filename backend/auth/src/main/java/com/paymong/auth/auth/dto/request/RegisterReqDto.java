@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RegisterRequestDto {
+public class RegisterReqDto {
 
     private String email;
     private String password;

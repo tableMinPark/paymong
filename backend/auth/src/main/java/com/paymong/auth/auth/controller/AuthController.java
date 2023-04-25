@@ -1,12 +1,12 @@
 package com.paymong.auth.auth.controller;
 
-import com.paymong.auth.auth.dto.request.LoginRequestDto;
-import com.paymong.auth.auth.dto.request.RegisterRequestDto;
-import com.paymong.auth.auth.dto.response.LoginResponseDto;
+import com.paymong.auth.auth.dto.request.LoginReqDto;
+import com.paymong.auth.auth.dto.request.RegisterReqDto;
+import com.paymong.auth.auth.dto.response.LoginResDto;
 import com.paymong.auth.auth.service.AuthService;
+import com.paymong.auth.global.code.ErrorStateCode;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +26,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<Object> login(@RequestBody LoginReqDto loginRequestDto) {
         log.info("login - Call");
         try {
-            LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
+            LoginResDto loginResponseDto = authService.login(loginRequestDto);
             return ResponseEntity.ok().body(loginResponseDto);
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().body("NotFoundException");
@@ -44,39 +44,42 @@ public class AuthController {
         log.info("reissue - Call");
 
         try {
-            LoginResponseDto loginResponse = authService.reissue(refreshToken);
+            LoginResDto loginResponse = authService.reissue(refreshToken);
             return ResponseEntity.ok().body(loginResponse);
         } catch (UnAuthException e) {
-            return ResponseEntity.badRequest().body("UnAuthException");
+            return ResponseEntity.badRequest()
+                .body(ErrorStateCode.UNAUTHORIXED_EXCEPTION.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body("NotFoundException");
+            return ResponseEntity.badRequest()
+                .body(ErrorStateCode.NOTFOUNDUSER_EXCEPTION.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("RuntimeException");
+            return ResponseEntity.badRequest().body(ErrorStateCode.RUNTIME_EXCEPTION.getMessage());
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<Object> register(@RequestBody RegisterReqDto registerRequestDto) {
         log.info("register - Call");
         try {
             authService.register(registerRequestDto);
             return ResponseEntity.ok().body("success");
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body("NotFoundException");
+            return ResponseEntity.badRequest().body(ErrorStateCode.NOTFOUNDUSER_EXCEPTION);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("RuntimeException");
+            return ResponseEntity.badRequest().body(ErrorStateCode.RUNTIME_EXCEPTION.getMessage());
         }
     }
 
     @GetMapping("/test")
-    public ResponseEntity<Object> test(){
+    public ResponseEntity<Object> test() {
         log.info("securit/test - Call");
-        try{
+        try {
             return ResponseEntity.ok().body("success");
-        }catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body("NotFoundException");
+        } catch (NotFoundException e) {
+            return ResponseEntity.badRequest()
+                .body(ErrorStateCode.NOTFOUNDUSER_EXCEPTION.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("RuntimeException");
+            return ResponseEntity.badRequest().body(ErrorStateCode.RUNTIME_EXCEPTION.getMessage());
         }
     }
 

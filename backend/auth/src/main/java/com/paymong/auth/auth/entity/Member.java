@@ -1,9 +1,7 @@
 package com.paymong.auth.auth.entity;
 
-import com.paymong.auth.auth.dto.request.RegisterRequestDto;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +17,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.jetbrains.annotations.NotNull;
 

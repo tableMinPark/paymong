@@ -6,11 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class BattleFindViewModel : ViewModel() {
-    var characterIdForA by mutableStateOf("")
-    var characterIdForB by mutableStateOf("")
+    var characterIdForA by mutableStateOf("CH102")
+    var characterIdForB by mutableStateOf("CH100")
 
     fun reload() {
-        characterIdForA = "CH100"
-        characterIdForB = "CH101"
+//        characterIdForA = "CH100"
+        characterIdForA = "CH102"
+        characterIdForB = "CH100"
     }
 }

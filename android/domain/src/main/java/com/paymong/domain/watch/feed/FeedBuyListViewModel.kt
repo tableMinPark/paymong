@@ -33,9 +33,24 @@ class FeedBuyListViewModel constructor(
             val foodCategory = stateHandle.get<String>("foodCategory") ?: throw IllegalStateException("No categoryId was passed to destination.")
             println(foodCategory)
             payPoint = 10000
-            foodList.add(Food("별사탕", "FD100", 3, LocalDateTime.now()))
-            foodList.add(Food("닭다리", "FD101", 500, LocalDateTime.now()))
-            foodList.add(Food("케이크", "FD102", 1000, LocalDateTime.now()))
+
+            // meal
+            foodList.add(Food("별사탕", "FD000", 3, LocalDateTime.now()))
+            foodList.add(Food("사과", "FD001", 500, LocalDateTime.now()))
+            foodList.add(Food("삼각김밥", "FD002", 500, LocalDateTime.now()))
+            foodList.add(Food("샌드위치", "FD003", 500, LocalDateTime.now()))
+            foodList.add(Food("피자", "FD004", 1000, LocalDateTime.now()))
+            foodList.add(Food("닭다리", "FD005", 1000, LocalDateTime.now()))
+            foodList.add(Food("스테이크", "FD006", 1000, LocalDateTime.now()))
+            foodList.add(Food("우주식품", "FD007", 5000, LocalDateTime.now()))
+            // snack
+            foodList.add(Food("초콜릿", "SN000", 300, LocalDateTime.now()))
+            foodList.add(Food("사탕", "SN001", 300, LocalDateTime.now()))
+            foodList.add(Food("음료수", "SN002", 300, LocalDateTime.now()))
+            foodList.add(Food("쿠키", "SN003", 600, LocalDateTime.now()))
+            foodList.add(Food("케이크", "SN004", 600, LocalDateTime.now()))
+            foodList.add(Food("감자튀김", "SN005", 600, LocalDateTime.now()))
+
             changeCurrentFoodPosition()
         }
     }

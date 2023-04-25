@@ -2,10 +2,8 @@ package com.paymong.ui.watch.feed
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -90,10 +88,12 @@ fun FeedBuyListUI(
 //        }
 //        }
 
-        Box(modifier = Modifier.fillMaxHeight(0.1f)
+        Box(modifier = Modifier
+            .fillMaxHeight(0.1f)
             .fillMaxWidth()
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
+            .padding(bottom = 10.dp)
         )
             {
 
@@ -122,8 +122,9 @@ fun FeedBuyListUI(
 
         Box(
 //            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.2f)
+            modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.2f)
                 .wrapContentHeight(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.CenterHorizontally)
         ) {
@@ -144,10 +145,14 @@ fun FeedBuyListUI(
 
         // * foodImg & button *
 
-        Box(modifier = Modifier.fillMaxHeight(0.5f)
+
+
+        Box(modifier = Modifier
+            .fillMaxHeight(0.5f)
             .fillMaxWidth()
             .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)){
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .padding(bottom= 5.dp)){
         Row(
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
@@ -169,15 +174,36 @@ fun FeedBuyListUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
+            val drawableId = when (viewModel.foodCode) {
+                "FD000" -> R.drawable.fd000 // 별사탕
+                "FD001" -> R.drawable.fd001 // 사과
+                "FD002" -> R.drawable.fd002 // 삼각김밥
+                "FD003" -> R.drawable.fd003 // 샌드위치
+                "FD004" -> R.drawable.fd004 // 피자
+                "FD005" -> R.drawable.fd005 // 닭다리
+                "FD006" -> R.drawable.fd006 // 스테이크
+                "FD007" -> R.drawable.fd007 // 우주음식
 
+                "SN000" -> R.drawable.sn000 // 초콜릿
+                "SN001" -> R.drawable.sn001 // 사탕
+                "SN002" -> R.drawable.sn002 // 음료수
+                "SN003" -> R.drawable.sn003 // 쿠키
+                "SN004" -> R.drawable.sn004 // 케이크
+                "SN005" -> R.drawable.sn005 // 감튀
+
+                else -> R.drawable.pointlogo
+            }
             Button(
+
                 onClick = {},
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.starcandy ),
-                    contentDescription = "starcandy",
-                    modifier = Modifier.size(50.dp)
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "foodImg",
+                    modifier = Modifier.fillMaxWidth(0.5f)
+                        .fillMaxHeight(0.7f)
+
                 )
             }
 
@@ -210,7 +236,8 @@ fun FeedBuyListUI(
 //        }
 
 
-        Box(   modifier = Modifier.fillMaxWidth(0.95f)
+        Box(   modifier = Modifier
+            .fillMaxWidth(0.95f)
             .fillMaxHeight(0.3f)
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
@@ -225,8 +252,9 @@ fun FeedBuyListUI(
                 Image(
                     painter = painterResource(id = R.drawable.pointlogo ),
                     contentDescription = "pointlogo",
-                    modifier = Modifier.size(30.dp)
-                        .padding(bottom= 2.dp)
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(bottom = 2.dp)
 
                 )
                 Text(text = String.format(" %d", viewModel.price), textAlign = TextAlign.Center, fontFamily = dalmoori,
@@ -238,10 +266,13 @@ fun FeedBuyListUI(
         // * button *
         Box(
 
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .fillMaxHeight(0.5f)
                 .wrapContentHeight(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.CenterHorizontally)
+                .size(200.dp)
+
 
         ) {
             Button(
@@ -254,11 +285,14 @@ fun FeedBuyListUI(
                         launchSingleTop =true
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
-                    .fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+
+                    ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "구매 ", fontFamily = dalmoori,
+                Text(text = "구매", fontFamily = dalmoori, textAlign = TextAlign.Center,
                     fontSize = 15.sp)
             }
         }

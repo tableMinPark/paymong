@@ -112,7 +112,7 @@ fun FeedBuyListUI(
                     text = String.format("%d", viewModel.payPoint),
                     textAlign = TextAlign.Center,
                     fontFamily = dalmoori,
-                    fontSize = 15.sp,
+                    fontSize = 12.sp,
                     modifier = Modifier.padding(start = 4.dp)
                 )
 

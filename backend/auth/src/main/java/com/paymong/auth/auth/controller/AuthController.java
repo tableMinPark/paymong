@@ -7,6 +7,7 @@ import com.paymong.auth.auth.service.AuthService;
 import com.paymong.auth.global.code.ErrorStateCode;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
+import com.paymong.auth.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,7 @@ public class AuthController {
             authService.register(registerRequestDto);
             return ResponseEntity.ok().body("success");
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body(ErrorStateCode.NOTFOUNDUSER_EXCEPTION);
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER_EXCEPTION));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ErrorStateCode.RUNTIME_EXCEPTION.getMessage());
         }

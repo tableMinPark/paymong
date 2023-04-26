@@ -58,60 +58,69 @@ fun TrainingActiveUI(
 
 
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxHeight().clickable { viewModel.screenClick() {
+
+    Box () {
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxHeight().clickable { viewModel.screenClick() {
                 navController.navigate(WatchNavItem.Activity.route) {
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop =true
                 }
             }
-        }
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)
-        ) {
-            Text(text = String.format("%02d:%02d", viewModel.second, viewModel.nanoSecond/10000000 ),
-                fontFamily = dalmoori,
-                fontSize = 20.sp)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=10.dp)
-        ) {
-            Text(text = String.format("%d", viewModel.count),
-                fontFamily = dalmoori,
-                fontSize = 30.sp)
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=10.dp, bottom = 10.dp)
-        ) {
-            val viewModel : MainInfoViewModel = viewModel()
-            var findCode = viewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
-            MessageContents()
-        }
-
-
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (viewModel.isTrainingEnd) {
-                Text(text = "훈련 종료",
-                    fontFamily = dalmoori,
-                    fontSize = 12.sp)
-            } else {
-                Text(text = "터치해서 훈련하기",
-                    fontFamily = dalmoori,
-                    fontSize = 12.sp)
             }
+        ) {
+            Row( horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.15f).padding(top=10.dp)
+            ) {
+                Text(text = String.format("%02d:%02d", viewModel.second, viewModel.nanoSecond/10000000 ),
+                    fontFamily = dalmoori,
+                    fontSize = 20.sp)
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().padding(top=5.dp)
+            ) {
+                Text(text = String.format("%d", viewModel.count),
+                    fontFamily = dalmoori,
+                    fontSize = 25.sp)
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().padding(top=5.dp)
+            ) {
+                val viewModel : MainInfoViewModel = viewModel()
+                var findCode = viewModel.characterCode
+                var chCode = CharacterCode.valueOf(findCode)
+                val chA = painterResource(chCode.code)
+                Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
+
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().padding(bottom=5.dp)
+            ) {
+                if (viewModel.isTrainingEnd) {
+                    Text(text = "훈련 종료",
+                        fontFamily = dalmoori,
+                        fontSize = 12.sp)
+                } else {
+                    Text(text = "터치해서 훈련",
+                        fontFamily = dalmoori,
+                        fontSize = 12.sp)
+                }
+            }
+
+        }
+
+        if (viewModel.isTrainingEnd) {
+            null
+        } else {
+            MessageContents()
         }
 
     }
@@ -145,7 +154,7 @@ fun MessageContents(
     Image(
         painter = rememberImagePainter(
             imageLoader = imageLoader,
-            data = R.drawable.wat,
+            data = R.drawable.loading,
             builder = {
                 size(OriginalSize)
             }
@@ -155,4 +164,3 @@ fun MessageContents(
 //            .padding(top = 10.dp)
     )
 }
-

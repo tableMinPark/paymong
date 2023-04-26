@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ import org.hibernate.annotations.DynamicInsert;
 public class MapCollect {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mapCollectId;
 
     @Column(nullable = false)
@@ -32,4 +31,6 @@ public class MapCollect {
 
     @Column(nullable = false)
     private String mapCode;
+
+
 }

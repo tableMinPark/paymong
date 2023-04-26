@@ -13,11 +13,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Text
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.CharacterCode
-import com.paymong.domain.watch.feed.FeedBuyListViewModel
 import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun MainInfo(
@@ -54,10 +52,10 @@ fun MainInfoUI(
         modifier = Modifier.fillMaxWidth()
         ) {
 
-        var findCode = viewModel.characterCode
-        var chCode = CharacterCode.valueOf(findCode)
-        val charac = painterResource(chCode.code)
-        Image(painter = charac, contentDescription = null, modifier = Modifier.width(150.dp))
+        val findCode = viewModel.characterCode
+        val chCode = CharacterCode.valueOf(findCode)
+        val character = painterResource(chCode.code)
+        Image(painter = character, contentDescription = null, modifier = Modifier.width(150.dp))
 //            Text(text = String.format("캐릭터 코드 : %s %s", animationState.value, viewModel.characterCode), textAlign = TextAlign.Center)
     }
     }

@@ -70,6 +70,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.20.1"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
 
+    // GPS
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
     // test
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"

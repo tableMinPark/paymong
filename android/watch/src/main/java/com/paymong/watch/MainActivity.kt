@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
             // 첫 번째 권한 요청에서 거부하면 설정에 직접가서 권한 설정 해야됨
             ActivityCompat.requestPermissions(this, permissions, PERMISSION_CHECK)
         }
-
     }
 
     // 권한 설정

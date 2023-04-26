@@ -23,4 +23,5 @@ enum class CharacterCode(
     CH301(R.drawable.ch301, "땡글몽"),
     CH302(R.drawable.ch302, "마미무메몽"),
     CH303(R.drawable.ch303, "새까몽"),
+    CH444(R.drawable.none,"")
 }

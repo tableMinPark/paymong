@@ -1,4 +1,4 @@
-package com.paymong.gateway.filter;
+package com.paymong.gateway.global.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;

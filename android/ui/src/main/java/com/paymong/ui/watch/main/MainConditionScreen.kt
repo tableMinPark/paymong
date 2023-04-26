@@ -13,7 +13,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.Text
 import com.paymong.domain.watch.main.MainConditionViewModel
-import com.paymong.ui.theme.PaymongTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.CircularProgressIndicator
 import com.paymong.common.R
+import com.paymong.ui.theme.*
 
 @Composable
 fun MainCondition() {
@@ -60,7 +60,7 @@ fun MainConditionUI(
                 endAngle = 270f,
                 progress = viewModel.health,
                 strokeWidth = 5.dp,
-                indicatorColor = Color(android.graphics.Color.parseColor("#FFA3B1")),
+                indicatorColor = PayMongRed,
             )
             }
 
@@ -78,7 +78,7 @@ fun MainConditionUI(
                     endAngle = 270f,
                     progress = viewModel.satiety,
                     strokeWidth = 5.dp,
-                    indicatorColor = Color(android.graphics.Color.parseColor("#FCBF19")),
+                    indicatorColor = PayMongYellow,
                 )
             }
 
@@ -104,7 +104,7 @@ fun MainConditionUI(
                     endAngle = 270f,
                     progress = viewModel.strength,
                     strokeWidth = 5.dp,
-                    indicatorColor = Color(android.graphics.Color.parseColor("#3BE368")),
+                    indicatorColor = PayMongGreen,
                 )
             }
 
@@ -122,7 +122,7 @@ fun MainConditionUI(
                     endAngle = 270f,
                     progress = viewModel.sleep,
                     strokeWidth = 5.dp,
-                    indicatorColor = Color(android.graphics.Color.parseColor("#A1E9FF")),
+                    indicatorColor = PayMongBlue,
                 )
             }
 

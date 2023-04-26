@@ -32,7 +32,7 @@ class FeedBuyListViewModel constructor(
         load = viewModelScope.launch {
             val foodCategory = stateHandle.get<String>("foodCategory") ?: throw IllegalStateException("No categoryId was passed to destination.")
             println(foodCategory)
-            payPoint = 10000
+            payPoint = 100000
 
             // meal
             foodList.add(Food("별사탕", "FD000", 3, LocalDateTime.now()))

@@ -17,6 +17,7 @@ public class RefreshToken {
 
     @Id
     private String id;
+    private String memberKey;
     private String refreshToken;
     private String accessToken;
     @TimeToLive

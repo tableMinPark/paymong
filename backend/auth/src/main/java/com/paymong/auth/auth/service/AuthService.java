@@ -55,6 +55,7 @@ public class AuthService {
         refreshTokenRedisRepository.save(
             RefreshToken.builder()
                 .id(member.getEmail())
+                .memberKey(String.valueOf(member.getMemberId()))
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
                 .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue())

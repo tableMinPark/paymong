@@ -47,7 +47,6 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             ServerHttpResponse response = exchange.getResponse();
             log.info("Custom PRE FILTER: request id = {}", request.getId());
 
-
             // 토큰 없을 때
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
@@ -63,16 +62,16 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             // redis 에서 확인
             String userName = tokenProvider.getUsername(token);
 
-
             Optional<RefreshToken> refreshToken = refreshTokenRedisRepository.findById(userName);
 
             if (refreshToken.isEmpty()) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
-            String memberKey = refreshToken.get().getId();
+            // Header 에 memberKey 추가
+            String memberKey = refreshToken.get().getMemberKey();
 
-            exchange.mutate().request((exchange.getRequest().mutate().header("MeberKey",memberKey).build()));
+            exchange.getRequest().mutate().header("MemberKey", memberKey).build();
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력
@@ -92,7 +91,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
     private String getToken(ServerHttpRequest request) {
         String headerAuth = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
         log.info("getToken");
-        log.info("headerAuth - "+ headerAuth);
+        log.info("headerAuth - " + headerAuth);
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }

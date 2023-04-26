@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
@@ -13,6 +14,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
+import com.paymong.domain.watch.WatchNavGraphViewModel
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
 import com.paymong.ui.watch.feed.Feed
@@ -20,9 +22,15 @@ import com.paymong.ui.watch.feed.FeedBuyList
 import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun NavGraph (){
+    val viewModel: WatchNavGraphViewModel = viewModel()
+    NavGraphUI(viewModel)
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun NavGraphUI (viewModel: WatchNavGraphViewModel){
     val animationState = remember { mutableStateOf(AnimationCode.Normal) }
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState(1)

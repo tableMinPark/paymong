@@ -1,9 +1,6 @@
 package com.paymong.domain.watch.activity
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -11,7 +8,6 @@ import android.hardware.SensorManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -71,11 +67,6 @@ class WalkingViewModel : ViewModel() {
         timerStart()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        sensorManager.unregisterListener(stepSensorEventListener)
-    }
-
     private fun timerStart(){
         if(::timer.isInitialized) timer.cancel()
 
@@ -107,5 +98,10 @@ class WalkingViewModel : ViewModel() {
             // 사용자 선택 종료
             walkingEnd()
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        sensorManager.unregisterListener(stepSensorEventListener)
     }
 }

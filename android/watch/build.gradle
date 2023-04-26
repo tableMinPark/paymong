@@ -59,6 +59,7 @@ dependencies {
     // compose
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
 
     // compose-extension
     implementation "androidx.wear.compose:compose-material:$wear_compose_version"
@@ -69,6 +70,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.20.1"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
 
+    // GPS
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
     // test
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
@@ -76,4 +80,5 @@ dependencies {
 
     implementation project(path: ':common')
     implementation project(path: ':ui')
+    implementation project(path: ':domain')
 }

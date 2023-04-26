@@ -1,4 +1,4 @@
-package com.paymong.auth.global.redis;
+package com.paymong.gateway.global.redis;
 
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;

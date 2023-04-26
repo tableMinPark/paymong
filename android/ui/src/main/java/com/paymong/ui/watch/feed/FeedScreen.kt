@@ -1,6 +1,7 @@
 package com.paymong.ui.watch.feed
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -58,11 +59,11 @@ fun FeedUI(
             }
         }
         // * Line *
-        Image(
-            painter = painterResource(id = R.drawable.line ),
-            contentDescription = "line",
-            modifier = Modifier,
-        )
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .height(5.dp))
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier

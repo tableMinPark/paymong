@@ -1,4 +1,4 @@
-package com.paymong.battle.dto.request;
+package com.paymong.battle.battle.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BattleReadyRequest {
-    private Long memberId;
+public class BattleReadyByLocationReqDto {
+    private Double latitude;
+    private Double longitude;
 }

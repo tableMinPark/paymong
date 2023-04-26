@@ -29,6 +29,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	// socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	// eureka
 //	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	// Database

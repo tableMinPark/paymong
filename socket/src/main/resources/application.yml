@@ -1,0 +1,12 @@
+spring:
+  redis:
+    cache:
+      host: tableminpark.iptime.org
+      port: 6379
+      password: paymong103.!
+
+battle:
+  max_distance: 300
+  max_search: 10
+  max_turn: 10
+  default_health: 500

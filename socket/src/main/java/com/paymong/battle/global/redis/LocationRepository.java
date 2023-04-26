@@ -27,7 +27,7 @@ public class LocationRepository {
 
     public void save(Long characterId, Double latitude, Double longitude) {
         GeoOperations<String, String> geoOperations = redisTemplate.opsForGeo();
-        geoOperations.add("characterLocation", new Point(latitude, longitude), characterId.toString());
+        geoOperations.add("characterLocation", new Point(longitude, latitude), characterId.toString());
     }
 
     public List<String> findById(Long characterId) {
@@ -44,5 +44,10 @@ public class LocationRepository {
         return geoResultList.getContent().stream()
                             .map(geoLocationGeoResult -> geoLocationGeoResult.getContent().getName())
                             .collect(Collectors.toList());
+    }
+
+    public void remove(Long characterId) {
+        GeoOperations<String, String> geoOperations = redisTemplate.opsForGeo();
+        geoOperations.remove("characterLocation", characterId.toString());
     }
 }

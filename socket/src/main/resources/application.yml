@@ -1,6 +1,6 @@
 spring:
   redis:
-    cache:
+    matching:
       host: tableminpark.iptime.org
       port: 6379
       password: paymong103.!

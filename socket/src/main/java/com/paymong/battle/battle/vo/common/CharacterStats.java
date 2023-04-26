@@ -1,4 +1,4 @@
-package com.paymong.battle.battle.dto.common;
+package com.paymong.battle.battle.vo.common;
 
 import lombok.Builder;
 import lombok.Data;

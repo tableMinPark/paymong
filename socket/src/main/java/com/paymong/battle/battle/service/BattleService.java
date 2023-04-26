@@ -1,19 +1,15 @@
 package com.paymong.battle.battle.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymong.battle.battle.dto.common.BattleLog;
-import com.paymong.battle.battle.dto.common.BattleUser;
-import com.paymong.battle.battle.dto.common.CharacterStats;
+import com.paymong.battle.battle.vo.common.BattleLog;
+import com.paymong.battle.battle.vo.common.Matching;
+import com.paymong.battle.battle.vo.common.CharacterStats;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
-import com.paymong.battle.battle.dto.common.BattleRoom;
-import com.paymong.battle.battle.vo.request.BattleReadyByLocationReqVo;
-import com.paymong.battle.battle.vo.response.BattleReadyByLocationResVo;
+import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.global.exception.NotFoundException;
-import com.paymong.battle.global.redis.LocationRepository;
-import com.paymong.battle.global.redis.MatchingRepository;
+import com.paymong.battle.information.dto.response.FindCharacterResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -21,72 +17,53 @@ import org.springframework.web.socket.WebSocketSession;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattleService {
-    private final LocationRepository locationRepository;
-    private final MatchingRepository matchingRepository;
-    // 상수
-    @Value("${battle.max_turn}")
-    private Integer maxTurn;
-    @Value("${battle.default_health}")
-    private Double defaultHealth;
     private final ObjectMapper objectMapper;
-
-    /*  redis 로 이식 부분 시작 (로드밸런싱 구동)*/
     private Map<String, BattleRoom> battleRoomMap;
-
-    /* redis 이식 부분 끝 */
+    private Map<Long, Matching> matchingMap;
 
     @PostConstruct
     private void init() {
         battleRoomMap = new LinkedHashMap<>();
+        matchingMap = new LinkedHashMap<>();
     }
 
-    public BattleRoom findRoomById(String battleRoomId) throws NotFoundException {
-        BattleRoom battleRoom = Optional.ofNullable(battleRoomMap.get(battleRoomId))
+    public BattleRoom findBattleRoom(String battleRoomId) throws NotFoundException {
+        return Optional.ofNullable(battleRoomMap.get(battleRoomId))
                                         .orElseThrow(() -> new NotFoundException());
-        return battleRoom;
     }
 
-    public BattleReadyByLocationResVo battleReadyByLocation(BattleReadyByLocationReqVo battleReadyByLocationReqVo) throws RuntimeException {
+    public List<BattleRoom> findAllBattleRoom() {
+        return battleRoomMap.values().stream().collect(Collectors.toList());
+    }
 
-        Long characterId = battleReadyByLocationReqVo.getCharacterId();
-        Double latitude = battleReadyByLocationReqVo.getLatitude();
-        Double longitude = battleReadyByLocationReqVo.getLongitude();
+    public void addBattleRoom(String battleRoomId, BattleRoom battleRoom) {
+        battleRoomMap.put(battleRoomId, battleRoom);
+    }
 
-        String battleRoomId = "";
-        String name = "";
-        String order = "";
+    public void removeBattleRoom(String battleRoomId) {
+        battleRoomMap.remove(battleRoomId);
+    }
 
-        // 대기 세션서버에 대기열 등록
-        locationRepository.save(characterId, latitude, longitude);
-        matchingRepository.save(characterId);
+    public Matching findMatching(Long characterId) {
+        return matchingMap.get(characterId);
+    }
 
-        // 자신 기준 가까운 10명 리스트
-        List<String> characterIdList = locationRepository.findById(characterId);
+    public List<Matching> findAllMatching() {
+        return matchingMap.values().stream().collect(Collectors.toList());
+    }
 
-        for (String otherCharacterId : characterIdList) {
-            Long id = Long.parseLong(otherCharacterId);
-            // 매칭이 되었는지 확인
-            if (matchingRepository.findById(id).isPresent()) {
-                // 정보 조회
-                BattleUser battleUser = matchingRepository.findById(id).get();
-                // 다른 사람이 매칭하지 못하게 대기열에서 삭제
-                matchingRepository.remove(id);
-                // 상대방 세션에 연결해서 매칭 정보 전달
+    public void addMatching(Long characterId, Matching matching) throws RuntimeException {
+        matchingMap.put(characterId, matching);
+    }
 
-                break;
-            }
-        }
-
-        return BattleReadyByLocationResVo.builder()
-                .battleRoomId(battleRoomId)
-                .name(name)
-                .order(order)
-                .build();
+    public void removeMatching(Long characterId) {
+        matchingMap.remove(characterId);
     }
 
     public BattleMessageResDto battleActive(Integer nowTurn, CharacterStats statsA, CharacterStats statsB, BattleLog battleLog){
@@ -150,6 +127,20 @@ public class BattleService {
         // 다른 방향
         else
             return false;
+    }
+
+    public CharacterStats findCharacterStats(Long characterId, Double defaultHealth) {
+        FindCharacterResponse findCharacterResponse = new FindCharacterResponse();
+        findCharacterResponse.setCharacterId(characterId);
+        findCharacterResponse.setStrength(1);
+        findCharacterResponse.setWeight(2);
+
+        return CharacterStats.builder()
+                .characterId(findCharacterResponse.getCharacterId())
+                .health(defaultHealth)
+                .strength(findCharacterResponse.getStrength())
+                .weight(findCharacterResponse.getWeight())
+                .build();
     }
 
     public <T> void sendMessage(WebSocketSession session, T message) {

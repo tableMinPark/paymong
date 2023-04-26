@@ -22,7 +22,7 @@ class TrainingViewModel : ViewModel() {
     private lateinit var timer : Job
     private var nowTime : Long = 0
     private var interval : Long = 10
-    private val maxTime : Long = 10000
+    private val maxTime : Long = 100  // 10000
 
     init {
         isTrainingEnd = false

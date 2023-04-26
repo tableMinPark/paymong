@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,14 +49,7 @@ fun WalkingActiveUI(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxHeight()
-            .clickable {
-                viewModel.screenClick() {
-                    navController.navigate(WatchNavItem.Activity.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-                    }
-                }
-            }
+
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -98,22 +93,55 @@ fun WalkingActiveUI(
 
         }
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (viewModel.isWalkingEnd) {
-                Text(text = "메인 화면",
-                    fontFamily = dalmoori,
-                    textAlign = TextAlign.Center,
-                    fontSize = 12.sp)
-            } else {
-                Text(text = "산책 종료",
-                    fontFamily = dalmoori,
-                    textAlign = TextAlign.Center,
-                    fontSize = 12.sp)
+
+
+        Box(modifier = Modifier
+                .fillMaxWidth(1f)
+                .fillMaxHeight(0.4f)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)) {
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight().scale(1.2f)
+                        .clickable {
+                            viewModel.screenClick() {
+                                navController.navigate(WatchNavItem.Activity.route) {
+                                    popUpTo(navController.graph.findStartDestination().id)
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                )
+
+                if (viewModel.isWalkingEnd) {
+
+                    Text(
+                        text = "메인",
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontFamily = dalmoori,
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp,
+                        color = Color(0xFF0C4DA2)
+                    )
+                } else {
+
+                    Text(
+                        text = "종료",
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontFamily = dalmoori,
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp,
+                        color = Color(0xFF0C4DA2)
+                    )
+                }
+
             }
-        }
+
     }
 }
 

@@ -5,13 +5,18 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -88,34 +93,116 @@ fun TrainingActiveUI(
                     fontSize = 25.sp)
             }
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
+
+
+            Box(
+//                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth().padding(top=5.dp)
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
             ) {
-                val viewModel : MainInfoViewModel = viewModel()
+                val viewModel: MainInfoViewModel = viewModel()
                 var findCode = viewModel.characterCode
                 var chCode = CharacterCode.valueOf(findCode)
                 val chA = painterResource(chCode.code)
-                Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
+                val TraingviewModel: TrainingViewModel = viewModel()
+                if (TraingviewModel.isTrainingEnd) {
+                    Box(Modifier.size(70.dp))
+                } else {
+                    Image(
+                        painter = chA,
+                        contentDescription = null,
+                        modifier = Modifier.width(100.dp)
+                    )
+                }
+
+
+
+                if (TraingviewModel.isTrainingEnd) {
+                    if (TraingviewModel.count >= 1) {
+                        Image(
+                            painter = painterResource(id = R.drawable.success),
+                            contentDescription = "success",
+                            modifier = Modifier.fillMaxHeight(0.3f).fillMaxWidth(0.8f)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.fail),
+                            contentDescription = "fail ",
+                            modifier = Modifier.fillMaxHeight(0.3f).fillMaxWidth(0.8f)
+                        )
+                    }
+                }
 
             }
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth().padding(bottom=5.dp)
-            ) {
+//            Row(
+//                horizontalArrangement = Arrangement.Center,
+//                modifier = Modifier.fillMaxWidth().padding(bottom=5.dp)
+//            ) {
+//                if (viewModel.isTrainingEnd) {
+//
+//                    Text(text = "훈련 종료",
+//                        fontFamily = dalmoori,
+//                        fontSize = 12.sp)
+//                } else {
+//                    Text(text = "터치해서 훈련",
+//                        fontFamily = dalmoori,
+//                        fontSize = 12.sp)
+//                }
+//            }
+
+
+            Box(modifier = Modifier
+                .fillMaxWidth(1f)
+                .fillMaxHeight(0.5f)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)) {
+
+
+
+
                 if (viewModel.isTrainingEnd) {
-                    Text(text = "훈련 종료",
+                    Image(
+                        painter = painterResource(id = R.drawable.blue_bnt),
+                        contentDescription = "blue_bnt",
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().scale(0.7f)
+                            .clickable {
+                                viewModel.screenClick() {
+                                    navController.navigate(WatchNavItem.Activity.route) {
+                                        popUpTo(navController.graph.findStartDestination().id)
+                                        launchSingleTop = true
+                                    }
+                                }
+                            }
+                    )
+                    Text(
+                        text = "종료",
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally),
                         fontFamily = dalmoori,
-                        fontSize = 12.sp)
+                        textAlign = TextAlign.Center,
+                        fontSize = 12.sp,
+                        color = Color(0xFF0C4DA2)
+                    )
                 } else {
+
                     Text(text = "터치해서 훈련",
                         fontFamily = dalmoori,
                         fontSize = 12.sp)
+
                 }
+
             }
 
+
         }
+
+
+
+
+
+
 
         if (viewModel.isTrainingEnd) {
             null

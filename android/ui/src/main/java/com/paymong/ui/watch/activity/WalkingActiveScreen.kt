@@ -81,19 +81,122 @@ fun WalkingActiveUI(
                     modifier = Modifier.align(Alignment.Bottom)
                 )}}
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=5.dp)
-        ) {
-            val viewModel : MainInfoViewModel = viewModel()
-            var findCode = viewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
 
+        if (viewModel.isWalkingEnd) {
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(top=25.dp).fillMaxHeight(0.6f)
+
+
+            ) {
+
+5
+
+                    Text(
+                        text = "?산책 종료?",
+                        modifier = Modifier.fillMaxHeight(1f).fillMaxWidth(),
+                        fontFamily = dalmoori,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color(0xFFffffff)
+                    )
+            }
+
+
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().padding(top=5.dp)
+            ) {
+                val viewModel : MainInfoViewModel = viewModel()
+                var findCode = viewModel.characterCode
+                var chCode = CharacterCode.valueOf(findCode)
+                val chA = painterResource(chCode.code)
+                Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
+
+            }
         }
 
+        if (viewModel.isWalkingEnd) {
 
+            Box(modifier = Modifier
+                .fillMaxWidth(1f)
+                .fillMaxHeight(0.4f)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)) {
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight().scale(1.2f)
+                        .clickable {
+                            viewModel.screenClick() {
+                                navController.navigate(WatchNavItem.Activity.route) {
+                                    popUpTo(navController.graph.findStartDestination().id)
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                )
+
+
+
+                Text(
+                text = "YES",
+                modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally),
+                fontFamily = dalmoori,
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                color = Color(0xFF0C4DA2)
+                )
+
+
+            }
+
+            Box(modifier = Modifier
+                .fillMaxWidth(1f)
+                .fillMaxHeight(0.4f)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)) {
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight().scale(1.2f)
+                        .clickable {
+                            viewModel.screenClick() {
+                                navController.navigate(WatchNavItem.Activity.route) {
+                                    popUpTo(navController.graph.findStartDestination().id)
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                )
+
+
+
+                Text(
+                    text = "YES",
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    color = Color(0xFF0C4DA2)
+                )
+
+
+            }
+
+
+
+
+        }else {
 
         Box(modifier = Modifier
                 .fillMaxWidth(1f)
@@ -116,18 +219,7 @@ fun WalkingActiveUI(
                         }
                 )
 
-                if (viewModel.isWalkingEnd) {
 
-                    Text(
-                        text = "메인",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight().wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 12.sp,
-                        color = Color(0xFF0C4DA2)
-                    )
-                } else {
 
                     Text(
                         text = "종료",
@@ -138,12 +230,13 @@ fun WalkingActiveUI(
                         fontSize = 12.sp,
                         color = Color(0xFF0C4DA2)
                     )
-                }
+
 
             }
 
-    }
+    } }
 }
+
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable

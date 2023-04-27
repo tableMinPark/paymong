@@ -1,4 +1,4 @@
-package com.paymong.gateway.filter;
+package com.paymong.gateway.global.filter;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
     // 설정 정보를 제공하는 클래스
     @Data
     public static class Config {
+
         private String baseMessage;
         private boolean preLogger;
         private boolean postLogger;
@@ -40,7 +41,6 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             if (config.isPreLogger()) {
                 log.info("Global Filter is start ... request id = {}", request.getId());
             }
-
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

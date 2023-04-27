@@ -34,7 +34,7 @@ public class CollectController {
         }
     }
 
-    @GetMapping("/collect/map/list")
+    @GetMapping("/map/list")
     public ResponseEntity<Object> findAllMapCollect(
         @RequestHeader(value = "MemberKey") String memberKey) {
         try {
@@ -46,11 +46,12 @@ public class CollectController {
         }
     }
 
-    @GetMapping("/collect/character/list")
+    @GetMapping("/character/list")
     public ResponseEntity<Object> findAllMongCollect(
         @RequestHeader(value = "MemberKey") String memberKey) {
         try {
-            List<FindAllMongCollectResDto> findAllMapCollectResDto = collectService.findAllMongCollect(memberKey);
+            List<FindAllMongCollectResDto> findAllMapCollectResDto = collectService.findAllMongCollect(
+                memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));

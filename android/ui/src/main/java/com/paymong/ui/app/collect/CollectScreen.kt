@@ -39,15 +39,14 @@ fun Btn(navController: NavController, btnText: String, route: String){
         onClick = { navController.navigate(route) },
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp)
-            .padding(30.dp)
+            .height(200.dp)
+            .padding(40.dp)
             .clip(RoundedCornerShape(15.dp)),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.5f))
     ) {
-        Text(text = btnText, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 30.sp, fontWeight = FontWeight.Bold,
+        Text(text = btnText, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 40.sp, fontWeight = FontWeight.Bold,
         color = Color.White
         )
-//        Text(text = btnText)
     }
 }
 

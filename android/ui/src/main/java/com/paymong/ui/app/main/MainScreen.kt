@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -28,7 +27,7 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
-import com.paymong.common.code.BackgroundCode
+import com.paymong.common.code.MapCode
 import com.paymong.ui.theme.dalmoori
 import java.text.NumberFormat
 import java.util.*
@@ -251,7 +250,7 @@ fun MainUI(
 ) {
     // 배경
     val findBgCode = viewModel.background
-    val bgCode = BackgroundCode.valueOf(findBgCode)
+    val bgCode = MapCode.valueOf(findBgCode)
     val bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
         modifier = Modifier

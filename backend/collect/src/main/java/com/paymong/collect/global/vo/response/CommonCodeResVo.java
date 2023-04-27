@@ -7,6 +7,9 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class MongCodeResVo {
-
+public class CommonCodeResVo {
+    private String code;
+    private String name;
+    private String group_code;
+    private String group_name;
 }

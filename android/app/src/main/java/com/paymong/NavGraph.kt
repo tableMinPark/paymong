@@ -8,7 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.ui.app.collect.Collect
-import com.paymong.ui.app.collect.CollectDetail
+import com.paymong.ui.app.collect.CollectPayMong
+import com.paymong.ui.app.collect.CollectMap
 import com.paymong.ui.app.condition.Condition
 import com.paymong.ui.app.help.Help
 import com.paymong.ui.app.info_detail.InfoDetail
@@ -71,18 +72,23 @@ fun NavGraph (navController: NavHostController){
         ) {
             Collect(navController)
         }
-        composable(
-            route = AppNavItem.CollectDetail.route + "/{collectCategory}/{memberId}",
+        composable(route = AppNavItem.CollectPayMong.route + "/{memberId}",
             arguments = listOf(
-                navArgument("collectCategory") {
-                    type = NavType.StringType
-                },
                 navArgument("memberId") {
                     type = NavType.StringType
-                },
+                }
             )
         ) {
-            CollectDetail(navController)
+            CollectPayMong(navController)
+        }
+        composable(route = AppNavItem.CollectMap.route + "/{memberId}",
+            arguments = listOf(
+                navArgument("memberId") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            CollectMap(navController)
         }
     }
 }

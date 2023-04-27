@@ -23,9 +23,17 @@ class InfoDetailViewModel constructor(
         if(::load.isInitialized) load.cancel()
 
         load = viewModelScope.launch {
-            characterId = stateHandle.get<String>("characterId")
-                ?: throw IllegalStateException("No characterId was passed to destination.")
+//            characterId = stateHandle.get<String>("characterId")
+//                ?: throw IllegalStateException("No characterId was passed to destination.")
+            characterId = "CH100"
             println(characterId)
+            val day = 1
+            val hour = 12
+            val minute = 4
+
+            name="별별이"
+            age = String.format("%d일 %d시간 %d분", day, hour, minute)
+            weight = 5
         }
     }
 

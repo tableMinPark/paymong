@@ -216,8 +216,8 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                     .width(150.dp)
             )
             Text(
-                text = "도감", textAlign = TextAlign.Center,
-                fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White
+                text = "몽집", textAlign = TextAlign.Center,
+                fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
             )
         }
         if (characterState.value != CharacterCode.CH444){
@@ -237,7 +237,7 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                 )
                 Text(
                     text = "지수", textAlign = TextAlign.Center,
-                    fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
                 )
             }
         }

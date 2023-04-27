@@ -30,7 +30,7 @@ fun Landing(navController: NavController){
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     Logo()
 
-    //3초 후 메인화면으로 전환
+    //2초 후 메인화면으로 전환
     Handler(Looper.getMainLooper()).postDelayed({
         navController.navigate(WatchNavItem.Main.route)
     },2000)

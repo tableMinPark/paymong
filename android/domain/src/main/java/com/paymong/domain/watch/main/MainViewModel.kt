@@ -17,7 +17,13 @@ class MainViewModel : ViewModel() {
         if(::load.isInitialized) load.cancel()
 
         load = viewModelScope.launch {
+            println("MainViewMOdel 시작")
             background = "MP000"
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("MainViewMOdel 끝")
     }
 }

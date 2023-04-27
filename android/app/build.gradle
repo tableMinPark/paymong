@@ -58,6 +58,8 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_ui_version"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
 
+//    implementation "com.chargemap.compose:numberpicker:latestVersion"
+
     // test
     testImplementation 'junit:junit:4.12'
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"

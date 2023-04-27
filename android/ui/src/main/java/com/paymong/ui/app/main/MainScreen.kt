@@ -1,36 +1,43 @@
 package com.paymong.ui.app.main
 
+import android.provider.ContactsContract.CommonDataKinds.Nickname
+import android.util.Log
+import android.widget.NumberPicker
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.DialogHost
+import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.main.MainViewModel
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
-import com.paymong.common.code.BackgroundCode
-import com.paymong.ui.theme.dalmoori
+import com.paymong.common.code.MapCode
+import com.paymong.ui.theme.*
 import java.text.NumberFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Composable
@@ -134,10 +141,147 @@ fun Top(navController: NavController){
         Point(navController)
     }
 }
+@Composable
+fun NicknameDialog(
+    value: String, setShowDialog: (Boolean) -> Unit, setShowSleepDialog: (Boolean) -> Unit,
+    characterState: MutableState<CharacterCode>,
+    setValue: (String) -> Unit
+){
+    val noNickname = remember { mutableStateOf("") }
+    val nickname = remember { mutableStateOf(value) }
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp),
+            color = Color.White.copy(alpha = 0.8f)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+                ,horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "새로운 몽의 이름을 지어주세요🤗",
+                    fontFamily = dalmoori,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+
+                OutlinedTextField(
+                    value = nickname.value,
+                    onValueChange = { nickname.value = it },
+                    textStyle = TextStyle(fontFamily = dalmoori),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PayMongBlue200,
+                        unfocusedBorderColor = PayMongBlue,
+                        backgroundColor = Color.White
+                    )
+                )
+
+                val setSleep = remember { mutableStateOf(false) }
+                Button(
+                    onClick = {
+                        if (nickname.value.isEmpty()) {
+                            noNickname.value = "닉네임 입력은 필수에요🥺"
+                            Log.d("error",noNickname.value)
+                            return@Button
+                        }
+                        setValue(nickname.value)
+                        setShowDialog(false)
+                        setShowSleepDialog(true)
+//                        characterState.value = CharacterCode.CH003
+                    },
+                    colors = ButtonDefaults.buttonColors(PayMongBlue),
+                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
+                ) {
+                    Text(text = "이름 짓기", fontFamily = dalmoori)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SleepDialog(value: String,setShowSleepDialog: (Boolean) -> Unit, nickname: String){
+    Dialog(onDismissRequest = { setShowSleepDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp),
+            color = Color.White.copy(alpha = 0.8f)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "💤${nickname}은 언제 자요?",
+                    fontFamily = dalmoori,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+                TimePicker()
+            }
+        }
+    }
+}
+
+@Composable
+fun TimePicker(){
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+//        var pickerValue by remember { mutableStateOf<Hours>(AMPMHours(9, 12, AMPMHours.DayTime.PM )) }
+//
+//        HoursNumberPicker(
+//            dividersColor = MaterialTheme.colors.primary,
+//            value = pickerValue,
+//            onValueChange = {
+//                pickerValue = it
+//            },
+//            hoursDivider = {
+//                Text(
+//                    modifier = Modifier.padding(horizontal = 8.dp),
+//                    textAlign = TextAlign.Center,
+//                    text = "hours"
+//                )
+//            },
+//            minutesDivider = {
+//                Text(
+//                    modifier = Modifier.padding(horizontal = 8.dp),
+//                    textAlign = TextAlign.Center,
+//                    text = "minutes"
+//                )
+//            }
+//        )
+
+    }
+}
 
 @Composable
 fun MakeEgg(navController: NavController, characterState: MutableState<CharacterCode>){
     val viewModel : MainViewModel = viewModel()
+    val dialogOpen = remember {mutableStateOf(false)}
+    val nickname = remember{ mutableStateOf("") }
+    val sleepDialogOpen = remember {mutableStateOf(false)}
+
+    if(dialogOpen.value){
+        NicknameDialog(value = "", setShowDialog = { dialogOpen.value = it }, setShowSleepDialog = {sleepDialogOpen.value = it}
+            ,characterState ){
+            nickname.value = it
+            Log.d("nickname",nickname.value)
+        }
+    }
+
+
+    if(sleepDialogOpen.value){
+        SleepDialog(value = "", setShowSleepDialog = { sleepDialogOpen.value = it }, nickname.value )
+    }
 
     Row(
         modifier = Modifier
@@ -153,7 +297,9 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { characterState.value = CharacterCode.CH003 }
+                    onClick = {
+                        dialogOpen.value = true
+                    }
                 )
             )
         } else if (characterState.value != CharacterCode.CH444){
@@ -251,7 +397,7 @@ fun MainUI(
 ) {
     // 배경
     val findBgCode = viewModel.background
-    val bgCode = BackgroundCode.valueOf(findBgCode)
+    val bgCode = MapCode.valueOf(findBgCode)
     val bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
         modifier = Modifier
@@ -272,6 +418,7 @@ fun InfoPreview() {
     val navController = rememberNavController()
     val viewModel : MainViewModel = viewModel()
     PaymongTheme {
-        MainUI(navController, viewModel)
+//        MainUI(navController, viewModel)
+
     }
 }

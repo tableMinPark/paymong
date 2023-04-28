@@ -37,6 +37,7 @@ public class TokenProvider {
         return extractAllClaims(token).get("username", String.class);
     }
 
+
     private Key getSigningKey(String secretKey) {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -47,17 +48,20 @@ public class TokenProvider {
         return expiration.before(new Date());
     }
 
-    public String generateAccessToken(String username) {
-        return doGenerateToken(username, JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue());
+    public String generateAccessToken(String username, String mongId) {
+        return doGenerateToken(username, mongId,
+            JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
-    public String generateRefreshToken(String username) {
-        return doGenerateToken(username, JwtStateCode.REFRESH_TOKEN_EXPIRATION_PERIOD.getValue());
+    public String generateRefreshToken(String username, String mongId) {
+        return doGenerateToken(username, mongId,
+            JwtStateCode.REFRESH_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
-    private String doGenerateToken(String username, long expireTime) { // 1
+    private String doGenerateToken(String username, String mongId, long expireTime) { // 1
         Claims claims = Jwts.claims();
         claims.put("username", username);
+        claims.put("mongId", mongId);
 
         return Jwts.builder()
             .setClaims(claims)

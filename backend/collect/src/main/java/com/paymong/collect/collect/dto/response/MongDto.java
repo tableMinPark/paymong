@@ -1,6 +1,7 @@
 package com.paymong.collect.collect.dto.response;
 
 import com.paymong.collect.global.vo.response.CommonCodeResVo;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,6 +20,15 @@ public class MongDto {
             .build();
     }
 
-//    public static void isValid
+    public MongDto isContain(List<String> mongCollect){
+        if(mongCollect.contains(this.characterCode)){
+            this.setIsOpen(true);
+        }else {
+            this.setIsOpen(false);
+            this.setName(null);
+            this.setCharacterCode(null);
+        }
+        return this;
+    }
 
 }

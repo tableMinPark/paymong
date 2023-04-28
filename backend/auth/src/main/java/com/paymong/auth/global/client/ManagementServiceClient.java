@@ -1,14 +1,14 @@
 package com.paymong.auth.global.client;
 
 import com.paymong.auth.global.vo.request.FindMongReqVo;
-import com.paymong.auth.global.vo.response.FindMongResVo;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "MANAGEMENT")
+@FeignClient(name = "management")
 public interface ManagementServiceClient {
 
     @GetMapping("/management/mong")
-    ResponseEntity<FindMongResVo> findMongByMember(FindMongReqVo findMongReqVo);
+    ResponseEntity<Object> findMongByMember(@SpringQueryMap FindMongReqVo findMongReqVo);
 }

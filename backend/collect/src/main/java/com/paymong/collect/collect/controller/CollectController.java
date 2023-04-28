@@ -42,7 +42,7 @@ public class CollectController {
                 memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
         }
     }
 
@@ -50,11 +50,11 @@ public class CollectController {
     public ResponseEntity<Object> findAllMongCollect(
         @RequestHeader(value = "MemberKey") String memberKey) {
         try {
-            List<FindAllMongCollectResDto> findAllMapCollectResDto = collectService.findAllMongCollect(
+            FindAllMongCollectResDto findAllMapCollectResDto = collectService.findAllMongCollect(
                 memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MONG_RUNTIME));
         }
     }
 }

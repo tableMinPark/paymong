@@ -1,10 +1,13 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
+import com.paymong.management.mong.vo.FindMongReqVo;
+import com.paymong.management.mong.vo.FindMongResVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +60,16 @@ public class MongService {
         addMongResVo.setBorn(LocalDate.now());
 
         return addMongResVo;
+    }
+
+    @Transactional
+    public FindMongResVo findMongByMember(FindMongReqVo findMongReqVo) throws Exception{
+        Mong mong = mongRepository.findByMemberIdAndComplete(findMongReqVo.getMemberId(), false)
+                .orElseThrow(()-> new NotFoundMongException());
+
+        FindMongResVo findMongResVo = new FindMongResVo();
+        findMongResVo.setMongId(mong.getMongId());
+
+        return findMongResVo;
     }
 }

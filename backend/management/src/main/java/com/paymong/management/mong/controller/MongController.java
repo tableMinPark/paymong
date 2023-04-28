@@ -5,9 +5,14 @@ import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.mong.dto.AddMongReqDto;
 import com.paymong.management.mong.dto.AddMongResDto;
+import com.paymong.management.mong.dto.FindMongReqDto;
+import com.paymong.management.mong.dto.FindMongResDto;
 import com.paymong.management.mong.service.MongService;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
+import com.paymong.management.mong.vo.FindMongReqVo;
+import com.paymong.management.mong.vo.FindMongResVo;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +39,26 @@ public class MongController {
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }catch(NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }
+
+    }
+
+    @GetMapping("/mong")
+    public ResponseEntity<Object> findMongByMember(FindMongReqDto findMongReqDto) throws Exception{
+        try {
+            if(findMongReqDto.getMemberId() == null){
+                throw new NullPointerException();
+            }
+            FindMongReqVo findMongReqVo = new FindMongReqVo(findMongReqDto);
+            FindMongResVo findMongResVo = mongService.findMongByMember(findMongReqVo);
+            FindMongResDto findMongResDto = new FindMongResDto(findMongResVo);
+            return ResponseEntity.status(HttpStatus.OK).body(findMongResDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

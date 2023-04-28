@@ -48,6 +48,8 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 }
 

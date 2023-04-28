@@ -5,12 +5,10 @@ import com.paymong.management.feed.dto.FeedSnackReqDto;
 import com.paymong.management.feed.service.FeedService;
 import com.paymong.management.feed.vo.FeedFoodReqVo;
 import com.paymong.management.feed.vo.FeedSnackReqVo;
-import com.paymong.management.global.code.ErrorCode;
-import com.paymong.management.global.dto.ErrorDto;
-import com.paymong.management.global.dto.ResDto;
+import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.mong.controller.MongController;
+import com.paymong.management.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +34,16 @@ public class FeedController {
                 throw new NullPointerException();
             }
             feedService.feedFood(feedFoodReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NULL_POINT.getCode(), ErrorCode.NULL_POINT.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NULL_POINT));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }catch (NotFoundMongException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_FOUND));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_ACTION.getCode(), ErrorCode.NOT_ACTION.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_ACTION));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
         }
     }
 
@@ -58,16 +56,16 @@ public class FeedController {
                 throw new NullPointerException();
             }
             feedService.feedSnack(feedSnackReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NULL_POINT.getCode(), ErrorCode.NULL_POINT.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NULL_POINT));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }catch (NotFoundMongException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_FOUND));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_ACTION.getCode(), ErrorCode.NOT_ACTION.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_ACTION));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
         }
     }
 }

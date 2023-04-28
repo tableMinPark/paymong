@@ -1,8 +1,8 @@
 package com.paymong.management.mong.controller;
 
-import com.paymong.management.global.code.ErrorCode;
-import com.paymong.management.global.dto.ErrorDto;
+import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.mong.dto.AddMongReqDto;
 import com.paymong.management.mong.dto.AddMongResDto;
 import com.paymong.management.mong.service.MongService;
@@ -35,13 +35,11 @@ public class MongController {
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);
         }catch (NullPointerException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NULL_POINT.getCode(), ErrorCode.NULL_POINT.name());
-            ErrorDto errorDto = new ErrorDto(ErrorCode.NULL_POINT);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }catch(NotFoundMongException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.name());
-            ErrorDto errorDto = new ErrorDto(ErrorCode.NOT_FOUND);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }
 
     }

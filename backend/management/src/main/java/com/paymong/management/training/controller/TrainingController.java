@@ -1,11 +1,9 @@
 package com.paymong.management.training.controller;
 
-import com.paymong.management.feed.controller.FeedController;
-import com.paymong.management.global.code.ErrorCode;
-import com.paymong.management.global.dto.ErrorDto;
-import com.paymong.management.global.dto.ResDto;
+import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.training.dto.WalkingReqDto;
 import com.paymong.management.training.service.TrainingService;
 import com.paymong.management.training.vo.WalkingReqVo;
@@ -29,13 +27,13 @@ public class TrainingController {
     public ResponseEntity<Object> training() throws Exception{
         try {
             trainingService.training();
-            return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NotFoundMongException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_FOUND));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_ACTION.getCode(), ErrorCode.NOT_ACTION.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_ACTION));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
         }
     }
 
@@ -47,16 +45,16 @@ public class TrainingController {
             }
             WalkingReqVo walkingReqVo = new WalkingReqVo(walkingReqDto.getWalkingCount());
             trainingService.walking(walkingReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResDto("SUCCESS"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NULL_POINT.getCode(), ErrorCode.NULL_POINT.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NULL_POINT));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }catch (NotFoundMongException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_FOUND));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
-            LOGGER.info("code : {}, message : {}", ErrorCode.NOT_ACTION.getCode(), ErrorCode.NOT_ACTION.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ErrorCode.NOT_ACTION));
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
         }
     }
 }

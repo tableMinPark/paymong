@@ -40,13 +40,13 @@ public class CollectService {
         Optional<List<MapCollect>> mapCollectList =
             mapCollectRepository.findAllByMemberIdOrderByMapCodeDesc(Long.parseLong(memberId));
 
-        if (mapCollectList.isPresent()) {
+        if (mapCollectList.isPresent() && mapCollectList.get().size() != 0) {
             List<String> mapCollectCodeList = mapCollectList.get().stream()
                 .map(MapCollect::getMapCode).collect(Collectors.toList());
 
-            findAllMapCollectResDtoList.stream()
-                .map(e -> e.isContain(mapCollectCodeList));
-
+            findAllMapCollectResDtoList = findAllMapCollectResDtoList.stream()
+                .map(e -> e.isContain(mapCollectCodeList))
+                .collect(Collectors.toList());
         }
 
         return findAllMapCollectResDtoList;
@@ -78,9 +78,10 @@ public class CollectService {
     }
 
     @Transactional
-    public List<FindAllMongCollectResDto> findAllMongCollect(String memberId)
+    public FindAllMongCollectResDto findAllMongCollect(String memberId)
         throws RuntimeException {
-        List<FindAllMongCollectResDto> findAllMapCollectResDtoList = new ArrayList<>();
+        FindAllMongCollectResDto findAllMongCollectResDto = FindAllMongCollectResDto.builder()
+            .build();
         List<MongDto> eggs = new ArrayList<>();
         List<MongDto> level1 = new ArrayList<>();
         List<MongDto> level2 = new ArrayList<>();
@@ -89,41 +90,44 @@ public class CollectService {
         List<MongDto> mongDtoList = MongTest().stream().map(MongDto::of)
             .collect(Collectors.toList());
 
-
-
         Optional<List<MongCollect>> mongCollectList =
             mongCollectRepository.findByMemberIdOrderByMongCodeDesc(Long.parseLong(memberId));
 
-//        if (mongCollectList.isPresent()) {
-//            mongDtoList.stream().map(e -> e.isValid(mongCollectList));
-//        }
+        if (mongCollectList.isPresent() && mongCollectList.get().size() != 0) {
+            List<String> mongCollectCodeList = mongCollectList.get().stream()
+                .map(MongCollect::getMongCode).collect(
+                    Collectors.toList());
 
-        MongTest().stream().map(e -> {
-            MongDto mongDto = MongDto.of(e);
-            char growth = mongDto.getCharacterCode().charAt(2);
-            switch (growth) {
-                case 0:
-                    eggs.add(mongDto);
-                    break;
-                case 1:
-                    level1.add(mongDto);
-                    break;
-                case 2:
-                    level2.add(mongDto);
-                    break;
-                case 3:
-                    level3.add(mongDto);
-                    break;
-            }
-            return 0;
-        });
+            mongDtoList = mongDtoList.stream()
+                .map(e -> e.isContain(mongCollectCodeList))
+                .collect(Collectors.toList());
 
-//        findAllMapCollectResDtoList.add(eggs);
-//        findAllMapCollectResDtoList.add(level1);
-//        findAllMapCollectResDtoList.add(level2);
-//        findAllMapCollectResDtoList.add(level3);
+            mongDtoList.forEach(e -> {
+                char growth = e.getCharacterCode().charAt(2);
+                log.info(String.valueOf(growth));
+                switch (growth) {
+                    case '0':
+                        eggs.add(e);
+                        break;
+                    case '1':
+                        level1.add(e);
+                        break;
+                    case '2':
+                        level2.add(e);
+                        break;
+                    case '3':
+                        level3.add(e);
+                        break;
+                }
+            });
+        }
 
-        return null;
+        findAllMongCollectResDto.setEggs(eggs);
+        findAllMongCollectResDto.setLevel1(level1);
+        findAllMongCollectResDto.setLevel2(level2);
+        findAllMongCollectResDto.setLevel3(level3);
+
+        return findAllMongCollectResDto;
     }
 
 }

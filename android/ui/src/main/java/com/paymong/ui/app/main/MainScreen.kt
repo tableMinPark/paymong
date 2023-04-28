@@ -281,7 +281,7 @@ fun SleepDialog(setSleepValue: (LocalTime) -> Unit, setShowSleepDialog: (Boolean
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "${nickname} 재울 시간💤",
+                    text = "${nickname} 재울 시간 💤",
                     fontFamily = dalmoori,
                     modifier = Modifier.padding(bottom = 20.dp),
                     color = Color.Black
@@ -314,7 +314,7 @@ fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "${nickname} 깨울 시간☀",
+                    text = "${nickname} 깨울 시간 ☀",
                     fontFamily = dalmoori,
                     modifier = Modifier.padding(bottom = 20.dp),
                     color = Color.Black

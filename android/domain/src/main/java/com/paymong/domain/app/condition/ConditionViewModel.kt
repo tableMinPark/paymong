@@ -28,6 +28,12 @@ class ConditionViewModel constructor(
             characterId = stateHandle.get<String>("characterId")
                 ?: throw IllegalStateException("No characterId was passed to destination.")
             println(characterId)
+
+            name="별별이"
+            health = 0.35f
+            satiety = 0.62f
+            strength = 0.80f
+            sleep = 0.23f
         }
     }
 

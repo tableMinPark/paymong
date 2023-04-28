@@ -1,8 +1,11 @@
+server:
+  port: 11050
+
 spring:
   redis:
     matching:
-      host: tableminpark.iptime.org
-      port: 6379
+      host: k8e103.p.ssafy.io
+      port: 6380
       password: paymong103.!
 
 battle:

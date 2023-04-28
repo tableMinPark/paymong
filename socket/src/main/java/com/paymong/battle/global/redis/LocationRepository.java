@@ -8,9 +8,11 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Repository
@@ -49,5 +51,9 @@ public class LocationRepository {
     public void remove(Long characterId) {
         GeoOperations<String, String> geoOperations = redisTemplate.opsForGeo();
         geoOperations.remove("characterLocation", characterId.toString());
+    }
+
+    public void removeAll() {
+        redisTemplate.expire("characterLocation", -1, TimeUnit.MILLISECONDS);
     }
 }

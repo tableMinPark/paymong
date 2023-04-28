@@ -39,7 +39,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     private final BattleService battleService;
     private final LocationRepository locationRepository;
-
     private Map<String, String> battleRoomMap;
 
     @PostConstruct
@@ -52,6 +51,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String payload = message.getPayload();
         BattleMessageReqDto battleMessageReqDto = objectMapper.readValue(payload, BattleMessageReqDto.class);
+
+        log.info(payload);
 
         Long characterId = battleMessageReqDto.getCharacterId();
         Double latitude = battleMessageReqDto.getLatitude();

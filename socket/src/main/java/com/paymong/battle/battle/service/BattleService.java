@@ -7,6 +7,7 @@ import com.paymong.battle.battle.vo.common.CharacterStats;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.global.exception.NotFoundException;
+import com.paymong.battle.global.redis.LocationRepository;
 import com.paymong.battle.information.dto.response.FindCharacterResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BattleService {
+    private final LocationRepository locationRepository;
     private final ObjectMapper objectMapper;
     private Map<String, BattleRoom> battleRoomMap;
     private Map<Long, Matching> matchingMap;
 
     @PostConstruct
     private void init() {
+        locationRepository.removeAll();
         battleRoomMap = new LinkedHashMap<>();
         matchingMap = new LinkedHashMap<>();
     }

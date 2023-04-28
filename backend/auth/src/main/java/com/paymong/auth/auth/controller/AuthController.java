@@ -59,11 +59,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegisterReqDto registerRequestDto) {
+    public ResponseEntity<Object> register(@RequestBody RegisterReqDto registerReqDto) {
         log.info("register - Call");
         try {
-            authService.register(registerRequestDto);
-            return ResponseEntity.ok().body("success");
+            authService.register(registerReqDto);
+            return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (RuntimeException e) {
@@ -71,21 +71,21 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<Object> test() {
-        log.info("securit/test - Call");
-        try {
-            return ResponseEntity.ok().body("success");
-        } catch (NotFoundException e) {
-            return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-        }
-    }
+//    @GetMapping("/test")
+//    public ResponseEntity<Object> test() {
+//        log.info("securit/test - Call");
+//        try {
+//            return ResponseEntity.ok().body("success");
+//        } catch (NotFoundException e) {
+//            return ResponseEntity.badRequest()
+//                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+//        }
+//    }
 
     @GetMapping("/detail")
-    public ResponseEntity<Object> findMember() {
+    public ResponseEntity<Object> findMemberId() {
         log.info("findMember - Call");
         try {
             return ResponseEntity.ok().body(authService.findMemberId());

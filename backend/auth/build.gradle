@@ -50,6 +50,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 }
 

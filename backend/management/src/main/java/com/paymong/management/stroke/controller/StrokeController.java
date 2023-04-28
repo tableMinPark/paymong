@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class StrokeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StrokeController.class);
     private final StrokeService strokeService;
-    @PostMapping
+    @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
 //        Long mongId = Long.parseLong(httpServletRequest.getHeader("mongkey"));
 

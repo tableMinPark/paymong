@@ -16,6 +16,7 @@ public class PaypointController {
     @GetMapping("/")
     public void a(){
         System.out.println("paypoint test!!!");
+        System.out.println("aaa");
     }
 
 }

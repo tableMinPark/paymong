@@ -40,31 +40,33 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final BattleService battleService;
     private final LocationRepository locationRepository;
     private Map<String, String> battleRoomMap;
+    private Map<String, Long> characterIdMap;
 
     @PostConstruct
     private void init() {
         battleRoomMap = new LinkedHashMap<>();
+        characterIdMap =new LinkedHashMap<>();
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-
-        String payload = message.getPayload();
-        BattleMessageReqDto battleMessageReqDto = objectMapper.readValue(payload, BattleMessageReqDto.class);
-
-        log.info(payload);
-
-        Long characterId = battleMessageReqDto.getCharacterId();
-        Double latitude = battleMessageReqDto.getLatitude();
-        Double longitude = battleMessageReqDto.getLongitude();
-
         try {
+            String payload = message.getPayload();
+            BattleMessageReqDto battleMessageReqDto = objectMapper.readValue(payload, BattleMessageReqDto.class);
+
+            log.info(payload);
+
+            Long characterId = battleMessageReqDto.getCharacterId();
+            Double latitude = battleMessageReqDto.getLatitude();
+            Double longitude = battleMessageReqDto.getLongitude();
+
             switch (battleMessageReqDto.getType()){
                 case CONNECT:
                     // 매칭 대기열 등록
                     log.info("handleTextMessage - CONNECT");
 
                     // 세션 서버에 대기열 등록
+                    characterIdMap.put(session.getId(), characterId);
                     locationRepository.save(characterId, latitude, longitude);
                     battleService.addMatching(characterId, Matching.builder()
                             .characterId(characterId)
@@ -155,6 +157,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                     .build());
 
                             isMatching = true;
+                            // 배틀 진행 맵에 저장
                             battleRoomMap.put(matchingA.getSession().getId(), battleRoomId);
                             battleRoomMap.put(matchingB.getSession().getId(), battleRoomId);
                             break;
@@ -194,8 +197,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // 연결이 끊긴 배틀방은 게임 종료 시킴
         String battleRoomId = battleRoomMap.get(session.getId());
-        BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
-        battleRoom.endBattle(battleService);
-        battleService.removeBattleRoom(battleRoomId);
+        if (battleRoomId != null){
+            BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
+            battleRoom.endBattle(battleService);
+            battleService.removeBattleRoom(battleRoomId);
+        }
+
+        // 매칭을 하지 않고 연결해제하는 경우 대기열에서 제거
+        Long characterId = characterIdMap.get(session.getId());
+        locationRepository.remove(characterId);
     }
 }

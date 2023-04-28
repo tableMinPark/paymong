@@ -50,7 +50,7 @@ public class CollectController {
     public ResponseEntity<Object> findAllMongCollect(
         @RequestHeader(value = "MemberKey") String memberKey) {
         try {
-            List<FindAllMongCollectResDto> findAllMapCollectResDto = collectService.findAllMongCollect(
+            FindAllMongCollectResDto findAllMapCollectResDto = collectService.findAllMongCollect(
                 memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (RuntimeException e) {

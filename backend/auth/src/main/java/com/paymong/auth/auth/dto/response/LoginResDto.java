@@ -1,5 +1,6 @@
 package com.paymong.auth.auth.dto.response;
 
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,5 +12,5 @@ public class LoginResDto {
     private String refreshToken;
     private String role;
 
-    private Long mongId;
+    private Optional<Long> mongId;
 }

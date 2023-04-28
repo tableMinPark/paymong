@@ -7,13 +7,15 @@ import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.repository.AuthRepository;
 import com.paymong.auth.auth.repository.MemberRepository;
-import com.paymong.auth.global.client.InformationServiceClient;
+import com.paymong.auth.global.client.ManagementServiceClient;
 import com.paymong.auth.global.code.JwtStateCode;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
+import java.util.Optional;
+import java.util.OptionalLong;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +35,7 @@ public class AuthService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-    private final InformationServiceClient informationServiceClient;
+    private final ManagementServiceClient informationServiceClient;
 
     @Transactional
     public LoginResDto login(LoginReqDto loginRequestDto)
@@ -46,9 +48,9 @@ public class AuthService {
             throw new IllegalArgumentException();
         }
 
-        // mongID도 토큰에 담기.
-        informationServiceClient.findMongId();
-        Long mongId = informationServiceClient.findMongId();
+        // mongId 가져오기
+        Optional<Long> mongId = informationServiceClient.findMongId(member.getMemberId());
+
         // 토큰 발급
 
         String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(), String.valueOf(mongId));

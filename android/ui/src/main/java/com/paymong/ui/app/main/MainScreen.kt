@@ -1,19 +1,24 @@
 package com.paymong.ui.app.main
 
-import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.util.Log
-import android.widget.NumberPicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -26,18 +31,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.DialogHost
-import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.compose.rememberNavController
+import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.main.MainViewModel
-import com.paymong.common.R
-import com.paymong.common.code.MapCode
 import com.paymong.ui.theme.*
 import java.text.NumberFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Composable
@@ -63,7 +67,7 @@ fun Help(navController: NavController){
                 .padding(horizontal = 20.dp)
         )
         Text(text = "?", textAlign = TextAlign.Center,
-            fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
     }
 }
 
@@ -83,7 +87,7 @@ fun Info(navController: NavController){
                 .width(40.dp)
         )
         Text(text = "i", textAlign = TextAlign.Center,
-            fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
     }
 }
 
@@ -117,7 +121,8 @@ fun Point(navController: NavController){
             Text(
                 text = NumberFormat.getNumberInstance(Locale.getDefault()).format(viewModel.point),
                 textAlign = TextAlign.Center,
-                fontFamily = dalmoori, fontSize = 18.sp
+                fontFamily = dalmoori, fontSize = 18.sp,
+                color = Color.Black
             )
         }
 
@@ -164,13 +169,14 @@ fun NicknameDialog(
                 Text(
                     text = "새로운 몽의 이름을 지어주세요🤗",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp)
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    color = Color.Black
                 )
 
                 OutlinedTextField(
                     value = nickname.value,
                     onValueChange = { nickname.value = it },
-                    textStyle = TextStyle(fontFamily = dalmoori),
+                    textStyle = TextStyle(fontFamily = dalmoori, color = Color.Black),
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = PayMongBlue200,
@@ -179,7 +185,6 @@ fun NicknameDialog(
                     )
                 )
 
-                val setSleep = remember { mutableStateOf(false) }
                 Button(
                     onClick = {
                         if (nickname.value.isEmpty()) {
@@ -195,7 +200,7 @@ fun NicknameDialog(
                     colors = ButtonDefaults.buttonColors(PayMongBlue),
                     modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
                 ) {
-                    Text(text = "이름 짓기", fontFamily = dalmoori)
+                    Text(text = "이름 짓기", fontFamily = dalmoori, color = Color.Black)
                 }
             }
         }
@@ -203,7 +208,66 @@ fun NicknameDialog(
 }
 
 @Composable
-fun SleepDialog(value: String,setShowSleepDialog: (Boolean) -> Unit, nickname: String){
+fun TimePicker(
+    time: LocalTime,
+    onTimeSelected: (LocalTime) -> Unit
+) {
+    val hour by remember { mutableStateOf(time.hour) }
+    val minute by remember { mutableStateOf(time.minute/10*10) }
+
+    val hourScrollState = rememberLazyListState()
+    val hourSelected= remember { mutableStateOf(hour) }
+    val minuteScrollState = rememberLazyListState()
+    val minuteSelected= remember { mutableStateOf(minute) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center
+        ) {
+            LazyColumn(
+                modifier = Modifier.size(24.dp), horizontalAlignment = Alignment.CenterHorizontally, state = hourScrollState,
+            ){
+                items(24){index ->
+                    var number = index.toString()
+                    if(index/10 == 0){ number = String.format("0${index}") }
+                    Text(number, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 2.dp), color = Color.Black)
+                }
+            }
+        }
+        Text(text = ":", fontFamily = dalmoori, modifier = Modifier.padding(horizontal = 10.dp), fontSize = 20.sp, color = Color.Black)
+        Row(
+            horizontalArrangement = Arrangement.Center
+        ) {
+            LazyColumn(
+                modifier = Modifier.size(24.dp), horizontalAlignment = Alignment.CenterHorizontally, state = minuteScrollState
+            ){
+                items(6){index ->
+                    var number = (index * 10).toString()
+                    if(number == "0"){ number = "00" }
+                    Text(number, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 2.dp), color = Color.Black)
+                }
+            }
+        }
+    }
+    Button(
+        onClick = {
+            val selectedTime = LocalTime.of(hourScrollState.firstVisibleItemIndex, minuteScrollState.firstVisibleItemIndex*10)
+            onTimeSelected(selectedTime)
+        },
+        colors = ButtonDefaults.buttonColors(PayMongBlue),
+        modifier = Modifier.padding(vertical = 5.dp)
+    ) {
+        Text(text = "확인", fontFamily = dalmoori, color = Color.Black)
+    }
+}
+
+@Composable
+fun SleepDialog(setSleepValue: (LocalTime) -> Unit, setShowSleepDialog: (Boolean) -> Unit, setShowWakeDialog: (Boolean) -> Unit, nickname: String){
     Dialog(onDismissRequest = { setShowSleepDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -217,49 +281,55 @@ fun SleepDialog(value: String,setShowSleepDialog: (Boolean) -> Unit, nickname: S
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "💤${nickname}은 언제 자요?",
+                    text = "${nickname} 재울 시간 💤",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp)
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    color = Color.Black
                 )
-                TimePicker()
+                TimePicker(
+                    time = LocalDateTime.now().toLocalTime(),
+                    onTimeSelected = { newTime ->
+                        setSleepValue(newTime)
+                        Log.d("sleepTime",newTime.toString())
+                        setShowSleepDialog(false)
+                        setShowWakeDialog(true)
+                    }
+                )
             }
         }
     }
 }
-
 @Composable
-fun TimePicker(){
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-//        var pickerValue by remember { mutableStateOf<Hours>(AMPMHours(9, 12, AMPMHours.DayTime.PM )) }
-//
-//        HoursNumberPicker(
-//            dividersColor = MaterialTheme.colors.primary,
-//            value = pickerValue,
-//            onValueChange = {
-//                pickerValue = it
-//            },
-//            hoursDivider = {
-//                Text(
-//                    modifier = Modifier.padding(horizontal = 8.dp),
-//                    textAlign = TextAlign.Center,
-//                    text = "hours"
-//                )
-//            },
-//            minutesDivider = {
-//                Text(
-//                    modifier = Modifier.padding(horizontal = 8.dp),
-//                    textAlign = TextAlign.Center,
-//                    text = "minutes"
-//                )
-//            }
-//        )
-
+fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -> Unit, nickname: String, characterState: MutableState<CharacterCode>){
+    Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp),
+            color = Color.White.copy(alpha = 0.8f)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "${nickname} 깨울 시간 ☀",
+                    fontFamily = dalmoori,
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    color = Color.Black
+                )
+                TimePicker(
+                    time = LocalDateTime.now().toLocalTime(),
+                    onTimeSelected = { newTime ->
+                        setWakeValue(newTime)
+                        Log.d("wakeTime",newTime.toString())
+                        characterState.value = CharacterCode.CH003
+                        setShowWakeDialog(false)
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -269,6 +339,8 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
     val dialogOpen = remember {mutableStateOf(false)}
     val nickname = remember{ mutableStateOf("") }
     val sleepDialogOpen = remember {mutableStateOf(false)}
+    val wakeDialogOpen = remember {mutableStateOf(false)}
+    val selectedTime = remember { mutableStateOf(LocalDateTime.now()) }
 
     if(dialogOpen.value){
         NicknameDialog(value = "", setShowDialog = { dialogOpen.value = it }, setShowSleepDialog = {sleepDialogOpen.value = it}
@@ -278,9 +350,12 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
         }
     }
 
-
     if(sleepDialogOpen.value){
-        SleepDialog(value = "", setShowSleepDialog = { sleepDialogOpen.value = it }, nickname.value )
+        SleepDialog(setSleepValue = {selectedTime.value}, setShowSleepDialog = { sleepDialogOpen.value = it }, setShowWakeDialog = { wakeDialogOpen.value = it }
+            , nickname.value )
+    }
+    if(wakeDialogOpen.value){
+        WakeDialog(setWakeValue = {selectedTime.value}, setShowWakeDialog = { wakeDialogOpen.value = it }, nickname.value, characterState )
     }
 
     Row(
@@ -419,6 +494,6 @@ fun InfoPreview() {
     val viewModel : MainViewModel = viewModel()
     PaymongTheme {
 //        MainUI(navController, viewModel)
-
+        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
     }
 }

@@ -14,10 +14,11 @@ import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
-import java.util.Optional;
-import java.util.OptionalLong;
+import com.paymong.auth.global.vo.request.FindMongReqVo;
+import com.paymong.auth.global.vo.response.FindMongResVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +50,15 @@ public class AuthService {
         }
 
         // mongId 가져오기
-        Optional<Long> mongId = informationServiceClient.findMongId(member.getMemberId());
+        ResponseEntity<FindMongResVo> findMongResVoResponseEntity = informationServiceClient.findMongByMember(
+            new FindMongReqVo(member.getMemberId()));
+        FindMongResVo findMongResVo = findMongResVoResponseEntity.getBody();
 
+        Long mongId = findMongResVo.getMongId();
         // 토큰 발급
 
-        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(), String.valueOf(mongId));
+        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(),
+            String.valueOf(mongId));
 
         String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail(),
             String.valueOf(mongId));
@@ -65,7 +70,7 @@ public class AuthService {
             RefreshToken.builder()
                 .id(member.getEmail())
                 .memberKey(String.valueOf(member.getMemberId()))
-                .mongKey( String.valueOf(mongId))
+                .mongKey(String.valueOf(mongId))
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
                 .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue())

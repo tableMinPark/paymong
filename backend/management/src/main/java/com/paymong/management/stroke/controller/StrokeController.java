@@ -26,14 +26,13 @@ public class StrokeController {
     private final StrokeService strokeService;
     @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
-//        Long mongId = Long.parseLong(httpServletRequest.getHeader("mongkey"));
+        Long mongId = Long.parseLong(httpServletRequest.getHeader("mongkey"));
 
         try {
-//            if(mongId == null) {
-//                throw new NullPointerException();
-//            }
-//            StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(mongId);
-            StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(1L);
+            if(mongId == null) {
+                throw new NullPointerException();
+            }
+            StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(mongId);
             strokeService.strokeMong(strokeMongReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){

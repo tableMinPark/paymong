@@ -12,5 +12,6 @@ sealed class AppNavItem(
     object Help: AppNavItem("help")
     object CollectSelect: AppNavItem("collect_select")
     object Collect: AppNavItem("collect")
-    object CollectDetail: AppNavItem("collect_detail")
+    object CollectMap: AppNavItem("collect_map")
+    object CollectPayMong: AppNavItem("collect_paymong")
 }

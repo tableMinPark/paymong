@@ -12,5 +12,5 @@ public class LoginResDto {
     private String refreshToken;
     private String role;
 
-    private Optional<Long> mongId;
+    private Long mongId;
 }

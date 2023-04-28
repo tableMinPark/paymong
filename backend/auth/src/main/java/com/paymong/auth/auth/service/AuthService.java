@@ -7,12 +7,15 @@ import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.repository.AuthRepository;
 import com.paymong.auth.auth.repository.MemberRepository;
+import com.paymong.auth.global.client.ManagementServiceClient;
 import com.paymong.auth.global.code.JwtStateCode;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
+import java.util.Optional;
+import java.util.OptionalLong;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +35,8 @@ public class AuthService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
+    private final ManagementServiceClient informationServiceClient;
+
     @Transactional
     public LoginResDto login(LoginReqDto loginRequestDto)
         throws RuntimeException {
@@ -43,11 +48,15 @@ public class AuthService {
             throw new IllegalArgumentException();
         }
 
+        // mongId 가져오기
+        Optional<Long> mongId = informationServiceClient.findMongId(member.getMemberId());
+
         // 토큰 발급
 
-        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail());
+        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(), String.valueOf(mongId));
 
-        String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail());
+        String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail(),
+            String.valueOf(mongId));
 
         // 역할 설정
         Auth auth = authRepository.findByMember(member).orElseThrow(() -> new NotFoundException());
@@ -56,6 +65,7 @@ public class AuthService {
             RefreshToken.builder()
                 .id(member.getEmail())
                 .memberKey(String.valueOf(member.getMemberId()))
+                .mongKey( String.valueOf(mongId))
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
                 .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue())
@@ -66,6 +76,7 @@ public class AuthService {
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .role(auth.getRole())
+            .mongId(mongId)
             .build();
     }
 
@@ -91,7 +102,8 @@ public class AuthService {
 
         if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
 
-            String accessToken = tokenProvider.generateAccessToken(email);
+            String accessToken = tokenProvider.generateAccessToken(email,
+                redisRefreshToken.getMongKey());
 
             redisRefreshToken.setAccessToken(accessToken);
             refreshTokenRedisRepository.save(redisRefreshToken);
@@ -113,7 +125,8 @@ public class AuthService {
     @Transactional
     public Long findMemberId() throws RuntimeException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NotFoundException());
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException());
         return member.getMemberId();
     }
 

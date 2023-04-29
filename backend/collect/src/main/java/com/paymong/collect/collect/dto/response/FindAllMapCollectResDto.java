@@ -1,6 +1,6 @@
 package com.paymong.collect.collect.dto.response;
 
-import com.paymong.collect.global.vo.response.CommonCode;
+import com.paymong.collect.global.vo.response.CommonCodeVo;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class FindAllMapCollectResDto {
     private String name;
     private String mapCode;
 
-    public static boolean isVaildMapCode(CommonCode commonCodeVo) {
+    public static boolean isVaildMapCode(CommonCodeVo commonCodeVo) {
         if (!commonCodeVo.getCode().equals("MP000")) {
             return true;
         } else {
@@ -23,7 +23,7 @@ public class FindAllMapCollectResDto {
         }
     }
 
-    public static FindAllMapCollectResDto of(CommonCode commonCodeResVo) {
+    public static FindAllMapCollectResDto of(CommonCodeVo commonCodeResVo) {
         return FindAllMapCollectResDto.builder()
             .name(commonCodeResVo.getName())
             .mapCode(commonCodeResVo.getCode())

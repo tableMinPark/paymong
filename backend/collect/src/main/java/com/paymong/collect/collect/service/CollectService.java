@@ -43,12 +43,12 @@ public class CollectService {
             commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupCode.MAP))
                 .getBody(), FindAllCommonCodeResVo.class);
 
-        if (findAllCommonCodeResVo.getCommonCodeList().isEmpty()) {
+        if (findAllCommonCodeResVo.getCommonCodeVoList().isEmpty()) {
             throw new RuntimeException();
         }
 
         List<FindAllMapCollectResDto> findAllMapCollectResDtoList =
-            findAllCommonCodeResVo.getCommonCodeList().stream()
+            findAllCommonCodeResVo.getCommonCodeVoList().stream()
                 .filter(FindAllMapCollectResDto::isVaildMapCode)
                 .map(FindAllMapCollectResDto::of)
                 .collect(Collectors.toList());
@@ -80,12 +80,11 @@ public class CollectService {
 
         ObjectMapper om = new ObjectMapper();
 
-        FindAllCommonCodeResVo findAllCommonCodeResVo =
-            om.convertValue(
-                commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupCode.CHARACTER))
-                    .getBody(), FindAllCommonCodeResVo.class);
+        FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(
+            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupCode.CHARACTER))
+                .getBody(), FindAllCommonCodeResVo.class);
 
-        List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeList().stream()
+        List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeVoList().stream()
             .map(MongDto::of)
             .collect(Collectors.toList());
 
@@ -97,13 +96,8 @@ public class CollectService {
                 .map(MongCollect::getMongCode).collect(
                     Collectors.toList());
 
-            mongDtoList = mongDtoList.stream()
-                .map(e -> e.isContain(mongCollectCodeList))
-                .collect(Collectors.toList());
-
             mongDtoList.forEach(e -> {
                 char growth = e.getCharacterCode().charAt(2);
-                log.info(String.valueOf(growth));
                 switch (growth) {
                     case '0':
                         eggs.add(e);
@@ -119,6 +113,23 @@ public class CollectService {
                         break;
                 }
             });
+
+            eggs.stream()
+                .map(e -> e.isContain(mongCollectCodeList))
+                .collect(Collectors.toList());
+
+            level1.stream()
+                .map(e -> e.isContain(mongCollectCodeList))
+                .collect(Collectors.toList());
+
+            level2.stream()
+                .map(e -> e.isContain(mongCollectCodeList))
+                .collect(Collectors.toList());
+
+            level3.stream()
+                .map(e -> e.isContain(mongCollectCodeList))
+                .collect(Collectors.toList());
+
         }
 
         findAllMongCollectResDto.setEggs(eggs);

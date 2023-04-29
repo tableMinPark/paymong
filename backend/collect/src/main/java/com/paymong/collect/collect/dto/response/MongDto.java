@@ -1,6 +1,6 @@
 package com.paymong.collect.collect.dto.response;
 
-import com.paymong.collect.global.vo.response.CommonCodeResVo;
+import com.paymong.collect.global.vo.response.CommonCode;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class MongDto {
     private String name;
     private String characterCode;
 
-    public static MongDto of(CommonCodeResVo commonCodeResVo){
+    public static MongDto of(CommonCode commonCodeResVo){
         return MongDto.builder()
             .isOpen(false)
             .name(commonCodeResVo.getName())

@@ -1,7 +1,9 @@
 package com.paymong.auth.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.auth.auth.dto.request.LoginReqDto;
 import com.paymong.auth.auth.dto.request.RegisterReqDto;
+import com.paymong.auth.auth.dto.response.FindMemberIdResDto;
 import com.paymong.auth.auth.dto.response.LoginResDto;
 import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
@@ -18,7 +20,6 @@ import com.paymong.auth.global.vo.request.FindMongReqVo;
 import com.paymong.auth.global.vo.response.FindMongResVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class AuthService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-    private final ManagementServiceClient informationServiceClient;
+    private final ManagementServiceClient managementServiceClient;
 
     @Transactional
     public LoginResDto login(LoginReqDto loginRequestDto)
@@ -50,11 +51,14 @@ public class AuthService {
         }
 
         // mongId 가져오기
-        ResponseEntity<FindMongResVo> findMongResVoResponseEntity = informationServiceClient.findMongByMember(
-            new FindMongReqVo(member.getMemberId()));
-        FindMongResVo findMongResVo = findMongResVoResponseEntity.getBody();
+        log.info("id : {}", member.getMemberId());
+        ObjectMapper om = new ObjectMapper();
+        FindMongResVo findMongResVo = om.convertValue(managementServiceClient.findMongByMember(
+            new FindMongReqVo(member.getMemberId())).getBody(), FindMongResVo.class);
 
         Long mongId = findMongResVo.getMongId();
+        log.info("id : {}", findMongResVo.getMongId());
+
         // 토큰 발급
 
         String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(),
@@ -86,8 +90,8 @@ public class AuthService {
     }
 
     @Transactional
-    public void register(RegisterReqDto registerRequestDto) {
-        Member member = registerRequestDto.toMember();
+    public void register(RegisterReqDto registerReqDto) {
+        Member member = registerReqDto.toMember();
         memberRepository.save(member);
         Auth auth = Auth.of("USER", member);
         authRepository.save(auth);
@@ -127,12 +131,12 @@ public class AuthService {
         return memberRepository.findByEmail(email).orElseThrow();
     }
 
-    @Transactional
-    public Long findMemberId() throws RuntimeException {
+
+    public FindMemberIdResDto findMemberId() throws RuntimeException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException());
-        return member.getMemberId();
+        return new FindMemberIdResDto(member.getMemberId());
     }
 
 }

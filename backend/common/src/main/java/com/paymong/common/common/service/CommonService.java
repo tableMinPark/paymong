@@ -25,12 +25,12 @@ public class CommonService {
     @Transactional
     public FindAllCommonCodeResDto findAllCommonCode(
         FindAllCommonCodeReqDto findAllCommonCodeReqDto) throws RuntimeException {
-
-        GroupCode groupCode = groupCodeRepository.findById(findAllCommonCodeReqDto.getGroupCode())
+        GroupCode groupCode = groupCodeRepository.findById(
+                findAllCommonCodeReqDto.getGroupCode().replace("\"", ""))
             .orElseThrow(() -> new NotFoundException());
         List<CommonCode> commonCodeList = commonCodeRepository.findAllByGroupCode(groupCode)
             .orElseThrow();
-        return FindAllCommonCodeResDto.builder().commonCodeVoList(commonCodeList).build();
+        return new FindAllCommonCodeResDto(commonCodeList);
     }
 
 }

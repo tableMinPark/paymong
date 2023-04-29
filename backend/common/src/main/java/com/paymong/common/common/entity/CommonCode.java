@@ -37,7 +37,4 @@ public class CommonCode {
     @ManyToOne
     @JoinColumn(name = "group_code")
     private GroupCode groupCode;
-
-    @Column(name = "group_name")
-    private String groupName;
 }

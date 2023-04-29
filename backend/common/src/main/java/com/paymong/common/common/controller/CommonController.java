@@ -8,7 +8,6 @@ import com.paymong.common.global.exception.NotFoundException;
 import com.paymong.common.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,13 +23,15 @@ public class CommonController {
 
     @GetMapping("/list")
     public ResponseEntity<Object> findAllCommonCode(
-        @SpringQueryMap FindAllCommonCodeReqDto findAllCommonCodeReqDto) {
+        FindAllCommonCodeReqDto findAllCommonCodeReqDto) {
         try {
             FindAllCommonCodeResDto findAllCommonCodeResDto = commonService.findAllCommonCode(
                 findAllCommonCodeReqDto);
             return ResponseEntity.ok().body(findAllCommonCodeResDto);
         } catch (NotFoundException e) {
             return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
 

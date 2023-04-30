@@ -4,6 +4,7 @@ sealed class AppNavItem(
     val route: String
 ) {
     object Landing: AppNavItem("landing")
+    object LandingLogin: AppNavItem("landinglogin")
     object Login: AppNavItem("login")
     object Main: AppNavItem("main")
     object InfoDetail: AppNavItem("info_detail")

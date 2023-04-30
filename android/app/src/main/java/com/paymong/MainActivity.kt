@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
     private fun PaymongMain() {
         val navController = rememberNavController()
         Scaffold(
-//        bottomBar = { BottomNavigationBar(navController = navController) }
         ) {
             Box(Modifier.padding(it)){
                 NavGraph(navController)

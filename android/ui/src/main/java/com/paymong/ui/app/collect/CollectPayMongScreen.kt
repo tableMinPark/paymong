@@ -1,5 +1,6 @@
 package com.paymong.ui.app.collect
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.volley.Header
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
+import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.collect.CollectPayMongViewModel
 import com.paymong.ui.app.component.TopBar
@@ -88,19 +90,26 @@ fun CollectPayMongUI(
         ) {
             Box(Modifier.padding(it)) {
                 val isOpen = remember { mutableStateOf(true) }
+                val grouped = viewModel.mongList.groupBy { it.substring(2,3) }
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ){
-//                    var isOpen = true
-                    stickyHeader {
-                        PayMongHeader("알", isOpen.value, setIsOpen = { isOpen.value = it })
-                    }
-                    if(isOpen.value){
-                        items(50){
-                            Text(text = "알")
+                    grouped.forEach { (level, mongforLevel) ->
+                        stickyHeader {
+                            var title = ""
+                            title =
+                                if(level == "0") "알" else if(level == "1") "1단계" else if(level == "2") "2단계" else "3단계"
+                            PayMongHeader(title, isOpen.value, setIsOpen = { isOpen.value = it })
+                        }
+
+
+                        items(mongforLevel.size) { mong ->
+                            val mongImg = CharacterCode.valueOf(mongforLevel[mong]).code
+                            Row() {
+                                Image(painterResource(mongImg), contentDescription = null, modifier = Modifier.fillMaxWidth(0.3f))
+                            }
                         }
                     }
-
                 }
             }
         }

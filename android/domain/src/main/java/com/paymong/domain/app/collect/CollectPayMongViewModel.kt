@@ -15,6 +15,7 @@ class CollectPayMongViewModel constructor(
 
     private lateinit var load : Job
     lateinit var memberId : String
+    var mongList = mutableListOf<String>()
 
     init {
         if(::load.isInitialized) load.cancel()
@@ -24,6 +25,23 @@ class CollectPayMongViewModel constructor(
                 ?: throw IllegalStateException("No memberId was passed to destination.")
 
             println(memberId)
+
+            for(i in 0..5){
+                val index = i.toString()
+                mongList.add("CH00${index}")
+            }
+            for(i in 0..2){
+                val index = i.toString()
+                mongList.add("CH10${index}")
+            }
+            for(i in 0..3){
+                val index = i.toString()
+                mongList.add("CH20${index}")
+            }
+            for(i in 0..3){
+                val index = i.toString()
+                mongList.add("CH30${index}")
+            }
         }
     }
 

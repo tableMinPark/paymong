@@ -1,4 +1,4 @@
-package com.paymong.data.watch.dto.response
+package com.paymong.data.watch
 
 import java.time.LocalDateTime
 

@@ -5,11 +5,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
+import com.paymong.common.code.ToastMessage
 import com.paymong.ui.theme.PaymongTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +21,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 필수 권한 확인
         checkPermission()
+
+        // 화면 켜짐 유지
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContent {
             WearPaymongMain()
@@ -49,7 +55,7 @@ class MainActivity : ComponentActivity() {
             if (it == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(
                     applicationContext,
-                    "신체 활동 및 위치 권한이 없습니다.\n권한에 동의해주세요.\n(애플리케이션 - 권한 - 페이몽)",
+                    ToastMessage.PERMISSION_DENIED.message,
                     Toast.LENGTH_LONG
                 ).show()
                 

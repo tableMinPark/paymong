@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
-import com.paymong.data.watch.dto.response.Food
+import com.paymong.data.watch.Food
 
 class FeedBuyListViewModel constructor(
     private val stateHandle: SavedStateHandle,

@@ -1,36 +1,45 @@
 package com.paymong.ui.watch.battle
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.ui.theme.PayMongRed
+import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun Battle(navController: NavHostController) {
+fun BattleLanding(
+    navController: NavHostController,
+    battleViewModel: BattleViewModel
+) {
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     Column(
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
+            .fillMaxHeight()
+            .clickable {
+                navController.navigate(WatchNavItem.BattleWait.route) {
+                    popUpTo(0)
+                    launchSingleTop =true
+                }
+                battleViewModel.battleWait()
+            }
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -54,13 +63,12 @@ fun Battle(navController: NavHostController) {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
-                onClick = { navController.navigate(WatchNavItem.BattleWait.route) },
+            Text(
+                text = "터치해서 배틀하기",
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-            ) {
-                Text(text = "터치해서 배틀하기", fontFamily = dalmoori, color = PayMongRed200)
-            }
+                fontFamily = dalmoori,
+                color = PayMongRed200
+            )
         }
     }
 }
@@ -69,7 +77,9 @@ fun Battle(navController: NavHostController) {
 @Composable
 fun BattlePreview() {
     val navController = rememberSwipeDismissableNavController()
+    val battleViewModel: BattleViewModel = viewModel()
+
     PaymongTheme {
-        Battle(navController)
+        BattleLanding(navController, battleViewModel)
     }
 }

@@ -116,7 +116,6 @@ fun CollectMapUI(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                val scrollState = rememberScrollState()
                 LazyColumn(
                     Modifier.fillMaxSize()
                 ) {

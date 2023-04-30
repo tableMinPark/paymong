@@ -1,15 +1,39 @@
 package com.paymong.management.global.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import com.paymong.management.poop.scheduler.PoopScheduler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class SchedulerConfig implements AsyncConfigurer, SchedulingConfigurer {
+import javax.annotation.PostConstruct;
 
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-
-    }
-}
+//@Component
+//@RequiredArgsConstructor
+////  implements AsyncConfigurer, SchedulingConfigurer
+//public class SchedulerConfig {
+//
+//    private final PoopScheduler poopScheduler;
+//
+//    @PostConstruct
+//    public void startScheduler(){
+//        poopScheduler.startScheduler();
+//    }
+//
+////    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
+//////        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+//////        scheduler.setPoolSize(Runtime.getRuntime().availableProcessors() * 2);
+//////        scheduler.setThreadNamePrefix("PAY-MONG-");
+//////        scheduler.initialize();
+////        return managementScheduler.startScheduler();
+////    }
+////
+////    @Override
+////    public Executor getAsyncExecutor(){
+////        System.out.println("Async");
+////        return this.threadPoolTaskScheduler();
+////    }
+////    @Override
+////    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+////        System.out.println("config");
+////        taskRegistrar.setTaskScheduler(this.threadPoolTaskScheduler());
+////    }
+//}

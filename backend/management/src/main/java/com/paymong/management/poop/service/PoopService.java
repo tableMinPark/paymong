@@ -5,14 +5,20 @@ import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.poop.vo.PoopMongReqVo;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class PoopService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoopService.class);
     private final MongRepository mongRepository;
+    int cnt = 0;
     @Transactional
     public void removePoop(PoopMongReqVo poopMongReqVo) throws Exception{
         Mong mong = mongRepository.findByMongId(poopMongReqVo.getMongId())
@@ -20,4 +26,18 @@ public class PoopService {
         mong.setPoopCount(0);
     }
 
+    @Async
+    public void testPoop(Long mongId){
+        LOGGER.info("나왔다 {}", mongId);
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+        long p = random.nextInt(5)+5;
+        try{
+            Thread.sleep(p * 1000);
+        }catch (Exception e){
+            LOGGER.info("나 잔다.");
+        }
+
+        LOGGER.info("똥싸!! {}", mongId);
+    }
 }

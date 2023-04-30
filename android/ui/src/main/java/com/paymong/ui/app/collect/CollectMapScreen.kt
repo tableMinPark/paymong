@@ -101,22 +101,10 @@ fun CollectMapUI(
     verticalArrangement = Arrangement.Center
 ) {
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Map", fontFamily = dalmoori, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White) },
-                    modifier = Modifier.height(80.dp),
-                    actions = {
-                        IconButton(onClick = { navController.navigate(AppNavItem.Collect.route + "/${viewModel.memberId}") }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
-                        }
-                    },
-                    backgroundColor = PayMongPurple,
-                    elevation = 40.dp
-                ) },
+            topBar = {TopBar("Map", navController, AppNavItem.Collect.route+ "/${viewModel.memberId}")},
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                val scrollState = rememberScrollState()
                 LazyColumn(
                     Modifier.fillMaxSize()
                 ) {

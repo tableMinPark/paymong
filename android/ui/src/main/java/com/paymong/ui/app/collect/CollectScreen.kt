@@ -56,19 +56,8 @@ fun CollectUI(
     viewModel: CollectViewModel
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("몽집", fontFamily = dalmoori, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White) },
-                modifier = Modifier.height(80.dp),
-                actions = {
-                    IconButton(onClick = { navController.navigate(AppNavItem.Main.route) }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
-                    }
-                },
-                backgroundColor = PayMongPurple,
-                elevation = 40.dp
-            ) },
-            backgroundColor = PayMongNavy
+        topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
+        backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){
             Column(

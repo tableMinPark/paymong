@@ -1,5 +1,6 @@
 package com.paymong.ui.app.condition
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,19 +31,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.condition.ConditionViewModel
-import com.paymong.ui.theme.PayMongBlue200
-import com.paymong.ui.theme.PayMongGreen200
-import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PayMongPurple
-import com.paymong.ui.theme.PayMongRed
-import com.paymong.ui.theme.PayMongRed200
-import com.paymong.ui.theme.PayMongYellow200
-import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.theme.dalmoori
-
+import com.paymong.ui.theme.*
+import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.app.component.TopBar
 
 @Composable
 fun Condition(navController: NavController) {
@@ -53,7 +55,9 @@ fun Component(img: Painter, condition: Float, color: Color) { //이미지, 지�
     Column(modifier = Modifier
         .padding(bottom = 10.dp)) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -83,21 +87,13 @@ fun ConditionUI(
     viewModel: ConditionViewModel
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("${viewModel.name}는(은)?", fontFamily = dalmoori, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White) },
-                modifier = Modifier.height(80.dp),
-                actions = {
-                    IconButton(onClick = { navController.navigate(AppNavItem.Main.route) }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
-                    }
-                },
-                backgroundColor = PayMongPurple,
-                elevation = 40.dp
-            ) },
+        topBar = { TopBar("${viewModel.name}는(은)?", navController, AppNavItem.Main.route) },
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){
+//            val bg = painterResource(R.drawable.main_bg)
+//            Image(bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+            BgGif()
             Column(
                 modifier = Modifier.padding(30.dp)
             ) {
@@ -108,17 +104,17 @@ fun ConditionUI(
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(healthImg, viewModel.health, PayMongRed200)
+                    Component(healthImg, viewModel.health, PayMongRed.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(satietyImg, viewModel.satiety, PayMongYellow200)
+                    Component(satietyImg, viewModel.satiety, PayMongYellow.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(strengthImg, viewModel.strength, PayMongGreen200)
+                    Component(strengthImg, viewModel.strength, PayMongGreen.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)

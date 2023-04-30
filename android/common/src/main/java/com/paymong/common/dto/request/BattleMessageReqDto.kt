@@ -1,4 +1,4 @@
-package com.paymong.data.watch.dto.request
+package com.paymong.common.dto.request
 
 import com.paymong.common.code.MessageType
 

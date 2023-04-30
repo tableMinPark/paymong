@@ -1,17 +1,12 @@
 package com.paymong.ui.watch.activity
 
-import android.graphics.Insets.add
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -28,12 +23,10 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 //import com.android.volley.toolbox.ImageLoader
-import com.android.volley.toolbox.ImageRequest
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.TrainingViewModel
-import com.paymong.domain.watch.battle.BattleFindViewModel
 import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori

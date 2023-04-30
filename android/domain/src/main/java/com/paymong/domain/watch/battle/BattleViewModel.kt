@@ -235,7 +235,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
 
             } while(battleSelectTime <= 1.0)
 
-            matchingState == MatchingCode.SELECT_AFTER
+            matchingState = MatchingCode.SELECT_AFTER
             socketService.select(selectState, characterId, battleActiveEntity.battleRoomId, battleActiveEntity.order)
         }
     }

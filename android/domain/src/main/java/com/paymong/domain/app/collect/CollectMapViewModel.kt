@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.paymong.data.app.dto.response.Map
 
 class CollectMapViewModel constructor(
     private val stateHandle: SavedStateHandle,

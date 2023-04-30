@@ -1,5 +1,7 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -16,16 +18,25 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.battle.BattleFindViewModel
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
-import com.paymong.ui.theme.PayMongPurple
+import com.paymong.common.code.MatchingCode
+import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun BattleFind(
-    navController: NavHostController
+    navController: NavHostController,
+    battleViewModel: BattleViewModel
 ) {
+    if (battleViewModel.matchingState == MatchingCode.ACTIVE){
+        navController.navigate(WatchNavItem.BattleActive.route) {
+            popUpTo(0)
+            launchSingleTop =true
+        }
+        battleViewModel.battleActive()
+    }
+
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
 
@@ -36,7 +47,6 @@ fun BattleFind(
     ) {
     }
 
-    val viewModel : BattleFindViewModel = viewModel()
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -45,8 +55,8 @@ fun BattleFind(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            Text(text = "A", textAlign = TextAlign.Center)
-            var findCode = viewModel.characterIdForA
+//            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
+            var findCode = battleViewModel.characterCodeA
             var chCode = CharacterCode.valueOf(findCode)
             var chA = painterResource(chCode.code)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
@@ -55,7 +65,6 @@ fun BattleFind(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            Text(text = "VS", textAlign = TextAlign.Center)
             val battle = painterResource(R.drawable.battle)
             Image(painter = battle, contentDescription = null)
         }
@@ -63,8 +72,8 @@ fun BattleFind(
             horizontalArrangement = Arrangement.Start,
 //            modifier = Modifier.fillMaxWidth()
         ) {
-//            Text(text = "B", textAlign = TextAlign.Center)
-            var findCode = viewModel.characterIdForB
+//            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
+            var findCode = battleViewModel.characterCodeB
             var chCode = CharacterCode.valueOf(findCode)
             var chB = painterResource(chCode.code)
             Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
@@ -76,7 +85,9 @@ fun BattleFind(
 @Composable
 fun BattleFindPreview() {
     val navController = rememberSwipeDismissableNavController()
+    val viewModel : BattleViewModel = viewModel()
+
     PaymongTheme {
-        BattleFind(navController)
+        BattleFind(navController, viewModel)
     }
 }

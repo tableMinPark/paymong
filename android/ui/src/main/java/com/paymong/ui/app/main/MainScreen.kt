@@ -1,5 +1,6 @@
 package com.paymong.ui.app.main
 
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +34,19 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.main.MainViewModel
 import com.paymong.ui.theme.*
+import com.paymong.ui.app.component.BgGif
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -105,11 +114,10 @@ fun Point(navController: NavController){
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId") }
-                )
-                .width(200.dp)
+                ).padding(horizontal = 20.dp)
         )
         Row(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.width(100.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -125,7 +133,6 @@ fun Point(navController: NavController){
                 color = Color.Black
             )
         }
-
     }
 }
 
@@ -474,11 +481,14 @@ fun MainUI(
     val findBgCode = viewModel.background
     val bgCode = MapCode.valueOf(findBgCode)
     val bg = painterResource(bgCode.code)
-    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight())
-
+    if(findBgCode == "MP000"){
+        BgGif()
+    } else {
+        Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight())
+    }
     // state 는 모두 공통 코드화 시켜야 함
     val characterState = remember { mutableStateOf(CharacterCode.CH444) }
 
@@ -494,6 +504,7 @@ fun InfoPreview() {
     val viewModel : MainViewModel = viewModel()
     PaymongTheme {
 //        MainUI(navController, viewModel)
-        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
+//        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
+        Top(navController)
     }
 }

@@ -2,6 +2,7 @@ package com.paymong.ui.watch.battle
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
@@ -23,7 +25,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.R
+import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
+import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
@@ -31,8 +35,23 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun BattleSelectBefore(
-    navController: NavHostController
+    navController: NavHostController,
+    battleViewModel: BattleViewModel
 ) {
+    if (battleViewModel.matchingState == MatchingCode.SELECT){
+        navController.navigate(WatchNavItem.BattleSelect.route) {
+            popUpTo(0)
+            launchSingleTop =true
+        }
+        battleViewModel.battleSelect()
+    } else if (battleViewModel.matchingState == MatchingCode.END){
+        navController.navigate(WatchNavItem.BattleEnd.route) {
+            popUpTo(0)
+            launchSingleTop =true
+        }
+        battleViewModel.battleEnd()
+    }
+
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
 
@@ -49,18 +68,15 @@ fun BattleSelectBefore(
             fontSize = 27.sp)
         }
     }
-
-    Handler(Looper.getMainLooper()).postDelayed({
-        navController.navigate(WatchNavItem.BattleSelect.route)
-    },1000)
-
 }
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun BattleSelectBeforePreview() {
     val navController = rememberSwipeDismissableNavController()
+    val viewModel: BattleViewModel = viewModel()
+
     PaymongTheme {
-        BattleSelectBefore(navController)
+        BattleSelectBefore(navController ,viewModel)
     }
 }

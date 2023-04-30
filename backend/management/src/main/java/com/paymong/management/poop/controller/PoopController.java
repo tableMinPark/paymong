@@ -3,6 +3,7 @@ package com.paymong.management.poop.controller;
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.global.scheduler.ManagementScheduler;
 import com.paymong.management.mong.controller.MongController;
 import com.paymong.management.poop.service.PoopService;
 import com.paymong.management.poop.vo.PoopMongReqVo;
@@ -11,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +24,7 @@ public class PoopController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PoopController.class);
 
     private final PoopService poopService;
+    private final ManagementScheduler managementScheduler;
     /* 똥생성은 소켓에서 */
 
     /* 똥 삭제 PUT */
@@ -44,6 +44,12 @@ public class PoopController {
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }
+    }
+
+    @GetMapping("/start")
+    public ResponseEntity<Object> startPoop(@RequestParam("mongId") Long mongId){
+        managementScheduler.startScheduler(mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 
 }

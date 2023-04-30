@@ -16,13 +16,13 @@ public class CommonCodeVo {
     private String name;
     private GroupCodeVo groupCodeVo;
 
-    public static CommonCodeVo of(CommonCode commonCode){
+    public static CommonCodeVo of(CommonCode commonCode) {
         return CommonCodeVo.builder()
             .code(commonCode.getCode())
             .name(commonCode.getName())
             .groupCodeVo(GroupCodeVo.builder()
-                .code(commonCode.getCode())
-                .name(commonCode.getName())
+                .code(commonCode.getGroupCode().getCode())
+                .name(commonCode.getGroupCode().getName())
                 .build())
             .build();
     }

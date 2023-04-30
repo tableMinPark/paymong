@@ -1,7 +1,9 @@
 package com.paymong.common.common.service;
 
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
+import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
+import com.paymong.common.common.dto.response.FindCommonCodResDto;
 import com.paymong.common.common.entity.CommonCode;
 import com.paymong.common.common.entity.GroupCode;
 import com.paymong.common.common.repository.CommonCodeRepository;
@@ -36,6 +38,18 @@ public class CommonService {
         return new FindAllCommonCodeResDto(commonCodeList.stream()
             .map(CommonCodeVo::of)
             .collect(Collectors.toList()));
+    }
+
+    @Transactional
+    public FindCommonCodResDto findCommonCode(FindCommonCodeReqDto findCommonCodeReqDto)
+        throws RuntimeException {
+        CommonCode commonCode = commonCodeRepository.findById(
+                findCommonCodeReqDto.getCode().replace("\"", ""))
+            .orElseThrow(() -> new NotFoundException());
+
+        return FindCommonCodResDto.builder()
+            .commonCodeVo(CommonCodeVo.of(commonCode))
+            .build();
     }
 
 }

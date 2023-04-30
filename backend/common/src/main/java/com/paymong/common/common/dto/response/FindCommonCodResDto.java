@@ -1,6 +1,6 @@
 package com.paymong.common.common.dto.response;
 
-import com.paymong.common.global.vo.response.CommonCodeVo;
+import com.paymong.common.common.entity.CommonCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +12,6 @@ import lombok.Setter;
 @Builder
 public class FindCommonCodResDto {
 
-    private CommonCodeVo commonCodeVo;
+    private CommonCode commonCodeVo;
 
 }

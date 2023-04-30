@@ -11,7 +11,7 @@ import com.paymong.collect.collect.repository.MongCollectRepository;
 import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
 import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
 import com.paymong.collect.global.client.CommonServiceClient;
-import com.paymong.collect.global.code.GroupCode;
+import com.paymong.collect.global.code.GroupStateCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +40,15 @@ public class CollectService {
         ObjectMapper om = new ObjectMapper();
 
         FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(
-            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupCode.MAP))
+            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupStateCode.MAP))
                 .getBody(), FindAllCommonCodeResVo.class);
 
-        if (findAllCommonCodeResVo.getCommonCodeVoList().isEmpty()) {
+        if (findAllCommonCodeResVo.getCommonCodeList().isEmpty()) {
             throw new RuntimeException();
         }
 
         List<FindAllMapCollectResDto> findAllMapCollectResDtoList =
-            findAllCommonCodeResVo.getCommonCodeVoList().stream()
+            findAllCommonCodeResVo.getCommonCodeList().stream()
                 .filter(FindAllMapCollectResDto::isVaildMapCode)
                 .map(FindAllMapCollectResDto::of)
                 .collect(Collectors.toList());
@@ -81,10 +81,10 @@ public class CollectService {
         ObjectMapper om = new ObjectMapper();
 
         FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(
-            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupCode.CHARACTER))
+            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupStateCode.CHARACTER))
                 .getBody(), FindAllCommonCodeResVo.class);
 
-        List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeVoList().stream()
+        List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeList().stream()
             .map(MongDto::of)
             .collect(Collectors.toList());
 

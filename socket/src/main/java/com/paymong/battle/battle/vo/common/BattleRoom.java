@@ -19,7 +19,7 @@ import java.util.*;
 @Slf4j
 @Getter
 public class BattleRoom {
-    private Integer maxTurn;
+    private Integer totalTurn;
     private String battleRoomId;
     private Map<String, WebSocketSession> sessions;
     private Map<String, CharacterStats> statsMap;
@@ -27,14 +27,14 @@ public class BattleRoom {
     private Integer nowTurn = 0;
 
     @Builder
-    public BattleRoom(Integer maxTurn,
+    public BattleRoom(Integer totalTurn,
                       String battleRoomId,
                       WebSocketSession sessionA,
                       WebSocketSession sessionB,
                       CharacterStats statsA,
                       CharacterStats statsB
     ) {
-        this.maxTurn = maxTurn;
+        this.totalTurn = totalTurn;
         this.battleRoomId = battleRoomId;
         this.sessions = new HashMap<>() {{ put("A", sessionA); put("B", sessionB); }};
         this.statsMap = new HashMap<>() {{ put("A", statsA); put("B", statsB); }};
@@ -81,6 +81,7 @@ public class BattleRoom {
             // 응답 갱신
             battleMessageResDto.setBattleRoomId(battleMessageReqDto.getBattleRoomId());
             battleMessageResDto.setNowTurn(nowTurn);
+            battleMessageResDto.setTotalTurn(totalTurn);
             battleMessageResDto.setHealthA(healthA);
             battleMessageResDto.setHealthB(healthB);
 
@@ -88,37 +89,29 @@ public class BattleRoom {
             statsMap.get("A").setHealth(healthA);
             statsMap.get("B").setHealth(healthB);
 
-            battleMessageResDto.setOrder("A");
-            battleService.sendMessage(sessions.get("A"), battleMessageResDto);
-            battleMessageResDto.setOrder("B");
-            battleService.sendMessage(sessions.get("B"), battleMessageResDto);
-
             // 마지막 턴인지 확인
-            if (maxTurn.equals(nowTurn) || healthA <= 0 || healthB <= 0){
-                // nowTurn을 -1로 보냄
-                endBattle(battleService);
-                sessions.values().parallelStream()
-                        .forEach(session -> {
-                            try {
-                                session.close();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+            if (totalTurn.equals(nowTurn) || healthA <= 0 || healthB <= 0){
+                battleMessageResDto.setNowTurn(-1);
             } else {
                 nowTurn++;
                 battleLog.setSelectA(null);
                 battleLog.setSelectB(null);
             }
+
+            battleMessageResDto.setOrder("A");
+            battleService.sendMessage(sessions.get("A"), battleMessageResDto);
+            battleMessageResDto.setOrder("B");
+            battleService.sendMessage(sessions.get("B"), battleMessageResDto);
         }
     }
 
     private BattleMessageResDto endMessage() {
         return BattleMessageResDto.builder()
-                .battleRoomId(null)
+                .battleRoomId(battleRoomId)
                 .nowTurn(-1)
-                .nextAttacker(null)
-                .order(null)
+                .totalTurn(totalTurn)
+                .nextAttacker("-")
+                .order("-")
                 .damageA(0.0)
                 .damageB(0.0)
                 .healthA(statsMap.get("A").getHealth())
@@ -127,13 +120,9 @@ public class BattleRoom {
     }
 
 
-    public void endBattle(BattleService battleService) {
+    public void endBattle(BattleService battleService, String battleRoomId) {
+        log.info("배틀 종료");
         sessions.values().parallelStream()
-                .forEach(session -> battleService.sendMessage(session, endMessage()) );
-    }
-
-    private <T> void sendMessage(T message, BattleService battleService) {
-        sessions.values().parallelStream()
-                .forEach(session -> battleService.sendMessage(session, message));
+                .forEach(session -> battleService.sendMessage(session, endMessage()));
     }
 }

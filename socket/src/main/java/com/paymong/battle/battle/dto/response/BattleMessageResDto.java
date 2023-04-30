@@ -8,6 +8,7 @@ import lombok.Data;
 public class BattleMessageResDto {
     private String battleRoomId;
     private Integer nowTurn;
+    private Integer totalTurn;
     private String nextAttacker;
     private String order;
     private Double damageA;

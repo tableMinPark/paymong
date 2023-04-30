@@ -2,7 +2,6 @@ package com.paymong.battle.battle.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.battle.battle.vo.common.BattleLog;
-import com.paymong.battle.battle.vo.common.Matching;
 import com.paymong.battle.battle.vo.common.CharacterStats;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.vo.common.BattleRoom;
@@ -18,7 +17,6 @@ import org.springframework.web.socket.WebSocketSession;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,46 +25,22 @@ public class BattleService {
     private final LocationRepository locationRepository;
     private final ObjectMapper objectMapper;
     private Map<String, BattleRoom> battleRoomMap;
-    private Map<Long, Matching> matchingMap;
 
     @PostConstruct
     private void init() {
         locationRepository.removeAll();
         battleRoomMap = new LinkedHashMap<>();
-        matchingMap = new LinkedHashMap<>();
     }
 
     public BattleRoom findBattleRoom(String battleRoomId) throws NotFoundException {
-        return Optional.ofNullable(battleRoomMap.get(battleRoomId))
-                                        .orElseThrow(() -> new NotFoundException());
+        return battleRoomMap.get(battleRoomId);
     }
-
-    public List<BattleRoom> findAllBattleRoom() {
-        return battleRoomMap.values().stream().collect(Collectors.toList());
-    }
-
     public void addBattleRoom(String battleRoomId, BattleRoom battleRoom) {
         battleRoomMap.put(battleRoomId, battleRoom);
     }
 
     public void removeBattleRoom(String battleRoomId) {
         battleRoomMap.remove(battleRoomId);
-    }
-
-    public Matching findMatching(Long characterId) {
-        return matchingMap.get(characterId);
-    }
-
-    public List<Matching> findAllMatching() {
-        return matchingMap.values().stream().collect(Collectors.toList());
-    }
-
-    public void addMatching(Long characterId, Matching matching) throws RuntimeException {
-        matchingMap.put(characterId, matching);
-    }
-
-    public void removeMatching(Long characterId) {
-        matchingMap.remove(characterId);
     }
 
     public BattleMessageResDto battleActive(Integer nowTurn, CharacterStats statsA, CharacterStats statsB, BattleLog battleLog){
@@ -124,10 +98,8 @@ public class BattleService {
     }
 
     private boolean isSameDirection(BattleLog battleLog) {
-        // 같은 방향
         if (battleLog.getSelectA().equals(battleLog.getSelectB()))
             return true;
-        // 다른 방향
         else
             return false;
     }
@@ -148,9 +120,9 @@ public class BattleService {
 
     public <T> void sendMessage(WebSocketSession session, T message) {
         try{
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+            System.out.println(message);
+            if (session.isOpen())
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+        } catch (IOException e) { log.error("세션 만료"); }
     }
 }

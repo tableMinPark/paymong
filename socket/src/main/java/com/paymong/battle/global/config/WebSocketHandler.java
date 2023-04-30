@@ -15,6 +15,8 @@ import com.paymong.battle.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -22,30 +24,149 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import javax.websocket.Session;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
+@EnableScheduling
 @RequiredArgsConstructor
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     @Value("${battle.max_turn}")
-    private Integer maxTurn;
+    private Integer totalTurn;
     @Value("${battle.default_health}")
     private Double defaultHealth;
+
+    private final Integer maxMatchingTime = 5;
 
     private final ObjectMapper objectMapper;
     private final BattleService battleService;
     private final LocationRepository locationRepository;
+
+    private Queue<Matching> matchingQueue;
+    private Map<Long, Matching> matchingMap;
     private Map<String, String> battleRoomMap;
-    private Map<String, Long> characterIdMap;
+    private Map<Long, String> battleCharacterIdMap;
+
+    @Scheduled(fixedDelay = 500)
+    public void battleMatching() {
+
+        if (matchingQueue.isEmpty()) return;
+
+        try {
+            log.info("handleTextMessage - Scheduler");
+
+            Matching matchingA = matchingQueue.poll();
+
+            Long characterId = matchingA.getCharacterId();
+            WebSocketSession session = matchingA.getSession();
+
+            // 이미 다른사람과 매칭된 플레이어는 패스
+            if (matchingMap.get(characterId) == null) return;
+
+            // 매칭 실패 (maxMatchingCount 만큼 매칭을 돌렸을 때)
+            Long waitTime = Duration.between(matchingA.getMatchingStart(), LocalDateTime.now()).getSeconds();
+            if (waitTime > maxMatchingTime) {
+                battleService.sendMessage(session, new ErrorResponse(BattleStateCode.MATCHING_FAIL));
+                return;
+            }
+
+            log.info(matchingA.getCharacterId() + " " + waitTime);
+
+            // 자신 기준 가까운 10명 리스트
+            List<String> idList = locationRepository.findById(matchingA.getCharacterId());
+
+            Boolean isMatching = false;
+            for (String id : idList) {
+                if (id.equals(characterId.toString())) continue;
+
+                Long characterBId = Long.parseLong(id);
+                Matching matchingB = matchingMap.get(characterBId);
+
+                if (matchingB != null) {
+                    // 현재 매칭된 플레이어 대기열에서 삭제
+                    matchingMap.remove(characterBId);
+                    // 위치정보 삭제
+                    locationRepository.remove(characterId);
+                    locationRepository.remove(characterBId);
+
+                    // 방 ID 생성
+                    String battleRoomId = UUID.randomUUID().toString();
+
+                    // 기본 체력 설정
+                    CharacterStats statsA = battleService.findCharacterStats(characterId, defaultHealth);
+                    CharacterStats statsB = battleService.findCharacterStats(characterBId, defaultHealth);
+
+                    // 배틀방 생성
+                    BattleRoom battleRoom = BattleRoom.builder()
+                            .totalTurn(totalTurn)
+                            .battleRoomId(battleRoomId)
+                            .sessionA(matchingA.getSession())
+                            .sessionB(matchingB.getSession())
+                            .statsA(statsA)
+                            .statsB(statsB)
+                            .build();
+
+                    // 방 Map에 추가
+                    battleService.addBattleRoom(battleRoomId, battleRoom);
+
+                    // A 매칭 응답 전송
+                    battleService.sendMessage(matchingA.getSession(), BattleMessageResDto.builder()
+                            .battleRoomId(battleRoomId)
+                            .nowTurn(0)
+                            .totalTurn(totalTurn)
+                            .nextAttacker("A")                  // 무조건 A 먼저 시작
+                            .order("A")
+                            .healthA(defaultHealth)
+                            .healthB(defaultHealth)
+                            .damageA(0.0)
+                            .damageB(0.0)
+                            .build());
+
+                    // B 매칭 응답 전송
+                    battleService.sendMessage(matchingB.getSession(), BattleMessageResDto.builder()
+                            .battleRoomId(battleRoomId)
+                            .nowTurn(0)
+                            .totalTurn(totalTurn)
+                            .nextAttacker("A")                  // 무조건 A 먼저 시작
+                            .order("B")
+                            .healthA(defaultHealth)
+                            .healthB(defaultHealth)
+                            .damageA(0.0)
+                            .damageB(0.0)
+                            .build());
+
+                    // 배틀 진행 맵에 저장
+                    battleCharacterIdMap.put(characterId, battleRoomId);
+                    battleCharacterIdMap.put(characterBId, battleRoomId);
+                    battleRoomMap.put(matchingA.getSession().getId(), battleRoomId);
+                    battleRoomMap.put(matchingB.getSession().getId(), battleRoomId);
+                    isMatching = true;
+                }
+            }
+
+            // 매칭되지 않으면 대기열로 다시 복귀
+            if (!isMatching) {
+                matchingQueue.add(Matching.builder()
+                        .characterId(matchingA.getCharacterId())
+                        .session(matchingA.getSession())
+                        .matchingStart(matchingA.getMatchingStart())
+                        .build());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @PostConstruct
     private void init() {
         battleRoomMap = new LinkedHashMap<>();
-        characterIdMap =new LinkedHashMap<>();
+        battleCharacterIdMap = new LinkedHashMap<>();
+        matchingQueue = new ArrayDeque<>();
+        matchingMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -66,108 +187,41 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     log.info("handleTextMessage - CONNECT");
 
                     // 세션 서버에 대기열 등록
-                    characterIdMap.put(session.getId(), characterId);
-                    locationRepository.save(characterId, latitude, longitude);
-                    battleService.addMatching(characterId, Matching.builder()
+                    Matching player = Matching.builder()
                             .characterId(characterId)
                             .session(session)
-                            .build());
+                            .matchingStart(LocalDateTime.now())
+                            .build();
 
-                    System.out.println("##### 현재 저장된 매칭 대기열 #####");
-                    for (Matching matching : battleService.findAllMatching()) {
-                        System.out.println(matching);
-                    }
-                    System.out.println("#################################");
+                    locationRepository.save(characterId, latitude, longitude);
+                    matchingQueue.add(player);
+                    matchingMap.put(characterId, player);
 
-                case RECONNECT:
-                    // 매칭 시작
-                    log.info("handleTextMessage - RECONNECT");
+                    System.out.println(matchingQueue);
+                    System.out.println(matchingMap);
 
-                    // 잠시 대기열에서 제외 (매칭 상대 찾는 동안 매칭이 이뤄지면 안됨)
-                    Matching matchingA = battleService.findMatching(characterId);
-                    battleService.removeMatching(characterId);
+                    break;
 
-                    // 자신 기준 가까운 10명 리스트
-                    List<String> idList = locationRepository.findById(characterId);
+                case DISCONNECT:
+                    // 매칭 대기열에서 삭제
+                    log.info("handleTextMessage - DISCONNECT");
+                    Thread.sleep(1000);
+                    // 세션 서버에 대기열 삭제
+                    locationRepository.remove(characterId);
+                    matchingMap.remove(characterId);
 
-                    System.out.println("##### 자신 기준 가까운 10명 리스트 #####");
-                    for (String id : idList) {
-                        if (id.equals(characterId.toString())) continue;
-                        System.out.println(id);
-                    }
-                    System.out.println("######################################");
+                    System.out.println(matchingQueue);
+                    System.out.println(matchingMap);
 
-                    Boolean isMatching = false;
-                    for (String id : idList) {
-                        if (characterId.equals(characterId.toString())) continue;
-
-                        Long characterBId = Long.parseLong(id);
-                        Matching matchingB = battleService.findMatching(characterBId);
-
-                        if (matchingB != null) {
-                            System.out.println("##### 매칭 상대 찾음! #####");
-                            System.out.println(matchingA.getCharacterId() + " VS " + matchingB.getCharacterId());
-                            System.out.println("###########################");
-
-                            battleService.removeMatching(characterBId);
-                            locationRepository.remove(characterId);
-                            locationRepository.remove(characterBId);
-
-                            String battleRoomId = UUID.randomUUID().toString();
-
-                            CharacterStats statsA = battleService.findCharacterStats(characterId, defaultHealth);
-                            CharacterStats statsB = battleService.findCharacterStats(characterBId, defaultHealth);
-
-                            BattleRoom battleRoom = BattleRoom.builder()
-                                    .maxTurn(maxTurn)
-                                    .battleRoomId(battleRoomId)
-                                    .sessionA(matchingA.getSession())
-                                    .sessionB(matchingB.getSession())
-                                    .statsA(statsA)
-                                    .statsB(statsB)
-                                    .build();
-
-                            battleService.addBattleRoom(battleRoomId, battleRoom);
-
-                            System.out.println("##### 배틀방 리스트 #####");
-                            for (BattleRoom br : battleService.findAllBattleRoom()) {
-                                System.out.println(br.getStatsMap().get("A").getCharacterId() + " VS " + br.getStatsMap().get("B").getCharacterId());
-                            }
-                            System.out.println("########################");
-
-                            battleService.sendMessage(matchingA.getSession(), BattleMessageResDto.builder()
-                                    .battleRoomId(battleRoomId)
-                                    .nowTurn(0)
-                                    .nextAttacker("A")                  // 무조건 A 먼저 시작
-                                    .order("A")
-                                    .healthA(defaultHealth)
-                                    .healthB(defaultHealth)
-                                    .damageA(0.0)
-                                    .damageB(0.0)
-                                    .build());
-                            battleService.sendMessage(matchingB.getSession(), BattleMessageResDto.builder()
-                                    .battleRoomId(battleRoomId)
-                                    .nowTurn(0)
-                                    .nextAttacker("A")                  // 무조건 A 먼저 시작
-                                    .order("B")
-                                    .healthA(defaultHealth)
-                                    .healthB(defaultHealth)
-                                    .damageA(0.0)
-                                    .damageB(0.0)
-                                    .build());
-
-                            isMatching = true;
-                            // 배틀 진행 맵에 저장
-                            battleRoomMap.put(matchingA.getSession().getId(), battleRoomId);
-                            battleRoomMap.put(matchingB.getSession().getId(), battleRoomId);
-                            break;
+                    // 배틀중에 탈주하는 경우
+                    String battleRoomId = battleCharacterIdMap.get(characterId);
+                    if (battleRoomId != null){
+                        BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
+                        // 정상 종료
+                        battleRoom.endBattle(battleService, battleRoomId);
+                        if (battleRoom != null) {
+                            battleService.removeBattleRoom(battleRoomId);
                         }
-                    }
-
-                    // 매칭 실패 시 실패 응답 전송
-                    if (!isMatching) {
-                        battleService.addMatching(characterId, matchingA);
-                        battleService.sendMessage(session, new ErrorResponse(BattleStateCode.MATCHING_FAIL));
                     }
                     break;
 
@@ -178,33 +232,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     battleRoom.handlerActions(battleMessageReqDto, battleService);
                     break;
             }
-        } catch (NotFoundMachingException e) {
-            e.printStackTrace();
-            log.error("Not Found Matching");
-            battleService.sendMessage(session, new ErrorResponse(BattleStateCode.MATCHING_FAIL));
-        }  catch (NotFoundException e) {
-            e.printStackTrace();
-            log.error("Not Found BattleRoom");
-            battleService.sendMessage(session, new ErrorResponse(BattleStateCode.FIND_BATTLE_ROOM_FAIL));
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            log.error("Internal Server Error");
-            battleService.sendMessage(session, new ErrorResponse(BattleStateCode.FAIL));
+        } catch (Exception e) {
+            log.error("handleTextMessage - exception");
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // 연결이 끊긴 배틀방은 게임 종료 시킴
-        String battleRoomId = battleRoomMap.get(session.getId());
-        if (battleRoomId != null){
-            BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
-            battleRoom.endBattle(battleService);
-            battleService.removeBattleRoom(battleRoomId);
-        }
-
-        // 매칭을 하지 않고 연결해제하는 경우 대기열에서 제거
-        Long characterId = characterIdMap.get(session.getId());
-        locationRepository.remove(characterId);
+//        String battleRoomId = battleRoomMap.get(session.getId());
+//        if (battleRoomId != null){
+//            BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
+//            battleRoom.endBattle(battleService);
+//            battleService.removeBattleRoom(battleRoomId);
+//        }
+//
+//        // 매칭을 하지 않고 연결해제하는 경우 대기열에서 제거
+//        Long characterId = characterIdMap.get(session.getId());
+//        locationRepository.remove(characterId);
     }
 }

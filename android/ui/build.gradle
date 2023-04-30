@@ -70,6 +70,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.20.1"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
 
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+
     testImplementation 'junit:junit:4.12'
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"

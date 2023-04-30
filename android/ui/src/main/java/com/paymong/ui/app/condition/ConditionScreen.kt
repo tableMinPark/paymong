@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,15 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.condition.ConditionViewModel
-import com.paymong.ui.theme.PayMongBlue200
-import com.paymong.ui.theme.PayMongGreen200
-import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PayMongPurple
-import com.paymong.ui.theme.PayMongRed
-import com.paymong.ui.theme.PayMongRed200
-import com.paymong.ui.theme.PayMongYellow200
-import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.theme.*
 
 
 @Composable
@@ -53,7 +46,9 @@ fun Component(img: Painter, condition: Float, color: Color) { //이미지, 지�
     Column(modifier = Modifier
         .padding(bottom = 10.dp)) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -98,6 +93,8 @@ fun ConditionUI(
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){
+            val bg = painterResource(R.drawable.main_bg)
+            Image(bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
             Column(
                 modifier = Modifier.padding(30.dp)
             ) {
@@ -108,17 +105,17 @@ fun ConditionUI(
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(healthImg, viewModel.health, PayMongRed200)
+                    Component(healthImg, viewModel.health, PayMongRed.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(satietyImg, viewModel.satiety, PayMongYellow200)
+                    Component(satietyImg, viewModel.satiety, PayMongYellow.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Component(strengthImg, viewModel.strength, PayMongGreen200)
+                    Component(strengthImg, viewModel.strength, PayMongGreen.copy(alpha = 0.6f))
                 }
                 Box(
                     modifier = Modifier.weight(1f)

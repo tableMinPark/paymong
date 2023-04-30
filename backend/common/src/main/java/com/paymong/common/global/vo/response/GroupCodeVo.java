@@ -1,15 +1,16 @@
-package com.paymong.collect.global.vo.response;
+package com.paymong.common.global.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class CommonCodeResVo {
+@NoArgsConstructor
+public class GroupCodeVo {
+
     private String code;
     private String name;
-    private String group_code;
-    private String group_name;
 }

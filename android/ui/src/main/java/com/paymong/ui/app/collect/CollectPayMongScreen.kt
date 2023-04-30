@@ -39,7 +39,7 @@ fun CollectPayMongUI(
         verticalArrangement = Arrangement.Center
     ) {
         Scaffold(
-            topBar = {TopBar("PayMong", navController)},
+            topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route+ "/${viewModel.memberId}")},
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {

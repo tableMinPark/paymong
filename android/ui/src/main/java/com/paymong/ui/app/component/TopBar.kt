@@ -28,23 +28,14 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun TopBar(
     msg: String,
-    navController: NavController
-) {
-    val viewModel: TopBarViewModel = viewModel()
-    TopBarUI(msg, navController)
-}
-
-
-@Composable
-fun TopBarUI(
-    msg: String,
-    navController: NavController
+    navController: NavController,
+    route: String
 ) {
     TopAppBar(
         title = { Text(msg, fontFamily = dalmoori, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White) },
         modifier = Modifier.height(80.dp),
         actions = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { navController.navigate(route) }) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
             }
         },
@@ -58,6 +49,6 @@ fun TopBarUI(
 fun TopBarPreview() {
     val navController = rememberNavController()
     PaymongTheme {
-        TopBar("MSG", navController)
+        TopBar("MSG", navController, AppNavItem.Main.route)
     }
 }

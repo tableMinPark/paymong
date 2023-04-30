@@ -101,7 +101,7 @@ fun CollectMapUI(
     verticalArrangement = Arrangement.Center
 ) {
         Scaffold(
-            topBar = {TopBar("Map", navController)},
+            topBar = {TopBar("Map", navController, AppNavItem.Collect.route+ "/${viewModel.memberId}")},
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {

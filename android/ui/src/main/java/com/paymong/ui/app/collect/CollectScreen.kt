@@ -56,7 +56,7 @@ fun CollectUI(
     viewModel: CollectViewModel
 ) {
     Scaffold(
-        topBar = {TopBar("몽집", navController)},
+        topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){

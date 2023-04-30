@@ -87,7 +87,7 @@ fun ConditionUI(
     viewModel: ConditionViewModel
 ) {
     Scaffold(
-        topBar = { TopBar("${viewModel.name}는(은)?", navController) },
+        topBar = { TopBar("${viewModel.name}는(은)?", navController, AppNavItem.Main.route) },
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){

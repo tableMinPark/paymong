@@ -26,6 +26,7 @@ import com.paymong.domain.app.paypoint.PayPointViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.dalmoori
 
 @Composable
@@ -91,14 +92,15 @@ fun PayPointUI(
     navController: NavController,
     viewModel: PayPointViewModel
 ) {
-    val bg = painterResource(R.drawable.main_bg)
-    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+    BgGif()
     Box(
-        modifier = Modifier.fillMaxSize().clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { navController.navigate(AppNavItem.Main.route) }
-        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { navController.navigate(AppNavItem.Main.route) }
+            ),
         contentAlignment = Alignment.Center
     ) {
         PayCard(viewModel)

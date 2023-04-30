@@ -74,19 +74,6 @@ public class AuthController {
         }
     }
 
-//    @GetMapping("/test")
-//    public ResponseEntity<Object> test() {
-//        log.info("securit/test - Call");
-//        try {
-//            return ResponseEntity.ok().body("success");
-//        } catch (NotFoundException e) {
-//            return ResponseEntity.badRequest()
-//                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-//        }
-//    }
-
     @GetMapping("/detail")
     public ResponseEntity<Object> findMemberId() {
         log.info("findMember - Call");

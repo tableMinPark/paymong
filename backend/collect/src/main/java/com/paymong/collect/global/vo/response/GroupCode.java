@@ -13,8 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class CommonCodeVo {
+public class GroupCode {
+
     private String code;
     private String name;
-    private GroupCodeVo groupCodeVo;
 }

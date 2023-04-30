@@ -11,6 +11,7 @@ import com.paymong.auth.auth.repository.AuthRepository;
 import com.paymong.auth.auth.repository.MemberRepository;
 import com.paymong.auth.global.client.ManagementServiceClient;
 import com.paymong.auth.global.code.JwtStateCode;
+import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;

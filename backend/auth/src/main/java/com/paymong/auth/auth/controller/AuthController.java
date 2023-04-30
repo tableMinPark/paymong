@@ -5,6 +5,7 @@ import com.paymong.auth.auth.dto.request.RegisterReqDto;
 import com.paymong.auth.auth.dto.response.LoginResDto;
 import com.paymong.auth.auth.service.AuthService;
 import com.paymong.auth.global.code.ErrorStateCode;
+import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.response.ErrorResponse;
@@ -34,6 +35,8 @@ public class AuthController {
             return ResponseEntity.ok().body(loginResponseDto);
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.IllEGALARGS));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }

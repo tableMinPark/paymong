@@ -1,7 +1,9 @@
 package com.paymong.gateway.global.filter;
 
+import com.paymong.gateway.global.entity.Mong;
 import com.paymong.gateway.global.redis.RefreshToken;
 import com.paymong.gateway.global.redis.RefreshTokenRedisRepository;
+import com.paymong.gateway.global.repogitory.MongRepository;
 import com.paymong.gateway.global.security.TokenProvider;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +26,19 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
+    private final MongRepository mongRepository;
+
     // 설정 정보를 제공하는 클래스
     public static class Config {
         // 설정 정보가 필요한 경우 명시
     }
 
     public CustomFilter(TokenProvider tokenProvider,
-        RefreshTokenRedisRepository refreshTokenRedisRepository) {
+        RefreshTokenRedisRepository refreshTokenRedisRepository, MongRepository mongRepository) {
         super(Config.class);
         this.tokenProvider = tokenProvider;
         this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        this.mongRepository = mongRepository;
     }
 
     // 필터의 동작을 정의한 메서드
@@ -70,7 +75,9 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             // Header 에 memberKey 추가
             String memberKey = refreshToken.get().getMemberKey();
-            String mongKey = refreshToken.get().getMongKey();
+            Optional<Mong> mong = mongRepository.findByMemberId(memberKey);
+
+            String mongKey = String.valueOf(mong);
 
             exchange.getRequest().mutate().header("MemberKey", memberKey).build();
             exchange.getRequest().mutate().header("mongKey", mongKey).build();

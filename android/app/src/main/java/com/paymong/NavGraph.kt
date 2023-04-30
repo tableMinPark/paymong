@@ -14,6 +14,7 @@ import com.paymong.ui.app.condition.Condition
 import com.paymong.ui.app.help.Help
 import com.paymong.ui.app.info_detail.InfoDetail
 import com.paymong.ui.app.landing.Landing
+import com.paymong.ui.app.landing.LandingLogin
 import com.paymong.ui.app.login.Login
 import com.paymong.ui.app.main.Main
 import com.paymong.ui.app.paypoint.PayPoint
@@ -26,6 +27,9 @@ fun NavGraph (navController: NavHostController){
     {
         composable(route = AppNavItem.Landing.route){
             Landing(navController)
+        }
+        composable(route = AppNavItem.LandingLogin.route){
+            LandingLogin(navController)
         }
         composable(route = AppNavItem.Login.route){
             Login(navController)

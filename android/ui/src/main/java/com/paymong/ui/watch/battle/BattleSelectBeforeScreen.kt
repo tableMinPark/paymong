@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -38,6 +39,21 @@ fun BattleSelectBefore(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var fontSize = 0
+
+
+    if (screenWidthDp < 200) {
+        fontSize = 20
+
+
+    }
+    else {
+        fontSize = 25
+
+    }
+
     if (battleViewModel.matchingState == MatchingCode.SELECT){
         navController.navigate(WatchNavItem.BattleSelect.route) {
             popUpTo(0)
@@ -65,7 +81,7 @@ fun BattleSelectBefore(
         ) {
             Text(text = "어느쪽으로?", textAlign = TextAlign.Center,
             fontFamily = dalmoori,
-            fontSize = 27.sp)
+            fontSize = fontSize.sp)
         }
     }
 }

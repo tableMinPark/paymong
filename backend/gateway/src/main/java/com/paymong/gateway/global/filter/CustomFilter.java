@@ -3,7 +3,7 @@ package com.paymong.gateway.global.filter;
 import com.paymong.gateway.global.entity.Mong;
 import com.paymong.gateway.global.redis.RefreshToken;
 import com.paymong.gateway.global.redis.RefreshTokenRedisRepository;
-import com.paymong.gateway.global.repogitory.MongRepository;
+import com.paymong.gateway.global.repository.MongRepository;
 import com.paymong.gateway.global.security.TokenProvider;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

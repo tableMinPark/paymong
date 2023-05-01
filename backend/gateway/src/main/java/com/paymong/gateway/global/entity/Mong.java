@@ -3,20 +3,25 @@ package com.paymong.gateway.global.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 
-@Table(name = "mong_entity")    // R2D2에선 인식 X
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 @Setter
+@DynamicInsert
+@Entity
+@Table(name = "auth")
 public class Mong {
 
     @Id

@@ -8,10 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
@@ -22,12 +25,28 @@ import com.paymong.common.code.MessageType
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun BattleSelect(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
+
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var fontSize = 0
+
+
+    if (screenWidthDp < 200) {
+        fontSize = 15
+    }
+    else {
+        fontSize = 20
+    }
+
+
     if (battleViewModel.matchingState == MatchingCode.SELECT_AFTER){
         navController.navigate(WatchNavItem.BattleActive.route) {
             popUpTo(0)
@@ -50,7 +69,9 @@ fun BattleSelect(
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.49f)
         ) {
             Button(
                 onClick = { battleViewModel.select(MessageType.LEFT)
@@ -63,7 +84,10 @@ fun BattleSelect(
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "왼쪽", modifier = Modifier.padding(end = 40.dp))
+                Text(text = "왼쪽",  fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                        fontSize = fontSize.sp,
+                    modifier = Modifier.fillMaxWidth())
             }
         }
         Box(modifier = Modifier
@@ -72,7 +96,9 @@ fun BattleSelect(
             .width(5.dp))
         Column(
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(1f)
         ) {
             Button(
                 onClick = { battleViewModel.select(MessageType.RIGHT)
@@ -84,7 +110,8 @@ fun BattleSelect(
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-                Text(text = "오른쪽", modifier = Modifier.padding(start = 30.dp))
+                Text(text = "오른쪽",   fontFamily = dalmoori,  fontSize = fontSize.sp,textAlign = TextAlign.Center
+                   , modifier = Modifier.fillMaxWidth(1f))
             }
         }
     }

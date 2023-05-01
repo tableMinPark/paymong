@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,18 @@ fun BattleFind(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var characterSize = 0
+
+    if (screenWidthDp < 200) {
+        characterSize = 80
+    }
+    else {
+        characterSize = 100
+    }
+
     if (battleViewModel.matchingState == MatchingCode.ACTIVE){
         navController.navigate(WatchNavItem.BattleActive.route) {
             popUpTo(0)
@@ -37,7 +50,7 @@ fun BattleFind(
         battleViewModel.battleActive()
     }
 
-    val bg = painterResource(R.drawable.main_bg)
+    val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
 
     Button(
@@ -59,7 +72,7 @@ fun BattleFind(
             var findCode = battleViewModel.characterCodeA
             var chCode = CharacterCode.valueOf(findCode)
             var chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
+            Image(painter = chA, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -76,7 +89,7 @@ fun BattleFind(
             var findCode = battleViewModel.characterCodeB
             var chCode = CharacterCode.valueOf(findCode)
             var chB = painterResource(chCode.code)
-            Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
+            Image(painter = chB, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
     }
 }

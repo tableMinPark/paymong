@@ -15,7 +15,7 @@ class CollectMapViewModel constructor(
 
     var mapCode by mutableStateOf("")
 
-    private lateinit var load : Job
+        private lateinit var load : Job
     lateinit var memberId : String
     var mapList = mutableListOf<String>()
 

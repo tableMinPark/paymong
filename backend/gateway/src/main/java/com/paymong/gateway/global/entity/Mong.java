@@ -21,7 +21,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Setter
 @DynamicInsert
 @Entity
-@Table(name = "auth")
+@Table(name = "mong")
 public class Mong {
 
     @Id

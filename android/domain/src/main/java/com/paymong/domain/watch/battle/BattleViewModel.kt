@@ -121,8 +121,11 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
             // 위치 한번 받고 업데이트 요청 종료
-            val latitude = locationResult.lastLocation.latitude
-            val longitude = locationResult.lastLocation.longitude
+//            val latitude = locationResult.lastLocation.latitude
+//            val longitude = locationResult.lastLocation.longitude
+            val latitude = 35.0963554
+            val longitude = 128.8539052
+
             mFusedLocationProviderClient.removeLocationUpdates(this)
 
             Log.d("battle-matching", "소켓 연결 시작")
@@ -132,9 +135,6 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
             Log.d("battle-matching", "소켓 연결 성공")
             socketJob = viewModelScope.launch {
                 try {
-                    val startTime: LocalDateTime = LocalDateTime.now()
-                    var duringTime: Long
-
                     // 매칭
                     Log.d("battle-matching", "매칭 - 위도 : $latitude / 경도 : $longitude")
                     socketService.connect(characterId, latitude, longitude)

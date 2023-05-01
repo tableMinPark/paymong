@@ -79,6 +79,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             String mongKey = String.valueOf(mong);
 
+            log.info("memberKey-{}", memberKey);
             log.info("mongKey- {}", mongKey);
 
             exchange.getRequest().mutate().header("MemberKey", memberKey).build();

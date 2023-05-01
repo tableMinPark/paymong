@@ -34,14 +34,23 @@ class CollectPayMongViewModel constructor(
                 val index = i.toString()
                 mongList.add("CH10${index}")
             }
-            for(i in 0..3){
+            for(i in 0..2){
                 val index = i.toString()
-                mongList.add("CH20${index}")
+                for(j in 0..3){
+                    val middle = j.toString()
+                    mongList.add("CH2${middle}${index}")
+                }
             }
-            for(i in 0..3){
+            for(i in 0..2){
                 val index = i.toString()
-                mongList.add("CH30${index}")
+                for(j in 0..3){
+                    val middle = j.toString()
+                    mongList.add("CH3${middle}${index}")
+                }
             }
+            mongList.add("CH203")
+            mongList.add("CH303")
+            // 가지고 있는 게 아니면 none사진 add CH444
         }
     }
 

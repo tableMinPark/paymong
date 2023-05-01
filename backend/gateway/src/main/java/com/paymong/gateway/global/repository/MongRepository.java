@@ -1,4 +1,4 @@
-package com.paymong.gateway.global.repogitory;
+package com.paymong.gateway.global.repository;
 
 import com.paymong.gateway.global.entity.Mong;
 import java.util.Optional;

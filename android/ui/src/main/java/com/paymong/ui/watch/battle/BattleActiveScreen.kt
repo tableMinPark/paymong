@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +42,32 @@ fun BattleActive(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var characterSize = 0
+    var fontSize = 0
+    var barWidth = 0
+    var barHeight = 0
+    var attackDefenceSize = 0
+
+    if (screenWidthDp < 200) {
+        characterSize = 80
+        barWidth = 60
+        barHeight = 15
+        fontSize = 20
+        attackDefenceSize = 35
+
+    }
+    else {
+        characterSize = 100
+        barWidth = 70
+        barHeight = 20
+        fontSize = 24
+        attackDefenceSize = 40
+    }
+
+
+
     if (battleViewModel.matchingState == MatchingCode.SELECT_BEFORE){
         navController.navigate(WatchNavItem.BattleSelectBefore.route) {
             popUpTo(0)
@@ -76,19 +103,19 @@ fun BattleActive(
         ) {
             if (battleViewModel.battleActiveEntity.order == "A") {
                 Image(
-                    painter = attack, contentDescription = null, contentScale = ContentScale.Crop,
-                    modifier = Modifier.padding(horizontal = 25.dp)
+                    painter = attack, contentDescription = null,
+                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
                 )
             } else {
                 Image(
-                    painter = defence, contentDescription = null, contentScale = ContentScale.Crop,
-                    modifier = Modifier.padding(horizontal = 25.dp)
+                    painter = defence, contentDescription = null,
+                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
                 )
             }
             var findCode = battleViewModel.characterCodeA
             var chCode = CharacterCode.valueOf(findCode)
             var chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp))
+            Image(painter = chA, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -98,8 +125,8 @@ fun BattleActive(
             //게이지 바
             var damA = battleViewModel.battleActiveEntity.damageA.toFloat()
             Box(modifier = Modifier
-                .width(60.dp)
-                .height(20.dp)
+                .width(barWidth.dp)
+                .height(barHeight.dp)
                 .clip(CircleShape)
                 .background(Color.White)){
                 Row(modifier = Modifier
@@ -112,13 +139,13 @@ fun BattleActive(
             Text(text=String.format("%d/%d", battleViewModel.battleActiveEntity.nowTurn, battleViewModel.TOTAL_TURN),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
-                fontSize = 24.sp,
+                fontSize = fontSize.sp,
                 modifier = Modifier.padding(horizontal = 10.dp))
             //게이지 바
             var damB = battleViewModel.battleActiveEntity.damageB.toFloat()
             Box(modifier = Modifier
-                .width(60.dp)
-                .height(20.dp)
+                .width(barWidth.dp)
+                .height(barHeight.dp)
                 .clip(CircleShape)
                 .background(Color.White)){
                 Row(modifier = Modifier
@@ -138,17 +165,17 @@ fun BattleActive(
             var findCode = battleViewModel.characterCodeB
             var chCode = CharacterCode.valueOf(findCode)
             var chB = painterResource(chCode.code)
-            Image(painter = chB, contentDescription = null, modifier = Modifier.width(100.dp))
+            Image(painter = chB, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
 
             if (battleViewModel.battleActiveEntity.order == "A") {
                 Image(
-                    painter = defence, contentDescription = null, contentScale = ContentScale.Crop,
-                    modifier = Modifier.padding(horizontal = 25.dp)
+                    painter = defence, contentDescription = null,
+                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
                 )
             } else {
                 Image(
-                    painter = attack, contentDescription = null, contentScale = ContentScale.Crop,
-                    modifier = Modifier.padding(horizontal = 25.dp)
+                    painter = attack, contentDescription = null,
+                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
                 )
             }
         }

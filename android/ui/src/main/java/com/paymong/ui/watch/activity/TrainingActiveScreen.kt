@@ -105,7 +105,7 @@ fun TrainingPreview() {
 @ExperimentalCoilApi
 @Composable
 fun LoadingGif(
-    modifier: Modifier = Modifier
+
 ) {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)

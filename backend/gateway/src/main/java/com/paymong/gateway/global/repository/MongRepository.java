@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MongRepository extends JpaRepository<Mong, Long> {
 
-    Optional<Mong> findByMemberId(String memberId);
+    Optional<Mong> findByMemberId(Long memberId);
 }

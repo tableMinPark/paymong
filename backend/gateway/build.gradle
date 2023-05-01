@@ -43,6 +43,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
 dependencyManagement {
@@ -55,15 +58,15 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-task copyPrivate(type: Copy) {
-    copy {
-        from '../../s08p31e103-sub/backend/gateway'
-        include "*.yml"
-        into 'src/main/resources'
-    }
-    copy {
-        from '../../s08p31e103-sub/backend/gateway'
-        include "*.yml"
-        into 'src/test/resources'
-    }
-}
+//task copyPrivate(type: Copy) {
+//    copy {
+//        from '../../s08p31e103-sub/backend/gateway'
+//        include "*.yml"
+//        into 'src/main/resources'
+//    }
+//    copy {
+//        from '../../s08p31e103-sub/backend/gateway'
+//        include "*.yml"
+//        into 'src/test/resources'
+//    }
+//}

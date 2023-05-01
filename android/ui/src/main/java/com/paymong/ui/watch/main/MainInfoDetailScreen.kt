@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,18 +26,38 @@ fun MainInfoDetail() {
 fun MainInfoDetailUI(
     viewModel: MainInfoDetailViewModel
 ) {
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var nameFontSize = 0
+    var ageFontSize = 0
+    var weightFontSize = 0
+
+
+    if (screenWidthDp < 200) {
+        nameFontSize = 20
+        ageFontSize=15
+        weightFontSize=15
+
+    }
+    else {
+        nameFontSize = 24
+        ageFontSize = 20
+        weightFontSize= 20
+    }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(top=10.dp)
         ) {
             Text(text = viewModel.name,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
-                fontSize = 24.sp)
+                fontSize = nameFontSize.sp)
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -45,7 +66,7 @@ fun MainInfoDetailUI(
             Text(text = viewModel.age,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
-                fontSize = 20.sp,
+                fontSize = ageFontSize.sp,
                 modifier = Modifier.padding(vertical = 16.dp))
         }
         Row(
@@ -55,7 +76,7 @@ fun MainInfoDetailUI(
             Text(text = String.format("%dkg", viewModel.weight),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
-                fontSize = 20.sp)
+                fontSize = weightFontSize.sp)
         }
     }
 }

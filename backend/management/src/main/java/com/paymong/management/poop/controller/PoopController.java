@@ -52,4 +52,9 @@ public class PoopController {
         return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 
+    @GetMapping("/stop")
+    public ResponseEntity<Object> stopPoop(@RequestParam("mongId") Long mongId){
+        managementScheduler.stopScheduler(mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
 }

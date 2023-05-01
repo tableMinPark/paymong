@@ -1,19 +1,24 @@
 package com.paymong.auth.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.auth.auth.dto.request.LoginReqDto;
 import com.paymong.auth.auth.dto.request.RegisterReqDto;
+import com.paymong.auth.auth.dto.response.FindMemberIdResDto;
 import com.paymong.auth.auth.dto.response.LoginResDto;
 import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.repository.AuthRepository;
 import com.paymong.auth.auth.repository.MemberRepository;
-import com.paymong.auth.global.client.InformationServiceClient;
+import com.paymong.auth.global.client.ManagementServiceClient;
 import com.paymong.auth.global.code.JwtStateCode;
+import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
+import com.paymong.auth.global.vo.request.FindMongReqVo;
+import com.paymong.auth.global.vo.response.FindMongResVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +38,7 @@ public class AuthService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-    private final InformationServiceClient informationServiceClient;
+    private final ManagementServiceClient managementServiceClient;
 
     @Transactional
     public LoginResDto login(LoginReqDto loginRequestDto)
@@ -46,12 +51,19 @@ public class AuthService {
             throw new IllegalArgumentException();
         }
 
-        // mongID도 토큰에 담기.
-        informationServiceClient.findMongId();
-        Long mongId = informationServiceClient.findMongId();
+        // mongId 가져오기
+        log.info("id : {}", member.getMemberId());
+        ObjectMapper om = new ObjectMapper();
+        FindMongResVo findMongResVo = om.convertValue(managementServiceClient.findMongByMember(
+            new FindMongReqVo(member.getMemberId())).getBody(), FindMongResVo.class);
+
+        Long mongId = findMongResVo.getMongId();
+        log.info("id : {}", findMongResVo.getMongId());
+
         // 토큰 발급
 
-        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(), String.valueOf(mongId));
+        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(),
+            String.valueOf(mongId));
 
         String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail(),
             String.valueOf(mongId));
@@ -63,7 +75,7 @@ public class AuthService {
             RefreshToken.builder()
                 .id(member.getEmail())
                 .memberKey(String.valueOf(member.getMemberId()))
-                .mongKey( String.valueOf(mongId))
+                .mongKey(String.valueOf(mongId))
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
                 .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue())
@@ -79,8 +91,8 @@ public class AuthService {
     }
 
     @Transactional
-    public void register(RegisterReqDto registerRequestDto) {
-        Member member = registerRequestDto.toMember();
+    public void register(RegisterReqDto registerReqDto) {
+        Member member = registerReqDto.toMember();
         memberRepository.save(member);
         Auth auth = Auth.of("USER", member);
         authRepository.save(auth);
@@ -120,12 +132,12 @@ public class AuthService {
         return memberRepository.findByEmail(email).orElseThrow();
     }
 
-    @Transactional
-    public Long findMemberId() throws RuntimeException {
+
+    public FindMemberIdResDto findMemberId() throws RuntimeException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException());
-        return member.getMemberId();
+        return new FindMemberIdResDto(member.getMemberId());
     }
 
 }

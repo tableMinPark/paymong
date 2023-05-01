@@ -31,6 +31,7 @@ public class PoopService {
 
         Mong mong = mongRepository.findByMongId(mongId)
                 .orElseThrow(() -> new NotFoundMongException());
+        if(!mong.getActive()) throw new NotFoundMongException();
         Integer poop = mong.getPoopCount();
         Integer penalty = mong.getPenalty();
         if(poop == 4){

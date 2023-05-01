@@ -4,7 +4,9 @@ import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.ManagementScheduler;
+import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.controller.MongController;
+import com.paymong.management.poop.scheduler.PoopScheduler;
 import com.paymong.management.poop.service.PoopService;
 import com.paymong.management.poop.vo.PoopMongReqVo;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class PoopController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PoopController.class);
 
     private final PoopService poopService;
-    private final ManagementScheduler managementScheduler;
+    private final SchedulerService schedulerService;
     /* 똥생성은 소켓에서 */
 
     /* 똥 삭제 PUT */
@@ -48,13 +50,13 @@ public class PoopController {
 
     @GetMapping("/start")
     public ResponseEntity<Object> startPoop(@RequestParam("mongId") Long mongId){
-        managementScheduler.startScheduler(mongId);
+        schedulerService.startOf(0,mongId);
         return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 
     @GetMapping("/stop")
     public ResponseEntity<Object> stopPoop(@RequestParam("mongId") Long mongId){
-        managementScheduler.stopScheduler(mongId);
+        schedulerService.stopOf(0, mongId);
         return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 }

@@ -12,6 +12,6 @@ import lombok.Setter;
 @Builder
 public class FindCommonCodResDto {
 
-    private CommonCode commonCodeVo;
+    private CommonCode commonCode;
 
 }

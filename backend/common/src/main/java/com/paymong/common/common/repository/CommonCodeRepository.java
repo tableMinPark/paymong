@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface CommonCodeRepository extends JpaRepository<CommonCode, String> {
 
     Optional<List<CommonCode>> findAllByGroupCode(GroupCode groupCode);
+
+    Optional<List<CommonCode>> findByCodeStartsWith(String code);
 }

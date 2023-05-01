@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Builder
 @Setter
@@ -13,26 +14,26 @@ import javax.persistence.*;
 @Entity
 @DynamicInsert
 @Table(name = "point_history")
-public class Paypoint {
+public class PointHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "poinit_history_id")
+    @Column(name = "point_history_id")
     private Long pointHistoryId;
 
     @Column(name = "price")
-    private String price;
+    private int price;
 
     @Column(name = "code")
     private String code;
 
     @Column(name = "pay_dt")
-    private String payDt;
+    private LocalDateTime payDt;
 
     @Column(name = "member_id")
-    private String memberId;
+    private Long memberId;
 
     @Column(name = "mong_id")
-    private String mongId;
+    private Long mongId;
 
 }

@@ -13,7 +13,6 @@ import com.paymong.auth.global.client.ManagementServiceClient;
 import com.paymong.auth.global.code.JwtStateCode;
 import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
-import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenProvider;
@@ -41,8 +40,7 @@ public class AuthService {
     private final ManagementServiceClient managementServiceClient;
 
     @Transactional
-    public LoginResDto login(LoginReqDto loginRequestDto)
-        throws RuntimeException {
+    public LoginResDto login(LoginReqDto loginRequestDto) throws RuntimeException {
 
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
             .orElseThrow(() -> new NotFoundException());
@@ -51,36 +49,42 @@ public class AuthService {
             throw new IllegalArgumentException();
         }
 
-        // mongId 가져오기
-        log.info("id : {}", member.getMemberId());
-        ObjectMapper om = new ObjectMapper();
-        FindMongResVo findMongResVo = om.convertValue(managementServiceClient.findMongByMember(
-            new FindMongReqVo(member.getMemberId())).getBody(), FindMongResVo.class);
-
-        Long mongId = findMongResVo.getMongId();
-        log.info("id : {}", findMongResVo.getMongId());
-
         // 토큰 발급
 
-        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail(),
-            String.valueOf(mongId));
+        String accessToken = tokenProvider.generateAccessToken(loginRequestDto.getEmail());
 
-        String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail(),
-            String.valueOf(mongId));
+        String refreshToken = tokenProvider.generateRefreshToken(loginRequestDto.getEmail());
 
         // 역할 설정
         Auth auth = authRepository.findByMember(member).orElseThrow(() -> new NotFoundException());
 
-        refreshTokenRedisRepository.save(
-            RefreshToken.builder()
-                .id(member.getEmail())
-                .memberKey(String.valueOf(member.getMemberId()))
-                .mongKey(String.valueOf(mongId))
-                .refreshToken(refreshToken)
+        refreshTokenRedisRepository.save(RefreshToken.builder()
+            .id(member.getEmail())
+            .memberKey(String.valueOf(member.getMemberId()))
+            .refreshToken(refreshToken)
+            .accessToken(accessToken)
+            .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue()).build());
+
+        // mongId 가져오기
+        log.info("id : {}", member.getMemberId());
+        ObjectMapper om = new ObjectMapper();
+        FindMongResVo findMongResVo = null;
+        try {
+            findMongResVo = om.convertValue(
+                managementServiceClient.findMongByMember(new FindMongReqVo(member.getMemberId()))
+                    .getBody(), FindMongResVo.class);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return LoginResDto.builder()
                 .accessToken(accessToken)
-                .expiration(JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue())
-                .build()
-        );
+                .refreshToken(refreshToken)
+                .role(auth.getRole())
+                .mongId(null)
+                .build();
+        }
+
+        Long mongId = findMongResVo.getMongId();
+        log.info("MongId : {}", findMongResVo.getMongId());
 
         return LoginResDto.builder()
             .accessToken(accessToken)
@@ -98,34 +102,34 @@ public class AuthService {
         authRepository.save(auth);
     }
 
-    @Transactional
-    public LoginResDto reissue(String refreshToken) throws RuntimeException {
-        refreshToken = refreshToken.substring(7);
-
-        String email = tokenProvider.getUsername(refreshToken);
-
-        RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(email)
-            .orElseThrow(() -> new UnAuthException());
-
-        Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new NotFoundException());
-
-        if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
-
-            String accessToken = tokenProvider.generateAccessToken(email,
-                redisRefreshToken.getMongKey());
-
-            redisRefreshToken.setAccessToken(accessToken);
-            refreshTokenRedisRepository.save(redisRefreshToken);
-
-            return LoginResDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        }
-
-        throw new UnAuthException();
-    }
+//    @Transactional
+//    public LoginResDto reissue(String refreshToken) throws RuntimeException {
+//        refreshToken = refreshToken.substring(7);
+//
+//        String email = tokenProvider.getUsername(refreshToken);
+//
+//        RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(email)
+//            .orElseThrow(() -> new UnAuthException());
+//
+//        Member member = memberRepository.findByEmail(email)
+//            .orElseThrow(() -> new NotFoundException());
+//
+//        if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
+//
+//            String accessToken = tokenProvider.generateAccessToken(email,
+//                redisRefreshToken.getMongKey());
+//
+//            redisRefreshToken.setAccessToken(accessToken);
+//            refreshTokenRedisRepository.save(redisRefreshToken);
+//
+//            return LoginResDto.builder()
+//                .accessToken(accessToken)
+//                .refreshToken(refreshToken)
+//                .build();
+//        }
+//
+//        throw new UnAuthException();
+//    }
 
     @Transactional
     public Member findByMemberEmail(String email) {

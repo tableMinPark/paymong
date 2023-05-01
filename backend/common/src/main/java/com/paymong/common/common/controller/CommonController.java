@@ -4,6 +4,7 @@ import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
 import com.paymong.common.common.dto.response.FindCommonCodResDto;
+import com.paymong.common.common.dto.response.FindEggResDto;
 import com.paymong.common.common.service.CommonService;
 import com.paymong.common.global.code.ErrorStateCode;
 import com.paymong.common.global.exception.NotFoundException;
@@ -43,6 +44,16 @@ public class CommonController {
             FindCommonCodResDto findCommonCodResDto = commonService.findCommonCode(
                 findCommonCodeReqDto);
             return ResponseEntity.ok().body(findCommonCodResDto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+        }
+    }
+
+    @GetMapping("/egg")
+    public ResponseEntity<Object> findRandomEgg() {
+        try {
+            FindEggResDto findEggResDto = commonService.findRandomEgg();
+            return ResponseEntity.ok().body(findEggResDto);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }

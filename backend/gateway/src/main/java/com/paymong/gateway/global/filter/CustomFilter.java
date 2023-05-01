@@ -75,11 +75,17 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             // Header 에 memberKey 추가
             String memberKey = refreshToken.get().getMemberKey();
-            Optional<Mong> mong = mongRepository.findByMemberId(Long.parseLong(memberKey));
+            Mong mong = mongRepository.findByMemberId(Long.parseLong(memberKey)).orElse(
+                Mong.builder().build());
 
-            String mongKey = String.valueOf(mong);
+            String mongKey = String.valueOf(mong.getMongId());
 
-            log.info("mongKey- {}", mongKey);
+            log.info("memberKey = {}", memberKey);
+            log.info("mongKey = {}", mongKey);
+
+            if (mongKey.equals("null")) {
+                mongKey = "";
+            }
 
             exchange.getRequest().mutate().header("MemberKey", memberKey).build();
             exchange.getRequest().mutate().header("MongKey", mongKey).build();

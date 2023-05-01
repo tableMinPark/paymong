@@ -48,20 +48,19 @@ public class TokenProvider {
         return expiration.before(new Date());
     }
 
-    public String generateAccessToken(String username, String mongId) {
-        return doGenerateToken(username, mongId,
+    public String generateAccessToken(String username) {
+        return doGenerateToken(username,
             JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
-    public String generateRefreshToken(String username, String mongId) {
-        return doGenerateToken(username, mongId,
+    public String generateRefreshToken(String username) {
+        return doGenerateToken(username,
             JwtStateCode.REFRESH_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
-    private String doGenerateToken(String username, String mongId, long expireTime) { // 1
+    private String doGenerateToken(String username,  long expireTime) { // 1
         Claims claims = Jwts.claims();
         claims.put("username", username);
-        claims.put("mongId", mongId);
 
         return Jwts.builder()
             .setClaims(claims)

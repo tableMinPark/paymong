@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -31,6 +32,21 @@ fun MainInfoUI(
     viewModel: MainInfoViewModel
 ) {
     val mapViewModel : MainViewModel = viewModel()
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    var characterSize = 0
+
+
+    if (screenWidthDp < 200) {
+        characterSize = 120
+
+
+    }
+    else {
+        characterSize = 150
+
+    }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -55,7 +71,7 @@ fun MainInfoUI(
         val findCode = viewModel.characterCode
         val chCode = CharacterCode.valueOf(findCode)
         val character = painterResource(chCode.code)
-        Image(painter = character, contentDescription = null, modifier = Modifier.width(150.dp))
+        Image(painter = character, contentDescription = null, modifier = Modifier.width(characterSize.dp))
 //            Text(text = String.format("캐릭터 코드 : %s %s", animationState.value, viewModel.characterCode), textAlign = TextAlign.Center)
     }
     }

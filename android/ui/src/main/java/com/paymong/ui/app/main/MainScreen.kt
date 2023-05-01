@@ -114,11 +114,10 @@ fun Point(navController: NavController){
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId") }
-                )
-                .width(200.dp)
+                ).padding(horizontal = 20.dp)
         )
         Row(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.width(100.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -134,7 +133,6 @@ fun Point(navController: NavController){
                 color = Color.Black
             )
         }
-
     }
 }
 
@@ -506,6 +504,7 @@ fun InfoPreview() {
     val viewModel : MainViewModel = viewModel()
     PaymongTheme {
 //        MainUI(navController, viewModel)
-        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
+//        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
+        Top(navController)
     }
 }

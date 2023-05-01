@@ -43,6 +43,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
 dependencyManagement {

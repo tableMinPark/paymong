@@ -27,7 +27,12 @@ public class CollectController {
         @RequestHeader(value = "MongKey") String mongKey) {
         log.info("collect/test - Call");
         log.info("memberKey - {}", memberKey);
-        log.info("mongKey - {}", mongKey);
+        log.info("mongKey - {}", mongKey.toString());
+
+        if (mongKey.isBlank()) {
+            log.info("mongKey is emtpy");
+        }
+
         try {
             return ResponseEntity.ok().body("success");
         } catch (RuntimeException e) {

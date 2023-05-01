@@ -75,7 +75,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             // Header 에 memberKey 추가
             String memberKey = refreshToken.get().getMemberKey();
-            Mong mong = mongRepository.findByMemberId(Long.parseLong(memberKey)).orElse(
+            Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberKey), 1).orElse(
                 Mong.builder().build());
 
             String mongKey = String.valueOf(mong.getMongId());

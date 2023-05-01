@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -130,7 +131,7 @@ fun Point(navController: NavController){
                 text = NumberFormat.getNumberInstance(Locale.getDefault()).format(viewModel.point),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori, fontSize = 18.sp,
-                color = Color.Black
+                color = Color.Black, overflow = TextOverflow.Ellipsis, maxLines = 1
             )
         }
     }

@@ -75,12 +75,14 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             // Header 에 memberKey 추가
             String memberKey = refreshToken.get().getMemberKey();
-            Optional<Mong> mong = mongRepository.findByMemberId(memberKey);
+            Optional<Mong> mong = mongRepository.findByMemberId(Long.parseLong(memberKey));
 
             String mongKey = String.valueOf(mong);
 
+            log.info("mongKey- {}", mongKey);
+
             exchange.getRequest().mutate().header("MemberKey", memberKey).build();
-            exchange.getRequest().mutate().header("mongKey", mongKey).build();
+            exchange.getRequest().mutate().header("MongKey", mongKey).build();
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

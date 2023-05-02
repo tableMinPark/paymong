@@ -121,7 +121,6 @@ fun CollectPayMongUI(
     navController: NavController,
     viewModel: CollectPayMongViewModel
 ) {
-    val isOpen by remember { mutableStateOf(true) }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center

@@ -35,7 +35,12 @@ fun TopBar(
         title = { Text(msg, fontFamily = dalmoori, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White) },
         modifier = Modifier.height(80.dp),
         actions = {
-            IconButton(onClick = { navController.navigate(route) }) {
+            IconButton(onClick = { navController.navigate(route){
+                navController.graph.startDestinationRoute?.let {
+                    popUpTo(it)
+                }
+                launchSingleTop = true
+            } }) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
             }
         },

@@ -1,5 +1,7 @@
 package com.paymong.ui.app.landing
 
+import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -49,10 +51,20 @@ fun LandingUI(
     navController: NavController,
     viewModel: LandingViewModel
 ) {
+    val context = LocalContext.current as Activity
+    val sharedPref = context.getPreferences(Context.MODE_PRIVATE)
     LaunchedEffect(key1 = true){
         delay(2000)
         if(viewModel.id != "") {
-            navController.navigate(AppNavItem.Main.route)
+            navController.navigate(AppNavItem.Main.route){
+                // 백스택 비우기
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+                // 스택 첫 화면 메인화면으로 변경
+                navController.graph.setStartDestination(AppNavItem.Main.route)
+                launchSingleTop =true
+            }
         } else{
             navController.navigate(AppNavItem.LandingLogin.route)
         }

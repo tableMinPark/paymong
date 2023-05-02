@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +71,10 @@ fun Help(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.Help.route) }
+                    onClick = { navController.navigate(AppNavItem.Help.route){
+                        popUpTo("main")
+                        launchSingleTop = true
+                    } }
                 )
                 .height(40.dp)
                 .padding(horizontal = 20.dp)
@@ -91,7 +95,10 @@ fun Info(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.InfoDetail.route + "/characterId") }
+                    onClick = { navController.navigate(AppNavItem.InfoDetail.route + "/characterId"){
+                        popUpTo("main")
+                        launchSingleTop = true
+                    } }
                 )
                 .width(40.dp)
         )
@@ -113,7 +120,10 @@ fun Point(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId") }
+                    onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId"){
+                        popUpTo("main")
+                        launchSingleTop = true
+                    } }
                 ).padding(horizontal = 20.dp)
         )
         Row(
@@ -130,7 +140,7 @@ fun Point(navController: NavController){
                 text = NumberFormat.getNumberInstance(Locale.getDefault()).format(viewModel.point),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori, fontSize = 18.sp,
-                color = Color.Black
+                color = Color.Black, overflow = TextOverflow.Ellipsis, maxLines = 1
             )
         }
     }
@@ -439,7 +449,10 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { navController.navigate(AppNavItem.Collect.route + "/memberId") }
+                        onClick = { navController.navigate(AppNavItem.Collect.route + "/memberId"){
+                            popUpTo("main")
+                            launchSingleTop = true
+                        } }
                     )
                     .width(150.dp)
             )
@@ -459,7 +472,10 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { navController.navigate(AppNavItem.Condition.route + "/characterId") }
+                            onClick = { navController.navigate(AppNavItem.Condition.route + "/characterId"){
+                                popUpTo("main")
+                                launchSingleTop = true
+                            } }
                         )
                         .width(150.dp)
                 )

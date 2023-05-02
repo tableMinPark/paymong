@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AddPointReqDto {
     String content;
-    int price;
+    Integer price;
 }

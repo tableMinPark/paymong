@@ -23,6 +23,7 @@ public class StatusController {
 
     @GetMapping("/detail")
     public ResponseEntity<Object> findStatus(FindStatusReqDto findStatusReqDto) {
+        log.info("findStatus - Call");
         try {
             FindStatusResDto findStatusResDto = statusService.findStatus(findStatusReqDto);
             return ResponseEntity.ok().body(findStatusResDto);

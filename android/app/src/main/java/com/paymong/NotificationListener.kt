@@ -9,7 +9,6 @@ import android.widget.Toast
 
 
 class NotificationListener : NotificationListenerService() {
-
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
 
@@ -23,7 +22,7 @@ class NotificationListener : NotificationListenerService() {
         val extraSubText: String = extras?.get(Notification.EXTRA_SUB_TEXT).toString()
         val extraSummaryText: String = extras?.get(Notification.EXTRA_SUMMARY_TEXT).toString()
 
-        Log.d("noti", "실행됨?")
+        Log.d("noti", "$packageName : $extraTitle : $extraText :  $extraBigText : $extraInfoText : $extraSubText : $extraSummaryText")
 
         Toast.makeText(this, "$packageName : $extraTitle : $extraText :  $extraBigText : $extraInfoText : $extraSubText : $extraSummaryText", Toast.LENGTH_LONG).show()
     }

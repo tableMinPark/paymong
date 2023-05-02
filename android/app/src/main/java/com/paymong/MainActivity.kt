@@ -19,7 +19,6 @@ import com.paymong.ui.theme.PaymongTheme
 
 class MainActivity : ComponentActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,13 +26,15 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
 
+        val it = Intent(this, PayPointParseService::class.java)
+        startForegroundService(it)
+
         setContent {
             PaymongTheme {
                 PaymongMain()
             }
         }
     }
-
     // 필수 권한 확인
     private fun isNotificationPermissionGranted(): Boolean {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

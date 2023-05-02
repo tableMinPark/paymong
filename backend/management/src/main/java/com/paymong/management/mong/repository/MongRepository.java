@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface MongRepository extends JpaRepository<Mong, Long> {
     Optional<Mong> findByMongId(Long mongId);
 
-    Optional<Mong> findByMemberIdAndComplete(Long memberId, Boolean complete);
+    Optional<Mong> findByMemberIdAndActive(Long memberId, Boolean active);
 }

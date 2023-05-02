@@ -17,8 +17,8 @@ public class CustomUserDetailService implements UserDetailsService {
     private final AuthService authService;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member  = authService.findByMemberEmail(email);
+    public UserDetails loadUserByUsername(String playerId) throws UsernameNotFoundException {
+        Member member  = authService.findByMemberPlayerId(playerId);
         return CustomUserDetail.of(member);
     }
 }

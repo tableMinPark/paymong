@@ -1,13 +1,14 @@
 package com.paymong.auth.auth.controller;
 
 import com.paymong.auth.auth.dto.request.LoginReqDto;
-import com.paymong.auth.auth.dto.request.RegisterReqDto;
 import com.paymong.auth.auth.dto.response.LoginResDto;
+import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.service.AuthService;
 import com.paymong.auth.global.code.ErrorStateCode;
 import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.response.ErrorResponse;
+import com.paymong.auth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,64 +26,22 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private final MemberService memberService;
+
+
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginReqDto loginRequestDto) {
         log.info("login - Call");
         try {
-            LoginResDto loginResponseDto = authService.login(loginRequestDto);
-            return ResponseEntity.ok().body(loginResponseDto);
+            LoginResDto loginResDto = authService.login(loginRequestDto);
+            return ResponseEntity.ok().body(loginResDto);
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+            LoginResDto loginResDto = memberService.register(loginRequestDto);
+            return ResponseEntity.badRequest().body(loginResDto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.IllEGALARGS));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-        }
-    }
-
-//    @PostMapping("/reissue")
-//    private ResponseEntity<Object> reissue(
-//        @RequestHeader(value = "RefreshToken", required = false) String refreshToken) {
-//        log.info("reissue - Call");
-//
-//        try {
-//            LoginResDto loginResponse = authService.reissue(refreshToken);
-//            return ResponseEntity.ok().body(loginResponse);
-//        } catch (UnAuthException e) {
-//            return ResponseEntity.badRequest()
-//                .body(new ErrorResponse(ErrorStateCode.UNAUTHORIXED));
-//        } catch (NotFoundException e) {
-//            return ResponseEntity.badRequest()
-//                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-//        }
-//    }
-
-    @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegisterReqDto registerReqDto) {
-        log.info("register - Call");
-        try {
-            authService.register(registerReqDto);
-            return ResponseEntity.ok().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-        }
-    }
-
-    @GetMapping("/detail")
-    public ResponseEntity<Object> findMemberId() {
-        log.info("findMember - Call");
-        try {
-            return ResponseEntity.ok().body(authService.findMemberId());
-        } catch (NotFoundException e) {
-            return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
-
         }
     }
 
@@ -99,6 +58,5 @@ public class AuthController {
 
         }
     }
-
 
 }

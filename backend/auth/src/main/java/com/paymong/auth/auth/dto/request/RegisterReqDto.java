@@ -8,13 +8,11 @@ import lombok.Data;
 @Builder
 public class RegisterReqDto {
 
-    private String email;
-    private String password;
+    private String playerId;
 
     public Member toMember(){
         return Member.builder()
-            .email(this.email)
-            .password(this.password)
+            .playerId(this.playerId)
             .build();
     }
 }

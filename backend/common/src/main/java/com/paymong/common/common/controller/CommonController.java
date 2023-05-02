@@ -2,14 +2,15 @@ package com.paymong.common.common.controller;
 
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
-import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
+import com.paymong.common.common.dto.response.CommonCodeDto;
 import com.paymong.common.common.dto.response.FindAllFoodResDto;
-import com.paymong.common.common.dto.response.FindCommonCodResDto;
 import com.paymong.common.common.dto.response.FindEggResDto;
+import com.paymong.common.common.entity.CommonCode;
 import com.paymong.common.common.service.CommonService;
 import com.paymong.common.global.code.ErrorStateCode;
 import com.paymong.common.global.exception.NotFoundException;
 import com.paymong.common.global.response.ErrorResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +33,12 @@ public class CommonController {
         FindAllCommonCodeReqDto findAllCommonCodeReqDto) {
         log.info("findAllCommonCode - Call");
         try {
-            FindAllCommonCodeResDto findAllCommonCodeResDto = commonService.findAllCommonCode(
+            List<CommonCode> commonCodeList = commonService.findAllCommonCode(
                 findAllCommonCodeReqDto);
-            return ResponseEntity.ok().body(findAllCommonCodeResDto);
+            return ResponseEntity.ok().body(commonCodeList);
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
@@ -46,9 +48,8 @@ public class CommonController {
     public ResponseEntity<Object> findCommonCode(FindCommonCodeReqDto findCommonCodeReqDto) {
         log.info("findCommonCode - Call");
         try {
-            FindCommonCodResDto findCommonCodResDto = commonService.findCommonCode(
-                findCommonCodeReqDto);
-            return ResponseEntity.ok().body(findCommonCodResDto);
+            CommonCode commonCodeDto = commonService.findCommonCode(findCommonCodeReqDto);
+            return ResponseEntity.ok().body(commonCodeDto);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
@@ -74,7 +75,8 @@ public class CommonController {
             FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongKey);
             return ResponseEntity.ok().body(findAllFoodResDto);
         } catch (NotFoundException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }

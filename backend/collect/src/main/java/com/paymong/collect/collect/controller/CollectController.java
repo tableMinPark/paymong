@@ -1,5 +1,6 @@
 package com.paymong.collect.collect.controller;
 
+import com.paymong.collect.collect.dto.request.AddMapReqDto;
 import com.paymong.collect.collect.dto.response.FindAllMapCollectResDto;
 import com.paymong.collect.collect.dto.response.FindAllMongCollectResDto;
 import com.paymong.collect.collect.service.CollectService;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +57,16 @@ public class CollectController {
         }
     }
 
+//    @PostMapping("/map")
+//    public ResponseEntity<Object> addMap(AddMapReqDto addMapReqDto) {
+//        try {
+//            collectService.addMap(addMapReqDto);
+//            return ResponseEntity.ok().build();
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
+//        }
+//    }
+
     @GetMapping("/character/list")
     public ResponseEntity<Object> findAllMongCollect(
         @RequestHeader(value = "MemberId") String memberId) {
@@ -68,5 +80,6 @@ public class CollectController {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MONG_RUNTIME));
         }
     }
+
 
 }

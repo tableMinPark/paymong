@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Builder
 @AllArgsConstructor
@@ -21,6 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Entity
 @Setter
 @DynamicInsert
+@DynamicUpdate
 @Table(name = "map_collect")
 public class MapCollect {
 

@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Builder
 @AllArgsConstructor
@@ -22,6 +23,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Getter
 @Entity
 @DynamicInsert
+@DynamicUpdate
 @Table(name = "mong_collect")
 public class MongCollect {
 

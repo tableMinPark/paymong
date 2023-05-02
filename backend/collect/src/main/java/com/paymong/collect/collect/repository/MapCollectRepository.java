@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface MapCollectRepository extends JpaRepository<MapCollect, Long> {
 
     List<MapCollect> findAllByMemberIdOrderByMapCodeDesc(Long memberId);
+
+    Optional<MapCollect> findByMemberIdAndMapCode(Long memberId, String mapCode);
 }

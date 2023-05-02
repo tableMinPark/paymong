@@ -1,6 +1,7 @@
 package com.paymong.collect.collect.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.collect.collect.dto.request.AddMapReqDto;
 import com.paymong.collect.collect.dto.response.FindAllMapCollectResDto;
 import com.paymong.collect.collect.dto.response.FindAllMongCollectResDto;
 import com.paymong.collect.collect.dto.response.MongDto;
@@ -71,6 +72,16 @@ public class CollectService {
 
         return findAllMapCollectResDtoList;
     }
+
+//    @Transactional
+//    public void addMap(AddMapReqDto addMapReqDto) {
+//        if (mapCollectRepository.findByMemberIdAndMapCode(addMapReqDto.getMemberId(),
+//            addMapReqDto.getCode()).isPresent()){
+//
+//        }
+//
+//
+//    }
 
     @Transactional
     public FindAllMongCollectResDto findAllMongCollect(String memberId)

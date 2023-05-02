@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
@@ -125,7 +126,10 @@ fun BattleFind(
                 player2 = painterResource(chCode.code)
             }
             Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
-        }
+
+            Text(text="me", modifier = Modifier.padding(top=70.dp))
+            }
+
     }
 }
 

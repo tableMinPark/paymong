@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
@@ -9,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +20,12 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
@@ -52,7 +60,7 @@ fun BattleFind(
 
     val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-
+    BattleBackgroundGif()
     Button(
         onClick = { navController.navigate(WatchNavItem.BattleActive.route) },
         modifier = Modifier.fillMaxHeight().fillMaxWidth(),
@@ -104,3 +112,33 @@ fun BattleFindPreview() {
         BattleFind(navController, viewModel)
     }
 }
+
+@ExperimentalCoilApi
+@Composable
+fun BattleBackgroundGif(
+
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.battle_bg_gif,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+

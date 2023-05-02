@@ -45,7 +45,7 @@ public class CollectService {
                         new FindAllCommonCodeReqVo(GroupStateCode.MAP))
                     .getBody(), FindAllCommonCodeResVo.class);
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             throw new GatewayException();
         }
 

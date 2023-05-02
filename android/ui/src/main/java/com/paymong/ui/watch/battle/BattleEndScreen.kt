@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,10 +55,24 @@ fun BattleEnd(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            var findCode = battleViewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
-            var charac = painterResource(chCode.code)
-            Image(painter = charac, contentDescription = null, modifier = Modifier.width(150.dp))
+
+
+            var findCode = ""
+            val chCode : CharacterCode
+            val player: Painter
+
+            if (battleViewModel.battleActiveEntity.order == "A") {
+                findCode = battleViewModel.characterCodeA
+                chCode = CharacterCode.valueOf(findCode)
+                player = painterResource(chCode.code)
+
+            } else {
+                findCode = battleViewModel.characterCodeB
+                chCode = CharacterCode.valueOf(findCode)
+                player = painterResource(chCode.code)
+            }
+
+            Image(painter = player, contentDescription = null, modifier = Modifier.width(150.dp))
         }
     }
     Column(

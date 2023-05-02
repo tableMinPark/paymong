@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -77,10 +78,24 @@ fun BattleFind(
             modifier = Modifier.fillMaxWidth()
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
-            var findCode = battleViewModel.characterCodeA
-            var chCode = CharacterCode.valueOf(findCode)
-            var chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+
+            // player1 :: 위쪽
+
+            var findCode = ""
+            val chCode : CharacterCode
+            val player1: Painter
+
+            if (battleViewModel.battleActiveEntity.order == "A") {
+                findCode = battleViewModel.characterCodeB
+                chCode = CharacterCode.valueOf(findCode)
+                player1 = painterResource(chCode.code)
+
+            } else {
+                findCode = battleViewModel.characterCodeA
+                chCode = CharacterCode.valueOf(findCode)
+                player1 = painterResource(chCode.code)
+            }
+            Image(painter = player1, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -94,10 +109,24 @@ fun BattleFind(
 //            modifier = Modifier.fillMaxWidth()
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
-            var findCode = battleViewModel.characterCodeB
-            var chCode = CharacterCode.valueOf(findCode)
-            var chB = painterResource(chCode.code)
-            Image(painter = chB, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+
+            // player2 :: 아래쪽
+
+            var findCode = ""
+            val chCode : CharacterCode
+            val player2: Painter
+
+            if (battleViewModel.battleActiveEntity.order == "A") {
+                findCode = battleViewModel.characterCodeA
+                chCode = CharacterCode.valueOf(findCode)
+                player2 = painterResource(chCode.code)
+
+            } else {
+                findCode = battleViewModel.characterCodeB
+                chCode = CharacterCode.valueOf(findCode)
+                player2 = painterResource(chCode.code)
+            }
+            Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
     }
 }

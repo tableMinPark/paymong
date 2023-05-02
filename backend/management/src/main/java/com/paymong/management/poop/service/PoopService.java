@@ -26,18 +26,20 @@ public class PoopService {
         mong.setPoopCount(0);
     }
 
-    @Async
-    public void testPoop(Long mongId){
-        LOGGER.info("나왔다 {}", mongId);
-        Random random = new Random();
-        random.setSeed(System.currentTimeMillis());
-        long p = random.nextInt(5)+5;
-        try{
-            Thread.sleep(p * 1000);
-        }catch (Exception e){
-            LOGGER.info("나 잔다.");
-        }
+    @Transactional
+    public void addPoop(Long mongId) throws NotFoundMongException {
 
-        LOGGER.info("똥싸!! {}", mongId);
+        Mong mong = mongRepository.findByMongId(mongId)
+                .orElseThrow(() -> new NotFoundMongException());
+        if(!mong.getActive()) throw new NotFoundMongException();
+        Integer poop = mong.getPoopCount();
+        Integer penalty = mong.getPenalty();
+        if(poop == 4){
+            // 패널티 적립
+            mong.setPenalty(penalty + 1);
+        }else{
+            // 갯수 적립
+            mong.setPoopCount(poop + 1);
+        }
     }
 }

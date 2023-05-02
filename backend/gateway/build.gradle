@@ -59,14 +59,14 @@ tasks.named('test') {
 }
 
 task copyPrivate(type: Copy) {
-    copy {
-        from '../../s08p31e103-sub/backend/gateway'
-        include "*.yml"
-        into 'src/main/resources'
-    }
-    copy {
-        from '../../s08p31e103-sub/backend/gateway'
-        include "*.yml"
-        into 'src/test/resources'
-    }
+   copy {
+       from '../../s08p31e103-sub/backend/gateway'
+       include "*.yml"
+       into 'src/main/resources'
+   }
+   copy {
+       from '../../s08p31e103-sub/backend/gateway'
+       include "*.yml"
+       into 'src/test/resources'
+   }
 }

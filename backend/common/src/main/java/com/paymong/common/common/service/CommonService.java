@@ -60,8 +60,11 @@ public class CommonService {
     @Transactional
     public FindAllFoodResDto findAllFood(String foodCategory, String mongKey)
         throws RuntimeException {
+
         GroupCode groupCode = groupCodeRepository.findById(foodCategory.replace("\"", ""))
             .orElseThrow(() -> new NotFoundException());
+
+        log.info("foodCategory - {}", foodCategory);
 
         List<CommonCode> commonCodeList = commonCodeRepository.findAllByGroupCode(groupCode)
             .orElseThrow();

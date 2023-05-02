@@ -52,7 +52,11 @@ fun LandingUI(
     LaunchedEffect(key1 = true){
         delay(2000)
         if(viewModel.id != "") {
-            navController.navigate(AppNavItem.Main.route)
+            navController.navigate(AppNavItem.Main.route){
+                popUpTo("landing"){
+                    inclusive = true
+                }
+            }
         } else{
             navController.navigate(AppNavItem.LandingLogin.route)
         }

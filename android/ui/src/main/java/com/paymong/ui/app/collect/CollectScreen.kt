@@ -36,7 +36,10 @@ fun Collect(navController: NavController) {
 @Composable
 fun Btn(navController: NavController, btnText: String, route: String){
     Button(
-        onClick = { navController.navigate(route) },
+        onClick = { navController.navigate(route){
+            popUpTo("collect")
+            navController.graph.setStartDestination(AppNavItem.Main.route)
+        } },
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)

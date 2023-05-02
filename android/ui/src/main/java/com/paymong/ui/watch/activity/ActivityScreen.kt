@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.activity
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,11 +22,18 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.ActivityViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
 fun Activity(navController: NavHostController) {
@@ -46,9 +55,9 @@ fun ActivityUI(
     val screenWidthDp = configuration.screenWidthDp
     val screenHeightDp = configuration.screenHeightDp
 
-    val img = painterResource(R.drawable.walking_bg)
+    val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-
+    MainBackgroundGif()
 
     if (screenWidthDp < 200) {
         SmallWatch( navController, viewModel)
@@ -141,7 +150,9 @@ fun BigWatch(    navController: NavHostController,
         ) {
             Button(
                 onClick = { navController.navigate(WatchNavItem.Training.route) },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                modifier = Modifier
+                    .size(width = 200.dp, height = 100.dp)
+                    .weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
@@ -164,7 +175,9 @@ fun BigWatch(    navController: NavHostController,
         ){
             Button(
                 onClick = { navController.navigate(WatchNavItem.Walking.route) },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                modifier = Modifier
+                    .size(width = 200.dp, height = 100.dp)
+                    .weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
@@ -175,3 +188,4 @@ fun BigWatch(    navController: NavHostController,
         }
     }
 }
+

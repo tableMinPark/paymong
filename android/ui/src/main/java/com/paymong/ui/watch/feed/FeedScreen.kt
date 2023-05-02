@@ -27,6 +27,7 @@ import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.activity.BigWatch
 import com.paymong.ui.watch.activity.SmallWatch
+import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
 fun Feed(navController: NavHostController) {
@@ -47,7 +48,7 @@ fun FeedUI(
 
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-
+    MainBackgroundGif()
 
     if (screenWidthDp < 200) {
         SmallWatch( navController, viewModel)

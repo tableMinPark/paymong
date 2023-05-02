@@ -30,6 +30,7 @@ import com.paymong.ui.theme.PayMongBlue
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.Purple700
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.landing.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -62,7 +63,7 @@ fun FeedBuyListUI(
 
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-
+    MainBackgroundGif()
     if (screenWidthDp < 200) {
         SmallWatch(animationState, pagerState, coroutineScope, navController, viewModel)
     }

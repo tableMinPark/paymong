@@ -24,14 +24,14 @@ public class CollectController {
     private final CollectService collectService;
 
     @GetMapping("/test")
-    public ResponseEntity<Object> test(@RequestHeader(value = "MemberKey") String memberKey,
-        @RequestHeader(value = "MongKey") String mongKey) {
+    public ResponseEntity<Object> test(@RequestHeader(value = "MemberId") String memberId,
+        @RequestHeader(value = "MongId") String mongId) {
         log.info("collect/test - Call");
-        log.info("memberKey - {}", memberKey);
-        log.info("mongKey - {}", mongKey.toString());
+        log.info("memberId - {}", memberId);
+        log.info("mongId - {}", mongId.toString());
 
-        if (mongKey.isBlank()) {
-            log.info("mongKey is emtpy");
+        if (mongId.isBlank()) {
+            log.info("mongId is emtpy");
         }
 
         try {
@@ -43,29 +43,30 @@ public class CollectController {
 
     @GetMapping("/map/list")
     public ResponseEntity<Object> findAllMapCollect(
-        @RequestHeader(value = "MemberKey") String memberKey) {
+        @RequestHeader(value = "MemberId") String memberId) {
         try {
             List<FindAllMapCollectResDto> findAllMapCollectResDto = collectService.findAllMapCollect(
-                memberKey);
+                memberId);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (GatewayException e){
+        } catch (GatewayException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
         }
     }
 
     @GetMapping("/character/list")
     public ResponseEntity<Object> findAllMongCollect(
-        @RequestHeader(value = "MemberKey") String memberKey) {
+        @RequestHeader(value = "MemberId") String memberId) {
         try {
             FindAllMongCollectResDto findAllMapCollectResDto = collectService.findAllMongCollect(
-                memberKey);
+                memberId);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (GatewayException e){
+        } catch (GatewayException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MONG_RUNTIME));
         }
     }
+
 }

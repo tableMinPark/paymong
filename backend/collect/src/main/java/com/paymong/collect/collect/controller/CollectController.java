@@ -23,10 +23,16 @@ public class CollectController {
     private final CollectService collectService;
 
     @GetMapping("/test")
-    public ResponseEntity<Object> test(@RequestHeader(value = "MemberKey") String memberKey) {
+    public ResponseEntity<Object> test(@RequestHeader(value = "MemberKey") String memberKey,
+        @RequestHeader(value = "MongKey") String mongKey) {
         log.info("collect/test - Call");
+        log.info("memberKey - {}", memberKey);
+        log.info("mongKey - {}", mongKey.toString());
 
-        log.info(memberKey);
+        if (mongKey.isBlank()) {
+            log.info("mongKey is emtpy");
+        }
+
         try {
             return ResponseEntity.ok().body("success");
         } catch (RuntimeException e) {

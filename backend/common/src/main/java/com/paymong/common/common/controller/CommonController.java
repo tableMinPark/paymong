@@ -30,12 +30,13 @@ public class CommonController {
     @GetMapping("/list")
     public ResponseEntity<Object> findAllCommonCode(
         FindAllCommonCodeReqDto findAllCommonCodeReqDto) {
+        log.info("findAllCommonCode - Call");
         try {
             FindAllCommonCodeResDto findAllCommonCodeResDto = commonService.findAllCommonCode(
                 findAllCommonCodeReqDto);
             return ResponseEntity.ok().body(findAllCommonCodeResDto);
         } catch (NotFoundException e) {
-            return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
@@ -43,6 +44,7 @@ public class CommonController {
 
     @GetMapping("/detail")
     public ResponseEntity<Object> findCommonCode(FindCommonCodeReqDto findCommonCodeReqDto) {
+        log.info("findCommonCode - Call");
         try {
             FindCommonCodResDto findCommonCodResDto = commonService.findCommonCode(
                 findCommonCodeReqDto);
@@ -54,6 +56,7 @@ public class CommonController {
 
     @GetMapping("/egg")
     public ResponseEntity<Object> findRandomEgg() {
+        log.info("findRandomEgg - Call");
         try {
             FindEggResDto findEggResDto = commonService.findRandomEgg();
             return ResponseEntity.ok().body(findEggResDto);
@@ -63,11 +66,16 @@ public class CommonController {
     }
 
     @GetMapping("/food/{foodCategory}")
-    public ResponseEntity<Object> findAllFood(@RequestHeader(value = "Mongkey") String mongKey, @PathVariable("foodCategory") String foodCategory){
-        try{
-            FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory,mongKey);
+    public ResponseEntity<Object> findAllFood(@RequestHeader(value = "Mongkey") String mongKey,
+        @PathVariable("foodCategory") String foodCategory) {
+        log.info("findAllFood - Call");
+        log.info("foodCategory - {}", foodCategory);
+        try {
+            FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongKey);
             return ResponseEntity.ok().body(findAllFoodResDto);
-        }catch (RuntimeException e){
+        } catch (NotFoundException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }

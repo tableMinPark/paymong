@@ -1,4 +1,4 @@
-package com.paymong.watch
+package com.paymong.ui.watch
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf

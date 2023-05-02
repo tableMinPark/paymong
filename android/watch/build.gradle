@@ -45,40 +45,17 @@ android {
 }
 
 dependencies {
+    // multi-module
+    implementation project(path: ':common')
+    implementation project(path: ':ui')
+    // android
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     // wear-os
     implementation 'com.google.android.gms:play-services-wearable:18.0.0'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-
-    // android
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-
     // compose
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.activity:activity-compose:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
-
-    // compose-extension
-    implementation "androidx.wear.compose:compose-material:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
-
-    // viewPager
-    implementation "com.google.accompanist:accompanist-pager:0.20.1"
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
-
-    // GPS
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
-
-    // test
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-
-    implementation project(path: ':common')
-    implementation project(path: ':domain')
-    implementation project(path: ':ui')
 }

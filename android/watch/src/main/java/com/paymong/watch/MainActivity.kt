@@ -9,10 +9,9 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import com.paymong.common.code.ToastMessage
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.watch.WatchMain
 
 class MainActivity : ComponentActivity() {
 
@@ -28,7 +27,7 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContent {
-            WearPaymongMain()
+            WatchMain()
         }
     }
 
@@ -63,13 +62,6 @@ class MainActivity : ComponentActivity() {
                 startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0)
                 finish()
             }
-        }
-    }
-
-    @Composable
-    private fun WearPaymongMain() {
-        PaymongTheme() {
-            NavGraph()
         }
     }
 }

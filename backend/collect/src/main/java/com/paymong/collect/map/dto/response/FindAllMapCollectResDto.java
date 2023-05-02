@@ -1,4 +1,4 @@
-package com.paymong.collect.collect.dto.response;
+package com.paymong.collect.map.dto.response;
 
 import com.paymong.collect.global.vo.response.CommonCode;
 import java.util.List;

@@ -1,19 +1,16 @@
-package com.paymong.collect.collect.service;
+package com.paymong.collect.mong.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymong.collect.collect.dto.request.AddMapReqDto;
-import com.paymong.collect.collect.dto.response.FindAllMapCollectResDto;
-import com.paymong.collect.collect.dto.response.FindAllMongCollectResDto;
-import com.paymong.collect.collect.dto.response.MongDto;
-import com.paymong.collect.collect.entity.MapCollect;
-import com.paymong.collect.collect.entity.MongCollect;
-import com.paymong.collect.collect.repository.MapCollectRepository;
-import com.paymong.collect.collect.repository.MongCollectRepository;
 import com.paymong.collect.global.client.CommonServiceClient;
 import com.paymong.collect.global.code.GroupStateCode;
 import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
 import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
+import com.paymong.collect.mong.dto.response.FindAllMongCollectResDto;
+import com.paymong.collect.mong.dto.response.MongDto;
+import com.paymong.collect.mong.entity.MongCollect;
+import com.paymong.collect.mong.repository.MongCollectRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,66 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CollectService {
-
-    private final MapCollectRepository mapCollectRepository;
+public class MongService {
 
     private final MongCollectRepository mongCollectRepository;
 
     private final CommonServiceClient commonServiceClient;
 
-
     @Transactional
-    public List<FindAllMapCollectResDto> findAllMapCollect(String memberId)
-        throws RuntimeException {
-        FindAllCommonCodeResVo findAllCommonCodeResVo;
-        try {
-            ObjectMapper om = new ObjectMapper();
-
-            findAllCommonCodeResVo = om.convertValue(
-                commonServiceClient.findAllCommonCode(
-                        new FindAllCommonCodeReqVo(GroupStateCode.MAP))
-                    .getBody(), FindAllCommonCodeResVo.class);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new GatewayException();
-        }
-
-        if (findAllCommonCodeResVo.getCommonCodeList().isEmpty()) {
-            throw new RuntimeException();
-        }
-
-        List<FindAllMapCollectResDto> findAllMapCollectResDtoList =
-            findAllCommonCodeResVo.getCommonCodeList().stream()
-                .filter(FindAllMapCollectResDto::isVaildMapCode)
-                .map(FindAllMapCollectResDto::of)
-                .collect(Collectors.toList());
-
-        List<MapCollect> mapCollectList =
-            mapCollectRepository.findAllByMemberIdOrderByMapCodeDesc(Long.parseLong(memberId));
-
-        List<String> mapCollectCodeList = mapCollectList.stream()
-            .map(MapCollect::getMapCode).collect(Collectors.toList());
-
-        findAllMapCollectResDtoList = findAllMapCollectResDtoList.stream()
-            .map(e -> e.isContain(mapCollectCodeList))
-            .collect(Collectors.toList());
-
-        return findAllMapCollectResDtoList;
-    }
-
-//    @Transactional
-//    public void addMap(AddMapReqDto addMapReqDto) {
-//        if (mapCollectRepository.findByMemberIdAndMapCode(addMapReqDto.getMemberId(),
-//            addMapReqDto.getCode()).isPresent()){
-//
-//        }
-//
-//
-//    }
-
-    @Transactional
-    public FindAllMongCollectResDto findAllMongCollect(String memberId)
+    public FindAllMongCollectResDto findAllMongCollect(Long memberId)
         throws RuntimeException {
         FindAllMongCollectResDto findAllMongCollectResDto = FindAllMongCollectResDto.builder()
             .build();
@@ -110,7 +55,7 @@ public class CollectService {
             .collect(Collectors.toList());
 
         List<MongCollect> mongCollectList =
-            mongCollectRepository.findByMemberIdOrderByMongCodeDesc(Long.parseLong(memberId));
+            mongCollectRepository.findByMemberIdOrderByMongCodeDesc(memberId);
 
         List<String> mongCollectCodeList = mongCollectList.stream()
             .map(MongCollect::getMongCode).collect(
@@ -158,4 +103,14 @@ public class CollectService {
         return findAllMongCollectResDto;
     }
 
+    @Transactional
+    public void findMong(Long memberId, String code) {
+        mongCollectRepository.findByMemberIdAndMongCode(memberId, code)
+            .orElseThrow(() -> new NotFoundException());
+    }
+
+    @Transactional
+    public void addMong(Long memberId, String code) {
+        mongCollectRepository.save(MongCollect.builder().mongCode(code).memberId(memberId).build());
+    }
 }

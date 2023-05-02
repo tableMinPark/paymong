@@ -1,4 +1,4 @@
-package com.paymong.collect.collect.entity;
+package com.paymong.collect.map.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

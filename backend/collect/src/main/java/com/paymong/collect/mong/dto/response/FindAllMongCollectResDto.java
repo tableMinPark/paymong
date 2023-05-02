@@ -1,9 +1,8 @@
-package com.paymong.collect.collect.dto.response;
+package com.paymong.collect.mong.dto.response;
 
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Setter;
 
 
 @Data

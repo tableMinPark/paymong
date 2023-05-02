@@ -1,6 +1,6 @@
-package com.paymong.collect.collect.repository;
+package com.paymong.collect.map.repository;
 
-import com.paymong.collect.collect.entity.MapCollect;
+import com.paymong.collect.map.entity.MapCollect;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.paymong.paypoint.paypoint.service;
 
-import com.paymong.paypoint.paypoint.dto.AddPaypointReqDto;
-import com.paymong.paypoint.paypoint.dto.FindMapByNameResDto;
+import com.paymong.paypoint.paypoint.dto.AddPayReqDto;
+import com.paymong.paypoint.paypoint.dto.AddPointReqDto;
 import com.paymong.paypoint.paypoint.entity.PointHistory;
 import com.paymong.paypoint.paypoint.repository.PaypointRepository;
 import com.paymong.paypoint.global.pay.Pay;
@@ -18,10 +18,10 @@ import java.util.List;
 public class PaypointService {
     final public PaypointRepository paypointRepository;
 
-    public PointHistory addPay(String memberKey, String mongKey, AddPaypointReqDto addPaypointReqDto) throws Exception{
-        Long memberId = Long.parseLong(memberKey);
+    public void addPay(String memberIdStr, String mongIdStr, AddPayReqDto addPaypointReqDto) throws Exception{
+        Long memberId = Long.parseLong(memberIdStr);
         Long mongId = 0L;
-        if(!mongKey.equals("")) mongId = Long.parseLong(mongKey);
+        if(!mongIdStr.equals("")) mongId = Long.parseLong(mongIdStr);
         String action = "페이 "+ addPaypointReqDto.getContent() + " 결제";
         PointHistory pointHistory = PointHistory.builder()
                 .price(addPaypointReqDto.getPrice())
@@ -31,29 +31,40 @@ public class PaypointService {
                 .build();
         PointHistory ret =  paypointRepository.save(pointHistory);
         //가격 반영보내기
+
         String map = Pay.getMap();
-        FindMapByNameResDto findMapByNameResDto =
-        //맵보내기
+
+        //맵코드 받기
+        //FindMapByNameResDto findMapByNameResDto =
+
+        //맵코드보내기  /collect/map
 
         System.out.println(ret);
 
-        return ret;
+
 
     }
 
 
-    public void addPoint(String memberKey, AddPaypointReqDto addPaypointReqDto) throws Exception{
-        Long memberId = Long.parseLong(memberKey);
+    public PointHistory addPoint(AddPointReqDto addPointReqDto) throws Exception{
+        Long memberId = addPointReqDto.getMemberId();
+        Long mongId = addPointReqDto.getMongId();
+        String action = addPointReqDto.getContent();
+        int price = addPointReqDto.getPrice();
         PointHistory pointHistory = PointHistory.builder()
-                .price(addPaypointReqDto.getPrice())
-                .action("")
+                .price(price)
+                .action(action)
+                .memberId(memberId)
+                .mongId(mongId)
                 .build();
-
+        PointHistory ret =  paypointRepository.save(pointHistory);
+        return ret;
     }
 
-    public void findAllPaypoint(String memberKey){
+    public List<PointHistory> findAllPaypoint(String memberKey){
         Long memberId = Long.parseLong(memberKey);
         List<PointHistory> paypointList =  paypointRepository.findAllByMemberIdOrderByPointHistoryId(memberId);
         System.out.println(paypointList);
+        return paypointList;
     }
 }

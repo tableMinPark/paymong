@@ -2,7 +2,8 @@ package com.paymong.paypoint.paypoint.controller;
 
 import com.paymong.paypoint.global.code.PaypointStateCode;
 import com.paymong.paypoint.global.response.ErrorResponse;
-import com.paymong.paypoint.paypoint.dto.AddPaypointReqDto;
+import com.paymong.paypoint.paypoint.dto.AddPayReqDto;
+import com.paymong.paypoint.paypoint.dto.AddPointReqDto;
 import com.paymong.paypoint.paypoint.service.PaypointService;
 
 
@@ -19,27 +20,24 @@ import org.springframework.web.bind.annotation.*;
 public class PaypointController {
     final public PaypointService paypointService;
     @PostMapping("")
-    public ResponseEntity<Object> addPay(@RequestHeader(value = "MemberKey") String memberKey,
-                                              @RequestHeader(value = "MongKey") String mongKey,
-                                              @RequestBody AddPaypointReqDto addPaypointReqDto
+    public ResponseEntity<Object> addPay(@RequestHeader(value = "MemberId") String memberIdStr,
+                                              @RequestHeader(value = "MongId") String mongIdStr,
+                                              @RequestBody AddPayReqDto addPaypointReqDto
                                               ){
         log.info("addPay - Call");
         try {
-            paypointService.addPay(memberKey, mongKey, addPaypointReqDto);
-            return ResponseEntity.status(HttpStatus.OK).body("");
-        }catch (NumberFormatException e){
-            System.out.println("NumberFormatException");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
+            paypointService.addPay(memberIdStr, mongIdStr, addPaypointReqDto);
+            return ResponseEntity.status(HttpStatus.OK).body("zz");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
     }
 
     @PostMapping("/point")
-    public ResponseEntity<Object> addPoint(){
+    public ResponseEntity<Object> addPoint(@RequestBody AddPointReqDto addPointReqDto){
         log.info("addPoint - Call");
         try {
-
+            paypointService.addPoint(addPointReqDto);
             return ResponseEntity.status(HttpStatus.OK).body("");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
@@ -48,10 +46,10 @@ public class PaypointController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<Object> findAllPaypoint(@RequestHeader(value = "MemberKey") String memberKey){
+    public ResponseEntity<Object> findAllPaypoint(@RequestHeader(value = "MemberId") String memberIdStr){
         log.info("findAllPaypoint - Call");
         try {
-            paypointService.findAllPaypoint(memberKey);
+            paypointService.findAllPaypoint(memberIdStr);
         }catch (Exception e){
 
         }

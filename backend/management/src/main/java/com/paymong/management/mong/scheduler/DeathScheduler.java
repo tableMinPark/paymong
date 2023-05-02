@@ -66,7 +66,6 @@ public class DeathScheduler implements ManagementScheduler {
 
     @Override
     public Long getDelay() {
-//        return 3L * 60L * 60L;
-        return  5L;
+        return 3L * 60L * 60L;
     }
 }

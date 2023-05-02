@@ -12,6 +12,7 @@ import com.paymong.management.poop.vo.PoopMongReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +28,19 @@ public class PoopController {
 
     private final PoopService poopService;
     private final SchedulerService schedulerService;
+
+    @Value("${header.mong}")
+    String headerMong;
     /* 똥생성은 소켓에서 */
 
     /* 똥 삭제 PUT */
     @PutMapping
     public ResponseEntity<Object> removePoop(HttpServletRequest httpServletRequest) throws Exception{
-//        Long mongId = Long.parseLong(httpServletRequest.getHeader("mongkey"));
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
         try {
-//            if(mongId == null) throw new NullPointerException();
-//            PoopMongReqVo poopMongReqVo = new PoopMongReqVo(mongId);
-            PoopMongReqVo poopMongReqVo = new PoopMongReqVo(1L);
+            if(mongId == null) throw new NullPointerException();
+            PoopMongReqVo poopMongReqVo = new PoopMongReqVo(mongId);
+//            PoopMongReqVo poopMongReqVo = new PoopMongReqVo(1L);
             poopService.removePoop(poopMongReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){

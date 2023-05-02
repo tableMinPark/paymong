@@ -36,7 +36,7 @@ public class CommonController {
                 findAllCommonCodeReqDto);
             return ResponseEntity.ok().body(findAllCommonCodeResDto);
         } catch (NotFoundException e) {
-            return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
@@ -74,7 +74,7 @@ public class CommonController {
             FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongKey);
             return ResponseEntity.ok().body(findAllFoodResDto);
         } catch (NotFoundException e) {
-            return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }

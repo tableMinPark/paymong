@@ -4,6 +4,7 @@ import com.paymong.collect.collect.dto.response.FindAllMapCollectResDto;
 import com.paymong.collect.collect.dto.response.FindAllMongCollectResDto;
 import com.paymong.collect.collect.service.CollectService;
 import com.paymong.collect.global.code.ErrorStateCode;
+import com.paymong.collect.global.exception.GatewayException;
 import com.paymong.collect.global.response.ErrorResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,9 @@ public class CollectController {
             List<FindAllMapCollectResDto> findAllMapCollectResDto = collectService.findAllMapCollect(
                 memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (RuntimeException e) {
+        } catch (GatewayException e){
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
+        } catch(RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
         }
     }
@@ -59,6 +62,8 @@ public class CollectController {
             FindAllMongCollectResDto findAllMapCollectResDto = collectService.findAllMongCollect(
                 memberKey);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
+        } catch (GatewayException e){
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MONG_RUNTIME));
         }

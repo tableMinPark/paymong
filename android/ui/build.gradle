@@ -55,6 +55,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.activity:activity-compose:$compose_ui_version"
+    implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
     implementation "androidx.compose.foundation:foundation-layout:$compose_ui_version"

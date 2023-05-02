@@ -1,5 +1,6 @@
 package com.paymong
 
+import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -15,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.games.GamesSignInClient
+import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.PlayGamesSdk
 import com.paymong.ui.theme.PaymongTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,6 +26,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PlayGamesSdk.initialize(this)
 
         if (!isNotificationPermissionGranted()){
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PaypointStateCode implements BasicCode{
     SUCCESS("200","성공"),
-
+    NOTEXIST("400", "존재하지 않는 ID"),
     UNKNOWN("555", "알 수 없음");
     private final String code;
     private final String message;

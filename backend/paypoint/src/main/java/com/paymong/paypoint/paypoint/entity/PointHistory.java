@@ -24,11 +24,11 @@ public class PointHistory {
     @Column(name = "price")
     private int price;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "action")
+    private String action;
 
-    @Column(name = "pay_dt")
-    private LocalDateTime payDt;
+    @Column(name = "reg_dt")
+    private LocalDateTime regDt;
 
     @Column(name = "member_id")
     private Long memberId;

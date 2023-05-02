@@ -73,22 +73,22 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
-            // Header 에 memberKey 추가
-            String memberKey = refreshToken.get().getMemberKey();
-            Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberKey), 1).orElse(
+            // Header 에 memberId 추가
+            String memberId = refreshToken.get().getMemberKey();
+            Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberId), 1).orElse(
                 Mong.builder().build());
 
-            String mongKey = String.valueOf(mong.getMongId());
+            String mongId = String.valueOf(mong.getMongId());
 
-            log.info("memberKey = {}", memberKey);
-            log.info("mongKey = {}", mongKey);
+            log.info("memberId = {}", memberId);
+            log.info("mongId = {}", mongId);
 
-            if (mongKey.equals("null")) {
-                mongKey = "";
+            if (mongId.equals("null")) {
+                mongId = "";
             }
 
-            exchange.getRequest().mutate().header("MemberKey", memberKey).build();
-            exchange.getRequest().mutate().header("MongKey", mongKey).build();
+            exchange.getRequest().mutate().header("MemberId", memberId).build();
+            exchange.getRequest().mutate().header("MongId", mongId).build();
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

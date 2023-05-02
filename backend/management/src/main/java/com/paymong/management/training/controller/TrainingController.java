@@ -3,6 +3,7 @@ package com.paymong.management.training.controller;
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.training.dto.WalkingReqDto;
 import com.paymong.management.training.service.TrainingService;
@@ -36,12 +37,15 @@ public class TrainingController {
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
-        } catch (NotFoundMongException e){
+        }catch (NotFoundMongException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
+        }catch (UnknownException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
         }
     }
 
@@ -66,6 +70,9 @@ public class TrainingController {
         }catch (NotFoundActionException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
+        }catch (UnknownException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
         }
     }
 }

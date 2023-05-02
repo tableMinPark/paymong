@@ -46,9 +46,9 @@ public class PaypointService {
     }
 
 
-    public PointHistory addPoint(AddPointReqDto addPointReqDto) throws Exception{
-        Long memberId = addPointReqDto.getMemberId();
-        Long mongId = addPointReqDto.getMongId();
+    public PointHistory addPoint(String memberIdStr, String mongIdStr, AddPointReqDto addPointReqDto) throws Exception{
+        Long memberId = Long.parseLong(memberIdStr);
+        Long mongId = Long.parseLong(mongIdStr);
         String action = addPointReqDto.getContent();
         int price = addPointReqDto.getPrice();
         PointHistory pointHistory = PointHistory.builder()

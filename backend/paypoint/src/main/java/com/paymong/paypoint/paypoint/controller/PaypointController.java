@@ -27,17 +27,19 @@ public class PaypointController {
         log.info("addPay - Call");
         try {
             paypointService.addPay(memberIdStr, mongIdStr, addPaypointReqDto);
-            return ResponseEntity.status(HttpStatus.OK).body("zz");
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
     }
 
     @PostMapping("/point")
-    public ResponseEntity<Object> addPoint(@RequestBody AddPointReqDto addPointReqDto){
+    public ResponseEntity<Object> addPoint(@RequestHeader(value = "MemberId") String memberIdStr,
+                                           @RequestHeader(value = "MongId") String mongIdStr,
+                                            @RequestBody AddPointReqDto addPointReqDto){
         log.info("addPoint - Call");
         try {
-            paypointService.addPoint(addPointReqDto);
+            paypointService.addPoint(memberIdStr, mongIdStr, addPointReqDto);
             return ResponseEntity.status(HttpStatus.OK).body("");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));

@@ -12,11 +12,15 @@ import com.paymong.management.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,14 +29,18 @@ public class FeedController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedController.class);
     private final FeedService feedService;
+    @Value("${header.mong}")
+    String headerMong;
     /* 음식 먹이기 */
-    @PostMapping("/food")
-    public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto) throws Exception{
+    @PutMapping("/food")
+    public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
         try {
-            if(feedFoodReqVo.getFoodCode() == null){
+            if(feedFoodReqVo.getFoodCode() == null || mongId == null){
                 throw new NullPointerException();
             }
+            feedFoodReqVo.setMongId(mongId);
             feedService.feedFood(feedFoodReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
@@ -48,13 +56,15 @@ public class FeedController {
     }
 
     /* 간식 먹이기 */
-    @PostMapping("/snack")
-    public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto) throws Exception{
+    @PutMapping("/snack")
+    public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
         try {
-            if(feedSnackReqVo.getSnackCode() == null){
+            if(feedSnackReqVo.getSnackCode() == null || mongId == null){
                 throw new NullPointerException();
             }
+            feedSnackReqVo.setMongId(mongId);
             feedService.feedSnack(feedSnackReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){

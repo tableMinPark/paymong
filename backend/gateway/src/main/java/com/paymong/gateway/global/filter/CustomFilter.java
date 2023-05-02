@@ -1,7 +1,9 @@
 package com.paymong.gateway.global.filter;
 
+import com.paymong.gateway.global.entity.Mong;
 import com.paymong.gateway.global.redis.RefreshToken;
 import com.paymong.gateway.global.redis.RefreshTokenRedisRepository;
+import com.paymong.gateway.global.repository.MongRepository;
 import com.paymong.gateway.global.security.TokenProvider;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +26,19 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
+    private final MongRepository mongRepository;
+
     // 설정 정보를 제공하는 클래스
     public static class Config {
         // 설정 정보가 필요한 경우 명시
     }
 
     public CustomFilter(TokenProvider tokenProvider,
-        RefreshTokenRedisRepository refreshTokenRedisRepository) {
+        RefreshTokenRedisRepository refreshTokenRedisRepository, MongRepository mongRepository) {
         super(Config.class);
         this.tokenProvider = tokenProvider;
         this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        this.mongRepository = mongRepository;
     }
 
     // 필터의 동작을 정의한 메서드
@@ -68,12 +73,22 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
-            // Header 에 memberKey 추가
-            String memberKey = refreshToken.get().getMemberKey();
-            String mongKey = refreshToken.get().getMongKey();
+            // Header 에 memberId 추가
+            String memberId = refreshToken.get().getMemberKey();
+            Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberId), 1).orElse(
+                Mong.builder().build());
 
-            exchange.getRequest().mutate().header("MemberKey", memberKey).build();
-            exchange.getRequest().mutate().header("mongKey", mongKey).build();
+            String mongId = String.valueOf(mong.getMongId());
+
+            log.info("memberId = {}", memberId);
+            log.info("mongId = {}", mongId);
+
+            if (mongId.equals("null")) {
+                mongId = "";
+            }
+
+            exchange.getRequest().mutate().header("MemberId", memberId).build();
+            exchange.getRequest().mutate().header("MongId", mongId).build();
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

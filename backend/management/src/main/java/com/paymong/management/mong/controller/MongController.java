@@ -3,6 +3,7 @@ package com.paymong.management.mong.controller;
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.dto.AddMongReqDto;
 import com.paymong.management.mong.dto.AddMongResDto;
 import com.paymong.management.mong.dto.FindMongReqDto;
@@ -12,13 +13,15 @@ import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
 import com.paymong.management.mong.vo.FindMongReqVo;
 import com.paymong.management.mong.vo.FindMongResVo;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,15 +30,23 @@ public class MongController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongController.class);
     private final MongService mongService;
+    private final SchedulerService schedulerService;
+
+    @Value("${header.member}")
+    String headerMember;
     /* 몽 생성 */
     @PostMapping
-    public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto) throws Exception{
+    public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto, HttpServletRequest httpServletRequest) throws Exception{
         try{
             LOGGER.info("name : {}", addMongReqDto.getName());
             if(addMongReqDto.getName() == null){
                 throw new NullPointerException();
             }
+            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
+            if(memberId == null) throw new NullPointerException();
+
             AddMongReqVo addMongReqVo = new AddMongReqVo(addMongReqDto);
+            addMongReqVo.setMemberId(memberId);
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);
@@ -66,6 +77,23 @@ public class MongController {
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }
+    }
 
+    @GetMapping("/start")
+    public ResponseEntity<Object> startReduceHealth(@RequestParam("mongId") Long mongId){
+        schedulerService.startOf(1, mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/stop")
+    public ResponseEntity<Object> stopReduceHealth(@RequestParam("mongId") Long mongId){
+        schedulerService.stopOf(1, mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/death/stop")
+    public ResponseEntity<Object> deathMong(@RequestParam("mongId") Long mongId){
+        schedulerService.stopOf(3, mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 }

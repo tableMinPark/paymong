@@ -1,4 +1,4 @@
-package com.paymong.common.dto.request
+package com.paymong.data.dto.request
 
 import com.paymong.common.code.MessageType
 

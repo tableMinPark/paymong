@@ -1,8 +1,8 @@
-package com.paymong.common.entity
+package com.paymong.domain.entity
 
 import java.time.LocalDateTime
 
-data class FoodEntity(
+data class Food(
     val name: String,
     val foodCode: String,
     val price: Int,

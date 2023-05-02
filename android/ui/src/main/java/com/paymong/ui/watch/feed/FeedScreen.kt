@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -20,13 +19,10 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.feed.FeedBuyListViewModel
 import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.common.R
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
-import com.paymong.ui.watch.activity.BigWatch
-import com.paymong.ui.watch.activity.SmallWatch
 import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable

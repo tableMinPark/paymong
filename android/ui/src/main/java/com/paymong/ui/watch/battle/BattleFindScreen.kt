@@ -1,8 +1,6 @@
 package com.paymong.ui.watch.battle
 
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -85,7 +83,7 @@ fun BattleFind(
             val chCode : CharacterCode
             val player1: Painter
 
-            if (battleViewModel.battleActiveEntity.order == "A") {
+            if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
                 player1 = painterResource(chCode.code)
@@ -116,7 +114,7 @@ fun BattleFind(
             val chCode : CharacterCode
             val player2: Painter
 
-            if (battleViewModel.battleActiveEntity.order == "A") {
+            if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
                 player2 = painterResource(chCode.code)

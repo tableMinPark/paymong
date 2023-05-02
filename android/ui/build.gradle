@@ -50,39 +50,36 @@ android {
     }
 }
 dependencies {
-    // compose-ui
-    implementation 'com.android.volley:volley:1.2.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation "androidx.activity:activity-compose:$compose_ui_version"
+    // multi-module
+    implementation project(path: ':common')
+    implementation project(path: ':domain')
+    // games
     implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    // coil (gif)
+    implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation("io.coil-kt:coil-gif:1.4.0")
+    // system-ui
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+    // compose
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
     implementation "androidx.compose.foundation:foundation-layout:$compose_ui_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
-
-    // compose-wear-ui
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    // compose-watch
     implementation "androidx.wear.compose:compose-material:$wear_compose_version"
     implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
     implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
-
-    // viewPager
+    // viewPager-watch
     implementation "com.google.accompanist:accompanist-pager:0.20.1"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
-
     // test
     testImplementation 'junit:junit:4.12'
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-
-    // coil (gif)
-    implementation("io.coil-kt:coil-compose:1.4.0")
-    implementation("io.coil-kt:coil-gif:1.4.0")
-
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
-
-    implementation project(path: ':common')
-    implementation project(path: ':domain')
 }

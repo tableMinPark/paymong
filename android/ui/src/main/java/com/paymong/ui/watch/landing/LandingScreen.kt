@@ -1,14 +1,11 @@
 package com.paymong.ui.watch.landing
 
-import android.graphics.Paint.Align
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -18,7 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import coil.ImageLoader
@@ -27,14 +23,9 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.common.R
 import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.watch.feed.BigWatch
-import com.paymong.ui.watch.feed.SmallWatch
-import com.paymong.ui.watch.main.MainInfoUI
 
 @Composable
 fun Landing(navController: NavController){

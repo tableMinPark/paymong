@@ -1,4 +1,4 @@
-package com.paymong.common.dto.response
+package com.paymong.data.dto.response
 
 data class BattleErrorResDto(
     var code: String,

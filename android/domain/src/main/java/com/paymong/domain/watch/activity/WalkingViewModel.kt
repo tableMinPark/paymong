@@ -51,14 +51,12 @@ class WalkingViewModel : ViewModel() {
         stepSensorEventListener = object : SensorEventListener {
             override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) { }
             override fun onSensorChanged(event: SensorEvent) {
-                event?.let {
-                    if (startCount == 0) {
-                        startCount = event.values[0].toInt()
-                    }
-                    var nowCount = event.values[0].toInt()
-                    count = nowCount - startCount
-//                    count += event.values[0].toInt()
+                if (startCount == 0) {
+                    startCount = event!!.values[0].toInt()
                 }
+                var nowCount = event!!.values[0].toInt()
+                count = nowCount - startCount
+//                    count += event.values[0].toInt()
             }
         }
         sensorManager.registerListener(stepSensorEventListener, stepSensor, SensorManager.SENSOR_DELAY_FASTEST)

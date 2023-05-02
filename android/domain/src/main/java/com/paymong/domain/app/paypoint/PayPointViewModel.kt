@@ -3,7 +3,7 @@ package com.paymong.domain.app.paypoint
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.common.entity.Point
+import com.paymong.domain.entity.Point
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 

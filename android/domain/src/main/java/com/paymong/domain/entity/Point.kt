@@ -1,4 +1,4 @@
-package com.paymong.common.entity
+package com.paymong.domain.entity
 
 data class Point(
     val text: String,

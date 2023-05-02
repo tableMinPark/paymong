@@ -1,4 +1,4 @@
-package com.paymong.common.dto.response
+package com.paymong.data.dto.response
 
 import com.google.gson.annotations.SerializedName
 

@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.paymong.common.code.MessageType
-import com.paymong.common.dto.request.BattleConnectReqDto
-import com.paymong.common.dto.request.BattleMessageReqDto
+import com.paymong.data.dto.request.BattleConnectReqDto
+import com.paymong.data.dto.request.BattleMessageReqDto
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket

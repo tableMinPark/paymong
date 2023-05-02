@@ -1,10 +1,14 @@
-package com.paymong
+package com.paymong.ui.app
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.ui.app.collect.Collect
@@ -19,7 +23,19 @@ import com.paymong.ui.app.main.Main
 import com.paymong.ui.app.paypoint.PayPoint
 
 @Composable
-fun NavGraph (navController: NavHostController){
+fun AppMain() {
+    Scaffold(
+    ) {
+        Box(Modifier.padding(it)){
+            AppMainNav()
+        }
+    }
+}
+
+@Composable
+fun AppMainNav(){
+    val navController = rememberNavController()
+
     NavHost(
         navController = navController,
         startDestination = AppNavItem.Landing.route)

@@ -1,8 +1,5 @@
 package com.paymong.ui.watch.battle
 
-import android.graphics.Paint.Align
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -61,7 +57,7 @@ fun BattleEnd(
             val chCode : CharacterCode
             val player: Painter
 
-            if (battleViewModel.battleActiveEntity.order == "A") {
+            if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
                 player = painterResource(chCode.code)

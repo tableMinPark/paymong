@@ -1,6 +1,6 @@
-package com.paymong.common.entity
+package com.paymong.domain.entity
 
-data class BattleActiveEntity(
+data class BattleActive(
     val battleRoomId: String,
     val nowTurn: Int,
     val totalTurn: Int,

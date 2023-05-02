@@ -23,7 +23,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-//import com.android.volley.toolbox.ImageLoader
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.WatchNavItem

@@ -1,4 +1,4 @@
-package com.paymong.common.dto.request
+package com.paymong.data.dto.request
 
 data class AddPayPointReqDto(
     val content: String,

@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
-import com.paymong.common.entity.FoodEntity
+import com.paymong.domain.entity.Food
 
 class FeedBuyListViewModel constructor(
     private val stateHandle: SavedStateHandle,
@@ -23,7 +23,7 @@ class FeedBuyListViewModel constructor(
     var isCanBuy by mutableStateOf(false)
 
     private lateinit var load : Job
-    private var foodEntityList = mutableStateListOf<FoodEntity>()
+    private var foodList = mutableStateListOf<Food>()
     private var currentFoodPosition by mutableStateOf(0)
 
     init {
@@ -35,21 +35,21 @@ class FeedBuyListViewModel constructor(
             payPoint = 100000
 
             // meal
-            foodEntityList.add(FoodEntity("별사탕", "FD000", 3, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("사과", "FD001", 500, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("삼각김밥", "FD002", 500, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("샌드위치", "FD003", 500, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("피자", "FD004", 1000, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("닭다리", "FD005", 1000, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("스테이크", "FD006", 1000, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("우주식품", "FD007", 5000, LocalDateTime.now()))
+            foodList.add(Food("별사탕", "FD000", 3, LocalDateTime.now()))
+            foodList.add(Food("사과", "FD001", 500, LocalDateTime.now()))
+            foodList.add(Food("삼각김밥", "FD002", 500, LocalDateTime.now()))
+            foodList.add(Food("샌드위치", "FD003", 500, LocalDateTime.now()))
+            foodList.add(Food("피자", "FD004", 1000, LocalDateTime.now()))
+            foodList.add(Food("닭다리", "FD005", 1000, LocalDateTime.now()))
+            foodList.add(Food("스테이크", "FD006", 1000, LocalDateTime.now()))
+            foodList.add(Food("우주식품", "FD007", 5000, LocalDateTime.now()))
             // snack
-            foodEntityList.add(FoodEntity("초콜릿", "SN000", 300, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("사탕", "SN001", 300, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("음료수", "SN002", 300, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("쿠키", "SN003", 600, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("케이크", "SN004", 600, LocalDateTime.now()))
-            foodEntityList.add(FoodEntity("감자튀김", "SN005", 600, LocalDateTime.now()))
+            foodList.add(Food("초콜릿", "SN000", 300, LocalDateTime.now()))
+            foodList.add(Food("사탕", "SN001", 300, LocalDateTime.now()))
+            foodList.add(Food("음료수", "SN002", 300, LocalDateTime.now()))
+            foodList.add(Food("쿠키", "SN003", 600, LocalDateTime.now()))
+            foodList.add(Food("케이크", "SN004", 600, LocalDateTime.now()))
+            foodList.add(Food("감자튀김", "SN005", 600, LocalDateTime.now()))
 
             changeCurrentFoodPosition()
         }
@@ -58,24 +58,24 @@ class FeedBuyListViewModel constructor(
     fun prevButtonClick() {
         currentFoodPosition--
         if (currentFoodPosition < 0)
-            currentFoodPosition = foodEntityList.size - 1
+            currentFoodPosition = foodList.size - 1
         changeCurrentFoodPosition()
     }
 
     fun nextButtonClick() {
         currentFoodPosition++
-        if (currentFoodPosition >= foodEntityList.size)
+        if (currentFoodPosition >= foodList.size)
             currentFoodPosition = 0
         changeCurrentFoodPosition()
     }
 
     fun selectButtonClick() {
-        println(foodEntityList[currentFoodPosition])
+        println(foodList[currentFoodPosition])
         println("선택완료!")
     }
 
     private fun changeCurrentFoodPosition() {
-        val nowFood = foodEntityList[currentFoodPosition]
+        val nowFood = foodList[currentFoodPosition]
         name = nowFood.name
         foodCode = nowFood.foodCode
         price = nowFood.price

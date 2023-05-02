@@ -17,16 +17,14 @@ import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
-import com.paymong.common.dto.response.BattleErrorResDto
-import com.paymong.common.dto.response.BattleMessageResDto
-import com.paymong.common.entity.BattleActiveEntity
+import com.paymong.data.dto.response.BattleErrorResDto
+import com.paymong.data.dto.response.BattleMessageResDto
+import com.paymong.domain.entity.BattleActive
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.time.Duration
-import java.time.LocalDateTime
 
 @SuppressLint("MissingPermission")
 class BattleViewModel (application: Application): AndroidViewModel(application)  {
@@ -34,7 +32,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     private var context : Context
 
     var matchingState by mutableStateOf(MatchingCode.FINDING)
-    var battleActiveEntity: BattleActiveEntity by mutableStateOf(BattleActiveEntity())
+    var battleActive: BattleActive by mutableStateOf(BattleActive())
 
     private var characterId = 0L
 
@@ -70,7 +68,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     private lateinit var socketJob : Job
     private lateinit var socketService: SocketService
     private val listener: WebSocketListener = object : WebSocketListener() {
-        override fun onMessage(webSocket: WebSocket?, text: String) {
+        override fun onMessage(webSocket: WebSocket, text: String) {
             try {
                 Log.e("battle", text)
 
@@ -81,9 +79,9 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
                     Log.e("battle-matching", battleErrorResDto.toString())
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
-                    Log.e("battle-matching", battleActiveEntity.toString())
+                    Log.e("battle-matching", battleActive.toString())
                     // 탈주
-                    battleActiveEntity = BattleActiveEntity(
+                    battleActive = BattleActive(
                         battleMessageResDto.battleRoomId,
                         battleMessageResDto.nowTurn,
                         battleMessageResDto.totalTurn,
@@ -95,11 +93,11 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
                         battleMessageResDto.healthB
                     )
 
-                    if (battleActiveEntity.nowTurn == 0) {
+                    if (battleActive.nowTurn == 0) {
                         // 시작
-                        findCharacterId(battleActiveEntity.battleRoomId)
+                        findCharacterId(battleActive.battleRoomId)
                         matchingState = MatchingCode.FOUND
-                    } else if (battleActiveEntity.nowTurn == -1) {
+                    } else if (battleActive.nowTurn == -1) {
                         // 게임 끝
                         socketService.disConnect(characterId)
                         matchingState = MatchingCode.END
@@ -161,7 +159,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
                 mFusedLocationProviderClient.requestLocationUpdates(
                     mLocationRequest,
                     mLocationCallback,
-                    Looper.myLooper()
+                    Looper.myLooper()!!
                 )
             }
         }
@@ -236,7 +234,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
             } while(battleSelectTime <= 1.0)
 
             matchingState = MatchingCode.SELECT_AFTER
-            socketService.select(selectState, characterId, battleActiveEntity.battleRoomId, battleActiveEntity.order)
+            socketService.select(selectState, characterId, battleActive.battleRoomId, battleActive.order)
         }
     }
 
@@ -247,14 +245,14 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     fun battleEnd() {
         Log.d("battle", "battleEnd - Call")
         viewModelScope.launch {
-            if (battleActiveEntity.order == "A") {
+            if (battleActive.order == "A") {
                 characterCode = characterCodeA
-                if (battleActiveEntity.damageA > battleActiveEntity.damageB) {
+                if (battleActive.damageA > battleActive.damageB) {
                     win = true
                 }
             } else {
                 characterCode = characterCodeB
-                if (battleActiveEntity.damageB > battleActiveEntity.damageA) {
+                if (battleActive.damageB > battleActive.damageA) {
                     win = true
                 }
             }
@@ -264,10 +262,7 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     }
 
     private fun findCharacterId(battleRoomId: String) {
-        Log.d("viewmodel", "findCharacterId()")
-        val sp : List<String> = battleRoomId.split("-")
-        val characterIdA = sp[0]
-        val characterIdB = sp[1]
+        Log.d("battle", battleRoomId)
         
         // api 호출
 

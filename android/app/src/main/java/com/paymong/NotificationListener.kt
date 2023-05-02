@@ -12,12 +12,12 @@ class NotificationListener : NotificationListenerService() {
     init {
         start = LocalDateTime.now()
     }
-    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+    override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
 
-        val extras = sbn?.notification?.extras
-        val packageName: String = sbn?.packageName ?: ""
-        val message: List<String> = extras?.get(Notification.EXTRA_TITLE).toString().split("\\")
+        val extras = sbn.notification.extras
+        val packageName: String = sbn.packageName ?: ""
+        val message: List<String> = extras.get(Notification.EXTRA_TITLE).toString().split("\\")
 
         val content : String = message[0]
         val price : Int = message[1].toInt()

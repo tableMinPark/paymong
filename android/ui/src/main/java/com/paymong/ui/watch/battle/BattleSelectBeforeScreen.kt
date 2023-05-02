@@ -1,47 +1,27 @@
 package com.paymong.ui.watch.battle
 
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun BattleSelectBefore(

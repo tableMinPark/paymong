@@ -3,8 +3,6 @@ package com.paymong.ui.app.collect
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +20,6 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.collect.CollectViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 

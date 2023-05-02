@@ -1,43 +1,21 @@
 package com.paymong.ui.app.landing
 
-import android.app.Activity
-import android.content.Context
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.landing.LandingViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.ui.app.component.BgGif
-import com.paymong.common.navigation.WatchNavItem
 import kotlinx.coroutines.delay
 
 @Composable

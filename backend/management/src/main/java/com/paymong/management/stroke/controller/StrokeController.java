@@ -8,6 +8,7 @@ import com.paymong.management.stroke.vo.StrokeMongReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,11 @@ public class StrokeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StrokeController.class);
     private final StrokeService strokeService;
+    @Value("${header.mong}")
+    String headerMong;
     @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("mongkey"));
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
 
         try {
             if(mongId == null) {

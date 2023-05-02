@@ -78,9 +78,10 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResDto register(LoginReqDto loginReqDto){
+    public LoginResDto register(LoginReqDto loginReqDto) {
         String password = passwordEncoder.encode(UUID.randomUUID().toString());
-        Member member = Member.builder().playerId(loginReqDto.getPlayerId()).password(password).build();
+        Member member = Member.builder().playerId(loginReqDto.getPlayerId()).password(password)
+            .build();
         memberRepository.save(member);
         Auth auth = Auth.of("USER", member);
         authRepository.save(auth);

@@ -8,7 +8,6 @@ import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.TimeoutException;
 import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.response.ErrorResponse;
-import com.paymong.auth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-
-    private final MemberService memberService;
-
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginReqDto loginRequestDto) {
@@ -61,5 +57,24 @@ public class AuthController {
 
         }
     }
+
+    //    @PostMapping("/reissue")
+//    private ResponseEntity<Object> reissue(
+//        @RequestHeader(value = "RefreshToken", required = false) String refreshToken) {
+//        log.info("reissue - Call");
+//
+//        try {
+//            LoginResDto loginResponse = authService.reissue(refreshToken);
+//            return ResponseEntity.ok().body(loginResponse);
+//        } catch (UnAuthException e) {
+//            return ResponseEntity.badRequest()
+//                .body(new ErrorResponse(ErrorStateCode.UNAUTHORIXED));
+//        } catch (NotFoundException e) {
+//            return ResponseEntity.badRequest()
+//                .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+//        }
+//    }
 
 }

@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.android.gms.games.GamesSignInClient
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
@@ -15,7 +14,6 @@ import com.paymong.ui.app.condition.Condition
 import com.paymong.ui.app.help.Help
 import com.paymong.ui.app.info_detail.InfoDetail
 import com.paymong.ui.app.landing.Landing
-import com.paymong.ui.app.landing.LandingLogin
 import com.paymong.ui.app.login.Login
 import com.paymong.ui.app.main.Main
 import com.paymong.ui.app.paypoint.PayPoint
@@ -28,9 +26,6 @@ fun NavGraph (navController: NavHostController){
     {
         composable(route = AppNavItem.Landing.route){
             Landing(navController)
-        }
-        composable(route = AppNavItem.LandingLogin.route){
-            LandingLogin(navController)
         }
         composable(route = AppNavItem.Login.route){
             Login(navController)

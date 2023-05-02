@@ -51,8 +51,6 @@ fun LandingUI(
     navController: NavController,
     viewModel: LandingViewModel
 ) {
-    val context = LocalContext.current as Activity
-    val sharedPref = context.getPreferences(Context.MODE_PRIVATE)
     LaunchedEffect(key1 = true){
         delay(2000)
         if(viewModel.id != "") {
@@ -66,7 +64,7 @@ fun LandingUI(
                 launchSingleTop =true
             }
         } else{
-            navController.navigate(AppNavItem.LandingLogin.route)
+            navController.navigate(AppNavItem.Login.route)
         }
     }
     

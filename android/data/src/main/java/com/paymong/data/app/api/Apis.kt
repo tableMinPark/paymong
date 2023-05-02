@@ -1,4 +1,4 @@
-package com.paymong.common.api
+package com.paymong.data.app.api
 
 import com.paymong.common.dto.request.Register
 import retrofit2.Call

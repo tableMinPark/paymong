@@ -2,6 +2,8 @@ package com.paymong.management.training.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.client.CommonServiceClient;
+import com.paymong.management.global.client.PaypointServiceClient;
+import com.paymong.management.global.dto.AddPayDto;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.mong.entity.Mong;
@@ -24,6 +26,7 @@ public class TrainingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
     private final MongRepository mongRepository;
     private final CommonServiceClient commonServiceClient;
+    private final PaypointServiceClient paypointServiceClient;
 
     @Transactional
     public void training(Long mongId) throws Exception{
@@ -40,6 +43,7 @@ public class TrainingService {
         if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
         FindStatusResDto status = om.convertValue(response.getBody(), FindStatusResDto.class);
 
+        ResponseEntity<Object> pay = paypointServiceClient.addaddPay("1","1", new AddPayDto("test입니다.", 22));
         mong.setStrength(mong.getStrength() + status.getStrength());
         mong.setHealth(mong.getHealth() + status.getHealth() < 0 ? 0 : mong.getHealth() + status.getHealth());
         mong.setSatiety(mong.getSatiety() + status.getSatiety() < 0 ? 0 : mong.getSatiety() + status.getSatiety());

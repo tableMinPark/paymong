@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.activity
 
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -70,7 +71,7 @@ fun TrainingActiveUI(
     // Background
     val img = painterResource(R.drawable.training_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-
+    TrainingBackgroundGif()
 
     if (screenWidthDp < 200) {
         SmallWatch(   navController, viewModel)
@@ -130,6 +131,36 @@ fun LoadingGif(
 //            .padding(top = 10.dp)
     )
 }
+
+@ExperimentalCoilApi
+@Composable
+fun TrainingBackgroundGif(
+
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.training_bg_gif,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
 
 @Composable
 fun SmallWatch (

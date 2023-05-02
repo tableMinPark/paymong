@@ -33,6 +33,7 @@ import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.activity.LoadingGif
+import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
 fun BattleLanding(
@@ -57,6 +58,7 @@ fun BattleLanding(
 
 
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+    MainBackgroundGif()
     Column(
         verticalArrangement = Arrangement.Center,
 
@@ -65,14 +67,16 @@ fun BattleLanding(
             .clickable {
                 navController.navigate(WatchNavItem.BattleWait.route) {
                     popUpTo(0)
-                    launchSingleTop =true
+                    launchSingleTop = true
                 }
                 battleViewModel.battleWait()
             }
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(bottom=10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp)
         ) {
             Text(text = "PAYMONG",
                 textAlign = TextAlign.Center,
@@ -93,7 +97,9 @@ fun BattleLanding(
         }
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
         ) {
             Text(
                 text = "터치해서 배틀하기",
@@ -119,31 +125,3 @@ fun BattlePreview() {
     }
 }
 
-@ExperimentalCoilApi
-@Composable
-fun LoadingGif(
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
-            if (Build.VERSION.SDK_INT >= 28) {
-                add(ImageDecoderDecoder(context))
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = R.drawable.loading,
-            builder = {
-                size(OriginalSize)
-            }
-        ),
-        contentDescription = null,
-        modifier = Modifier
-//            .padding(top = 10.dp)
-    )
-}

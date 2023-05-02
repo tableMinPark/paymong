@@ -33,6 +33,7 @@ import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.landing.MainBackgroundGif
 
 
 @Composable
@@ -71,7 +72,7 @@ fun BattleWait(
 
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-
+    MainBackgroundGif()
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()

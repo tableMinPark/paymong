@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +30,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
@@ -88,7 +96,7 @@ fun BattleActive(
 
     val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-
+    BattleBackgroundGif()
     val defence = painterResource(R.drawable.defence)
     val attack = painterResource(R.drawable.attack)
 
@@ -194,3 +202,4 @@ fun BattleActivePreview() {
         BattleActive(navController, viewModel)
     }
 }
+

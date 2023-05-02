@@ -1,11 +1,13 @@
 package com.paymong.ui.watch.main
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,11 +16,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.google.accompanist.pager.*
+import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
 import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.watch.landing.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class)
@@ -34,6 +44,7 @@ fun Main(
     var bgCode = MapCode.valueOf(findCode)
     var bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+    MainBackgroundGif()
     Column {
         HorizontalPager(
             count = 4,
@@ -73,3 +84,4 @@ fun MainPreview() {
         Main(animationState, pagerState, coroutineScope, navController)
     }
 }
+

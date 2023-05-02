@@ -29,6 +29,7 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
 fun BattleEnd(
@@ -44,7 +45,7 @@ fun BattleEnd(
 
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-
+    MainBackgroundGif()
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -65,7 +66,9 @@ fun BattleEnd(
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top= 50.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 50.dp)
         ) {
             if (battleViewModel.win) {
                 val win = painterResource(R.drawable.win)
@@ -78,7 +81,9 @@ fun BattleEnd(
 
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top= 20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
         ) {
         Box(
             modifier = Modifier
@@ -97,14 +102,15 @@ fun BattleEnd(
 
                         navController.navigate(WatchNavItem.BattleLanding.route) {
                             popUpTo(0)
-                            launchSingleTop =true
+                            launchSingleTop = true
                         }
 
                     }
             )
             Text(
                 text = "종료",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .fillMaxHeight()
                     .wrapContentHeight(Alignment.CenterVertically)
                     .wrapContentWidth(Alignment.CenterHorizontally),

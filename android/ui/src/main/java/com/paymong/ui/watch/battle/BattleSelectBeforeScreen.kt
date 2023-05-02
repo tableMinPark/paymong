@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -22,6 +24,12 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -32,6 +40,7 @@ import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.landing.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -70,6 +79,7 @@ fun BattleSelectBefore(
 
     val bg = painterResource(R.drawable.main_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
+    MainBackgroundGif()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -96,3 +106,4 @@ fun BattleSelectBeforePreview() {
         BattleSelectBefore(navController ,viewModel)
     }
 }
+

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ public class FeedController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedController.class);
     private final FeedService feedService;
     /* 음식 먹이기 */
-    @PostMapping("/food")
+    @PutMapping("/food")
     public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         try {
@@ -48,7 +49,7 @@ public class FeedController {
     }
 
     /* 간식 먹이기 */
-    @PostMapping("/snack")
+    @PutMapping("/snack")
     public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         try {

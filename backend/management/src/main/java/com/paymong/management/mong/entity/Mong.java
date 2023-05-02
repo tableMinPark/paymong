@@ -54,6 +54,8 @@ public class Mong {
     private LocalTime sleepStart;
     @Column(name = "sleep_end")
     private LocalTime sleepEnd;
-    @Column(name = "complete")
-    private Boolean complete;
+    @Column(name = "active")
+    private Boolean active;
+    @Column(name = "is_sleep")
+    private Boolean isSleep;
 }

@@ -69,6 +69,7 @@ public class CommonController {
     public ResponseEntity<Object> findAllFood(@RequestHeader(value = "Mongkey") String mongKey,
         @PathVariable("foodCategory") String foodCategory) {
         log.info("findAllFood - Call");
+        log.info("foodCategory - {}", foodCategory);
         try {
             FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongKey);
             return ResponseEntity.ok().body(findAllFoodResDto);

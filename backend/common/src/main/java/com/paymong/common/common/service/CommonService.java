@@ -16,6 +16,7 @@ import com.paymong.common.global.client.PayPointServiceClient;
 import com.paymong.common.global.exception.NotFoundException;
 import com.paymong.common.global.vo.request.FindLastBuyReqVo;
 import com.paymong.common.global.vo.response.FindLastBuyResVo;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -71,10 +72,15 @@ public class CommonService {
 
         FindAllFoodResDto findAllFoodResDto = new FindAllFoodResDto(
             commonCodeList.stream().map(e -> {
-                ObjectMapper om = new ObjectMapper();
-                FindLastBuyResVo findLastBuyResVo = om.convertValue(
-                    payPointServiceClient.findLastBuy(new FindLastBuyReqVo(foodCategory, mongKey))
-                        .getBody(), FindLastBuyResVo.class);
+                // payPointService 완성되면 마치면 연결해보기
+//                ObjectMapper om = new ObjectMapper();
+//                FindLastBuyResVo findLastBuyResVo = om.convertValue(
+//                    payPointServiceClient.findLastBuy(new FindLastBuyReqVo(foodCategory, mongKey))
+//                        .getBody(), FindLastBuyResVo.class);
+
+                FindLastBuyResVo findLastBuyResVo = FindLastBuyResVo.builder().lastBuy(
+                    LocalDateTime.now()).build();
+
                 return Food.of(e, findLastBuyResVo.getLastBuy());
             }).collect(Collectors.toList()));
 

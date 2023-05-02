@@ -44,6 +44,10 @@ import com.paymong.common.dto.response.BattleMessageResDto
 import com.paymong.common.entity.BattleActiveEntity
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.*
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.ui.graphics.painter.Painter
+import kotlinx.coroutines.delay
 
 @Composable
 fun BattleActive(
@@ -89,8 +93,12 @@ fun BattleActive(
         }
         battleViewModel.battleEnd()
     } else if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT){
-        Log.d("battle", "싸움 애니메이션 ON")
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            Log.d("battle", "싸움 애니메이션 ON")
+
         battleViewModel.matchingState = MatchingCode.SELECT_BEFORE
+        }, 3000)
     }
 
 
@@ -109,22 +117,155 @@ fun BattleActive(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
+
             if (battleViewModel.battleActiveEntity.order == "A") {
-                Image(
-                    painter = attack, contentDescription = null,
-                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
-                )
+                if (battleViewModel.battleActiveEntity.nextAttacker == "A") {
+                    Image(
+                        painter = defence, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+
+                } else {
+                    Image(
+                        painter = attack, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+                }
             } else {
-                Image(
-                    painter = defence, contentDescription = null,
-                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
-                )
+                if (battleViewModel.battleActiveEntity.nextAttacker == "A") {
+                    Image(
+                        painter = attack, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+
+                } else {
+                    Image(
+                        painter = defence, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+                }
             }
-            var findCode = battleViewModel.characterCodeA
-            var chCode = CharacterCode.valueOf(findCode)
-            var chA = painterResource(chCode.code)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+
+
+            var findCode = ""
+            val chCode : CharacterCode
+            val player1: Painter
+
+            if (battleViewModel.battleActiveEntity.order == "A") {
+                findCode = battleViewModel.characterCodeB
+                chCode = CharacterCode.valueOf(findCode)
+                player1 = painterResource(chCode.code)
+
+            } else {
+                findCode = battleViewModel.characterCodeA
+                chCode = CharacterCode.valueOf(findCode)
+                player1 = painterResource(chCode.code)
+            }
+//                Image(
+//                    painter = chA,
+//                    contentDescription = null,
+//                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+//                )
+            if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT){
+                if (battleViewModel.battleActiveEntity.order == "A" && battleViewModel.battleActiveEntity.nowTurn % 2 != 0){
+                  if ( battleViewModel.battleActiveEntity.damageB > 0 ) {
+
+                    Box() {
+                        Row() {
+                            Image(
+                            painter = player1,
+                            contentDescription = null,
+                            modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                        )}
+
+                        Row() {
+                            Image(
+                                painter = painterResource(R.drawable.strength),
+                                contentDescription = null,
+                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                            )}
+                    }
+
+                  } else {
+
+                    Box() {
+
+                        Row() {
+                            Image(
+                            painter = player1,
+                            contentDescription = null,
+                            modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                        )}
+
+                        Row() {
+                            Image(
+                                painter = painterResource(R.drawable.satiety),
+                                contentDescription = null,
+                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                            )}
+                        }
+                    }
+                } else if (battleViewModel.battleActiveEntity.order == "B" && battleViewModel.battleActiveEntity.nowTurn % 2 != 0)  {
+                    if ( battleViewModel.battleActiveEntity.damageA > 0 ) {
+                        Box() {
+                            Row() {
+                                Image(
+                                    painter = player1,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.strength),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+
+                    } else {
+
+                        Box() {
+                            Row() { Image(
+                                painter = player1,
+                                contentDescription = null,
+                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                            )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.satiety),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+                    }
+
+                } else {
+                    Box() {
+                        Row() {
+                            Image(
+                            painter = player1,
+                            contentDescription = null,
+                            modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                             )
+                        }
+                    }
+                }
+
+            } else {
+                Box() {
+                    Row() {
+                        Image(
+                        painter = player1,
+                        contentDescription = null,
+                        modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                        )
+                    }
+                }
+            }
         }
+
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -170,27 +311,174 @@ fun BattleActive(
             modifier = Modifier.fillMaxWidth()
         ) {
 //            Text(text = "B", textAlign = TextAlign.Center)
-            var findCode = battleViewModel.characterCodeB
-            var chCode = CharacterCode.valueOf(findCode)
-            var chB = painterResource(chCode.code)
-            Image(painter = chB, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+            // player2 :: 아래쪽
+            var findCode = ""
+            val chCode : CharacterCode
+            val player2: Painter
 
             if (battleViewModel.battleActiveEntity.order == "A") {
-                Image(
+                findCode = battleViewModel.characterCodeA
+                chCode = CharacterCode.valueOf(findCode)
+                player2 = painterResource(chCode.code)
+
+            } else {
+                findCode = battleViewModel.characterCodeB
+                chCode = CharacterCode.valueOf(findCode)
+                player2 = painterResource(chCode.code)
+            }
+
+//            Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+
+            // ------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+            if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT){
+                if (battleViewModel.battleActiveEntity.order == "B" && battleViewModel.battleActiveEntity.nowTurn % 2 == 0){
+                    if ( battleViewModel.battleActiveEntity.damageB > 0 ) {
+
+                        Box() {
+                            Row() {
+                                Image(
+                                    painter = player2,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.strength),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+
+                    } else {
+
+                        Box() {
+
+                            Row() {
+                                Image(
+                                    painter = player2,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.satiety),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+                    }
+                } else if (battleViewModel.battleActiveEntity.order == "A" && battleViewModel.battleActiveEntity.nowTurn % 2 == 0)  {
+                    if ( battleViewModel.battleActiveEntity.damageA > 0 ) {
+                        Box() {
+                            Row() {
+                                Image(
+                                    painter = player2,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.strength),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+
+                    } else {
+
+                        Box() {
+                            Row() { Image(
+                                painter = player2,
+                                contentDescription = null,
+                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                            )}
+
+                            Row() {
+                                Image(
+                                    painter = painterResource(R.drawable.satiety),
+                                    contentDescription = null,
+                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                                )}
+                        }
+                    }
+
+                } else {
+                    Box() {
+                        Row() {
+                            Image(
+                                painter = player2,
+                                contentDescription = null,
+                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                            )
+                        }
+                    }
+                }
+
+            } else {
+                Box() {
+                    Row() {
+                        Image(
+                            painter = player2,
+                            contentDescription = null,
+                            modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+                        )
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // -----------------------------------------------------------------------------------------------------------------------------------------------
+
+            if (battleViewModel.battleActiveEntity.order == "A") {
+                if (battleViewModel.battleActiveEntity.nextAttacker == "A") {
+                    Image(
+                        painter = attack, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+                } else {
+                    Image(
                     painter = defence, contentDescription = null,
                     modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
                 )
+
+                }
             } else {
-                Image(
-                    painter = attack, contentDescription = null,
-                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
-                )
+                if (battleViewModel.battleActiveEntity.nextAttacker == "A") {
+                    Image(
+                        painter = defence, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+                } else {
+
+                    Image(
+                        painter = attack, contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    )
+                }
             }
         }
+
+    }
     }
 
 //    var cnt by remember { mutableStateOf(viewModel.count) }
-}
+
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
@@ -202,4 +490,6 @@ fun BattleActivePreview() {
         BattleActive(navController, viewModel)
     }
 }
+
+
 

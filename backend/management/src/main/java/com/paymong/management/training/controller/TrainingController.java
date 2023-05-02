@@ -10,12 +10,12 @@ import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,12 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrainingController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingController.class);
     private final TrainingService trainingService;
-    @PostMapping
-    public ResponseEntity<Object> training() throws Exception{
+
+    @Value("${header.mong}")
+    String headerMong;
+    @PutMapping
+    public ResponseEntity<Object> training(HttpServletRequest httpServletRequest) throws Exception{
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
         try {
-            trainingService.training();
+            if(mongId == null) throw new NullPointerException();
+            trainingService.training(mongId);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-        }catch (NotFoundMongException e){
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        } catch (NotFoundMongException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }catch (NotFoundActionException e){
@@ -37,13 +45,16 @@ public class TrainingController {
         }
     }
 
-    @PostMapping("/walking")
-    public ResponseEntity<Object> walking(@RequestBody WalkingReqDto walkingReqDto) throws Exception{
+    @PutMapping("/walking")
+    public ResponseEntity<Object> walking(WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
+        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
         try {
-            if(walkingReqDto.getWalkingCount() == null){
+            if(walkingReqDto.getWalkingCount() == null || mongId == null){
                 throw new NullPointerException();
             }
-            WalkingReqVo walkingReqVo = new WalkingReqVo(walkingReqDto.getWalkingCount());
+            WalkingReqVo walkingReqVo = new WalkingReqVo();
+            walkingReqVo.setWalkingCount(walkingReqVo.getWalkingCount());
+            walkingReqVo.setMongId(mongId);
             trainingService.walking(walkingReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){

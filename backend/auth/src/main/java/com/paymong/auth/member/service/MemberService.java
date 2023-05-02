@@ -22,25 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    private final AuthRepository authRepository;
-
-    private final AuthService authService;
-
-    private final PasswordEncoder passwordEncoder;
-
     @Transactional
-    public LoginResDto register(LoginReqDto loginReqDto) throws RuntimeException {
-        String password = passwordEncoder.encode(UUID.randomUUID().toString());
-        Member member = Member.builder().playerId(loginReqDto.getPlayerId()).password(password).build();
-        memberRepository.save(member);
-        Auth auth = Auth.of("USER", member);
-        authRepository.save(auth);
-        TokenInfo tokenInfo = authService.provideToken(member);
-        return LoginResDto.builder()
-            .accessToken(tokenInfo.getAcessToken())
-            .refreshToken(tokenInfo.getRefreshToken())
-            .build();
+    public Member findByMemberPlayerId(String playerId) {
+        return memberRepository.findByPlayerId(playerId).orElseThrow();
     }
+
 
 //    @Transactional
 //    public FindMemberInfoResDto findMemberInfo() throws RuntimeException {

@@ -2,11 +2,11 @@ package com.paymong.auth.auth.controller;
 
 import com.paymong.auth.auth.dto.request.LoginReqDto;
 import com.paymong.auth.auth.dto.response.LoginResDto;
-import com.paymong.auth.auth.entity.Member;
 import com.paymong.auth.auth.service.AuthService;
 import com.paymong.auth.global.code.ErrorStateCode;
-import com.paymong.auth.global.exception.IllegalArgumentException;
 import com.paymong.auth.global.exception.NotFoundException;
+import com.paymong.auth.global.exception.TimeoutException;
+import com.paymong.auth.global.exception.UnAuthException;
 import com.paymong.auth.global.response.ErrorResponse;
 import com.paymong.auth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +36,13 @@ public class AuthController {
             LoginResDto loginResDto = authService.login(loginRequestDto);
             return ResponseEntity.ok().body(loginResDto);
         } catch (NotFoundException e) {
-            LoginResDto loginResDto = memberService.register(loginRequestDto);
+            // 없으면 회원 등록
+            LoginResDto loginResDto = authService.register(loginRequestDto);
             return ResponseEntity.badRequest().body(loginResDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.IllEGALARGS));
+        } catch (UnAuthException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.UNAUTHORIXED));
+        } catch (TimeoutException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.REDIS));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }

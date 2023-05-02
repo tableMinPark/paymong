@@ -8,13 +8,13 @@ import com.paymong.collect.collect.entity.MapCollect;
 import com.paymong.collect.collect.entity.MongCollect;
 import com.paymong.collect.collect.repository.MapCollectRepository;
 import com.paymong.collect.collect.repository.MongCollectRepository;
-import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
-import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
 import com.paymong.collect.global.client.CommonServiceClient;
 import com.paymong.collect.global.code.GroupStateCode;
+import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
+import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +36,18 @@ public class CollectService {
     @Transactional
     public List<FindAllMapCollectResDto> findAllMapCollect(String memberId)
         throws RuntimeException {
+        FindAllCommonCodeResVo findAllCommonCodeResVo;
+        try {
+            ObjectMapper om = new ObjectMapper();
 
-        ObjectMapper om = new ObjectMapper();
-
-        FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(
-            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupStateCode.MAP))
-                .getBody(), FindAllCommonCodeResVo.class);
+            findAllCommonCodeResVo = om.convertValue(
+                commonServiceClient.findAllCommonCode(
+                        new FindAllCommonCodeReqVo(GroupStateCode.MAP))
+                    .getBody(), FindAllCommonCodeResVo.class);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new GatewayException();
+        }
 
         if (findAllCommonCodeResVo.getCommonCodeList().isEmpty()) {
             throw new RuntimeException();
@@ -53,17 +59,15 @@ public class CollectService {
                 .map(FindAllMapCollectResDto::of)
                 .collect(Collectors.toList());
 
-        Optional<List<MapCollect>> mapCollectList =
+        List<MapCollect> mapCollectList =
             mapCollectRepository.findAllByMemberIdOrderByMapCodeDesc(Long.parseLong(memberId));
 
-        if (mapCollectList.isPresent() && mapCollectList.get().size() != 0) {
-            List<String> mapCollectCodeList = mapCollectList.get().stream()
-                .map(MapCollect::getMapCode).collect(Collectors.toList());
+        List<String> mapCollectCodeList = mapCollectList.stream()
+            .map(MapCollect::getMapCode).collect(Collectors.toList());
 
-            findAllMapCollectResDtoList = findAllMapCollectResDtoList.stream()
-                .map(e -> e.isContain(mapCollectCodeList))
-                .collect(Collectors.toList());
-        }
+        findAllMapCollectResDtoList = findAllMapCollectResDtoList.stream()
+            .map(e -> e.isContain(mapCollectCodeList))
+            .collect(Collectors.toList());
 
         return findAllMapCollectResDtoList;
     }
@@ -77,60 +81,63 @@ public class CollectService {
         List<MongDto> level1 = new ArrayList<>();
         List<MongDto> level2 = new ArrayList<>();
         List<MongDto> level3 = new ArrayList<>();
-
         ObjectMapper om = new ObjectMapper();
 
-        FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(
-            commonServiceClient.findAllCommonCode(new FindAllCommonCodeReqVo(GroupStateCode.CHARACTER))
-                .getBody(), FindAllCommonCodeResVo.class);
+        FindAllCommonCodeResVo findAllCommonCodeResVo;
+        try {
+            findAllCommonCodeResVo = om.convertValue(
+                commonServiceClient.findAllCommonCode(
+                        new FindAllCommonCodeReqVo(GroupStateCode.CHARACTER))
+                    .getBody(), FindAllCommonCodeResVo.class);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new GatewayException();
+        }
 
         List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeList().stream()
             .map(MongDto::of)
             .collect(Collectors.toList());
 
-        Optional<List<MongCollect>> mongCollectList =
+        List<MongCollect> mongCollectList =
             mongCollectRepository.findByMemberIdOrderByMongCodeDesc(Long.parseLong(memberId));
 
-        if (mongCollectList.isPresent() && mongCollectList.get().size() != 0) {
-            List<String> mongCollectCodeList = mongCollectList.get().stream()
-                .map(MongCollect::getMongCode).collect(
-                    Collectors.toList());
+        List<String> mongCollectCodeList = mongCollectList.stream()
+            .map(MongCollect::getMongCode).collect(
+                Collectors.toList());
 
-            mongDtoList.forEach(e -> {
-                char growth = e.getCharacterCode().charAt(2);
-                switch (growth) {
-                    case '0':
-                        eggs.add(e);
-                        break;
-                    case '1':
-                        level1.add(e);
-                        break;
-                    case '2':
-                        level2.add(e);
-                        break;
-                    case '3':
-                        level3.add(e);
-                        break;
-                }
-            });
+        mongDtoList.forEach(e -> {
+            char growth = e.getCharacterCode().charAt(2);
+            switch (growth) {
+                case '0':
+                    eggs.add(e);
+                    break;
+                case '1':
+                    level1.add(e);
+                    break;
+                case '2':
+                    level2.add(e);
+                    break;
+                case '3':
+                    level3.add(e);
+                    break;
+            }
+        });
 
-            eggs.stream()
-                .map(e -> e.isContain(mongCollectCodeList))
-                .collect(Collectors.toList());
+        eggs.stream()
+            .map(e -> e.isContain(mongCollectCodeList))
+            .collect(Collectors.toList());
 
-            level1.stream()
-                .map(e -> e.isContain(mongCollectCodeList))
-                .collect(Collectors.toList());
+        level1.stream()
+            .map(e -> e.isContain(mongCollectCodeList))
+            .collect(Collectors.toList());
 
-            level2.stream()
-                .map(e -> e.isContain(mongCollectCodeList))
-                .collect(Collectors.toList());
+        level2.stream()
+            .map(e -> e.isContain(mongCollectCodeList))
+            .collect(Collectors.toList());
 
-            level3.stream()
-                .map(e -> e.isContain(mongCollectCodeList))
-                .collect(Collectors.toList());
-
-        }
+        level3.stream()
+            .map(e -> e.isContain(mongCollectCodeList))
+            .collect(Collectors.toList());
 
         findAllMongCollectResDto.setEggs(eggs);
         findAllMongCollectResDto.setLevel1(level1);

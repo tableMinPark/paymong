@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MongCollectRepository extends JpaRepository<MongCollect, Long> {
 
-    Optional<List<MongCollect>> findByMemberIdOrderByMongCodeDesc(Long memberId);
+    List<MongCollect> findByMemberIdOrderByMongCodeDesc(Long memberId);
 }

@@ -6,12 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -30,20 +25,21 @@ import com.google.android.gms.tasks.Task
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.landing.LandingViewModel
+import com.paymong.domain.app.login.LoginViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
 
 
 @Composable
 fun Login(navController: NavController) {
-    val viewModel: LandingViewModel = viewModel()
+    val viewModel: LoginViewModel = viewModel()
     LoginUI(navController, viewModel)
 }
 
 @Composable
 fun LoginUI(
     navController: NavController,
-    viewModel: LandingViewModel
+    viewModel: LoginViewModel
 ) {
     BgGif()
     Column(
@@ -64,7 +60,6 @@ fun LoginUI(
             horizontalArrangement = Arrangement.Center
         ){
             val context = LocalContext.current as Activity
-//            val api = Apis.create()
 
             val google = painterResource(R.drawable.google_login)
             Image(painter = google, contentDescription = null,
@@ -72,22 +67,27 @@ fun LoginUI(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null, // 애니메이션 제거
                     onClick = {
+                        viewModel.isClicked = true
                         val gamesSignInClient: GamesSignInClient =
                             PlayGames.getGamesSignInClient(context)
 
                         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-                            val isAuthenticated = isAuthenticatedTask.isSuccessful &&
-                                    isAuthenticatedTask.result.isAuthenticated
+                            val isAuthenticated =
+                                isAuthenticatedTask.isSuccessful &&
+                                        isAuthenticatedTask.result.isAuthenticated
+                            Log.d("isAuthenticated", isAuthenticated.toString())
                             if (isAuthenticated) {
                                 PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
                                     val ID = mTask?.result?.playerId
-                                    Log.d("id","$ID")
-                                    val sharedPref = context.getSharedPreferences("loginId",Context.MODE_PRIVATE)
-                                    with (sharedPref.edit()) {
+                                    Log.d("id", "$ID")
+                                    val sharedPref = context.getSharedPreferences(
+                                        "loginId",
+                                        Context.MODE_PRIVATE
+                                    )
+                                    with(sharedPref.edit()) {
                                         putString("loginId", ID)
                                         apply()
                                     }
-//                                    api.register(ID.toString())
                                 }
                                 navController.navigate(AppNavItem.Main.route){
                                     // 백스택 비우기
@@ -100,8 +100,37 @@ fun LoginUI(
                                 }
                             } else {
                                 gamesSignInClient.signIn()
+                                Log.d("fail","fail")
                             }
                         }
+//                        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+//                            val isAuthenticated = isAuthenticatedTask.isSuccessful &&
+//                                    isAuthenticatedTask.result.isAuthenticated
+//                            if (isAuthenticated) {
+//                                PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
+//                                    val ID = mTask?.result?.playerId
+//                                    Log.d("id","$ID")
+//                                    val sharedPref = context.getSharedPreferences("loginId",Context.MODE_PRIVATE)
+//                                    with (sharedPref.edit()) {
+//                                        putString("loginId", ID)
+//                                        apply()
+//                                    }
+////                                    api.register(ID.toString())
+//                                }
+//                                navController.navigate(AppNavItem.Main.route){
+//                                    // 백스택 비우기
+//                                    popUpTo(navController.graph.id) {
+//                                        inclusive = true
+//                                    }
+//                                    // 스택 첫 화면 메인화면으로 변경
+//                                    navController.graph.setStartDestination(AppNavItem.Main.route)
+//                                    launchSingleTop =true
+//                                }
+//                            } else {
+//                                gamesSignInClient.signIn()
+//                                Log.d("fail","fail")
+//                            }
+//                        }
                     }
                 ))
         }

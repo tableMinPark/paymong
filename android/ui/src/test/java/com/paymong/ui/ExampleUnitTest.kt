@@ -1,5 +1,6 @@
 package com.paymong.ui
 
+import com.paymong.common.api.Apis
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +13,7 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val api = Apis.create()
+        api.register("id")
     }
 }

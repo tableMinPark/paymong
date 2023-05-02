@@ -1,17 +1,29 @@
 package com.paymong.ui.app.login
 
-import androidx.compose.foundation.layout.*
+import android.app.Activity
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.games.AuthenticationResult
+import com.google.android.gms.games.GamesSignInClient
+import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.Player
+import com.google.android.gms.tasks.Task
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.login.LoginViewModel
 import com.paymong.ui.theme.PaymongTheme
@@ -35,6 +47,7 @@ fun LoginUI(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
+            val context = LocalContext.current as Activity
             Button(
                 onClick = {
                     var isLogin = true
@@ -42,6 +55,8 @@ fun LoginUI(
                     /*
                         로그인 관련 로직 함수 호출
                     */
+
+
 
                     // 로그인 인증 완료 시 메인화면으로 이동
                     if (isLogin) {

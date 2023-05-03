@@ -81,6 +81,8 @@ public class MemberController {
 //        } catch (NullPointerException e) {
 //            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NULLPOINTER));
 //        } catch (RuntimeException e) {
+        log.info("modifyPointDto content -{} ", modifyPointDto.getContent());
+        log.info("modifyPointDto point -{} ",modifyPointDto.getPoint());
         try {
             return ResponseEntity.ok().build();
         } catch (Exception e) {

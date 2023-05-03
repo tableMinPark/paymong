@@ -42,8 +42,6 @@ public class AuthService {
         Member member = memberRepository.findByPlayerId(loginReqDto.getPlayerId()).orElseThrow(
             () -> new NotFoundException());
 
-        refreshTokenRedisRepository.findById(member.getPlayerId());
-
         // 토큰 발급
         TokenInfo tokenInfo = provideToken(member);
 
@@ -78,7 +76,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResDto register(LoginReqDto loginReqDto) {
+    public LoginResDto register(LoginReqDto loginReqDto) throws RuntimeException{
         String password = passwordEncoder.encode(UUID.randomUUID().toString());
         Member member = Member.builder().playerId(loginReqDto.getPlayerId()).password(password)
             .build();

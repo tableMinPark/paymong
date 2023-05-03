@@ -3,6 +3,7 @@ package com.paymong.auth.member.controller;
 import com.paymong.auth.global.code.ErrorStateCode;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.NullPointerException;
+import com.paymong.auth.global.exception.PayPointException;
 import com.paymong.auth.global.response.ErrorResponse;
 import com.paymong.auth.member.dto.request.ModifyPointReqDto;
 import com.paymong.auth.member.dto.response.FindMemberInfoResDto;
@@ -37,8 +38,10 @@ public class MemberController {
             FindMemberInfoResDto findMemberInfoResDto = memberService.findMemberInfo();
             return ResponseEntity.ok().body(findMemberInfoResDto);
         } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
@@ -55,13 +58,43 @@ public class MemberController {
             ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId,
                 modifyPointDto.getPoint());
             return ResponseEntity.ok().body(modifyPointResDto);
+
         } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (NullPointerException e) {
+            log.error(ErrorStateCode.NULLPOINTER.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NULLPOINTER));
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
+    }
+
+    @PutMapping("/management/paypoint")
+    public ResponseEntity<Object> modifyPointAndToPaypoint(
+        @RequestBody ModifyPointReqDto modifyPointDto,
+        HttpServletRequest httpServletRequest) {
+        log.info("modifyPointAndToPaypoint - Call");
+
+        log.info("modifyPointDto content -{} ", modifyPointDto.getContent());
+        log.info("modifyPointDto point -{} ", modifyPointDto.getPoint());
+        try {
+            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
+            memberService.modifyPointAndToPaypoint(memberId, modifyPointDto.getPoint(),
+                modifyPointDto.getContent());
+            return ResponseEntity.ok().build();
+        } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+        } catch (PayPointException e) {
+            log.error(ErrorStateCode.PAYPOINT.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.PAYPOINT));
+        } catch (Exception e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+        }
+
     }
 
 

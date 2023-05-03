@@ -12,6 +12,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface CommonServiceClient {
     @GetMapping(value = "/common/name", produces = "application/json")
     ResponseEntity<Object> findMapByName(@RequestHeader("MemberId") String memberId,
-                                         @RequestHeader("MongId") String mongId,
                                          @SpringQueryMap FindMapByNameReqDto findMapByNameReqVo);
 }

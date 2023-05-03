@@ -171,7 +171,8 @@ fun NicknameDialog(
     value: String,
     setShowDialog: (Boolean) -> Unit,
     setShowSleepDialog: (Boolean) -> Unit,
-    setValue: (String) -> Unit
+    setValue: (String) -> Unit,
+    appViewModel: AppViewModel
 ){
     val noNickname = remember { mutableStateOf("") }
     val name = remember { mutableStateOf(value) }
@@ -217,6 +218,7 @@ fun NicknameDialog(
                         setValue(name.value)
                         setShowDialog(false)
                         setShowSleepDialog(true)
+                        appViewModel.setMongName(name.value)
 //                        characterState.value = CharacterCode.CH003
                     },
                     colors = ButtonDefaults.buttonColors(PayMongBlue),
@@ -293,7 +295,9 @@ fun SleepDialog(
     setSleepValue: (LocalTime) -> Unit,
     setShowSleepDialog: (Boolean) -> Unit,
     setShowWakeDialog: (Boolean) -> Unit,
-    name: String){
+    name: String,
+    appViewModel: AppViewModel
+){
     Dialog(onDismissRequest = { setShowSleepDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -319,6 +323,7 @@ fun SleepDialog(
                         Log.d("sleepTime",newTime.toString())
                         setShowSleepDialog(false)
                         setShowWakeDialog(true)
+                        appViewModel.setMongSleepStart(newTime.toString())
                     }
                 )
             }
@@ -329,7 +334,8 @@ fun SleepDialog(
 fun WakeDialog(
     setWakeValue: (LocalTime) -> Unit,
     setShowWakeDialog: (Boolean) -> Unit,
-    name: String
+    name: String,
+    appViewModel: AppViewModel
 ){
     Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
         Surface(
@@ -354,6 +360,7 @@ fun WakeDialog(
                     onTimeSelected = { newTime ->
                         setWakeValue(newTime)
                         setShowWakeDialog(false)
+                        appViewModel.setMongSleepEnd(newTime.toString())
                     }
                 )
             }
@@ -374,7 +381,8 @@ fun MakeEgg(appViewModel: AppViewModel){
             value = "",
             setShowDialog = { dialogOpen.value = it },
             setShowSleepDialog = { sleepDialogOpen.value = it },
-            setValue = { name.value = it }
+            setValue = { name.value = it },
+            appViewModel
         )
     }
 
@@ -383,13 +391,16 @@ fun MakeEgg(appViewModel: AppViewModel){
             setSleepValue = { selectedTime.value },
             setShowSleepDialog = { sleepDialogOpen.value = it },
             setShowWakeDialog = { wakeDialogOpen.value = it },
-            name.value )
+            name.value,
+            appViewModel
+        )
     }
     if(wakeDialogOpen.value){
         WakeDialog(
             setWakeValue = { selectedTime.value },
             setShowWakeDialog = { wakeDialogOpen.value = it },
-            name.value
+            name.value,
+            appViewModel
         )
     }
 

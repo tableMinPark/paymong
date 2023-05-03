@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
 import com.paymong.domain.entity.MongInfo
+import com.paymong.domain.entity.MongSetting
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -18,6 +19,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var poopCount by mutableStateOf(0)
     var point by mutableStateOf(0)
     var mongInfo by mutableStateOf(MongInfo())
+    var mongName by mutableStateOf("")
+    var mongSleepStart by mutableStateOf("")
+    var mongSleepEnd by mutableStateOf("")
+    var mongSetting by mutableStateOf(MongSetting())
 
     init {
         if(::load.isInitialized) load.cancel()
@@ -53,6 +58,27 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             mongInfo.weight
         )
     }
+
+    fun setMongName(name:String){
+        mongName = name
+    }
+
+    fun setMongSleepStart(sleepStart:String){
+        mongSleepStart = sleepStart
+    }
+
+    fun setMongSleepEnd(sleepEnd:String){
+        mongSleepEnd = sleepEnd
+    }
+
+    fun setMongSetting(){
+        mongSetting = MongSetting(
+            mongName,
+            mongSleepStart,
+            mongSleepEnd
+        )
+    }
+
 
     private fun findPoopCount() {
         poopCount = 0

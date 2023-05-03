@@ -1,15 +1,17 @@
 package com.paymong.collect.map.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.collect.global.vo.response.CommonCodeDto;
+import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
 import com.paymong.collect.map.dto.response.FindAllMapCollectResDto;
 import com.paymong.collect.global.client.CommonServiceClient;
 import com.paymong.collect.global.code.GroupStateCode;
 import com.paymong.collect.global.exception.GatewayException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
-import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
 import com.paymong.collect.map.entity.MapCollect;
 import com.paymong.collect.map.repository.MapCollectRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,28 +30,26 @@ public class MapService {
     @Transactional
     public List<FindAllMapCollectResDto> findAllMapCollect(Long memberId)
         throws RuntimeException {
-        FindAllCommonCodeResVo findAllCommonCodeResVo;
+
+        List<CommonCodeDto> commonCodeDtoList;
         try {
             ObjectMapper om = new ObjectMapper();
+            FindAllCommonCodeResVo findAllCommonCodeResVo = om.convertValue(commonServiceClient.findAllCommonCode(
+                new FindAllCommonCodeReqVo(GroupStateCode.MAP)).getBody(), FindAllCommonCodeResVo.class);
 
-            findAllCommonCodeResVo = om.convertValue(
-                commonServiceClient.findAllCommonCode(
-                        new FindAllCommonCodeReqVo(GroupStateCode.MAP))
-                    .getBody(), FindAllCommonCodeResVo.class);
+            log.info(findAllCommonCodeResVo.getCommonCodeDtoList().get(0).toString());
+            commonCodeDtoList=findAllCommonCodeResVo.getCommonCodeDtoList();
+
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new GatewayException();
         }
 
-        if (findAllCommonCodeResVo.getCommonCodeList().isEmpty()) {
-            throw new RuntimeException();
-        }
+        List<FindAllMapCollectResDto> findAllMapCollectResDtoList = commonCodeDtoList.stream()
+            .filter(FindAllMapCollectResDto::isVaildMapCode)
+            .map(FindAllMapCollectResDto::of)
+            .collect(Collectors.toList());
 
-        List<FindAllMapCollectResDto> findAllMapCollectResDtoList =
-            findAllCommonCodeResVo.getCommonCodeList().stream()
-                .filter(FindAllMapCollectResDto::isVaildMapCode)
-                .map(FindAllMapCollectResDto::of)
-                .collect(Collectors.toList());
 
         List<MapCollect> mapCollectList =
             mapCollectRepository.findAllByMemberIdOrderByMapCodeDesc(memberId);

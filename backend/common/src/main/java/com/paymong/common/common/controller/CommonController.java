@@ -4,6 +4,7 @@ import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCodeByNameReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.response.CommonCodeDto;
+import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
 import com.paymong.common.common.dto.response.FindAllFoodResDto;
 import com.paymong.common.common.service.CommonService;
 import com.paymong.common.global.code.ErrorStateCode;
@@ -34,7 +35,7 @@ public class CommonController {
         try {
             List<CommonCodeDto> commonCodeDtoList = commonService.findAllCommonCode(
                 findAllCommonCodeReqDto);
-            return ResponseEntity.ok().body(commonCodeDtoList);
+            return ResponseEntity.ok().body(new FindAllCommonCodeResDto(commonCodeDtoList));
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest()
                 .body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));

@@ -29,9 +29,10 @@ public class TrainingController {
     String headerMong;
     @PutMapping
     public ResponseEntity<Object> training(HttpServletRequest httpServletRequest) throws Exception{
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
         try {
-            if(mongId == null) throw new NullPointerException();
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
             trainingService.training(mongId);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
@@ -51,11 +52,13 @@ public class TrainingController {
 
     @PutMapping("/walking")
     public ResponseEntity<Object> walking(WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+
         try {
-            if(walkingReqDto.getWalkingCount() == null || mongId == null){
+            if(walkingReqDto.getWalkingCount() == null || mongIdStr == null || mongIdStr.equals("")){
                 throw new NullPointerException();
             }
+            Long mongId = Long.parseLong(mongIdStr);
             WalkingReqVo walkingReqVo = new WalkingReqVo();
             walkingReqVo.setWalkingCount(walkingReqVo.getWalkingCount());
             walkingReqVo.setMongId(mongId);

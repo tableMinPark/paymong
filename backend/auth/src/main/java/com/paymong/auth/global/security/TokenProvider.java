@@ -23,8 +23,6 @@ public class TokenProvider {
     @Value("${jwt.secret}")
     private String JWT_KEY;
 
-    private CustomUserDetailService customUserDetailService;
-
     public Claims extractAllClaims(String token) { // 2
         return Jwts.parserBuilder()
             .setSigningKey(getSigningKey(JWT_KEY))

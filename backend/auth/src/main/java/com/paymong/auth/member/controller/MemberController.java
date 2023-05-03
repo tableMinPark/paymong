@@ -64,5 +64,32 @@ public class MemberController {
         }
     }
 
+    @PutMapping("/management/paypoint")
+    public ResponseEntity<Object> modifyPointAndToPaypoint(@RequestBody ModifyPointReqDto modifyPointDto,
+        HttpServletRequest httpServletRequest) {
+        log.info("modifyPoint - Call");
+//        try {
+//            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
+//            if (memberId == null) {
+//                throw new NullPointerException();
+//            }
+//            ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId,
+//                modifyPointDto.getPoint());
+//            return ResponseEntity.ok().body(modifyPointResDto);
+//        } catch (NotFoundException e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+//        } catch (NullPointerException e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NULLPOINTER));
+//        } catch (RuntimeException e) {
+        log.info("modifyPointDto content -{} ", modifyPointDto.getContent());
+        log.info("modifyPointDto point -{} ",modifyPointDto.getPoint());
+        try {
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+        }
+
+    }
+
 
 }

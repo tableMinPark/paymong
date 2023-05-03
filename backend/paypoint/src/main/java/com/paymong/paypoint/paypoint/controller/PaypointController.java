@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +30,9 @@ public class PaypointController {
         log.info("addPay - Call");
         try {
             paypointService.addPay(memberIdStr, mongIdStr, addPaypointReqDto);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+            Map <String,String> testRet = new HashMap<>();
+            testRet.put("key","짱짱걸");
+            return ResponseEntity.status(HttpStatus.OK).body(testRet);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }

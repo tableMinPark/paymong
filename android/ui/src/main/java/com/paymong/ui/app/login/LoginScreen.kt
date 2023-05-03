@@ -23,6 +23,7 @@ import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.paymong.common.R
+import com.paymong.common.code.LoginCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.landing.LandingViewModel
 import com.paymong.domain.app.login.LoginViewModel
@@ -67,7 +68,6 @@ fun LoginUI(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null, // 애니메이션 제거
                     onClick = {
-                        viewModel.isClicked = true
                         val gamesSignInClient: GamesSignInClient =
                             PlayGames.getGamesSignInClient(context)
 
@@ -79,7 +79,11 @@ fun LoginUI(
                             if (isAuthenticated) {
                                 PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
                                     val ID = mTask?.result?.playerId
+                                    viewModel.id = ID.toString()
+                                    viewModel.isClicked = LoginCode.AFTER_CLICK
+                                    viewModel.login()
                                     Log.d("id", "$ID")
+                                    Log.d("click", viewModel.isClicked.toString())
                                     val sharedPref = context.getSharedPreferences(
                                         "loginId",
                                         Context.MODE_PRIVATE

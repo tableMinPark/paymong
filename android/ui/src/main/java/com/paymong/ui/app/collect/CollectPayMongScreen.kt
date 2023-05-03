@@ -1,6 +1,5 @@
 package com.paymong.ui.app.collect
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,21 +22,58 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.collect.CollectPayMongViewModel
+import com.paymong.domain.app.CollectPayMongViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CollectPayMong(navController: NavController) {
-    val viewModel: CollectPayMongViewModel = viewModel()
-    CollectPayMongUI(navController, viewModel)
+fun CollectPayMong(
+    navController: NavController,
+    collectPayMongViewModel: CollectPayMongViewModel = viewModel()
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Scaffold(
+            topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route)},
+            backgroundColor = PayMongNavy
+        ) {
+            Box(Modifier.padding(it)) {
+                val grouped = collectPayMongViewModel.mongList.groupBy { it.substring(2,3) }
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    grouped.forEach { (level, mongforLevel) ->
+                        stickyHeader {
+                            var title = ""
+                            title =
+                                if(level == "0") "알" else if(level == "1") "1단계" else if(level == "2") "2단계" else "3단계"
+                            PayMongHeader(title)
+                        }
+
+                        var cnt = 0
+                        cnt = if(mongforLevel.size%3==0){
+                            mongforLevel.size/3
+                        } else{
+                            mongforLevel.size/3+1
+                        }
+                        items(cnt) { mong ->
+                            ImageList(mongforLevel, mong*3)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
-fun PayMongHeader(title:String){
+fun PayMongHeader(title : String){
     Column() {
         Row(
             modifier = Modifier
@@ -51,7 +87,7 @@ fun PayMongHeader(title:String){
     }
 }
 @Composable
-fun ImageList(list:List<String>, index:Int){
+fun ImageList(list : List<String>, index:Int){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +98,7 @@ fun ImageList(list:List<String>, index:Int){
             var mongImg = R.drawable.none
             var text = ""
             if((index + i - 1)<list.size) {
-                mongImg = CharacterCode.valueOf(list[index + i - 1]).code
+                mongImg = CharacterCode.valueOf(list[index + i - 1]).resourceCode
                 text = CharacterCode.valueOf(list[index + i - 1]).codeName
             }
             Box(modifier = Modifier
@@ -95,49 +131,6 @@ fun ImageList(list:List<String>, index:Int){
                         }
                     }
 
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun CollectPayMongUI(
-    navController: NavController,
-    viewModel: CollectPayMongViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Scaffold(
-            topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route+ "/${viewModel.memberId}")},
-            backgroundColor = PayMongNavy
-        ) {
-            Box(Modifier.padding(it)) {
-                val grouped = viewModel.mongList.groupBy { it.substring(2,3) }
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    grouped.forEach { (level, mongforLevel) ->
-                        stickyHeader {
-                            var title = ""
-                            title =
-                                if(level == "0") "알" else if(level == "1") "1단계" else if(level == "2") "2단계" else "3단계"
-                            PayMongHeader(title)
-                        }
-
-                        var cnt = 0
-                        cnt = if(mongforLevel.size%3==0){
-                            mongforLevel.size/3
-                        } else{
-                            mongforLevel.size/3+1
-                        }
-                        items(cnt) { mong ->
-                            ImageList(mongforLevel, mong*3)
-                        }
-                    }
                 }
             }
         }

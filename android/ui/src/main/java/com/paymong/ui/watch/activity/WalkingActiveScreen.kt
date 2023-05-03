@@ -196,7 +196,7 @@ fun SmallWatch (  navController: NavHostController,
             val viewModel : MainInfoViewModel = viewModel()
             var findCode = viewModel.characterCode
             var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
+            val chA = painterResource(chCode.resourceCode)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(80.dp).height(80.dp))
 
         }
@@ -423,7 +423,7 @@ fun BigWatch (  navController: NavHostController,
             val viewModel : MainInfoViewModel = viewModel()
             var findCode = viewModel.characterCode
             var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
+            val chA = painterResource(chCode.resourceCode)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp).height(100.dp))
 
         }

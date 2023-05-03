@@ -25,19 +25,50 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.info_detail.InfoDetailViewModel
-import com.paymong.domain.app.main.MainViewModel
+import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.app.MainViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 
 @Composable
-fun InfoDetail(navController: NavController) {
-    val viewModel: InfoDetailViewModel = viewModel()
-    InfoDetailUI(navController, viewModel)
+fun InfoDetail(
+    navController: NavController,
+    appViewModel : AppViewModel = viewModel()
+) {
+    val mainViewModel : MainViewModel = viewModel()
+    val findBgCode = mainViewModel.background
+    val bgCode = MapCode.valueOf(findBgCode)
+    val bg = painterResource(bgCode.code)
+
+    if(findBgCode == "MP000"){
+        BgGif()
+    } else {
+        Image(
+            painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        )
+    }
+    Box(
+        modifier = Modifier.fillMaxSize().clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { navController.navigate(AppNavItem.Main.route){
+                popUpTo("main"){
+                    inclusive = true
+                }
+            } }
+        ),
+        contentAlignment = Alignment.Center
+    ){
+        Card(appViewModel)
+    }
+
 }
 
 @Composable
-fun Card(viewModel: InfoDetailViewModel){
+fun Card(appViewModel : AppViewModel){
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -46,7 +77,7 @@ fun Card(viewModel: InfoDetailViewModel){
         val firstColors = listOf(PayMongRed, PayMongRed200, PayMongRed)
         val secondColors = listOf(PayMongYellow, PayMongYellow200, PayMongYellow)
         val thirdColors = listOf(PayMongBlue, PayMongBlue200, PayMongBlue)
-        val colors = when(viewModel.characterId.substring(2,3)){
+        val colors = when(appViewModel.mongInfo.mongCode.code.substring(2,3)){            // 내부에서 계산해서 view 로 넘겨야함
             "0" -> eggColors
             "1" -> firstColors
             "2"-> secondColors
@@ -72,14 +103,13 @@ fun Card(viewModel: InfoDetailViewModel){
             contentAlignment = Alignment.Center
         ) {
         }
-        Info(viewModel.name, viewModel.characterId, viewModel.age, viewModel.weight)
+        Info(appViewModel.mongInfo.name, appViewModel.mongInfo.mongCode, appViewModel.getAge(), appViewModel.mongInfo.weight)
     }
 }
 
 @Composable
-fun Info(name: String, characterId: String, age: String, weight: Number){
-    val chCode = CharacterCode.valueOf(characterId)
-    val character = painterResource(chCode.code)
+fun Info(name: String, mongCode: CharacterCode, age: String, weight: Number){
+    val character = painterResource(mongCode.resourceCode)
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,49 +123,13 @@ fun Info(name: String, characterId: String, age: String, weight: Number){
     }
 }
 
-@Composable
-fun InfoDetailUI(
-    navController: NavController,
-    viewModel: InfoDetailViewModel
-    ) {
-    val mainViewModel : MainViewModel = viewModel()
-    val findBgCode = mainViewModel.background
-    val bgCode = MapCode.valueOf(findBgCode)
-    val bg = painterResource(bgCode.code)
-    if(findBgCode == "MP000"){
-        BgGif()
-    } else {
-        Image(
-            painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        )
-    }
-    Box(
-        modifier = Modifier.fillMaxSize().clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { navController.navigate(AppNavItem.Main.route){
-                popUpTo("main"){
-                    inclusive = true
-                }
-            } }
-        ),
-        contentAlignment = Alignment.Center
-    ){
-        Card(viewModel)
-    }
-
-}
-
 @Preview(showBackground = true)
 @Composable
 fun InfoDetailPreview() {
     val navController = rememberNavController()
-    val viewModel : InfoDetailViewModel = viewModel()
+    val viewModel : AppViewModel = viewModel()
     PaymongTheme {
 //        InfoDetail(navController)
-        Info(viewModel.name, viewModel.characterId, viewModel.age, viewModel.weight)
+//        Info(viewModel.name, viewModel.characterId, viewModel.age, viewModel.weight)
     }
 }

@@ -3,8 +3,6 @@ package com.paymong
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
-import android.widget.Toast
 import java.time.LocalDateTime
 
 class NotificationListener : NotificationListenerService() {
@@ -19,11 +17,11 @@ class NotificationListener : NotificationListenerService() {
         val packageName: String = sbn.packageName ?: ""
         val message: List<String> = extras.get(Notification.EXTRA_TITLE).toString().split("\\")
 
-        val content : String = message[0]
-        val price : Int = message[1].toInt()
-
-        Log.e("samsung pay", "$packageName : $content : $price : $start")
-        Toast.makeText(applicationContext, "$content : $price : $start", Toast.LENGTH_LONG).show()
+//        val content : String = message[0]
+//        val price : Int = message[1].toInt()
+//
+//        Log.e("samsung pay", "$packageName : $content : $price : $start")
+//        Toast.makeText(applicationContext, "$content : $price : $start", Toast.LENGTH_LONG).show()
     }
 }
 

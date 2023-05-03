@@ -220,7 +220,7 @@ fun SmallWatch (
             val viewModel: MainInfoViewModel = viewModel()
             var findCode = viewModel.characterCode
             var chCode = CharacterCode.valueOf(findCode)
-            val chA = painterResource(chCode.code)
+            val chA = painterResource(chCode.resourceCode)
 
 
             if (TraingviewModel.isTrainingEnd) {
@@ -397,7 +397,7 @@ fun BigWatch (
         val viewModel: MainInfoViewModel = viewModel()
         var findCode = viewModel.characterCode
         var chCode = CharacterCode.valueOf(findCode)
-        val chA = painterResource(chCode.code)
+        val chA = painterResource(chCode.resourceCode)
 
 
         if (TraingviewModel.isTrainingEnd) {

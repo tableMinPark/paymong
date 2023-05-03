@@ -148,12 +148,12 @@ fun BattleActive(
             if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.code)
+                player1 = painterResource(chCode.resourceCode)
 
             } else {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.code)
+                player1 = painterResource(chCode.resourceCode)
             }
 //                Image(
 //                    painter = chA,
@@ -315,12 +315,12 @@ fun BattleActive(
             if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.code)
+                player2 = painterResource(chCode.resourceCode)
 
             } else {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.code)
+                player2 = painterResource(chCode.resourceCode)
             }
 
 //            Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))

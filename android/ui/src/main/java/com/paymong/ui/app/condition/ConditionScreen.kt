@@ -21,15 +21,55 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.condition.ConditionViewModel
+import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.app.ConditionViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.TopBar
 
 @Composable
-fun Condition(navController: NavController) {
-    val viewModel: ConditionViewModel = viewModel()
-    ConditionUI(navController, viewModel)
+fun Condition(
+    navController: NavController,
+    conditionViewModel : ConditionViewModel = viewModel()
+) {
+    Scaffold(
+        topBar = { TopBar("${conditionViewModel.mongStats.name}는(은)?", navController, AppNavItem.Main.route) },
+        backgroundColor = PayMongNavy
+    ) {
+        Box(Modifier.padding(it)){
+//            val bg = painterResource(R.drawable.main_bg)
+//            Image(bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+            BgGif()
+            Column(
+                modifier = Modifier.padding(30.dp)
+            ) {
+                val healthImg = painterResource(R.drawable.health)
+                val satietyImg = painterResource(R.drawable.satiety)
+                val strengthImg = painterResource(R.drawable.strength)
+                val sleepImg = painterResource(R.drawable.sleep)
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Component(healthImg, conditionViewModel.mongStats.health, PayMongRed.copy(alpha = 0.6f))
+                }
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Component(satietyImg, conditionViewModel.mongStats.satiety, PayMongYellow.copy(alpha = 0.6f))
+                }
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Component(strengthImg, conditionViewModel.mongStats.strength, PayMongGreen.copy(alpha = 0.6f))
+                }
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Component(sleepImg, conditionViewModel.mongStats.sleep, PayMongBlue200)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -58,51 +98,6 @@ fun Component(img: Painter, condition: Float, color: Color) { //이미지, 지�
                     .clip(CutCornerShape(topStart = 10.dp, bottomStart = 10.dp))
                     .background(color = color)
                     .padding(8.dp)) {}
-            }
-        }
-    }
-}
-
-@Composable
-fun ConditionUI(
-    navController: NavController,
-    viewModel: ConditionViewModel
-) {
-    Scaffold(
-        topBar = { TopBar("${viewModel.name}는(은)?", navController, AppNavItem.Main.route) },
-        backgroundColor = PayMongNavy
-    ) {
-        Box(Modifier.padding(it)){
-//            val bg = painterResource(R.drawable.main_bg)
-//            Image(bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-            BgGif()
-            Column(
-                modifier = Modifier.padding(30.dp)
-            ) {
-                val healthImg = painterResource(R.drawable.health)
-                val satietyImg = painterResource(R.drawable.satiety)
-                val strengthImg = painterResource(R.drawable.strength)
-                val sleepImg = painterResource(R.drawable.sleep)
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Component(healthImg, viewModel.health, PayMongRed.copy(alpha = 0.6f))
-                }
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Component(satietyImg, viewModel.satiety, PayMongYellow.copy(alpha = 0.6f))
-                }
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Component(strengthImg, viewModel.strength, PayMongGreen.copy(alpha = 0.6f))
-                }
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Component(sleepImg, viewModel.sleep, PayMongBlue200)
-                }
             }
         }
     }

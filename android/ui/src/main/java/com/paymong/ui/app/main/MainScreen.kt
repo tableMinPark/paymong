@@ -1,28 +1,19 @@
 package com.paymong.ui.app.main
 
-import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,19 +30,40 @@ import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.main.MainViewModel
+import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.app.MainViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import java.text.NumberFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
 @Composable
-fun Main(navController: NavController) {
-    val viewModel: MainViewModel = viewModel()
-    MainUI(navController, viewModel)
+fun Main(
+    navController: NavController,
+    appViewModel: AppViewModel,
+    mainViewModel: MainViewModel = viewModel()
+) {
+    // 배경
+    val findBgCode = mainViewModel.background
+    val bgCode = MapCode.valueOf(findBgCode)
+    val bg = painterResource(bgCode.code)
+
+    if(findBgCode == "MP000"){
+        BgGif()
+    } else {
+        Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight())
+    }
+    // state 는 모두 공통 코드화 시켜야 함
+    val characterState = remember { mutableStateOf(CharacterCode.CH444) }
+
+    Top(navController, appViewModel)
+    MakeEgg(appViewModel)
+    Btn(navController, characterState)
 }
 
 @Composable
@@ -65,10 +77,7 @@ fun Help(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.Help.route){
-                        popUpTo("main")
-                        launchSingleTop = true
-                    } }
+                    onClick = { navController.navigate(AppNavItem.Help.route) }
                 )
                 .height(40.dp)
                 .padding(horizontal = 20.dp)
@@ -89,10 +98,7 @@ fun Info(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.InfoDetail.route + "/characterId"){
-                        popUpTo("main")
-                        launchSingleTop = true
-                    } }
+                    onClick = { navController.navigate(AppNavItem.InfoDetail.route) }
                 )
                 .width(40.dp)
         )
@@ -102,8 +108,10 @@ fun Info(navController: NavController){
 }
 
 @Composable
-fun Point(navController: NavController){
-    val viewModel : MainViewModel = viewModel()
+fun Point(
+    navController: NavController,
+    appViewModel: AppViewModel
+){
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -114,10 +122,7 @@ fun Point(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.PayPoint.route + "/memberId"){
-                        popUpTo("main")
-                        launchSingleTop = true
-                    } }
+                    onClick = { navController.navigate(AppNavItem.PayPoint.route) }
                 ).padding(horizontal = 20.dp)
         )
         Row(
@@ -131,7 +136,7 @@ fun Point(navController: NavController){
                     .padding(end = 20.dp)
             )
             Text(
-                text = NumberFormat.getNumberInstance(Locale.getDefault()).format(viewModel.point),
+                text = NumberFormat.getNumberInstance(Locale.getDefault()).format(appViewModel.point),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori, fontSize = 18.sp,
                 color = Color.Black, overflow = TextOverflow.Ellipsis, maxLines = 1
@@ -141,7 +146,10 @@ fun Point(navController: NavController){
 }
 
 @Composable
-fun Top(navController: NavController){
+fun Top(
+    navController: NavController,
+    appViewModel: AppViewModel
+){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -154,17 +162,20 @@ fun Top(navController: NavController){
             Help(navController)
             Info(navController)
         }
-        Point(navController)
+        Point(navController, appViewModel)
     }
 }
+
 @Composable
 fun NicknameDialog(
-    value: String, setShowDialog: (Boolean) -> Unit, setShowSleepDialog: (Boolean) -> Unit,
-    characterState: MutableState<CharacterCode>,
+    value: String,
+    setShowDialog: (Boolean) -> Unit,
+    setShowSleepDialog: (Boolean) -> Unit,
     setValue: (String) -> Unit
 ){
     val noNickname = remember { mutableStateOf("") }
-    val nickname = remember { mutableStateOf(value) }
+    val name = remember { mutableStateOf(value) }
+
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -185,8 +196,8 @@ fun NicknameDialog(
                 )
 
                 OutlinedTextField(
-                    value = nickname.value,
-                    onValueChange = { nickname.value = it },
+                    value = name.value,
+                    onValueChange = { name.value = it },
                     textStyle = TextStyle(fontFamily = dalmoori, color = Color.Black),
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -198,12 +209,12 @@ fun NicknameDialog(
 
                 Button(
                     onClick = {
-                        if (nickname.value.isEmpty()) {
+                        if (name.value.isEmpty()) {
                             noNickname.value = "닉네임 입력은 필수에요🥺"
                             Log.d("error",noNickname.value)
                             return@Button
                         }
-                        setValue(nickname.value)
+                        setValue(name.value)
                         setShowDialog(false)
                         setShowSleepDialog(true)
 //                        characterState.value = CharacterCode.CH003
@@ -267,7 +278,7 @@ fun TimePicker(
     }
     Button(
         onClick = {
-            val selectedTime = LocalTime.of(hourScrollState.firstVisibleItemIndex, minuteScrollState.firstVisibleItemIndex*10)
+            val selectedTime = LocalTime.of(hourScrollState.firstVisibleItemIndex, minuteScrollState.firstVisibleItemIndex * 10)
             onTimeSelected(selectedTime)
         },
         colors = ButtonDefaults.buttonColors(PayMongBlue),
@@ -278,7 +289,11 @@ fun TimePicker(
 }
 
 @Composable
-fun SleepDialog(setSleepValue: (LocalTime) -> Unit, setShowSleepDialog: (Boolean) -> Unit, setShowWakeDialog: (Boolean) -> Unit, nickname: String){
+fun SleepDialog(
+    setSleepValue: (LocalTime) -> Unit,
+    setShowSleepDialog: (Boolean) -> Unit,
+    setShowWakeDialog: (Boolean) -> Unit,
+    name: String){
     Dialog(onDismissRequest = { setShowSleepDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -292,7 +307,7 @@ fun SleepDialog(setSleepValue: (LocalTime) -> Unit, setShowSleepDialog: (Boolean
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "${nickname} 재울 시간 💤",
+                    text = "$name 재울 시간 💤",
                     fontFamily = dalmoori,
                     modifier = Modifier.padding(bottom = 20.dp),
                     color = Color.Black
@@ -311,7 +326,11 @@ fun SleepDialog(setSleepValue: (LocalTime) -> Unit, setShowSleepDialog: (Boolean
     }
 }
 @Composable
-fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -> Unit, nickname: String, characterState: MutableState<CharacterCode>){
+fun WakeDialog(
+    setWakeValue: (LocalTime) -> Unit,
+    setShowWakeDialog: (Boolean) -> Unit,
+    name: String
+){
     Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -325,7 +344,7 @@ fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "${nickname} 깨울 시간 ☀",
+                    text = "$name 깨울 시간 ☀",
                     fontFamily = dalmoori,
                     modifier = Modifier.padding(bottom = 20.dp),
                     color = Color.Black
@@ -334,8 +353,6 @@ fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -
                     time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setWakeValue(newTime)
-                        Log.d("wakeTime",newTime.toString())
-                        characterState.value = CharacterCode.CH003
                         setShowWakeDialog(false)
                     }
                 )
@@ -345,28 +362,35 @@ fun WakeDialog(setWakeValue: (LocalTime) -> Unit, setShowWakeDialog: (Boolean) -
 }
 
 @Composable
-fun MakeEgg(navController: NavController, characterState: MutableState<CharacterCode>){
-    val viewModel : MainViewModel = viewModel()
+fun MakeEgg(appViewModel: AppViewModel){
     val dialogOpen = remember {mutableStateOf(false)}
-    val nickname = remember{ mutableStateOf("") }
     val sleepDialogOpen = remember {mutableStateOf(false)}
     val wakeDialogOpen = remember {mutableStateOf(false)}
     val selectedTime = remember { mutableStateOf(LocalDateTime.now()) }
+    val name = remember{ mutableStateOf("") }
 
     if(dialogOpen.value){
-        NicknameDialog(value = "", setShowDialog = { dialogOpen.value = it }, setShowSleepDialog = {sleepDialogOpen.value = it}
-            ,characterState ){
-            nickname.value = it
-            Log.d("nickname",nickname.value)
-        }
+        NicknameDialog(
+            value = "",
+            setShowDialog = { dialogOpen.value = it },
+            setShowSleepDialog = { sleepDialogOpen.value = it },
+            setValue = { name.value = it }
+        )
     }
 
     if(sleepDialogOpen.value){
-        SleepDialog(setSleepValue = {selectedTime.value}, setShowSleepDialog = { sleepDialogOpen.value = it }, setShowWakeDialog = { wakeDialogOpen.value = it }
-            , nickname.value )
+        SleepDialog(
+            setSleepValue = { selectedTime.value },
+            setShowSleepDialog = { sleepDialogOpen.value = it },
+            setShowWakeDialog = { wakeDialogOpen.value = it },
+            name.value )
     }
     if(wakeDialogOpen.value){
-        WakeDialog(setWakeValue = {selectedTime.value}, setShowWakeDialog = { wakeDialogOpen.value = it }, nickname.value, characterState )
+        WakeDialog(
+            setWakeValue = { selectedTime.value },
+            setShowWakeDialog = { wakeDialogOpen.value = it },
+            name.value
+        )
     }
 
     Row(
@@ -377,7 +401,8 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
         verticalAlignment = Alignment.CenterVertically
     ) {
         val isClicked = remember { mutableStateOf(false) }
-        if (characterState.value == CharacterCode.CH444) {
+
+        if (appViewModel.mongInfo.mongCode == CharacterCode.CH444) {
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
                 fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White,
                 modifier = Modifier.clickable(
@@ -388,7 +413,7 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
                     }
                 )
             )
-        } else if (characterState.value != CharacterCode.CH444){
+        } else if (appViewModel.mongInfo.mongCode != CharacterCode.CH444){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -399,7 +424,7 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                characterState.value = CharacterCode.CH100
+                                appViewModel.setMongCode(CharacterCode.CH100)
                                 isClicked.value = false
                             }
                         )
@@ -408,7 +433,7 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
                 else{
                     Text(text = " \n ", lineHeight = 50.sp, fontSize = 20.sp,)
                 }
-                Image(painter = painterResource(characterState.value.code), contentDescription = null,
+                Image(painter = painterResource(appViewModel.getResourceCode()), contentDescription = null,
                     modifier = Modifier
                         .height(250.dp)
                         .clickable(
@@ -424,7 +449,7 @@ fun MakeEgg(navController: NavController, characterState: MutableState<Character
 
 @Composable
 fun Btn(navController: NavController, characterState: MutableState<CharacterCode>){
-    val viewModel : MainViewModel = viewModel()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -443,10 +468,7 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { navController.navigate(AppNavItem.Collect.route + "/memberId"){
-                            popUpTo("main")
-                            launchSingleTop = true
-                        } }
+                        onClick = { navController.navigate(AppNavItem.Collect.route) }
                     )
                     .width(150.dp)
             )
@@ -466,10 +488,7 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { navController.navigate(AppNavItem.Condition.route + "/characterId"){
-                                popUpTo("main")
-                                launchSingleTop = true
-                            } }
+                            onClick = { navController.navigate(AppNavItem.Condition.route) }
                         )
                         .width(150.dp)
                 )
@@ -482,39 +501,13 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
     }
 }
 
-@Composable
-fun MainUI(
-    navController: NavController,
-    viewModel: MainViewModel
-) {
-    // 배경
-    val findBgCode = viewModel.background
-    val bgCode = MapCode.valueOf(findBgCode)
-    val bg = painterResource(bgCode.code)
-    if(findBgCode == "MP000"){
-        BgGif()
-    } else {
-        Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight())
-    }
-    // state 는 모두 공통 코드화 시켜야 함
-    val characterState = remember { mutableStateOf(CharacterCode.CH444) }
-
-    Top(navController)
-    MakeEgg(navController, characterState)
-    Btn(navController, characterState)
-}
-
 @Preview(showBackground = false)
 @Composable
 fun InfoPreview() {
     val navController = rememberNavController()
-    val viewModel : MainViewModel = viewModel()
     PaymongTheme {
 //        MainUI(navController, viewModel)
 //        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
-        Top(navController)
+//        Top(navController)
     }
 }

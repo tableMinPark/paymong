@@ -18,7 +18,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
@@ -87,12 +86,12 @@ fun BattleFind(
             if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.code)
+                player1 = painterResource(chCode.resourceCode)
 
             } else {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.code)
+                player1 = painterResource(chCode.resourceCode)
             }
             Image(painter = player1, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
         }
@@ -118,12 +117,12 @@ fun BattleFind(
             if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.code)
+                player2 = painterResource(chCode.resourceCode)
 
             } else {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.code)
+                player2 = painterResource(chCode.resourceCode)
             }
             Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
 

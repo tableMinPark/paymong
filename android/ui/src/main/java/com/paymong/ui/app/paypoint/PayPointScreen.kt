@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.paymong.domain.app.paypoint.PayPointViewModel
+import com.paymong.domain.app.PayPointViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
@@ -29,9 +29,27 @@ import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun PayPoint(navController: NavController) {
-    val viewModel: PayPointViewModel = viewModel()
-    PayPointUI(navController, viewModel)
+fun PayPoint(
+    navController: NavController,
+    payPointViewModel: PayPointViewModel = viewModel()
+) {
+    BgGif()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { navController.navigate(AppNavItem.Main.route){
+                    popUpTo("main"){
+                        inclusive = true
+                    }
+                } }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        PayCard(payPointViewModel)
+    }
 }
 
 @Composable
@@ -56,8 +74,9 @@ fun PointInfo(text:String, point: Int){
     }
     Spacer(modifier = Modifier.height(15.dp))
 }
+
 @Composable
-fun PayCard(viewModel: PayPointViewModel) {
+fun PayCard(payPointViewModel: PayPointViewModel) {
     Card(elevation = 10.dp,
         modifier = Modifier
             .fillMaxSize()
@@ -78,37 +97,14 @@ fun PayCard(viewModel: PayPointViewModel) {
                 .background(Color.White))
             Spacer(modifier = Modifier.height(40.dp))
             LazyColumn(){
-                items(viewModel.payList.size){index ->
-                    PointInfo(text = viewModel.payList[index].text, point = viewModel.payList[index].point)
+                items(payPointViewModel.payList.size){index ->
+                    PointInfo(text = payPointViewModel.payList[index].text, point = payPointViewModel.payList[index].point)
                 }
             }
         }
     }
 }
 
-@Composable
-fun PayPointUI(
-    navController: NavController,
-    viewModel: PayPointViewModel
-) {
-    BgGif()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { navController.navigate(AppNavItem.Main.route){
-                    popUpTo("main"){
-                        inclusive = true
-                    }
-                } }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        PayCard(viewModel)
-    }
-}
 
 @Preview(showBackground = false)
 @Composable

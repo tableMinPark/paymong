@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
 import com.paymong.ui.app.collect.CollectMap
@@ -35,75 +39,43 @@ fun AppMain() {
 @Composable
 fun AppMainNav(){
     val navController = rememberNavController()
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
 
     NavHost(
         navController = navController,
         startDestination = AppNavItem.Landing.route)
     {
         composable(route = AppNavItem.Landing.route){
-            Landing(navController)
+            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
+            Landing(navController, appViewModel)
         }
         composable(route = AppNavItem.Login.route){
             Login(navController)
         }
         composable(route = AppNavItem.Main.route){
-            Main(navController)
+            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
+            Main(navController, appViewModel)
         }
-        composable(route = AppNavItem.InfoDetail.route + "/{characterId}",
-            arguments = listOf(
-                navArgument("characterId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            InfoDetail(navController)
+        composable(route = AppNavItem.InfoDetail.route) {
+            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
+            InfoDetail(navController, appViewModel)
         }
-        composable(route = AppNavItem.Condition.route + "/{characterId}",
-            arguments = listOf(
-                navArgument("characterId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable(route = AppNavItem.Condition.route) {
             Condition(navController)
         }
-        composable(route = AppNavItem.PayPoint.route + "/{memberId}",
-            arguments = listOf(
-                navArgument("memberId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable(route = AppNavItem.PayPoint.route) {
             PayPoint(navController)
         }
         composable(route = AppNavItem.Help.route){
-            Help(navController)
+            Help()
         }
-        composable(route = AppNavItem.Collect.route + "/{memberId}",
-            arguments = listOf(
-                navArgument("memberId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable(route = AppNavItem.Collect.route) {
             Collect(navController)
         }
-        composable(route = AppNavItem.CollectPayMong.route + "/{memberId}",
-            arguments = listOf(
-                navArgument("memberId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable(route = AppNavItem.CollectPayMong.route) {
             CollectPayMong(navController)
         }
-        composable(route = AppNavItem.CollectMap.route + "/{memberId}",
-            arguments = listOf(
-                navArgument("memberId") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable(route = AppNavItem.CollectMap.route) {
             CollectMap(navController)
         }
     }

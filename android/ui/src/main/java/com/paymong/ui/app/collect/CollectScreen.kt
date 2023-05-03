@@ -13,21 +13,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.collect.CollectViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
-
 @Composable
 fun Collect(navController: NavController) {
-    val viewModel: CollectViewModel = viewModel()
-    CollectUI(navController, viewModel)
+    Scaffold(
+        topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
+        backgroundColor = PayMongNavy
+    ) {
+        Box(Modifier.padding(it)){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Btn(navController, btnText = "PayMong", AppNavItem.CollectPayMong.route)
+                Btn(navController, btnText = "Map", AppNavItem.CollectMap.route)
+            }
+        }
+    }
 }
 
 @Composable
@@ -47,28 +57,6 @@ fun Btn(navController: NavController, btnText: String, route: String){
         Text(text = btnText, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 40.sp, fontWeight = FontWeight.Bold,
         color = Color.White
         )
-    }
-}
-
-@Composable
-fun CollectUI(
-    navController: NavController,
-    viewModel: CollectViewModel
-) {
-    Scaffold(
-        topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
-        backgroundColor = PayMongNavy
-    ) {
-        Box(Modifier.padding(it)){
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Btn(navController, btnText = "PayMong", AppNavItem.CollectPayMong.route + "/${viewModel.memberId}")
-                Btn(navController, btnText = "Map", AppNavItem.CollectMap.route + "/${viewModel.memberId}")
-            }
-        }
     }
 }
 

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.collect.CollectMapViewModel
+import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.common.code.MapCode
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
@@ -25,9 +25,29 @@ import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun CollectMap(navController: NavController) {
-    val viewModel: CollectMapViewModel = viewModel()
-    CollectMapUI(navController, viewModel)
+fun CollectMap(
+    navController: NavController,
+    collectMapViewModel : CollectMapViewModel = viewModel()
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Scaffold(
+            topBar = {TopBar("Map", navController, AppNavItem.Collect.route)},
+            backgroundColor = PayMongNavy
+        ) {
+            Box(Modifier.padding(it)) {
+                LazyColumn(
+                    Modifier.fillMaxSize()
+                ) {
+                    items(16){
+                            index -> ComponentRow(index = index*2, collectMapViewModel)
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -52,11 +72,13 @@ fun Component(mapName :String, mapCode: Int){ // map 이름 + map 사진
             )
         }
     }
-
 }
+
 @Composable
-fun ComponentRow(index: Int){
-    val viewModel : CollectMapViewModel = viewModel()
+fun ComponentRow(
+    index: Int,
+    collectMapViewModel: CollectMapViewModel
+){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,41 +89,15 @@ fun ComponentRow(index: Int){
             .weight(1f)
             .fillMaxSize()
             .padding(start = 15.dp, end = 5.dp)){
-            Component(MapCode.valueOf(viewModel.mapList[index]).mapName, MapCode.valueOf(viewModel.mapList[index]).code)
+            Component(MapCode.valueOf(collectMapViewModel.mapList[index]).mapName, MapCode.valueOf(collectMapViewModel.mapList[index]).code)
         }
         Box(modifier = Modifier
             .weight(1f)
             .fillMaxSize()
             .padding(start = 5.dp, end = 15.dp)){
-            Component(MapCode.valueOf(viewModel.mapList[index+1]).mapName, MapCode.valueOf(viewModel.mapList[index+1]).code)
+            Component(MapCode.valueOf(collectMapViewModel.mapList[index+1]).mapName, MapCode.valueOf(collectMapViewModel.mapList[index+1]).code)
         }
 
-    }
-}
-
-@Composable
-fun CollectMapUI(
-    navController: NavController,
-    viewModel: CollectMapViewModel
-) {
-    Column(
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.Center
-) {
-        Scaffold(
-            topBar = {TopBar("Map", navController, AppNavItem.Collect.route+ "/${viewModel.memberId}")},
-            backgroundColor = PayMongNavy
-        ) {
-            Box(Modifier.padding(it)) {
-                LazyColumn(
-                    Modifier.fillMaxSize()
-                ) {
-                    items(16){
-                        index -> ComponentRow(index = index*2)
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -112,7 +108,7 @@ fun CollectMapPreview() {
 
     PaymongTheme {
 //        CollectMap(navController)
-        ComponentRow(0)
+//        ComponentRow(0)
 //        Component("스타벅스", R.drawable.mp001)
     }
 }

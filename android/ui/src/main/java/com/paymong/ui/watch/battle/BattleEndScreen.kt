@@ -26,7 +26,6 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
-import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
 fun BattleEnd(
@@ -60,12 +59,12 @@ fun BattleEnd(
             if (battleViewModel.battleActive.order == "A") {
                 findCode = battleViewModel.characterCodeA
                 chCode = CharacterCode.valueOf(findCode)
-                player = painterResource(chCode.code)
+                player = painterResource(chCode.resourceCode)
 
             } else {
                 findCode = battleViewModel.characterCodeB
                 chCode = CharacterCode.valueOf(findCode)
-                player = painterResource(chCode.code)
+                player = painterResource(chCode.resourceCode)
             }
 
             Image(painter = player, contentDescription = null, modifier = Modifier.width(150.dp))

@@ -70,7 +70,7 @@ fun MainInfoUI(
 
         val findCode = viewModel.characterCode
         val chCode = CharacterCode.valueOf(findCode)
-        val character = painterResource(chCode.code)
+        val character = painterResource(chCode.resourceCode)
         Image(painter = character, contentDescription = null, modifier = Modifier.width(characterSize.dp))
 //            Text(text = String.format("캐릭터 코드 : %s %s", animationState.value, viewModel.characterCode), textAlign = TextAlign.Center)
     }

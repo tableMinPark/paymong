@@ -10,12 +10,9 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
-import com.google.android.gms.games.GamesSignInClient
-import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.PlayGamesSdk
 import com.paymong.ui.app.AppMain
 import com.paymong.ui.theme.PaymongTheme
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -19,9 +19,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var poopCount by mutableStateOf(0)
     var point by mutableStateOf(0)
     var mongInfo by mutableStateOf(MongInfo())
-    var mongName by mutableStateOf("")
-    var mongSleepStart by mutableStateOf("")
-    var mongSleepEnd by mutableStateOf("")
+    var mongname by mutableStateOf("")
+    var mongsleepStart by mutableStateOf("")
+    var mongsleepEnd by mutableStateOf("")
     var mongSetting by mutableStateOf(MongSetting())
 
     init {
@@ -60,22 +60,22 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setMongName(name:String){
-        mongName = name
+        mongname = name
     }
 
     fun setMongSleepStart(sleepStart:String){
-        mongSleepStart = sleepStart
+        mongsleepStart = sleepStart
     }
 
     fun setMongSleepEnd(sleepEnd:String){
-        mongSleepEnd = sleepEnd
+        mongsleepEnd = sleepEnd
     }
 
     fun setMongSetting(){
         mongSetting = MongSetting(
-            mongName,
-            mongSleepStart,
-            mongSleepEnd
+            mongname,
+            mongsleepStart,
+            mongsleepEnd
         )
     }
 

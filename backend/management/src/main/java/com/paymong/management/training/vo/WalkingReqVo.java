@@ -12,5 +12,6 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WalkingReqVo {
+    private Long mongId;
     private Integer walkingCount;
 }

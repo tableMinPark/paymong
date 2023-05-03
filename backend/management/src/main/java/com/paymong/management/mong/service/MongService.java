@@ -1,7 +1,9 @@
 package com.paymong.management.mong.service;
 
+import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
+import com.paymong.management.mong.dto.FindRandomEggDto;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -24,31 +26,17 @@ import java.util.Random;
 public class MongService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongService.class);
     private final MongRepository mongRepository;
+    private final CommonServiceClient commonServiceClient;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
 
-        // mong의 memberId 받아오기
-//        mong.setMemberId(1L);
-
-        // mong의 공통 코드 받아오기
-        List<String> mongCodes = new ArrayList<>();
-        mongCodes.add("000");
-        mongCodes.add("001");
-        mongCodes.add("002");
-        mongCodes.add("003");
-        mongCodes.add("004");
-        mongCodes.add("005");
-
-        // 6개의 알중에 랜덤 적용
-        Random random = new Random();
-        random.setSeed(System.currentTimeMillis());
-        int r = random.nextInt(6);
+        FindRandomEggDto findRandomEggDto = commonServiceClient.findRandomEgg();
 
         Mong mong = Mong.builder()
                 .name(addMongReqVo.getName())
-                .memberId(1L)
-                .code(mongCodes.get(r))
+                .memberId(addMongReqVo.getMemberId())
+                .code(findRandomEggDto.getCode())
                 .sleepStart(addMongReqVo.getSleepStart())
                 .sleepEnd(addMongReqVo.getSleepEnd())
                 .build();

@@ -1,7 +1,9 @@
 package com.paymong.paypoint.paypoint.service;
 
-import com.paymong.paypoint.paypoint.dto.AddPayReqDto;
-import com.paymong.paypoint.paypoint.dto.AddPointReqDto;
+import com.paymong.paypoint.global.client.AuthServiceClient;
+import com.paymong.paypoint.global.client.CollectServiceClient;
+import com.paymong.paypoint.global.client.CommonServiceClient;
+import com.paymong.paypoint.paypoint.dto.*;
 import com.paymong.paypoint.paypoint.entity.PointHistory;
 import com.paymong.paypoint.paypoint.repository.PaypointRepository;
 import com.paymong.paypoint.global.pay.Pay;
@@ -17,27 +19,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaypointService {
     final public PaypointRepository paypointRepository;
+    final public CommonServiceClient commonServiceClient;
+    final public AuthServiceClient authServiceClient;
+    final public CollectServiceClient collectServiceClient;
 
     public void addPay(String memberIdStr, String mongIdStr, AddPayReqDto addPaypointReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long mongId = 0L;
         if(!mongIdStr.equals("")) mongId = Long.parseLong(mongIdStr);
         String action = "페이 "+ addPaypointReqDto.getContent() + " 결제";
+        Integer price = addPaypointReqDto.getPrice();
         PointHistory pointHistory = PointHistory.builder()
-                .price(addPaypointReqDto.getPrice())
+                .price(price)
                 .action(action)
                 .memberId(memberId)
                 .mongId(mongId)
                 .build();
         PointHistory ret =  paypointRepository.save(pointHistory);
         //가격 반영보내기
+        //authServiceClient.modifyPaypoint(memberIdStr, mongIdStr, new ModifyPaypointReqDto(price));
 
         String map = Pay.getMap();
 
         //맵코드 받기
         //FindMapByNameResDto findMapByNameResDto =
+        //commonServiceClient.findMapByName(memberIdStr, mongIdStr, new FindMapByNameReqDto(map));
 
         //맵코드보내기  /collect/map
+        //collectServiceClient.addMap(memberIdStr, mongIdStr, new AddMapReqDto());
 
         System.out.println(ret);
 
@@ -46,9 +55,9 @@ public class PaypointService {
     }
 
 
-    public PointHistory addPoint(AddPointReqDto addPointReqDto) throws Exception{
-        Long memberId = addPointReqDto.getMemberId();
-        Long mongId = addPointReqDto.getMongId();
+    public PointHistory addPoint(String memberIdStr, String mongIdStr, AddPointReqDto addPointReqDto) throws Exception{
+        Long memberId = Long.parseLong(memberIdStr);
+        Long mongId = Long.parseLong(mongIdStr);
         String action = addPointReqDto.getContent();
         int price = addPointReqDto.getPrice();
         PointHistory pointHistory = PointHistory.builder()

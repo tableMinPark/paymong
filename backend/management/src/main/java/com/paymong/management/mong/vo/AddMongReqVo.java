@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class AddMongReqVo {
+    private Long memberId;
     private String name;
     private LocalTime sleepStart;
     private LocalTime sleepEnd;

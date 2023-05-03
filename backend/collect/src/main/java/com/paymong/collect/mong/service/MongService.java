@@ -3,6 +3,7 @@ package com.paymong.collect.mong.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.collect.global.client.CommonServiceClient;
 import com.paymong.collect.global.code.GroupStateCode;
+import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.GatewayException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
@@ -47,7 +48,7 @@ public class MongService {
                     .getBody(), FindAllCommonCodeResVo.class);
         } catch (Exception e) {
             log.info(e.getMessage());
-            throw new GatewayException();
+            throw new CommonCodeException();
         }
 
         List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeDtoList().stream()
@@ -104,13 +105,13 @@ public class MongService {
     }
 
     @Transactional
-    public void findMong(Long memberId, String code) {
+    public void findMong(Long memberId, String code) throws RuntimeException{
         mongCollectRepository.findByMemberIdAndMongCode(memberId, code)
             .orElseThrow(() -> new NotFoundException());
     }
 
     @Transactional
-    public void addMong(Long memberId, String code) {
+    public void addMong(Long memberId, String code) throws RuntimeException{
         mongCollectRepository.save(MongCollect.builder().mongCode(code).memberId(memberId).build());
     }
 }

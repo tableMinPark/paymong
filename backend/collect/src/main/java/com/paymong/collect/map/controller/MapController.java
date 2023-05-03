@@ -1,7 +1,7 @@
 package com.paymong.collect.map.controller;
 
 import com.paymong.collect.global.code.ErrorStateCode;
-import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.response.ErrorResponse;
 import com.paymong.collect.map.dto.request.AddMapReqDto;
@@ -42,10 +42,12 @@ public class MapController {
             List<FindAllMapCollectResDto> findAllMapCollectResDto = mapService.findAllMapCollect(
                 memberId);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (GatewayException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
+        } catch (CommonCodeException e) {
+            log.error(ErrorStateCode.COMMONCODE.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.COMMONCODE));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
+            log.error(ErrorStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
 
@@ -59,10 +61,16 @@ public class MapController {
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             log.info("addMap - Call");
-            mapService.addMap(memberId, addMapReqDto.getCode());
-            return ResponseEntity.ok().build();
+            try{
+                mapService.addMap(memberId, addMapReqDto.getCode());
+                return ResponseEntity.ok().build();
+            }catch (Exception ex){
+                log.error(ErrorStateCode.RUNTIME.getMessage());
+                return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            }
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
+            log.error(ErrorStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
 

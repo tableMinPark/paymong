@@ -38,7 +38,7 @@ public class SecurityConfig {
             .csrf().disable()
 
             .authorizeRequests() // 요청에 대한 사용권한 체크
-            .antMatchers("/auth/login").permitAll()
+            .antMatchers("/auth/login","/auth/member/management/paypoint","/auth/member/paypoint").permitAll()
             .antMatchers("/auth/**").hasAnyAuthority("USER")
             .anyRequest().permitAll()
 

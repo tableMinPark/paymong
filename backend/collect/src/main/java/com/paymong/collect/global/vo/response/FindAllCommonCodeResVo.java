@@ -15,6 +15,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class FindAllCommonCodeResVo {
-
-    List<CommonCode> commonCodeList;
+    List<CommonCodeDto> commonCodeDtoList;
 }

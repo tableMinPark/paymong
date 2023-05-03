@@ -1,38 +1,40 @@
-package com.paymong.collect.collect.entity;
+package com.paymong.collect.map.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@Setter
 @DynamicInsert
-@Table(name = "mong_collect")
-public class MongCollect {
+@DynamicUpdate
+@Table(name = "map_collect")
+public class MapCollect {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    private Long mongCollectId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "map_collect_id")
+    private Long mapCollectId;
 
-
-    @Column(nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Column(nullable = false)
-    private String mongCode;
+    @Column(name = "map_code", nullable = false)
+    private String mapCode;
+
 }

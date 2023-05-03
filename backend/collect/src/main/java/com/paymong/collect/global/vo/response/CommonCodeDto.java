@@ -13,9 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class CommonCode {
+public class CommonCodeDto {
 
     private String code;
     private String name;
-    private GroupCode groupCode;
+
 }

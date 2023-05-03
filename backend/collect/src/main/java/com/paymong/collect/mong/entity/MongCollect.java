@@ -1,4 +1,4 @@
-package com.paymong.collect.collect.entity;
+package com.paymong.collect.mong.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,28 +11,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Setter
 @DynamicInsert
-@Table(name = "map_collect")
-public class MapCollect {
+@DynamicUpdate
+@Table(name = "mong_collect")
+public class MongCollect {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "map_collect_id")
-    private Long mapCollectId;
+    private Long mongCollectId;
 
-    @Column(name = "member_id", nullable = false)
+
+    @Column(nullable = false)
     private Long memberId;
 
-    @Column(name = "map_code", nullable = false)
-    private String mapCode;
-
+    @Column(nullable = false)
+    private String mongCode;
 }

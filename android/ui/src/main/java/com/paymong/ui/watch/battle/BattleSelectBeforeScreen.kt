@@ -10,6 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -31,16 +32,16 @@ fun BattleSelectBefore(
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     var fontSize = 0
-
+    var attackDefenceSize = 0
 
     if (screenWidthDp < 200) {
         fontSize = 20
-
+        attackDefenceSize = 60
 
     }
     else {
         fontSize = 25
-
+        attackDefenceSize = 70
     }
 
     if (battleViewModel.matchingState == MatchingCode.SELECT){
@@ -57,9 +58,13 @@ fun BattleSelectBefore(
         battleViewModel.battleEnd()
     }
 
-    val bg = painterResource(R.drawable.main_bg)
+    val bg = painterResource(R.drawable.battle_bg)
+    val defence = painterResource(R.drawable.defence)
+    val attack = painterResource(R.drawable.attack)
+
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    MainBackgroundGif()
+    BattleBackgroundGif()
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -69,10 +74,36 @@ fun BattleSelectBefore(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "어느쪽으로?", textAlign = TextAlign.Center,
-            fontFamily = dalmoori,
-            fontSize = fontSize.sp)
+
+
+        if (battleViewModel.battleActive.order == "A") {
+            if (battleViewModel.battleActive.nextAttacker == "A") {
+                Image(
+                    painter = attack, contentDescription = null,
+                    modifier = Modifier.size(attackDefenceSize.dp)
+                )
+            } else {
+                Image(
+                    painter = defence, contentDescription = null,
+                    modifier = Modifier.size(attackDefenceSize.dp)
+                )
+
+            }
+        } else {
+            if (battleViewModel.battleActive.nextAttacker == "A") {
+                Image(
+                    painter = defence, contentDescription = null,
+                    modifier = Modifier.size(attackDefenceSize.dp)
+                )
+            } else {
+
+                Image(
+                    painter = attack, contentDescription = null,
+                    modifier = Modifier.size(attackDefenceSize.dp)
+                )
+            }
         }
+    }
     }
 }
 

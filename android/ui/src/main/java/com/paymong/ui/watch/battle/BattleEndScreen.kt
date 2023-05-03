@@ -40,9 +40,9 @@ fun BattleEnd(
         }
     }
 
-    val bg = painterResource(R.drawable.main_bg)
+    val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    MainBackgroundGif()
+    BattleBackgroundGif()
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()

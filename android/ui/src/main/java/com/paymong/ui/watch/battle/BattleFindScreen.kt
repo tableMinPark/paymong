@@ -127,7 +127,7 @@ fun BattleFind(
             }
             Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
 
-            Text(text="me", modifier = Modifier.padding(top=70.dp))
+
             }
 
     }

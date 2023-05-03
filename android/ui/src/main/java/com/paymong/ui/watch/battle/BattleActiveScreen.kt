@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +32,13 @@ import com.paymong.ui.theme.*
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.size.OriginalSize
 
 @Composable
 fun BattleActive(
@@ -84,7 +92,7 @@ fun BattleActive(
             Log.d("battle", "싸움 애니메이션 ON")
 
         battleViewModel.matchingState = MatchingCode.SELECT_BEFORE
-        }, 3000)
+        }, 4000)
     }
 
 
@@ -164,12 +172,14 @@ fun BattleActive(
                             modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                         )}
 
-                        Row() {
-                            Image(
-                                painter = attack,
-                                contentDescription = null,
-                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                            )}
+                        Row(modifier = Modifier.size(characterSize.dp)) {
+                            AttackGif()
+//                            Image(
+//                                painter = attack,
+//                                contentDescription = null,
+//                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+//                            )
+                        }
                     }
 
                   } else {
@@ -184,11 +194,10 @@ fun BattleActive(
                         )}
 
                         Row() {
-                            Image(
-                                painter = defence,
-                                contentDescription = null,
-                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                            )}
+                            Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceGif()
+                            }
+                        }
                         }
                     }
                 } else if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0)  {
@@ -201,12 +210,14 @@ fun BattleActive(
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
 
-                            Row() {
-                                Image(
-                                    painter = attack,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackGif()
+//                                Image(
+//                                    painter = attack,
+//                                    contentDescription = null,
+//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+//                                )
+                            }
                         }
 
                     } else {
@@ -218,12 +229,9 @@ fun BattleActive(
                                 modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                             )}
 
-                            Row() {
-                                Image(
-                                    painter = defence,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceGif()
+                            }
                         }
                     }
 
@@ -259,6 +267,7 @@ fun BattleActive(
         ) {
             //게이지 바
             var damA = battleViewModel.battleActive.damageA.toFloat()
+            var healA = battleViewModel.battleActive.healthA.toFloat()
             Box(modifier = Modifier
                 .width(barWidth.dp)
                 .height(barHeight.dp)
@@ -266,7 +275,7 @@ fun BattleActive(
                 .background(Color.White)){
                 Row(modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(fraction = damA)
+                    .fillMaxWidth(fraction = healA/500)
                     .clip(CircleShape)
                     .background(color = PayMongRed)
                     .padding(8.dp)) {}
@@ -278,6 +287,7 @@ fun BattleActive(
                 modifier = Modifier.padding(horizontal = 10.dp))
             //게이지 바
             var damB = battleViewModel.battleActive.damageB.toFloat()
+            var healB = battleViewModel.battleActive.healthB.toFloat()
             Box(modifier = Modifier
                 .width(barWidth.dp)
                 .height(barHeight.dp)
@@ -285,7 +295,7 @@ fun BattleActive(
                 .background(Color.White)){
                 Row(modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(fraction = damB)
+                    .fillMaxWidth(fraction = healB/500)
                     .clip(CircleShape)
                     .background(color = PayMongRed)
                     .padding(8.dp)) {}
@@ -330,12 +340,14 @@ fun BattleActive(
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
 
-                            Row() {
-                                Image(
-                                    painter = attack,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackGif()
+//                                Image(
+//                                    painter = attack,
+//                                    contentDescription = null,
+//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+//                                )
+                            }
                         }
 
                     } else {
@@ -349,12 +361,9 @@ fun BattleActive(
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
 
-                            Row() {
-                                Image(
-                                    painter = defence,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceGif()
+                            }
                         }
                     }
                 } else if (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0)  {
@@ -367,12 +376,14 @@ fun BattleActive(
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
 
-                            Row() {
-                                Image(
-                                    painter = attack,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackGif()
+//                                Image(
+//                                    painter = attack,
+//                                    contentDescription = null,
+//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
+//                                )
+                            }
                         }
 
                     } else {
@@ -384,12 +395,9 @@ fun BattleActive(
                                 modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                             )}
 
-                            Row() {
-                                Image(
-                                    painter = defence,
-                                    contentDescription = null,
-                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-                                )}
+                            Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceGif()
+                            }
                         }
                     }
 
@@ -432,8 +440,8 @@ fun BattleActive(
             // -----------------------------------------------------------------------------------------------------------------------------------------------
 
 
-            Row(modifier=Modifier.width(20.dp)) {
-                Text(text="me", modifier = Modifier.padding(top=50.dp))
+            Row(modifier=Modifier.width(30.dp)) {
+                Image( painter = painterResource(R.drawable.battle_me) ,  contentDescription = null,modifier = Modifier.padding(top=50.dp).size(30.dp))
 
             }
             if (battleViewModel.battleActive.order == "A") {
@@ -484,3 +492,61 @@ fun BattleActivePreview() {
 
 
 
+
+@ExperimentalCoilApi
+@Composable
+fun AttackGif(
+
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.attack_motion,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun DefenceGif(
+
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.defence_motion,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}

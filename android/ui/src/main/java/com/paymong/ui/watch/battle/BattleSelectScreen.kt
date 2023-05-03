@@ -37,14 +37,14 @@ fun BattleSelect(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var fontSize = 0
+    var leftRightBtn = 0
 
 
     if (screenWidthDp < 200) {
-        fontSize = 15
+        leftRightBtn = 30
     }
     else {
-        fontSize = 20
+        leftRightBtn = 40
     }
 
 
@@ -61,15 +61,16 @@ fun BattleSelect(
         battleViewModel.battleEnd()
     }
 
-    val bg = painterResource(R.drawable.main_bg)
+    val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    MainBackgroundGif()
+    BattleBackgroundGif()
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
+
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(0.49f)
@@ -83,12 +84,14 @@ fun BattleSelect(
 //                    }
 //                    viewModel.isSelectEnd = true
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth()
             ) {
-                Text(text = "왼쪽",  fontFamily = dalmoori,
-                    textAlign = TextAlign.Center,
-                        fontSize = fontSize.sp,
-                    modifier = Modifier.fillMaxWidth())
+                Image(
+                    painter = painterResource(id = R.drawable.leftbnt ),
+                    contentDescription = "leftbnt",
+                    modifier = Modifier.size(leftRightBtn.dp)
+                )
             }
         }
         Box(modifier = Modifier
@@ -109,10 +112,15 @@ fun BattleSelect(
 //                        launchSingleTop =true
 //                    }
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                modifier = Modifier.fillMaxHeight().fillMaxWidth()
+
             ) {
-                Text(text = "오른쪽",   fontFamily = dalmoori,  fontSize = fontSize.sp,textAlign = TextAlign.Center
-                   , modifier = Modifier.fillMaxWidth(1f))
+                Image(
+                    painter = painterResource(id = R.drawable.rightbnt ),
+                    contentDescription = "rightbnt",
+                    modifier = Modifier.size(leftRightBtn.dp)
+                )
             }
         }
     }

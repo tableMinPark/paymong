@@ -45,10 +45,18 @@ public class TrainingService {
         FindStatusResDto status = om.convertValue(response.getBody(), FindStatusResDto.class);
 
         // pay 사용 등록
-        ResponseEntity<Object> pay = paypointServiceClient.addaddPay(String.valueOf(mong.getMemberId()),String.valueOf(mongId), new AddPayDto("훈련", status.getPoint()));
+        ResponseEntity<Object> pay = paypointServiceClient.addPay(String.valueOf(mong.getMemberId()),String.valueOf(mongId), new AddPayDto("훈련", status.getPoint()));
         if(pay.getStatusCode() == HttpStatus.BAD_REQUEST) throw new UnknownException();
 
         // 수치값 변경
+        Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+        if(level == 1){
+            mong.setStrength(mong.getStrength() + status.getStrength() > 20 ? 20 : mong.getStrength() + status.getStrength());
+        }else if(level == 2){
+            mong.setStrength(mong.getStrength() + status.getStrength() > 30 ? 30 : mong.getStrength() + status.getStrength());
+        }else if(level == 3){
+            mong.setStrength(mong.getStrength() + status.getStrength() > 40 ? 40 : mong.getStrength() + status.getStrength());
+        }
         mong.setStrength(mong.getStrength() + status.getStrength());
         mong.setHealth(mong.getHealth() + status.getHealth() < 0 ? 0 : mong.getHealth() + status.getHealth());
         mong.setSatiety(mong.getSatiety() + status.getSatiety() < 0 ? 0 : mong.getSatiety() + status.getSatiety());
@@ -79,7 +87,19 @@ public class TrainingService {
         // mongId 담고
         // point 담고
         // 종목 담고
-        mong.setStrength(mong.getStrength() + (status.getStrength()*cnt));
+        // pay 사용 등록
+        ResponseEntity<Object> pay = paypointServiceClient.addPay(String.valueOf(mong.getMemberId()),String.valueOf(walkingReqVo.getMongId()), new AddPayDto("산책", status.getPoint()));
+        if(pay.getStatusCode() == HttpStatus.BAD_REQUEST) throw new UnknownException();
+
+        Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+        if(level == 1){
+            mong.setStrength(mong.getStrength() + (status.getStrength()*cnt) > 20 ? 20 : mong.getStrength() + (status.getStrength()*cnt));
+        }else if(level == 2){
+            mong.setStrength(mong.getStrength() + (status.getStrength()*cnt) > 30 ? 30 : mong.getStrength() + (status.getStrength()*cnt));
+        }else if(level == 3){
+            mong.setStrength(mong.getStrength() + (status.getStrength()*cnt) > 40 ? 40 : mong.getStrength() + (status.getStrength()*cnt));
+        }
+
         mong.setHealth(mong.getHealth() + status.getHealth() < 0 ? 0 : mong.getHealth() + status.getHealth());
         mong.setSatiety(mong.getSatiety() + status.getSatiety() < 0 ? 0 : mong.getSatiety() + status.getSatiety());
         mong.setSleep(mong.getSleep() + status.getSleep() < 0 ? 0 : mong.getSleep() + status.getSleep());

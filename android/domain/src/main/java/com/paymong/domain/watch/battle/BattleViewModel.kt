@@ -17,8 +17,8 @@ import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
-import com.paymong.data.dto.response.BattleErrorResDto
-import com.paymong.data.dto.response.BattleMessageResDto
+import com.paymong.data.model.response.BattleErrorResDto
+import com.paymong.data.model.response.BattleMessageResDto
 import com.paymong.domain.entity.BattleActive
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

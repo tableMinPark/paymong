@@ -56,16 +56,25 @@ fun MainInteractionUI(
     var buttonSize = 0
     var buttonIconSize = 0
     var boxHeight = 0
+    var boxWidth = 0
+    var marginTop = 0
+    var thirdRowPadding = 0
 
     if (screenWidthDp < 200) {
-        buttonSize = 47
+        buttonSize = 45
         buttonIconSize = 25
         boxHeight = 50
+        boxWidth = 60
+        marginTop = 40
+        thirdRowPadding = 12
     }
     else {
         buttonSize = 57
         buttonIconSize = 35
         boxHeight = 60
+        boxWidth = 80
+        marginTop = 50
+        thirdRowPadding = 15
     }
 
 
@@ -83,29 +92,34 @@ fun MainInteractionUI(
 
                 Box(
                     modifier = Modifier.clickable { navController.navigate(WatchNavItem.Battle.route) }
-                        .width(buttonSize.dp),
+                        .width(boxWidth.dp).height(boxHeight.dp),
                     contentAlignment = Alignment.Center
                 ) {
-
-                    val battle = painterResource(R.drawable.battle)
-                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                    val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
-                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                    Image(painter = interactionBntBorder, contentDescription = null,)
-                    Image(painter = battle, contentDescription = null)
-
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize.dp),
+                        contentAlignment = Alignment.Center
+                    )
+                    {
+                        val battle = painterResource(R.drawable.battle)
+                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(painter = battle, contentDescription = null,  modifier = Modifier.size(buttonIconSize.dp))
+                    }
                 }
             }
 
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().padding(top=50.dp, bottom= 5.dp)
+                modifier = Modifier.fillMaxWidth().padding(top=marginTop.dp, bottom= 5.dp)
             ) {
 
                 Box(
                     modifier = Modifier.clickable { navController.navigate(WatchNavItem.Feed.route) }
-                        .width(80.dp).height(boxHeight.dp).padding(start = 2.dp),
+                        .width(boxWidth.dp).height(boxHeight.dp).padding(start = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -118,7 +132,7 @@ fun MainInteractionUI(
 //                Text(text = "FEED", textAlign = TextAlign.Center)
                         val feed = painterResource(R.drawable.feed)
                         val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_orange)
                         Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                         Image(painter = interactionBntBorder, contentDescription = null,)
                         Image(
@@ -131,7 +145,7 @@ fun MainInteractionUI(
 
                 Box(
                     modifier = Modifier.clickable { navController.navigate(WatchNavItem.Activity.route) }
-                        .width(80.dp).height(boxHeight.dp).padding(end = 2.dp),
+                        .width(boxWidth.dp).height(boxHeight.dp).padding(end = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -143,7 +157,7 @@ fun MainInteractionUI(
 //                Text(text = "Activity", textAlign = TextAlign.Center)
                         val activity = painterResource(R.drawable.activity)
                         val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_green)
                         Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                         Image(painter = interactionBntBorder, contentDescription = null,)
                         Image(
@@ -171,7 +185,7 @@ fun MainInteractionUI(
                         launchSingleTop = true
                         coroutineScope.launch { pagerState.animateScrollToPage(1) }
                     }
-                }.width(80.dp) .height(boxHeight.dp).padding(start = 15.dp),
+                }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             )
 
@@ -182,7 +196,7 @@ fun MainInteractionUI(
 //                Text(text = "SLEEP", textAlign = TextAlign.Center)
                 val sleep = painterResource(R.drawable.sleep)
                 val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
                 Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                 Image(painter = interactionBntBorder, contentDescription = null,)
                 Image(
@@ -199,7 +213,7 @@ fun MainInteractionUI(
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop =true
                     coroutineScope.launch {pagerState.animateScrollToPage(1) }
-                }}.width(80.dp) .height(boxHeight.dp).padding(end = 15.dp),
+                }}.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             )
             {    Box ( modifier = Modifier.size(buttonSize.dp),
@@ -209,7 +223,7 @@ fun MainInteractionUI(
 //                Text(text = "POOP", textAlign = TextAlign.Center)
                     val poop = painterResource(R.drawable.poop)
                     val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                    val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                    val interactionBntBorder = painterResource(R.drawable.interaction_bnt_purple)
                     Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                     Image(painter = interactionBntBorder, contentDescription = null,)
                     Image(

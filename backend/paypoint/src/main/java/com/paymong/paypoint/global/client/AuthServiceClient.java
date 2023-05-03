@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface AuthServiceClient {
     @PutMapping(value = "/auth/member/paypoint", produces = "application/json")
     ResponseEntity<Object>  modifyPaypoint(@RequestHeader("MemberId") String memberId,
-                                           @RequestHeader("MongId") String mongId,
                                            @RequestBody ModifyPaypointReqDto modifyPaypointReqDto
                                            );
 

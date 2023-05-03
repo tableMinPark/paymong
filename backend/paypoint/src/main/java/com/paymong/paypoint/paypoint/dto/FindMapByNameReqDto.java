@@ -2,10 +2,11 @@ package com.paymong.paypoint.paypoint.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class FindMapByNameResDto {
-    String code;
+@NoArgsConstructor
+public class FindMapByNameReqDto {
     String name;
 }

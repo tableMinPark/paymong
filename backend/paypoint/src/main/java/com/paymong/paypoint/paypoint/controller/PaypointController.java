@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,17 +30,21 @@ public class PaypointController {
         log.info("addPay - Call");
         try {
             paypointService.addPay(memberIdStr, mongIdStr, addPaypointReqDto);
-            return ResponseEntity.status(HttpStatus.OK).body("zz");
+            Map <String,String> testRet = new HashMap<>();
+            testRet.put("key","짱짱걸");
+            return ResponseEntity.status(HttpStatus.OK).body(testRet);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
     }
 
     @PostMapping("/point")
-    public ResponseEntity<Object> addPoint(@RequestBody AddPointReqDto addPointReqDto){
+    public ResponseEntity<Object> addPoint(@RequestHeader(value = "MemberId") String memberIdStr,
+                                           @RequestHeader(value = "MongId") String mongIdStr,
+                                            @RequestBody AddPointReqDto addPointReqDto){
         log.info("addPoint - Call");
         try {
-            paypointService.addPoint(addPointReqDto);
+            paypointService.addPoint(memberIdStr, mongIdStr, addPointReqDto);
             return ResponseEntity.status(HttpStatus.OK).body("");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));

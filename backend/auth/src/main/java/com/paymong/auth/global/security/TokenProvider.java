@@ -23,8 +23,6 @@ public class TokenProvider {
     @Value("${jwt.secret}")
     private String JWT_KEY;
 
-    private CustomUserDetailService customUserDetailService;
-
     public Claims extractAllClaims(String token) { // 2
         return Jwts.parserBuilder()
             .setSigningKey(getSigningKey(JWT_KEY))
@@ -37,6 +35,7 @@ public class TokenProvider {
         return extractAllClaims(token).get("username", String.class);
     }
 
+
     private Key getSigningKey(String secretKey) {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -48,14 +47,16 @@ public class TokenProvider {
     }
 
     public String generateAccessToken(String username) {
-        return doGenerateToken(username, JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue());
+        return doGenerateToken(username,
+            JwtStateCode.ACCESS_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
     public String generateRefreshToken(String username) {
-        return doGenerateToken(username, JwtStateCode.REFRESH_TOKEN_EXPIRATION_PERIOD.getValue());
+        return doGenerateToken(username,
+            JwtStateCode.REFRESH_TOKEN_EXPIRATION_PERIOD.getValue());
     }
 
-    private String doGenerateToken(String username, long expireTime) { // 1
+    private String doGenerateToken(String username,  long expireTime) { // 1
         Claims claims = Jwts.claims();
         claims.put("username", username);
 

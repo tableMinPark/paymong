@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface PaypointRepository extends JpaRepository<PointHistory, Long> {
-    List<PointHistory> findAllByMemberIdOrderByPointHistoryId(Long memberId);
+    List<PointHistory> findAllByMemberIdOrderByPointHistoryIdDesc(Long memberId);
 
 
 }

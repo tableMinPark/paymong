@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "auth")
 public interface AuthServiceClient {
-    @PutMapping(value = "/auth/paypoint", produces = "application/json")
+    @PutMapping(value = "/auth/member/paypoint", produces = "application/json")
     ResponseEntity<Object>  modifyPaypoint(@RequestHeader("MemberId") String memberId,
-                                           @RequestHeader("MongId") String mongId,
                                            @RequestBody ModifyPaypointReqDto modifyPaypointReqDto
                                            );
 

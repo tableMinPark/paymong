@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModifyPointReqDto {
+public class AddPointReqDto {
 
     private String content;
     private Integer point;

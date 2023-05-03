@@ -64,49 +64,49 @@ fun Login(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null, // 애니메이션 제거
                     onClick = {
-                        try {
-                            // 로그인 시도
-                            gamesSignInClient.signIn()
+                        // 로그인 시도
+                        gamesSignInClient.signIn()
+                        // 로그인 리스너
+                        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+                            loginViewModel.isAuthenticated =
+                                isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
 
-                            // 로그인 리스너
-                            gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-                                loginViewModel.isAuthenticated =
-                                    isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
+                            // 로그인 성공
+                            if (loginViewModel.isAuthenticated) {
+                                PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
+                                    val playerId = mTask?.result?.playerId.toString()
 
-                                // 로그인 성공
-                                if (loginViewModel.isAuthenticated) {
-                                    PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
-                                        val playerId = mTask?.result?.playerId.toString()
-
-                                        // api 호출
-                                        loginViewModel.login(playerId)
-
-                                    }
-                                    // 화면 이동
-                                    navController.navigate(AppNavItem.Main.route) {
-                                        popUpTo(navController.graph.id) {
-                                            inclusive = true
+                                    val isSuccess = loginViewModel.login(playerId)
+                                    // 로그인 성공
+                                    if (!isSuccess) {
+                                        // 화면 이동
+                                        navController.navigate(AppNavItem.Main.route) {
+                                            popUpTo(navController.graph.id) {
+                                                inclusive = true
+                                            }
+                                            navController.graph.setStartDestination(AppNavItem.Main.route)
+                                            launchSingleTop = true
                                         }
-                                        navController.graph.setStartDestination(AppNavItem.Main.route)
-                                        launchSingleTop = true
+                                    } 
+                                    // 로그인 실패
+                                    else {
+                                        Toast.makeText(
+                                            context,
+                                            ToastMessage.LOGIN_FAIL.message,
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
                                 }
-                                // 로그인 실패
-                                else {
-                                    Toast.makeText(
-                                        context,
-                                        ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                ToastMessage.LOGIN_FAIL.message,
-                                Toast.LENGTH_LONG
-                            ).show()
 
+                            }
+                            // 계정을 찾을 수 없음
+                            else {
+                                Toast.makeText(
+                                    context,
+                                    ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     }
                 ))

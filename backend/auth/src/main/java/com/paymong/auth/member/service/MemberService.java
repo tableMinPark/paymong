@@ -14,6 +14,8 @@ import com.paymong.auth.member.dto.response.FindMemberInfoResDto;
 import com.paymong.auth.member.dto.response.ModifyPointResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,20 +70,21 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyPointAndToPaypoint(Long memberId, Integer point, String content) throws RuntimeException {
+    public void modifyPointAndToPaypoint(Long memberId, Integer point, String content)
+        throws RuntimeException {
 
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
 
-        Long prePoint = member.getPoint();
-        member.setPoint(prePoint + point);
+        ResponseEntity<Object> response = paypointServiceClient.addPoint(String.valueOf(memberId),
+            new AddPointReqDto(content, point));
 
-        try{
-            paypointServiceClient.addPoint(String.valueOf(memberId), new AddPointReqDto(content,point));
-        }catch (Exception e){
-            log.error(e.getMessage());
+        if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             throw new PayPointException();
         }
+
+        Long prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
 
     }
 

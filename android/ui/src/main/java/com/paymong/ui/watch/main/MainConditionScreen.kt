@@ -162,7 +162,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
 fun BigWatch( viewModel: MainConditionViewModel) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
     ) {
 
 

@@ -34,12 +34,16 @@ public class AuthController {
         } catch (NotFoundException e) {
             // 없으면 회원 등록
             LoginResDto loginResDto = authService.register(loginRequestDto);
+            log.info("register - Call");
             return ResponseEntity.badRequest().body(loginResDto);
         } catch (UnAuthException e) {
+            log.error(ErrorStateCode.UNAUTHORIXED.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.UNAUTHORIXED));
         } catch (TimeoutException e) {
+            log.error(ErrorStateCode.REDIS.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.REDIS));
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
@@ -50,9 +54,11 @@ public class AuthController {
         try {
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.badRequest()
                 .body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
 
         }

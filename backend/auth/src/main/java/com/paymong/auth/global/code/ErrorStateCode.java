@@ -12,6 +12,8 @@ public enum ErrorStateCode {
     REDIS("408", "캐시 서버에 문제가 있습니다"),
 
     NULLPOINTER("400", "빈 값이 있습니다."),
+
+    PAYPOINT("503", "포인트 기록 추가에 문제가 있습니다."),
     RUNTIME("500", "서버 에러");
     private final String code;
     private final String message;

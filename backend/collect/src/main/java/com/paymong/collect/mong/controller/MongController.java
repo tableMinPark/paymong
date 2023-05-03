@@ -1,7 +1,7 @@
 package com.paymong.collect.mong.controller;
 
 import com.paymong.collect.global.code.ErrorStateCode;
-import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.response.ErrorResponse;
 import com.paymong.collect.mong.dto.request.AddMongReqDto;
@@ -40,25 +40,34 @@ public class MongController {
             FindAllMongCollectResDto findAllMapCollectResDto = mongService.findAllMongCollect(
                 memberId);
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (GatewayException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
+        } catch (CommonCodeException e) {
+            log.error(ErrorStateCode.COMMONCODE.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.COMMONCODE));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MONG_RUNTIME));
+            log.error(ErrorStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
 
     @PostMapping("")
     public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto,
-        HttpServletRequest httpServletRequest) {
+        HttpServletRequest httpServletRequest) throws RuntimeException {
         Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
         try {
+            log.info("findMong - Call");
             mongService.findMong(memberId, addMongReqDto.getCode());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
-            log.info("addMap - Call");
-            mongService.addMong(memberId, addMongReqDto.getCode());
-            return ResponseEntity.ok().build();
+            log.info("addMong - Call");
+            try {
+                mongService.addMong(memberId, addMongReqDto.getCode());
+                return ResponseEntity.ok().build();
+            } catch (Exception ex) {
+                log.error(ErrorStateCode.RUNTIME.getMessage());
+                return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            }
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }

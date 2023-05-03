@@ -16,6 +16,8 @@ import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 public class FeedService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedService.class);
     private final MongRepository mongRepository;
     private final CommonServiceClient commonServiceClient;
     private final AuthServiceClient authServiceClient;
@@ -38,7 +41,7 @@ public class FeedService {
                 .orElseThrow(() -> new NotFoundMongException());
 
         // foodCode에 따라 해당 액션 찾기
-        String foodCode = feedFoodReqVo.getFoodCode().substring(2);
+        String foodCode = feedFoodReqVo.getFoodCode().substring(3,4);
         int code = Integer.parseInt(foodCode);
 
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto();
@@ -54,13 +57,15 @@ public class FeedService {
 
         ObjectMapper om = new ObjectMapper();
         ResponseEntity<Object> response = commonServiceClient.findStatus(findStatusReqDto);
-        if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
+        if(response.getStatusCode()!= HttpStatus.OK) throw new NotFoundActionException();
         FindStatusResDto status = om.convertValue(response.getBody(), FindStatusResDto.class);
 
         ResponseEntity<Object> feedCode = commonServiceClient.findCommonCode(new FindCommonCodeDto(feedFoodReqVo.getFoodCode()));
-        if(feedCode.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
+        if(feedCode.getStatusCode() != HttpStatus.OK) throw new NotFoundActionException();
         CommonCodeDto food = om.convertValue(feedCode.getBody(), CommonCodeDto.class);
         // 이름까지 받아옴
+
+        LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
         ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
         if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
 
@@ -89,13 +94,14 @@ public class FeedService {
 
         ObjectMapper om = new ObjectMapper();
         ResponseEntity<Object> response = commonServiceClient.findStatus(findStatusReqDto);
-        if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
+        if(response.getStatusCode() != HttpStatus.OK) throw new NotFoundActionException();
         FindStatusResDto status = om.convertValue(response.getBody(), FindStatusResDto.class);
 
         ResponseEntity<Object> feedCode = commonServiceClient.findCommonCode(new FindCommonCodeDto(feedSnackReqVo.getSnackCode()));
-        if(feedCode.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
+        if(feedCode.getStatusCode() != HttpStatus.OK) throw new NotFoundActionException();
         CommonCodeDto food = om.convertValue(feedCode.getBody(), CommonCodeDto.class);
         // 이름까지 받아옴
+        LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
         ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
         if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
 

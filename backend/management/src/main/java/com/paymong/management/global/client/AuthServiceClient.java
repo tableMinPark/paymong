@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient("auth")
 public interface AuthServiceClient {
-    @PutMapping(value = "/auth/member/paypoint")
+    @PutMapping(value = "/auth/member/management/paypoint")
     public ResponseEntity<Object> addPoint(@RequestHeader("MemberId") String memberId, @RequestBody AddPointDto addPayDto);
 }

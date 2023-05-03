@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,10 +31,10 @@ public class FeedController {
     String headerMong;
     /* 음식 먹이기 */
     @PutMapping("/food")
-    public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> feedFood(@RequestBody FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-
+        LOGGER.info("{} 먹어", feedFoodReqVo.getFoodCode());
         try {
             if(feedFoodReqVo.getFoodCode() == null || mongIdStr == null || mongIdStr.equals("")){
                 throw new NullPointerException();
@@ -63,7 +60,7 @@ public class FeedController {
 
     /* 간식 먹이기 */
     @PutMapping("/snack")
-    public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> feedSnack(@RequestBody FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
 

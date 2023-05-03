@@ -1,15 +1,15 @@
 package com.paymong.common.common.dto.response;
 
-import com.paymong.common.common.entity.CommonCode;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
-@Setter
-@Getter
+@NoArgsConstructor
+@Builder
 public class FindAllCommonCodeResDto {
-
-    List<CommonCode> commonCodeList;
+    List<CommonCodeDto>  commonCodeDtoList;
 }

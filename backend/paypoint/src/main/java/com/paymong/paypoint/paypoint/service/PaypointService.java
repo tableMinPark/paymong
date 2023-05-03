@@ -1,15 +1,23 @@
 package com.paymong.paypoint.paypoint.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.paypoint.global.client.AuthServiceClient;
 import com.paymong.paypoint.global.client.CollectServiceClient;
 import com.paymong.paypoint.global.client.CommonServiceClient;
+import com.paymong.paypoint.global.exception.InvalidIdException;
+import com.paymong.paypoint.global.exception.NotFoundAuthException;
+import com.paymong.paypoint.global.exception.NotFoundMapCodeException;
+import com.paymong.paypoint.global.exception.NotFoundMapException;
 import com.paymong.paypoint.paypoint.dto.*;
 import com.paymong.paypoint.paypoint.entity.PointHistory;
 import com.paymong.paypoint.paypoint.repository.PaypointRepository;
 import com.paymong.paypoint.global.pay.Pay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,45 +31,69 @@ public class PaypointService {
     private final AuthServiceClient authServiceClient;
     private final CollectServiceClient collectServiceClient;
 
-    public void addPay(String memberIdStr, String mongIdStr, AddPayReqDto addPaypointReqDto) throws Exception{
+    @Transactional
+    public AddPayResDto addPay(String memberIdStr, String mongIdStr, AddPayReqDto addPaypointReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long mongId = 0L;
         if(!mongIdStr.equals("")) mongId = Long.parseLong(mongIdStr);
         String action = "페이 "+ addPaypointReqDto.getContent() + " 결제";
         Integer price = addPaypointReqDto.getPrice();
+        Integer point = price/10;
         PointHistory pointHistory = PointHistory.builder()
-                .price(price)
+                .point(point)
                 .action(action)
                 .memberId(memberId)
                 .mongId(mongId)
                 .build();
+
         PointHistory ret =  paypointRepository.save(pointHistory);
+
+
         //가격 반영보내기
-        //authServiceClient.modifyPaypoint(memberIdStr, mongIdStr, new ModifyPaypointReqDto(price));
+        ResponseEntity<Object> authResponse  = authServiceClient.modifyPaypoint(memberIdStr, mongIdStr, new ModifyPaypointReqDto(point));
+        ObjectMapper om = new ObjectMapper();
+        if(authResponse.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundAuthException();
+        ModifyPaypointReqDto modifyPaypointReqDto = om.convertValue(authResponse.getBody(),ModifyPaypointReqDto.class);
+        Integer totalPoint = modifyPaypointReqDto.getPoint();
 
-        String map = Pay.getMap();
+        //브랜드명 뽑기(없으면 null)
+        String brand = Pay.getMap(action);
 
-        //맵코드 받기
-        //FindMapByNameResDto findMapByNameResDto =
-        //commonServiceClient.findMapByName(memberIdStr, mongIdStr, new FindMapByNameReqDto(map));
+        AddPayResDto addPayResDto = AddPayResDto.builder()
+                .point(totalPoint)
+                .build();
+        if (brand != null){
+            //맵코드 받기
+            ResponseEntity<Object> commonResponse  = commonServiceClient.findMapByName(memberIdStr, mongIdStr, new FindMapByNameReqDto(brand));
+            System.out.println(commonResponse.getBody());
+            if(commonResponse.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapException();
 
-        //맵코드보내기  /collect/map
-        //collectServiceClient.addMap(memberIdStr, mongIdStr, new AddMapReqDto());
+            FindMapByNameResDto findMapByNameResDto = om.convertValue(commonResponse.getBody(), FindMapByNameResDto.class);
+            String mapCode = findMapByNameResDto.getCode();
 
-        System.out.println(ret);
+            //맵코드보내기
+            ResponseEntity<Object> collectResponse = collectServiceClient.addMap(memberIdStr, mongIdStr, new AddMapReqDto(mapCode));
+            if(collectResponse.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapCodeException();
 
+            addPayResDto.setMapCode(mapCode);
+        }
 
+        return addPayResDto;
 
     }
 
 
+    @Transactional
     public PointHistory addPoint(String memberIdStr, String mongIdStr, AddPointReqDto addPointReqDto) throws Exception{
+        System.out.println(memberIdStr + " "+ mongIdStr);
         Long memberId = Long.parseLong(memberIdStr);
+        if (mongIdStr.equals("")) throw new InvalidIdException();
         Long mongId = Long.parseLong(mongIdStr);
         String action = addPointReqDto.getContent();
-        int price = addPointReqDto.getPrice();
+        int point = addPointReqDto.getPoint();
+
         PointHistory pointHistory = PointHistory.builder()
-                .price(price)
+                .point(point)
                 .action(action)
                 .memberId(memberId)
                 .mongId(mongId)
@@ -70,9 +102,10 @@ public class PaypointService {
         return ret;
     }
 
+    @Transactional
     public List<PointHistory> findAllPaypoint(String memberKey){
         Long memberId = Long.parseLong(memberKey);
-        List<PointHistory> paypointList =  paypointRepository.findAllByMemberIdOrderByPointHistoryId(memberId);
+        List<PointHistory> paypointList =  paypointRepository.findAllByMemberIdOrderByPointHistoryIdDesc(memberId);
         System.out.println(paypointList);
         return paypointList;
     }

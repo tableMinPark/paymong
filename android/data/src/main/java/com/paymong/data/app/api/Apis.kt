@@ -1,6 +1,7 @@
 package com.paymong.data.app.api
 
-import com.paymong.data.dto.request.Register
+import com.paymong.data.dto.request.LoginReq
+import com.paymong.data.dto.response.LoginRes
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,8 +21,8 @@ interface Apis {
         }
     }
 
-    @POST("auth/register")
+    @POST("/auth/login")
     @Headers("accept: application/json",
         "content-type: application/json")
-    fun register(@Body params: String) : Call<Register>
+    fun register(@Body params: LoginReq) : Call<LoginRes>
 }

@@ -1,4 +1,9 @@
-package com.paymong.data.dto.response
+package com.paymong.data.model.response
+
+data class BattleErrorResDto(
+    var code: String,
+    val message: String
+)
 
 data class BattleMessageResDto(
     val battleRoomId: String,

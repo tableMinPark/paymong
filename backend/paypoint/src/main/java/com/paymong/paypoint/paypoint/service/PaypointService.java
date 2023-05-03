@@ -18,10 +18,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PaypointService {
-    final public PaypointRepository paypointRepository;
-    final public CommonServiceClient commonServiceClient;
-    final public AuthServiceClient authServiceClient;
-    final public CollectServiceClient collectServiceClient;
+    private final PaypointRepository paypointRepository;
+    private final CommonServiceClient commonServiceClient;
+    private final AuthServiceClient authServiceClient;
+    private final CollectServiceClient collectServiceClient;
 
     public void addPay(String memberIdStr, String mongIdStr, AddPayReqDto addPaypointReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);

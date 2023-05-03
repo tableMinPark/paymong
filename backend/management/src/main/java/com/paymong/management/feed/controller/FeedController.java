@@ -6,6 +6,7 @@ import com.paymong.management.feed.service.FeedService;
 import com.paymong.management.feed.vo.FeedFoodReqVo;
 import com.paymong.management.feed.vo.FeedSnackReqVo;
 import com.paymong.management.global.code.ManagementStateCode;
+import com.paymong.management.global.exception.GatewayException;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
@@ -52,9 +53,12 @@ public class FeedController {
         }catch (NotFoundActionException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
-        } catch (UnknownException e){
+        }catch (UnknownException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
         }
     }
 
@@ -84,6 +88,9 @@ public class FeedController {
         }catch (UnknownException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
         }
     }
 }

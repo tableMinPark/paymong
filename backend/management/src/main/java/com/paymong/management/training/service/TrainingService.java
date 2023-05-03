@@ -1,9 +1,11 @@
 package com.paymong.management.training.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.management.global.client.AuthServiceClient;
 import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.client.PaypointServiceClient;
 import com.paymong.management.global.dto.AddPayDto;
+import com.paymong.management.global.dto.AddPointDto;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
@@ -13,12 +15,12 @@ import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
 import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.generic.LOOKUPSWITCH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 
 @Service
@@ -28,6 +30,7 @@ public class TrainingService {
     private final MongRepository mongRepository;
     private final CommonServiceClient commonServiceClient;
     private final PaypointServiceClient paypointServiceClient;
+    private final AuthServiceClient authServiceClient;
 
     @Transactional
     public void training(Long mongId) throws Exception{
@@ -44,10 +47,11 @@ public class TrainingService {
         if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundActionException();
         FindStatusResDto status = om.convertValue(response.getBody(), FindStatusResDto.class);
 
-        // pay 사용 등록
-        ResponseEntity<Object> pay = paypointServiceClient.addPay(String.valueOf(mong.getMemberId()),String.valueOf(mongId), new AddPayDto("훈련", status.getPoint()));
-        if(pay.getStatusCode() == HttpStatus.BAD_REQUEST) throw new UnknownException();
-
+        // auth 서비스로 전송
+        //
+        ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), "훈련"));
+        if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
+        if(addPoint.getStatusCode() == HttpStatus.OK) LOGGER.info(addPoint.getBody().toString());
         // 수치값 변경
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
         if(level == 1){
@@ -88,8 +92,10 @@ public class TrainingService {
         // point 담고
         // 종목 담고
         // pay 사용 등록
-        ResponseEntity<Object> pay = paypointServiceClient.addPay(String.valueOf(mong.getMemberId()),String.valueOf(walkingReqVo.getMongId()), new AddPayDto("산책", status.getPoint()));
-        if(pay.getStatusCode() == HttpStatus.BAD_REQUEST) throw new UnknownException();
+        // auth 서비스로 전송
+        ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), "산책"));
+        if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
+        if(addPoint.getStatusCode() == HttpStatus.OK) LOGGER.info(addPoint.getBody().toString());
 
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
         if(level == 1){

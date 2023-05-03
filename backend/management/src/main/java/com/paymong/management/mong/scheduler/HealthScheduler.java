@@ -66,6 +66,6 @@ public class HealthScheduler implements ManagementScheduler {
 
     @Override
     public Long getDelay() {
-        return 5L;
+        return 15L * 60L;
     }
 }

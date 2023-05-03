@@ -8,21 +8,20 @@ import com.paymong.management.mong.dto.AddMongReqDto;
 import com.paymong.management.mong.dto.AddMongResDto;
 import com.paymong.management.mong.dto.FindMongReqDto;
 import com.paymong.management.mong.dto.FindMongResDto;
-import com.paymong.management.mong.scheduler.DeathScheduler;
-import com.paymong.management.mong.scheduler.HealthScheduler;
-import com.paymong.management.mong.service.DeathService;
 import com.paymong.management.mong.service.MongService;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
 import com.paymong.management.mong.vo.FindMongReqVo;
 import com.paymong.management.mong.vo.FindMongResVo;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,15 +32,21 @@ public class MongController {
     private final MongService mongService;
     private final SchedulerService schedulerService;
 
+    @Value("${header.member}")
+    String headerMember;
     /* 몽 생성 */
     @PostMapping
-    public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto) throws Exception{
+    public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto, HttpServletRequest httpServletRequest) throws Exception{
         try{
             LOGGER.info("name : {}", addMongReqDto.getName());
             if(addMongReqDto.getName() == null){
                 throw new NullPointerException();
             }
+            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
+            if(memberId == null) throw new NullPointerException();
+
             AddMongReqVo addMongReqVo = new AddMongReqVo(addMongReqDto);
+            addMongReqVo.setMemberId(memberId);
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);

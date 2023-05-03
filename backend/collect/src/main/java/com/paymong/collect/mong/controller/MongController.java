@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/collect/mong")
 public class MongController {
+
     @Value("${header.member}")
     String headerMember;
 
@@ -48,16 +49,16 @@ public class MongController {
 
     @PostMapping("")
     public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto,
-        HttpServletRequest httpServletRequest){
+        HttpServletRequest httpServletRequest) {
         Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
-        try{
+        try {
             mongService.findMong(memberId, addMongReqDto.getCode());
             return ResponseEntity.ok().build();
-        }catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             log.info("addMap - Call");
             mongService.addMong(memberId, addMongReqDto.getCode());
             return ResponseEntity.ok().build();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }

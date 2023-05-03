@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task
 import com.paymong.common.R
 import com.paymong.common.code.LoginCode
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.landing.LandingViewModel
 import com.paymong.domain.app.login.LoginViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme

@@ -44,6 +44,7 @@ fun BattleActive(
     var barWidth = 0
     var barHeight = 0
     var attackDefenceSize = 0
+    var attackDefenceSizeSmall = 0
 
     if (screenWidthDp < 200) {
         characterSize = 80
@@ -51,6 +52,7 @@ fun BattleActive(
         barHeight = 15
         fontSize = 20
         attackDefenceSize = 35
+        attackDefenceSizeSmall = 25
 
     }
     else {
@@ -59,6 +61,7 @@ fun BattleActive(
         barHeight = 20
         fontSize = 24
         attackDefenceSize = 40
+        attackDefenceSizeSmall = 30
     }
 
 
@@ -105,26 +108,26 @@ fun BattleActive(
                 if (battleViewModel.battleActive.nextAttacker == "A") {
                     Image(
                         painter = defence, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSizeSmall.dp)
                     )
 
                 } else {
                     Image(
                         painter = attack, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSizeSmall.dp)
                     )
                 }
             } else {
                 if (battleViewModel.battleActive.nextAttacker == "A") {
                     Image(
                         painter = attack, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSizeSmall.dp)
                     )
 
                 } else {
                     Image(
                         painter = defence, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSizeSmall.dp)
                     )
                 }
             }
@@ -163,7 +166,7 @@ fun BattleActive(
 
                         Row() {
                             Image(
-                                painter = painterResource(R.drawable.strength),
+                                painter = attack,
                                 contentDescription = null,
                                 modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                             )}
@@ -182,13 +185,13 @@ fun BattleActive(
 
                         Row() {
                             Image(
-                                painter = painterResource(R.drawable.satiety),
+                                painter = defence,
                                 contentDescription = null,
                                 modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                             )}
                         }
                     }
-                } else if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0)  {
+                } else if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0)  {
                     if ( battleViewModel.battleActive.damageA > 0 ) {
                         Box() {
                             Row() {
@@ -200,7 +203,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.strength),
+                                    painter = attack,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -217,7 +220,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.satiety),
+                                    painter = defence,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -316,7 +319,7 @@ fun BattleActive(
 
 
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT){
-                if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0){
+                if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0){
                     if ( battleViewModel.battleActive.damageB > 0 ) {
 
                         Box() {
@@ -329,7 +332,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.strength),
+                                    painter = attack,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -348,7 +351,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.satiety),
+                                    painter = defence,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -366,7 +369,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.strength),
+                                    painter = attack,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -383,7 +386,7 @@ fun BattleActive(
 
                             Row() {
                                 Image(
-                                    painter = painterResource(R.drawable.satiety),
+                                    painter = defence,
                                     contentDescription = null,
                                     modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
                                 )}
@@ -428,16 +431,21 @@ fun BattleActive(
 
             // -----------------------------------------------------------------------------------------------------------------------------------------------
 
+
+            Row(modifier=Modifier.width(20.dp)) {
+                Text(text="me", modifier = Modifier.padding(top=50.dp))
+
+            }
             if (battleViewModel.battleActive.order == "A") {
                 if (battleViewModel.battleActive.nextAttacker == "A") {
                     Image(
                         painter = attack, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(start=10.dp).size(attackDefenceSize.dp)
                     )
                 } else {
                     Image(
                     painter = defence, contentDescription = null,
-                    modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                    modifier = Modifier.padding(start=10.dp).size(attackDefenceSize.dp)
                 )
 
                 }
@@ -445,20 +453,20 @@ fun BattleActive(
                 if (battleViewModel.battleActive.nextAttacker == "A") {
                     Image(
                         painter = defence, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(start=10.dp).size(attackDefenceSize.dp)
                     )
                 } else {
 
                     Image(
                         painter = attack, contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 25.dp).size(attackDefenceSize.dp)
+                        modifier = Modifier.padding(start=10.dp).size(attackDefenceSize.dp)
                     )
                 }
             }
-        }
 
+        }}
     }
-    }
+
 
 //    var cnt by remember { mutableStateOf(viewModel.count) }
 

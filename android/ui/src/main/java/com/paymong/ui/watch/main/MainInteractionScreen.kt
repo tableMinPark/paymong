@@ -1,8 +1,10 @@
 package com.paymong.ui.watch.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -53,101 +55,183 @@ fun MainInteractionUI(
     val screenWidthDp = configuration.screenWidthDp
     var buttonSize = 0
     var buttonIconSize = 0
+    var boxHeight = 0
+    var boxWidth = 0
+    var marginTop = 0
+    var thirdRowPadding = 0
 
     if (screenWidthDp < 200) {
         buttonSize = 45
         buttonIconSize = 25
+        boxHeight = 50
+        boxWidth = 60
+        marginTop = 40
+        thirdRowPadding = 12
     }
     else {
-        buttonSize = 55
+        buttonSize = 57
         buttonIconSize = 35
+        boxHeight = 60
+        boxWidth = 80
+        marginTop = 50
+        thirdRowPadding = 15
     }
 
 
     Column(
         modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
+                .fillMaxSize(1f)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongRed.copy(alpha = 0.8f)),
-                border = ButtonDefaults.outlinedButtonBorder(PayMongRed),
+        Box () {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
 
-                modifier = Modifier.height(buttonSize.dp).width(buttonSize.dp),
-                // nav -> BattleScreen()
-                onClick = { navController.navigate(WatchNavItem.Battle.route) }
             ) {
-//                Text(text = "Battle", textAlign = TextAlign.Center)
-                val battle = painterResource(R.drawable.battle)
-                Image(painter = battle, contentDescription = null, modifier = Modifier.size(buttonIconSize.dp))
-            }
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongGreen.copy(alpha = 0.8f)),
-                border = ButtonDefaults.outlinedButtonBorder(PayMongGreen),
-                modifier = Modifier.height(buttonSize.dp).width(buttonSize.dp),
-                // nav -> ActivityScreen()
-                onClick = { navController.navigate(WatchNavItem.Activity.route) }
-            ) {
-//                Text(text = "Activity", textAlign = TextAlign.Center)
-                val activity = painterResource(R.drawable.activity)
-                Image(painter = activity, contentDescription = null, modifier = Modifier.size(buttonIconSize.dp))
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongYellow.copy(alpha = 0.8f)),
-                border = ButtonDefaults.outlinedButtonBorder(PayMongYellow),
-                modifier = Modifier.height(buttonSize.dp).width(buttonSize.dp),
-                // nav -> FeedScreen()
-                onClick = { navController.navigate(WatchNavItem.Feed.route) }
-            ) {
-//                Text(text = "FEED", textAlign = TextAlign.Center)
-                val feed = painterResource(R.drawable.feed)
-                Image(painter = feed, contentDescription = null, modifier = Modifier.size(buttonIconSize.dp))
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongBlue.copy(alpha = 0.8f)),
-                border = ButtonDefaults.outlinedButtonBorder(PayMongBlue),
-                modifier = Modifier.height(buttonSize.dp).width(buttonSize.dp),
-                onClick = {
-                    animationState.value = AnimationCode.Sleep
-                    navController.navigate(WatchNavItem.Main.route){
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop =true
-                        coroutineScope.launch {pagerState.animateScrollToPage(1) }
+//
+
+                Box(
+                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Battle.route) }
+                        .width(boxWidth.dp).height(boxHeight.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize.dp),
+                        contentAlignment = Alignment.Center
+                    )
+                    {
+                        val battle = painterResource(R.drawable.battle)
+                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(painter = battle, contentDescription = null,  modifier = Modifier.size(buttonIconSize.dp))
                     }
                 }
+            }
+
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().padding(top=marginTop.dp, bottom= 5.dp)
             ) {
+
+                Box(
+                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Feed.route) }
+                        .width(boxWidth.dp).height(boxHeight.dp).padding(start = 2.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize.dp),
+                        contentAlignment = Alignment.Center
+                    )
+
+                    {
+//                Text(text = "FEED", textAlign = TextAlign.Center)
+                        val feed = painterResource(R.drawable.feed)
+                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_orange)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(
+                            painter = feed,
+                            contentDescription = null,
+                            modifier = Modifier.size(buttonIconSize.dp)
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Activity.route) }
+                        .width(boxWidth.dp).height(boxHeight.dp).padding(end = 2.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier.size(buttonSize.dp),
+                        contentAlignment = Alignment.Center
+                    )
+
+                    {
+//                Text(text = "Activity", textAlign = TextAlign.Center)
+                        val activity = painterResource(R.drawable.activity)
+                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                        val interactionBntBorder = painterResource(R.drawable.interaction_bnt_green)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(
+                            painter = activity,
+                            contentDescription = null,
+                            modifier = Modifier.size(buttonIconSize.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+        ) {
+
+            Box(
+                modifier = Modifier.clickable {
+                    animationState.value = AnimationCode.Sleep
+                    navController.navigate(WatchNavItem.Main.route) {
+                        popUpTo(navController.graph.findStartDestination().id)
+                        launchSingleTop = true
+                        coroutineScope.launch { pagerState.animateScrollToPage(1) }
+                    }
+                }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
+                contentAlignment = Alignment.Center
+            )
+
+            {   Box ( modifier = Modifier.size(buttonSize.dp),
+                contentAlignment = Alignment.Center
+            )
+            {
 //                Text(text = "SLEEP", textAlign = TextAlign.Center)
                 val sleep = painterResource(R.drawable.sleep)
-                Image(painter = sleep, contentDescription = null, modifier = Modifier.size(buttonIconSize.dp))
+                val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
+                Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                Image(painter = interactionBntBorder, contentDescription = null,)
+                Image(
+                    painter = sleep,
+                    contentDescription = null,
+                    modifier = Modifier.size(buttonIconSize.dp)
+                )
             }
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = PayMongPurple.copy(alpha = 0.8f)),
-                border = ButtonDefaults.outlinedButtonBorder(PayMongPurple),
-                modifier = Modifier.height(buttonSize.dp).width(buttonSize.dp),
-                onClick = {
-                    animationState.value = AnimationCode.Poop
-                    navController.navigate(WatchNavItem.Main.route){
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop =true
-                        coroutineScope.launch {pagerState.animateScrollToPage(1) }
-                    }
-                }
-            ) {
+        }
+
+            Box ( modifier = Modifier.clickable {
+                animationState.value = AnimationCode.Poop
+                navController.navigate(WatchNavItem.Main.route){
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop =true
+                    coroutineScope.launch {pagerState.animateScrollToPage(1) }
+                }}.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
+                contentAlignment = Alignment.Center
+            )
+            {    Box ( modifier = Modifier.size(buttonSize.dp),
+                contentAlignment = Alignment.Center
+            )
+                {
 //                Text(text = "POOP", textAlign = TextAlign.Center)
-                val poop = painterResource(R.drawable.poop)
-                Image(painter = poop, contentDescription = null, modifier = Modifier.size(buttonIconSize.dp))
+                    val poop = painterResource(R.drawable.poop)
+                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                    val interactionBntBorder = painterResource(R.drawable.interaction_bnt_purple)
+                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                    Image(painter = interactionBntBorder, contentDescription = null,)
+                    Image(
+                        painter = poop,
+                        contentDescription = null,
+                        modifier = Modifier.size(buttonIconSize.dp)
+                    )
+                }
             }
         }
     }

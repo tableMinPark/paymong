@@ -21,8 +21,8 @@ public class PointHistory {
     @Column(name = "point_history_id")
     private Long pointHistoryId;
 
-    @Column(name = "price")
-    private int price;
+    @Column(name = "point")
+    private int point;
 
     @Column(name = "action")
     private String action;

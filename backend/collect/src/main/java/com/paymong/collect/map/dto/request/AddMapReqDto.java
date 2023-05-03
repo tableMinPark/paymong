@@ -1,4 +1,4 @@
-package com.paymong.auth.member.dto.request;
+package com.paymong.collect.map.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModifyPointReqDto {
+public class AddMapReqDto {
+    private String code;
 
-    private String content;
-    private Integer point;
 }

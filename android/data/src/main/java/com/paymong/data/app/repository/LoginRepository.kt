@@ -7,9 +7,7 @@ class LoginRepository {
     private val api = Apis.create()
     
     fun registerLogin(id : String) {
-        if(id!=""){
             api.register(id)
             println("api = $api")
-        }
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient("paypoint")
 public interface PaypointServiceClient {
-    @PostMapping(value = "/paypoint", produces = "application/json")
+    @PostMapping(value = "/paypoint")
     public ResponseEntity<Object> addPay(@RequestHeader("MemberId") String memberId,
                                          @RequestHeader("MongId") String mongId,
                                          @RequestBody AddPayDto addPayDto

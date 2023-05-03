@@ -4,16 +4,19 @@ import com.paymong.paypoint.global.code.PaypointStateCode;
 import com.paymong.paypoint.global.response.ErrorResponse;
 import com.paymong.paypoint.paypoint.dto.AddPayReqDto;
 import com.paymong.paypoint.paypoint.dto.AddPointReqDto;
+import com.paymong.paypoint.paypoint.entity.PointHistory;
 import com.paymong.paypoint.paypoint.service.PaypointService;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -56,11 +59,11 @@ public class PaypointController {
     public ResponseEntity<Object> findAllPaypoint(@RequestHeader(value = "MemberId") String memberIdStr){
         log.info("findAllPaypoint - Call");
         try {
-            paypointService.findAllPaypoint(memberIdStr);
+            List<PointHistory> ret= paypointService.findAllPaypoint(memberIdStr);
+            return ResponseEntity.status(HttpStatus.OK).body(ret);
         }catch (Exception e){
-
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
-        return null;
     }
 
 }

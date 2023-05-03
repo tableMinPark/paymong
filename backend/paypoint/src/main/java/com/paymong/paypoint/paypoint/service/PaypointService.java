@@ -29,8 +29,9 @@ public class PaypointService {
         if(!mongIdStr.equals("")) mongId = Long.parseLong(mongIdStr);
         String action = "페이 "+ addPaypointReqDto.getContent() + " 결제";
         Integer price = addPaypointReqDto.getPrice();
+        Integer point = price/10;
         PointHistory pointHistory = PointHistory.builder()
-                .price(price)
+                .point(point)
                 .action(action)
                 .memberId(memberId)
                 .mongId(mongId)
@@ -39,14 +40,17 @@ public class PaypointService {
         //가격 반영보내기
         //authServiceClient.modifyPaypoint(memberIdStr, mongIdStr, new ModifyPaypointReqDto(price));
 
-        String map = Pay.getMap();
+        String brand = Pay.getMap(action);
+        System.out.println("brand : "+brand);
+        if (brand != null){
+            //맵코드 받기
+            //FindMapByNameResDto findMapByNameResDto =
+            //commonServiceClient.findMapByName(memberIdStr, mongIdStr, new FindMapByNameReqDto(map));
 
-        //맵코드 받기
-        //FindMapByNameResDto findMapByNameResDto =
-        //commonServiceClient.findMapByName(memberIdStr, mongIdStr, new FindMapByNameReqDto(map));
+            //맵코드보내기  /collect/map
+            //collectServiceClient.addMap(memberIdStr, mongIdStr, new AddMapReqDto());
+        }
 
-        //맵코드보내기  /collect/map
-        //collectServiceClient.addMap(memberIdStr, mongIdStr, new AddMapReqDto());
 
         System.out.println(ret);
 
@@ -59,9 +63,9 @@ public class PaypointService {
         Long memberId = Long.parseLong(memberIdStr);
         Long mongId = Long.parseLong(mongIdStr);
         String action = addPointReqDto.getContent();
-        int price = addPointReqDto.getPrice();
+        int point = addPointReqDto.getPoint();
         PointHistory pointHistory = PointHistory.builder()
-                .price(price)
+                .point(point)
                 .action(action)
                 .memberId(memberId)
                 .mongId(mongId)

@@ -1,15 +1,14 @@
-package com.paymong.auth.auth.dto.request;
+package com.paymong.auth.member.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginReqDto {
+public class FindMemberInfoResDto {
+    Long mongId;
 
-    private String playerId;
+    Long point;
 }

@@ -1,6 +1,6 @@
-package com.paymong.collect.global.vo.response;
+package com.paymong.common.global.vo.response;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class FindAllCommonCodeResVo {
-    List<CommonCodeDto> commonCodeDtoList;
+public class FindLastBuyResVo {
+    LocalDateTime lastBuy;
 }

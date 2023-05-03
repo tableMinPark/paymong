@@ -1,6 +1,5 @@
 package com.paymong.collect.global.vo.response;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,6 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class FindAllCommonCodeResVo {
-    List<CommonCodeDto> commonCodeDtoList;
+public class CommonCodeDto {
+
+    private String code;
+    private String name;
+
 }

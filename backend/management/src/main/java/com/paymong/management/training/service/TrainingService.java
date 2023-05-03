@@ -51,7 +51,6 @@ public class TrainingService {
         //
         ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), "훈련"));
         if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
-        if(addPoint.getStatusCode() == HttpStatus.OK) LOGGER.info(addPoint.getBody().toString());
         // 수치값 변경
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
         if(level == 1){
@@ -95,7 +94,6 @@ public class TrainingService {
         // auth 서비스로 전송
         ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), "산책"));
         if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
-        if(addPoint.getStatusCode() == HttpStatus.OK) LOGGER.info(addPoint.getBody().toString());
 
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
         if(level == 1){

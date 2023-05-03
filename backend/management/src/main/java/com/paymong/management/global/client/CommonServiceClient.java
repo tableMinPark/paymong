@@ -1,6 +1,8 @@
 package com.paymong.management.global.client;
 
 
+import com.paymong.management.global.dto.CommonCodeDto;
+import com.paymong.management.global.dto.FindCommonCodeDto;
 import com.paymong.management.mong.dto.FindRandomEggDto;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,5 +18,8 @@ public interface CommonServiceClient {
 
     @GetMapping("/common/status/detail")
     public ResponseEntity<Object> findStatus(@SpringQueryMap FindStatusReqDto findStatusReqDto);
+
+    @GetMapping("/common/detail")
+    public ResponseEntity<Object> findCommonCode(@SpringQueryMap FindCommonCodeDto findCommonCodeDto);
 
 }

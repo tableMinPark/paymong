@@ -38,8 +38,10 @@ public class MemberController {
             FindMemberInfoResDto findMemberInfoResDto = memberService.findMemberInfo();
             return ResponseEntity.ok().body(findMemberInfoResDto);
         } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (RuntimeException e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
@@ -56,6 +58,7 @@ public class MemberController {
             ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId,
                 modifyPointDto.getPoint());
             return ResponseEntity.ok().body(modifyPointResDto);
+
         } catch (NotFoundException e) {
             log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
@@ -82,10 +85,13 @@ public class MemberController {
                 modifyPointDto.getContent());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
+            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
         } catch (PayPointException e) {
+            log.error(ErrorStateCode.PAYPOINT.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.PAYPOINT));
         } catch (Exception e) {
+            log.error(ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
 

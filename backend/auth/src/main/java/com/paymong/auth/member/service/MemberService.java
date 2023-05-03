@@ -76,10 +76,14 @@ public class MemberService {
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
 
-        ResponseEntity<Object> response = paypointServiceClient.addPoint(String.valueOf(memberId),
-            new AddPointReqDto(content, point));
-
-        if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+        try {
+            ResponseEntity<Object> response = paypointServiceClient.addPoint(
+                String.valueOf(memberId),
+                new AddPointReqDto(content, point));
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new PayPointException();
+            }
+        } catch (Exception e) {
             throw new PayPointException();
         }
 

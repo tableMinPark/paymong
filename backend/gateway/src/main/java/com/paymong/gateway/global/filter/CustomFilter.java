@@ -65,11 +65,18 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             // 토큰이 유효하지 않을 때
             // redis 에서 확인
+
             String userName = tokenProvider.getUsername(token);
 
             Optional<RefreshToken> refreshToken = refreshTokenRedisRepository.findById(userName);
 
+            // userName으로 된 토큰이 없을 때 -> 만료돼서 redis에서 사라짐
             if (refreshToken.isEmpty()) {
+                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+            }
+
+            // 토큰이 일치하지 않으면
+            if(!refreshToken.get().getAccessToken().equals(token)){
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 

@@ -2,11 +2,10 @@ package com.paymong.auth.global.security;
 
 import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
-import com.paymong.auth.global.config.SecurityConfig;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Getter

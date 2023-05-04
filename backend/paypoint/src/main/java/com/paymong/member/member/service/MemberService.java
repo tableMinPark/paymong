@@ -78,7 +78,6 @@ public class MemberService {
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
 
-
         String memberIdStr = Long.toString(memberId);
         paypointService.addPoint(String memberIdStr, new AddPointReqDto(content, point));
 

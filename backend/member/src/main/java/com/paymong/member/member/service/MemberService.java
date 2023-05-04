@@ -66,22 +66,22 @@ public class MemberService {
     public ModifyPointResDto modifyPoint(Long memberId, Integer point) throws RuntimeException {
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
-        Long prePoint = member.getPoint();
+        Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
         return new ModifyPointResDto(member.getPoint());
     }
 
     @Transactional
     public void modifyPointAndToPaypoint(Long memberId, Integer point, String content)
-        throws RuntimeException {
+            throws Exception {
 
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
 
         String memberIdStr = Long.toString(memberId);
-        paypointService.addPoint(String memberIdStr, new AddPointReqDto(content, point));
+        paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
 
-        Long prePoint = member.getPoint();
+        Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
 
     }

@@ -36,6 +36,6 @@ public class Member {
     private String password;
 
     @Column(name = "point")
-    private Long point;
+    private Integer point;
 
 }

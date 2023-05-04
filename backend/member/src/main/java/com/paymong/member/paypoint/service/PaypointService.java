@@ -34,8 +34,8 @@ public class PaypointService {
     public AddPaypointResDto addPaypoint(String memberIdStr, AddPaypointReqDto addPaypointReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         String action = "페이 "+ addPaypointReqDto.getContent() + " 결제";
-        Long price = addPaypointReqDto.getPrice();
-        Long point = price/10;
+        Integer price = addPaypointReqDto.getPrice();
+        Integer point = price/10;
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)
                 .action(action)
@@ -82,7 +82,7 @@ public class PaypointService {
         System.out.println(memberIdStr + " " + addPointReqDto.getPoint() +" " + addPointReqDto.getContent());
         Long memberId = Long.parseLong(memberIdStr);
         String action = addPointReqDto.getContent();
-        Long point = addPointReqDto.getPoint();
+        Integer point = addPointReqDto.getPoint();
 
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)

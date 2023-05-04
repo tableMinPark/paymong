@@ -22,7 +22,7 @@ public class PointHistory {
     private Long pointHistoryId;
 
     @Column(name = "point")
-    private Long point;
+    private Integer point;
 
     @Column(name = "action")
     private String action;

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddPointReqDto {
     String content;
-    Long point;
+    Integer point;
 }

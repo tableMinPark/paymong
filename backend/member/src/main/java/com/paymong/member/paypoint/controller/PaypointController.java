@@ -5,9 +5,9 @@ import com.paymong.member.global.exception.NotFoundAuthException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.global.response.ErrorResponse;
-import com.paymong.member.paypoint.dto.AddPaypointReqDto;
-import com.paymong.member.paypoint.dto.AddPaypointResDto;
-import com.paymong.member.paypoint.dto.AddPointReqDto;
+import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
+import com.paymong.member.paypoint.dto.response.AddPaypointResDto;
+import com.paymong.member.paypoint.dto.response.AddPointReqDto;
 import com.paymong.member.paypoint.entity.PointHistory;
 import com.paymong.member.paypoint.service.PaypointService;
 

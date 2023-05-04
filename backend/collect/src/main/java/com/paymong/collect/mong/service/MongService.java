@@ -3,7 +3,7 @@ package com.paymong.collect.mong.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.collect.global.client.CommonServiceClient;
 import com.paymong.collect.global.code.GroupStateCode;
-import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.vo.request.FindAllCommonCodeReqVo;
 import com.paymong.collect.global.vo.response.FindAllCommonCodeResVo;
@@ -29,7 +29,7 @@ public class MongService {
     private final CommonServiceClient commonServiceClient;
 
     @Transactional
-    public FindAllMongCollectResDto findAllMongCollect(Long memberId)
+    public List<MongDto> findAllMongCollect(Long memberId)
         throws RuntimeException {
         FindAllMongCollectResDto findAllMongCollectResDto = FindAllMongCollectResDto.builder()
             .build();
@@ -47,7 +47,7 @@ public class MongService {
                     .getBody(), FindAllCommonCodeResVo.class);
         } catch (Exception e) {
             log.info(e.getMessage());
-            throw new GatewayException();
+            throw new CommonCodeException();
         }
 
         List<MongDto> mongDtoList = findAllCommonCodeResVo.getCommonCodeDtoList().stream()
@@ -61,56 +61,21 @@ public class MongService {
             .map(MongCollect::getMongCode).collect(
                 Collectors.toList());
 
-        mongDtoList.forEach(e -> {
-            char growth = e.getCharacterCode().charAt(2);
-            switch (growth) {
-                case '0':
-                    eggs.add(e);
-                    break;
-                case '1':
-                    level1.add(e);
-                    break;
-                case '2':
-                    level2.add(e);
-                    break;
-                case '3':
-                    level3.add(e);
-                    break;
-            }
-        });
-
-        eggs.stream()
+        mongDtoList.stream()
             .map(e -> e.isContain(mongCollectCodeList))
             .collect(Collectors.toList());
 
-        level1.stream()
-            .map(e -> e.isContain(mongCollectCodeList))
-            .collect(Collectors.toList());
-
-        level2.stream()
-            .map(e -> e.isContain(mongCollectCodeList))
-            .collect(Collectors.toList());
-
-        level3.stream()
-            .map(e -> e.isContain(mongCollectCodeList))
-            .collect(Collectors.toList());
-
-        findAllMongCollectResDto.setEggs(eggs);
-        findAllMongCollectResDto.setLevel1(level1);
-        findAllMongCollectResDto.setLevel2(level2);
-        findAllMongCollectResDto.setLevel3(level3);
-
-        return findAllMongCollectResDto;
+        return mongDtoList;
     }
 
     @Transactional
-    public void findMong(Long memberId, String code) {
+    public void findMong(Long memberId, String code) throws RuntimeException {
         mongCollectRepository.findByMemberIdAndMongCode(memberId, code)
             .orElseThrow(() -> new NotFoundException());
     }
 
     @Transactional
-    public void addMong(Long memberId, String code) {
+    public void addMong(Long memberId, String code) throws RuntimeException {
         mongCollectRepository.save(MongCollect.builder().mongCode(code).memberId(memberId).build());
     }
 }

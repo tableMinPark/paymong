@@ -5,11 +5,12 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorStateCode {
-    MAP_RUNTIME("001", "맵 컬렉션을 찾을 수 없습니다."),
-    MONG_RUNTIME("002", "몽 컬렉션을 찾을 수 없습니다."),
+public enum CollectStateCode {
     BAD_GATEWAY("502", "게이트 웨이 에러"),
-    RUNTIME("500", "서버 에러");
+    COMMONCODE("503", "공통 코드 조회에 오류가 있습니다"),
+    RUNTIME("500", "서버 에러"),
+
+    SUCCESS("200","성공");
     private final String code;
     private final String message;
 

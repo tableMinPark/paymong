@@ -1,7 +1,7 @@
 package com.paymong.collect.map.controller;
 
-import com.paymong.collect.global.code.ErrorStateCode;
-import com.paymong.collect.global.exception.GatewayException;
+import com.paymong.collect.global.code.CollectStateCode;
+import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.response.ErrorResponse;
 import com.paymong.collect.map.dto.request.AddMapReqDto;
@@ -33,7 +33,7 @@ public class MapController {
 
     private final MapService mapService;
 
-    @GetMapping("/list")
+    @GetMapping("")
     public ResponseEntity<Object> findAllMapCollect(
         HttpServletRequest httpServletRequest) {
         log.info("findAllMapCollect - Call");
@@ -41,11 +41,17 @@ public class MapController {
             Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
             List<FindAllMapCollectResDto> findAllMapCollectResDto = mapService.findAllMapCollect(
                 memberId);
+            log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                CollectStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().body(findAllMapCollectResDto);
-        } catch (GatewayException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.BAD_GATEWAY));
+        } catch (CommonCodeException e) {
+            log.info("code : {}, message : {}", CollectStateCode.COMMONCODE.getCode(),
+                CollectStateCode.COMMONCODE.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.COMMONCODE));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
+            log.info("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                CollectStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
         }
     }
 
@@ -56,13 +62,25 @@ public class MapController {
         try {
             log.info("findMap - Call");
             mapService.findMap(memberId, addMapReqDto.getCode());
+            log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                CollectStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             log.info("addMap - Call");
-            mapService.addMap(memberId, addMapReqDto.getCode());
-            return ResponseEntity.ok().build();
+            try {
+                mapService.addMap(memberId, addMapReqDto.getCode());
+                log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                    CollectStateCode.SUCCESS.getMessage());
+                return ResponseEntity.ok().build();
+            } catch (Exception ex) {
+                log.info("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                    CollectStateCode.RUNTIME.getMessage());
+                return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
+            }
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.MAP_RUNTIME));
+            log.info("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                CollectStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
         }
     }
 

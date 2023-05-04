@@ -6,11 +6,14 @@ import com.paymong.member.global.client.CommonServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
-import com.paymong.member.member.dto.response.ModifyPointResDto;
 import com.paymong.member.member.entity.Member;
 import com.paymong.member.member.repository.MemberRepository;
-import com.paymong.member.member.service.MemberService;
-import com.paymong.member.paypoint.dto.*;
+import com.paymong.member.paypoint.dto.request.AddMapReqDto;
+import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
+import com.paymong.member.paypoint.dto.request.FindMapByNameReqDto;
+import com.paymong.member.paypoint.dto.response.AddPaypointResDto;
+import com.paymong.member.paypoint.dto.response.AddPointReqDto;
+import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
 import com.paymong.member.paypoint.entity.PointHistory;
 import com.paymong.member.paypoint.repository.PaypointRepository;
 import com.paymong.member.global.pay.Pay;
@@ -22,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Slf4j

@@ -1,6 +1,6 @@
 package com.paymong.member.global.client;
 
-import com.paymong.member.paypoint.dto.AddMapReqDto;
+import com.paymong.member.paypoint.dto.request.AddMapReqDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

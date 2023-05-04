@@ -1,4 +1,4 @@
-package com.paymong.member.paypoint.dto;
+package com.paymong.member.paypoint.dto.response;
 
 import lombok.Data;
 

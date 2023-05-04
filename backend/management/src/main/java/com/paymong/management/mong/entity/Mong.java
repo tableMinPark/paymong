@@ -31,7 +31,7 @@ public class Mong {
     @Column(name = "name")
     private String name;
     @Column(name = "reg_dt")
-    private LocalDate regDt;
+    private LocalDateTime regDt;
     @Column(name = "weight")
     private Integer weight;
     @Column(name = "age")

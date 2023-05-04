@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class LoginReqDto {
     private String playerId;
 
+    private String password;
+
 }

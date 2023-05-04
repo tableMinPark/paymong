@@ -14,6 +14,7 @@ import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenInfo;
 import com.paymong.auth.global.security.TokenProvider;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +38,9 @@ public class AuthService {
 
     @Transactional
     public LoginResDto login(LoginReqDto loginReqDto) throws RuntimeException {
+        String password = passwordEncoder.encode(UUID.randomUUID().toString());
 
+        loginReqDto.setPassword(password);
         //try-catch 잡기
         MemberLoginResDto memberLoginResDto;
         try {

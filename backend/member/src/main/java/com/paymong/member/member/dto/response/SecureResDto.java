@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SecureResDto {
-    private String memberId;
+    private Long memberId;
 
     private Integer point;
 

@@ -13,10 +13,8 @@ import com.paymong.member.member.vo.FindMongReqVo;
 import com.paymong.member.member.vo.FindMongResVo;
 import com.paymong.member.paypoint.dto.AddPointReqDto;
 import com.paymong.member.paypoint.service.PaypointService;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +30,6 @@ public class MemberService {
 
     private final PaypointService paypointService;
 
-    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Member findByMemberPlayerId(String playerId) throws RuntimeException {
@@ -80,7 +77,6 @@ public class MemberService {
 
         String memberIdStr = Long.toString(memberId);
         paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
-        
 
         Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
@@ -96,8 +92,7 @@ public class MemberService {
 
     @Transactional
     public LoginResDto register(LoginReqDto loginReqDto) {
-        String password = passwordEncoder.encode(UUID.randomUUID().toString());
-        Member member = Member.builder().password(password)
+        Member member = Member.builder().password(loginReqDto.getPassword())
             .playerId(loginReqDto.getPlayerId()).point(0).mapCode("MP000").build();
         memberRepository.save(member);
         return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
@@ -105,8 +100,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void secure(String palyerId){
-        Member member = memberRepository.findByPlayerId(palyerId).orElseThrow(()->new NotFoundException());
+    public void secure(String palyerId) {
+        Member member = memberRepository.findByPlayerId(palyerId)
+            .orElseThrow(() -> new NotFoundException());
 
     }
 

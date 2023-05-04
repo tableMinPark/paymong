@@ -25,7 +25,7 @@ public class InformationController {
     private final MongService mongService;
 
     @Value("${header.mong}")
-    private String headerMong;
+    String headerMong;
 
     @GetMapping("/mong")
     public ResponseEntity<Object> findMong(HttpServletRequest httpServletRequest){

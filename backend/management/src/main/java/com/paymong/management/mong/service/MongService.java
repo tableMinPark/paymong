@@ -58,7 +58,7 @@ public class MongService {
 
         FindMongResVo findMongResVo = new FindMongResVo();
         findMongResVo.setMongId(mong.getMongId());
-
+        findMongResVo.setMongCode(mong.getCode());
         return findMongResVo;
     }
 

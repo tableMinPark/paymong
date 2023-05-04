@@ -74,6 +74,7 @@ public class MemberService {
 
         String memberIdStr = Long.toString(memberId);
         paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
+        
 
         Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);

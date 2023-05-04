@@ -23,9 +23,8 @@ public class TokenEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException, ServletException {
         // 엑세스 토큰 만료될때 터짐
-        // 토큰없을때
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().print(objectMapper.writeValueAsString("토큰이 없습니다."));
+        response.getWriter().print(objectMapper.writeValueAsString("토큰이 만료되었습니다."));
     }
 }

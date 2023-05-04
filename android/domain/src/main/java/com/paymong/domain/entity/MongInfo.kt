@@ -6,8 +6,9 @@ import java.time.LocalDateTime
 data class MongInfo(
     val name : String,
     val mongCode : CharacterCode,
-    val born : LocalDateTime,
-    val weight : Int
+    val weight : Int,
+    val born : LocalDateTime
+
 ) {
-    constructor() : this("", CharacterCode.CH000, LocalDateTime.now(), 0)
+    constructor() : this("", CharacterCode.CH000,0, LocalDateTime.now())
 }

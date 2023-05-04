@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPayResDto {
+public class AddPaypointResDto {
     Integer point;
     String mapCode;
 }

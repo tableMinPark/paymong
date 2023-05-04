@@ -31,6 +31,8 @@ public class Mong {
     private Long memberId;
     @Column(name = "code")
     private String code;
+    @Column(name = "state_code")
+    private String stateCode;
     @Column(name = "name")
     private String name;
     @Column(name = "reg_dt")
@@ -61,6 +63,4 @@ public class Mong {
     private LocalTime sleepEnd;
     @Column(name = "active", columnDefinition = "TINYINT", length=1)
     private Integer active;
-    @Column(name = "is_sleep", columnDefinition = "TINYINT", length=1)
-    private Integer is_sleep;
 }

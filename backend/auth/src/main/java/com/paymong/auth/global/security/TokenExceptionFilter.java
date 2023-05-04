@@ -34,8 +34,8 @@ public class TokenExceptionFilter extends GenericFilterBean {
     public void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex)
         throws IOException {
         // 토큰이 없을때 터짐
-        response.setStatus(status.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString("토큰이 만료되었습니다."));
+        response.getWriter().write(objectMapper.writeValueAsString("토큰이 없습니다."));
     }
 }

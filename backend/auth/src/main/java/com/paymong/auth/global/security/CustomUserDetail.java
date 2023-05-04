@@ -1,9 +1,6 @@
 package com.paymong.auth.global.security;
 
 import com.paymong.auth.auth.dto.response.SecureResDto;
-import com.paymong.auth.auth.entity.Auth;
-import com.paymong.auth.auth.entity.Member;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

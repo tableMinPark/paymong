@@ -26,10 +26,12 @@ public class Mong {
     private Long memberId;
     @Column(name = "code")
     private String code;
+    @Column(name = "state_code")
+    private String stateCode;
     @Column(name = "name")
     private String name;
     @Column(name = "reg_dt")
-    private LocalDate regDt;
+    private LocalDateTime regDt;
     @Column(name = "weight")
     private Integer weight;
     @Column(name = "age")
@@ -56,6 +58,4 @@ public class Mong {
     private LocalTime sleepEnd;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "is_sleep")
-    private Boolean isSleep;
 }

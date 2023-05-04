@@ -16,6 +16,7 @@ import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
+import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,18 +31,12 @@ import javax.transaction.Transactional;
 public class FeedService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedService.class);
     private final MongRepository mongRepository;
-    private final CommonServiceClient commonServiceClient;
     private final AuthServiceClient authServiceClient;
     private final ClientService clientService;
+    private final StatusService statusService;
 
     @Transactional
     public void feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
-        // auth에서 mongId 받아오기
-
-        // mongId로 해당 mong 찾기
-        Mong mong = mongRepository.findByMongId(feedFoodReqVo.getMongId())
-                .orElseThrow(() -> new NotFoundMongException());
-
         // foodCode에 따라 해당 액션 찾기
         String foodCode = feedFoodReqVo.getFoodCode().substring(3,4);
         int code = Integer.parseInt(foodCode);
@@ -49,35 +44,25 @@ public class FeedService {
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto();
         if(code == 0){
             findStatusReqDto.setCode("AT000");
-        }else if(1<=code && 3>=code){
+        }else if(code == 1){
             findStatusReqDto.setCode("AT010");
-        }else if(4<=code && 6>=code){
+        }else if(code == 2){
             findStatusReqDto.setCode("AT020");
-        }else{
+        }else if(code == 3){
             findStatusReqDto.setCode("AT030");
+        }else {
+            throw new NotFoundActionException();
         }
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
         CommonCodeDto food = clientService.findCommonCode(new FindCommonCodeDto(feedFoodReqVo.getFoodCode()));
-        // 이름까지 받아옴
 
         LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
-//        try {
-//            ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
-//            if(addPoint.getStatusCode() != HttpStatus.OK) {
-//                LOGGER.info("dmdkdkdkdkd");
-//                throw new UnknownException();
-//            }
-//            mong.setWeight(mong.getWeight() + status.getWeight());
-//        } catch (Exception e){
-//            throw new UnknownException();
-//        }
-        clientService.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
-        mong.setWeight(mong.getWeight() + status.getWeight());
 
+        clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
 
-
+        statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
 
     }
 
@@ -90,27 +75,27 @@ public class FeedService {
                 .orElseThrow(() -> new NotFoundMongException());
 
         // foodCode에 따라 해당 액션 찾기
-        String foodCode = feedSnackReqVo.getSnackCode().substring(2);
+        String foodCode = feedSnackReqVo.getSnackCode().substring(3,4);
         int code = Integer.parseInt(foodCode);
 
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto();
-        if(code>= 0 && code<= 3){
+        if(code == 0){
             findStatusReqDto.setCode("AT001");
-        }else{
+        }else if(code == 1){
+            // code == 1
             findStatusReqDto.setCode("AT011");
+        }else{
+            throw new NotFoundActionException();
         }
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
         CommonCodeDto food = clientService.findCommonCode(new FindCommonCodeDto(feedSnackReqVo.getSnackCode()));
 
-        // 이름까지 받아옴
-        LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
-        ResponseEntity<Object> addPoint = authServiceClient.addPoint(String.valueOf(mong.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
-        if(addPoint.getStatusCode() != HttpStatus.OK) throw new UnknownException();
+        LOGGER.info("활동 코드 : {} , 간식 코드 : {}, 간식 이름 : {}, 간식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
 
-        mong.setWeight(mong.getWeight() + status.getWeight());
-        mong.setHealth(mong.getHealth() + status.getHealth());
-        mong.setStrength(mong.getStrength() + status.getStrength());
+        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
+
+        statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
     }
 }

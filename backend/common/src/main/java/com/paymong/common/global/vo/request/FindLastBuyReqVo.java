@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindLastBuyReqVo {
-    private String characterId;
     private String foodCode;
 }

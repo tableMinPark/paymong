@@ -63,63 +63,59 @@ fun Login(
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null, // 애니메이션 제거
-                    onClick = {
-                        // 로그인 시도
-                        gamesSignInClient.signIn()
-                        // 로그인 리스너
-                        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-                            loginViewModel.isAuthenticated =
-                                isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
-
-                            // 로그인 성공
-                            if (loginViewModel.isAuthenticated) {
-                                PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
-                                    val playerId = mTask?.result?.playerId.toString()
-
-                                    val isSuccess = loginViewModel.login(playerId)
-                                    // 로그인 성공
-                                    if (!isSuccess) {
-                                        // 화면 이동
-                                        navController.navigate(AppNavItem.Main.route) {
-                                            popUpTo(navController.graph.id) {
-                                                inclusive = true
-                                            }
-                                            navController.graph.setStartDestination(AppNavItem.Main.route)
-                                            launchSingleTop = true
-                                        }
-                                    } 
-                                    // 로그인 실패
-                                    else {
-                                        Toast.makeText(
-                                            context,
-                                            ToastMessage.LOGIN_FAIL.message,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-
-                            }
-                            // 계정을 찾을 수 없음
-                            else {
-                                Toast.makeText(
-                                    context,
-                                    ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    }
-                ))
+                    onClick = { login(context, navController, gamesSignInClient, loginViewModel) }
+                )
+            )
         }
     }
 }
-@Composable
-fun SaveData(loginId:String){
-    val context = LocalContext.current as Activity
-    val sharedPref = context.getPreferences(Context.MODE_PRIVATE) ?: return
-    with (sharedPref.edit()) {
-        putString("loginId", loginId)
-        apply()
+
+fun login(
+    context: Activity,
+    navController: NavController,
+    gamesSignInClient : GamesSignInClient,
+    loginViewModel: LoginViewModel
+) {
+
+    // 로그인 시도
+    gamesSignInClient.signIn()
+    // 로그인 리스너
+    gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+        loginViewModel.isAuthenticated = isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
+        // 로그인 성공
+        if (loginViewModel.isAuthenticated) {
+            PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
+                val playerId = mTask?.result?.playerId.toString()
+
+                val isSuccess = loginViewModel.login(playerId)
+                // 로그인 성공
+                if (isSuccess) {
+                    navController.navigate(AppNavItem.Main.route) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        navController.graph.setStartDestination(AppNavItem.Main.route)
+                        launchSingleTop = true
+                    }
+                }
+                // 로그인 실패
+                else {
+                    Toast.makeText(
+                        context,
+                        ToastMessage.LOGIN_FAIL.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+        // 계정을 찾을 수 없음
+        else {
+            Toast.makeText(
+                context,
+                ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }
 

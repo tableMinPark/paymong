@@ -9,9 +9,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
 import com.paymong.data.model.request.CreateReqDto
+import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.CreateRepository
+import com.paymong.data.repository.LoginRepository
 import com.paymong.domain.entity.MongInfo
-import com.paymong.domain.entity.MongSetting
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -27,6 +28,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var mongsleepEnd by mutableStateOf("")
 
     private var createRepository: CreateRepository = CreateRepository()
+    private var loginRepository: LoginRepository = LoginRepository()
 
     init {
         if(::load.isInitialized) load.cancel()
@@ -36,6 +38,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             findPoint()
             findMongInfo()
         }
+    }
+
+    fun loginCheck() : Boolean {
+        return loginRepository.reissue()
     }
 
     fun getMemberId() : Long {

@@ -5,17 +5,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.CapabilityInfo
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.Wearable
 import com.paymong.common.code.ToastMessage
 import com.paymong.ui.watch.WatchMain
 
 class MainActivity : ComponentActivity() {
-
-    private val PERMISSION_CHECK = 100
+    companion object {
+        private const val PERMISSION_CHECK = 100
+        private const val VOICE_TRANSCRIPTION_CAPABILITY_NAME = "voice_transcription"
+        private var transcriptionNodeId: String? = null
+        private const val VOICE_TRANSCRIPTION_MESSAGE_PATH = "/voice_transcription"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

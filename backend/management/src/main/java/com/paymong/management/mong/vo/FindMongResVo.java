@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FindMongResVo {
     private Long mongId;
+    private String mongCode;
 }

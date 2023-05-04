@@ -90,7 +90,14 @@ public class PaypointService {
         Long memberId = Long.parseLong(memberIdStr);
         String action = addPointReqDto.getContent();
         Integer point = addPointReqDto.getPoint();
+        
+        //point반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
 
+        //history에 기록
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)
                 .action(action)

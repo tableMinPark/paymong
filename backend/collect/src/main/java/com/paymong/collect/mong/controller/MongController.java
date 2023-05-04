@@ -32,7 +32,7 @@ public class MongController {
 
     private final MongService mongService;
 
-    @GetMapping("/list")
+    @GetMapping("")
     public ResponseEntity<Object> findAllMongCollect(HttpServletRequest httpServletRequest) {
         log.info("findAllMongCollect - Call");
         Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));

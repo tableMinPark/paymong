@@ -33,7 +33,7 @@ public class MapController {
 
     private final MapService mapService;
 
-    @GetMapping("/list")
+    @GetMapping("")
     public ResponseEntity<Object> findAllMapCollect(
         HttpServletRequest httpServletRequest) {
         log.info("findAllMapCollect - Call");

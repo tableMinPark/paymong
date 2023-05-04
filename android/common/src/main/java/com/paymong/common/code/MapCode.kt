@@ -39,4 +39,9 @@ enum class MapCode(
     MP030(R.drawable.mp030,"설빙"),
     MP031(R.drawable.mp031,"KFC"),
     MP032(R.drawable.mp032,"롯데시네마"),
+    MP033(R.drawable.mp033,"쿠팡"),
+    MP034(R.drawable.mp034,"요기요"),
+    MP035(R.drawable.mp035,"배달의민족"),
+    MP036(R.drawable.mp036,"카페"),
+    MP037(R.drawable.mp037,"세븐일레븐"),
 }

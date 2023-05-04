@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class FindMemberInfoResDto {
     Long mongId;
 
-    Long point;
+    Integer point;
 }

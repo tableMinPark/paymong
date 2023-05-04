@@ -1,10 +1,8 @@
 package com.paymong.member.paypoint.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymong.member.global.client.AuthServiceClient;
 import com.paymong.member.global.client.CollectServiceClient;
 import com.paymong.member.global.client.CommonServiceClient;
-import com.paymong.member.global.exception.NotFoundAuthException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
@@ -29,7 +27,6 @@ import java.util.List;
 public class PaypointService {
     private final PaypointRepository paypointRepository;
     private final CommonServiceClient commonServiceClient;
-    private final AuthServiceClient authServiceClient;
     private final CollectServiceClient collectServiceClient;
     private final MemberService memberService;
 
@@ -59,6 +56,7 @@ public class PaypointService {
                 .point(totalPoint)
                 .build();
         if (brand != null){
+            ObjectMapper om = new ObjectMapper();
             //맵코드 받기
             ResponseEntity<Object> commonResponse  = commonServiceClient.findMapByName(memberIdStr, new FindMapByNameReqDto(brand));
             System.out.println(commonResponse.getBody());
@@ -84,7 +82,7 @@ public class PaypointService {
         System.out.println(memberIdStr + " " + addPointReqDto.getPoint() +" " + addPointReqDto.getContent());
         Long memberId = Long.parseLong(memberIdStr);
         String action = addPointReqDto.getContent();
-        int point = addPointReqDto.getPoint();
+        Integer point = addPointReqDto.getPoint();
 
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)

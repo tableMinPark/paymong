@@ -36,7 +36,7 @@ public class Member {
     private String password;
 
     @Column(name = "point")
-    private Long point;
+    private Integer point;
 
     @Column(name = "map_code")
     private String mapCode;

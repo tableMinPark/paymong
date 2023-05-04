@@ -1,18 +1,24 @@
 package com.paymong.member.member.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.paymong.member.global.client.ManagementServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
+import com.paymong.member.global.exception.PayPointException;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
 import com.paymong.member.member.entity.Member;
 import com.paymong.member.member.repository.MemberRepository;
 import com.paymong.member.member.vo.FindMongReqVo;
 import com.paymong.member.member.vo.FindMongResVo;
+import com.paymong.member.paypoint.dto.AddPaypointReqDto;
 import com.paymong.member.paypoint.dto.AddPointReqDto;
 import com.paymong.member.paypoint.service.PaypointService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,14 +66,14 @@ public class MemberService {
     public ModifyPointResDto modifyPoint(Long memberId, Integer point) throws RuntimeException {
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
-        Long prePoint = member.getPoint();
+        Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
         return new ModifyPointResDto(member.getPoint());
     }
 
     @Transactional
     public void modifyPointAndToPaypoint(Long memberId, Integer point, String content)
-        throws Exception {
+            throws Exception {
 
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new NotFoundException());
@@ -75,7 +81,7 @@ public class MemberService {
         String memberIdStr = Long.toString(memberId);
         paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
 
-        Long prePoint = member.getPoint();
+        Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
 
     }

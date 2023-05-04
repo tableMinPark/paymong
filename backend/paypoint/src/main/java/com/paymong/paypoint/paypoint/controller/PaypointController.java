@@ -1,13 +1,12 @@
 package com.paymong.paypoint.paypoint.controller;
 
 import com.paymong.paypoint.global.code.PaypointStateCode;
-import com.paymong.paypoint.global.exception.InvalidIdException;
 import com.paymong.paypoint.global.exception.NotFoundAuthException;
 import com.paymong.paypoint.global.exception.NotFoundMapCodeException;
 import com.paymong.paypoint.global.exception.NotFoundMapException;
 import com.paymong.paypoint.global.response.ErrorResponse;
-import com.paymong.paypoint.paypoint.dto.AddPayReqDto;
-import com.paymong.paypoint.paypoint.dto.AddPayResDto;
+import com.paymong.paypoint.paypoint.dto.AddPaypointReqDto;
+import com.paymong.paypoint.paypoint.dto.AddPaypointResDto;
 import com.paymong.paypoint.paypoint.dto.AddPointReqDto;
 import com.paymong.paypoint.paypoint.entity.PointHistory;
 import com.paymong.paypoint.paypoint.service.PaypointService;
@@ -15,7 +14,6 @@ import com.paymong.paypoint.paypoint.service.PaypointService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +27,12 @@ import java.util.List;
 public class PaypointController {
     final public PaypointService paypointService;
     @PostMapping("")
-    public ResponseEntity<Object> addPay(@RequestHeader(value = "MemberId") String memberIdStr,
-                                              @RequestHeader(value = "MongId") String mongIdStr,
-                                              @RequestBody AddPayReqDto addPaypointReqDto
+    public ResponseEntity<Object> addPaypoint(@RequestHeader(value = "MemberId") String memberIdStr,
+                                              @RequestBody AddPaypointReqDto addPaypointReqDto
                                               ){
         log.info("addPay - Call");
         try {
-            AddPayResDto addPayResDto = paypointService.addPay(memberIdStr, mongIdStr, addPaypointReqDto);
+            AddPaypointResDto addPayResDto = paypointService.addPaypoint(memberIdStr, addPaypointReqDto);
             return ResponseEntity.status(HttpStatus.OK).body(addPayResDto);
         }catch (NotFoundAuthException e){
             log.info("code : {}, message : {}", PaypointStateCode.FAIL_AUTH.getCode(), PaypointStateCode.FAIL_AUTH.name());
@@ -54,17 +51,13 @@ public class PaypointController {
 
     @PostMapping("/point")
     public ResponseEntity<Object> addPoint(@RequestHeader(value = "MemberId") String memberIdStr,
-                                           @RequestHeader(value = "MongId") String mongIdStr,
                                             @RequestBody AddPointReqDto addPointReqDto){
         log.info("addPoint - Call");
         try {
-            PointHistory paypoint =  paypointService.addPoint(memberIdStr, mongIdStr, addPointReqDto);
+            PointHistory paypoint =  paypointService.addPoint(memberIdStr, addPointReqDto);
             return ResponseEntity.status(HttpStatus.OK).body(paypoint);
-        }catch (InvalidIdException e){
-            log.info("code : {}, message : {}", PaypointStateCode.NOTEXIST.getCode(), PaypointStateCode.NOTEXIST.name());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.NOTEXIST));
-        }
-        catch (Exception e){
+        }catch (Exception e){
+            System.out.println(e);
             log.info("code : {}, message : {}", PaypointStateCode.UNKNOWN.getCode(), PaypointStateCode.UNKNOWN.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }

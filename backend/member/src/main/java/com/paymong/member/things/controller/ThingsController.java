@@ -40,9 +40,10 @@ public class ThingsController {
         log.info("findAddableThings - Call");
 
         try {
-
+            thingsService.findAddableThings(memberIdStr);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            System.out.println(e);
             log.error(PaypointStateCode.UNKNOWN.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }

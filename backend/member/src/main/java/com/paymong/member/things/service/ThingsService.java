@@ -5,10 +5,12 @@ import com.paymong.member.global.client.CommonServiceClient;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
+import com.paymong.member.things.dto.request.FindAddableThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
 import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
 import com.paymong.member.things.dto.response.ThingsCommonCode;
+import com.paymong.member.things.dto.response.ThingsCommonCodeList;
 import com.paymong.member.things.entity.Things;
 import com.paymong.member.things.repository.ThingsRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +50,14 @@ public class ThingsService {
     public List<FindAddableThingsResDto> findAddableThings(String memberIdStr) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         String groupCode = "ST";
-        Map<String, String> req = new HashMap<>();
-        req.put("commonCode",groupCode);
-        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
-        if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapException();
+        FindAddableThingsReqDto req = new FindAddableThingsReqDto(groupCode);
+        System.out.println("thingsCommonCodesList 요청 가즈아");
         ObjectMapper om = new ObjectMapper();
-        //List<ThingsCommonCode>  = om.convertValue(response.getBody(), ThingsCommonCode.class);
+        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
+        ThingsCommonCodeList thingsCommonCodeList =  om.convertValue(response.getBody(), ThingsCommonCodeList.class);
+        System.out.println(thingsCommonCodeList.getCommonCodeDtoList());
+        //System.out.println(thingsCommonCodesList);
+
 
         return null;
     }

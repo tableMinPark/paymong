@@ -359,9 +359,10 @@ fun WakeDialog(
                     time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setWakeValue(newTime)
+                        Log.d("wakeTime",newTime.toString())
                         setShowWakeDialog(false)
                         appViewModel.setMongSleepEnd(newTime.toString())
-                        appViewModel.create()
+//                        appViewModel.create()
                     }
                 )
             }

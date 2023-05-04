@@ -12,8 +12,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.wear.compose.navigation.SwipeDismissableNavHost
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
@@ -76,7 +80,8 @@ fun AppMainNav(){
             CollectPayMong(navController)
         }
         composable(route = AppNavItem.CollectMap.route) {
-            CollectMap(navController)
+            val mapViewModel = viewModel<CollectMapViewModel>(viewModelStoreOwner)
+            CollectMap(navController, mapViewModel)
         }
     }
 }

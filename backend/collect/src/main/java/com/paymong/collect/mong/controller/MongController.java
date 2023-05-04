@@ -1,12 +1,13 @@
 package com.paymong.collect.mong.controller;
 
-import com.paymong.collect.global.code.ErrorStateCode;
+import com.paymong.collect.global.code.CollectStateCode;
 import com.paymong.collect.global.exception.CommonCodeException;
 import com.paymong.collect.global.exception.NotFoundException;
 import com.paymong.collect.global.response.ErrorResponse;
 import com.paymong.collect.mong.dto.request.AddMongReqDto;
-import com.paymong.collect.mong.dto.response.FindAllMongCollectResDto;
+import com.paymong.collect.mong.dto.response.MongDto;
 import com.paymong.collect.mong.service.MongService;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,15 +38,19 @@ public class MongController {
         log.info("findAllMongCollect - Call");
         Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
         try {
-            FindAllMongCollectResDto findAllMapCollectResDto = mongService.findAllMongCollect(
+            List<MongDto> findAllMapCollectResDto = mongService.findAllMongCollect(
                 memberId);
+            log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                CollectStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (CommonCodeException e) {
-            log.error(ErrorStateCode.COMMONCODE.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.COMMONCODE));
+            log.info("code : {}, message : {}", CollectStateCode.COMMONCODE.getCode(),
+                CollectStateCode.COMMONCODE.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.COMMONCODE));
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                CollectStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
         }
     }
 
@@ -56,19 +61,25 @@ public class MongController {
         try {
             log.info("findMong - Call");
             mongService.findMong(memberId, addMongReqDto.getCode());
+            log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                CollectStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             log.info("addMong - Call");
             try {
                 mongService.addMong(memberId, addMongReqDto.getCode());
+                log.info("code : {}, message : {}", CollectStateCode.SUCCESS.getCode(),
+                    CollectStateCode.SUCCESS.getMessage());
                 return ResponseEntity.ok().build();
             } catch (Exception ex) {
-                log.error(ErrorStateCode.RUNTIME.getMessage());
-                return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+                log.error("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                    CollectStateCode.RUNTIME.getMessage());
+                return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
             }
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.error("code : {}, message : {}", CollectStateCode.RUNTIME.getCode(),
+                CollectStateCode.RUNTIME.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CollectStateCode.RUNTIME));
         }
     }
 

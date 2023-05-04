@@ -1,17 +1,13 @@
 package com.paymong.management.feed.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.feed.vo.FeedFoodReqVo;
 import com.paymong.management.feed.vo.FeedSnackReqVo;
-import com.paymong.management.global.client.AuthServiceClient;
 import com.paymong.management.global.client.ClientService;
-import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.dto.AddPointDto;
 import com.paymong.management.global.dto.CommonCodeDto;
 import com.paymong.management.global.dto.FindCommonCodeDto;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
@@ -20,8 +16,6 @@ import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,7 +25,6 @@ import javax.transaction.Transactional;
 public class FeedService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedService.class);
     private final MongRepository mongRepository;
-    private final AuthServiceClient authServiceClient;
     private final ClientService clientService;
     private final StatusService statusService;
 

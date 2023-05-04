@@ -3,9 +3,12 @@ package com.paymong.member.paypoint.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.member.global.client.CollectServiceClient;
 import com.paymong.member.global.client.CommonServiceClient;
+import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
+import com.paymong.member.member.entity.Member;
+import com.paymong.member.member.repository.MemberRepository;
 import com.paymong.member.member.service.MemberService;
 import com.paymong.member.paypoint.dto.*;
 import com.paymong.member.paypoint.entity.PointHistory;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -26,9 +30,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaypointService {
     private final PaypointRepository paypointRepository;
+    private final MemberRepository memberRepository;
     private final CommonServiceClient commonServiceClient;
     private final CollectServiceClient collectServiceClient;
-    private final MemberService memberService;
 
     @Transactional
     public AddPaypointResDto addPaypoint(String memberIdStr, AddPaypointReqDto addPaypointReqDto) throws Exception{
@@ -45,9 +49,12 @@ public class PaypointService {
         PointHistory ret =  paypointRepository.save(pointHistory);
 
 
-        //가격 반영보내기
-        ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId, point);
-        Integer totalPoint = modifyPointResDto.getPoint();
+        //가격 반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
+        Integer totalPoint = member.getPoint();
 
         //브랜드명 뽑기(없으면 null)
         String brand = Pay.getMap(action);

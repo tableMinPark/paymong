@@ -11,6 +11,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface CollectServiceClient {
     @PostMapping(value = "/collect/map", produces = "application/json")
     ResponseEntity<Object> addMap(@RequestHeader("MemberId") String memberId,
-                                  @RequestHeader("MongId") String mongId,
                                   @RequestBody AddMapReqDto addMapReqDto);
 }

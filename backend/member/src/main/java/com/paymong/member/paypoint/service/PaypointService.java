@@ -7,6 +7,8 @@ import com.paymong.member.global.client.CommonServiceClient;
 import com.paymong.member.global.exception.NotFoundAuthException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
+import com.paymong.member.member.dto.response.ModifyPointResDto;
+import com.paymong.member.member.service.MemberService;
 import com.paymong.member.paypoint.dto.*;
 import com.paymong.member.paypoint.entity.PointHistory;
 import com.paymong.member.paypoint.repository.PaypointRepository;
@@ -29,6 +31,7 @@ public class PaypointService {
     private final CommonServiceClient commonServiceClient;
     private final AuthServiceClient authServiceClient;
     private final CollectServiceClient collectServiceClient;
+    private final MemberService memberService;
 
     @Transactional
     public AddPaypointResDto addPaypoint(String memberIdStr, AddPaypointReqDto addPaypointReqDto) throws Exception{
@@ -46,11 +49,8 @@ public class PaypointService {
 
 
         //가격 반영보내기
-        ResponseEntity<Object> authResponse  = authServiceClient.modifyPaypoint(memberIdStr, new ModifyPaypointReqDto(point));
-        ObjectMapper om = new ObjectMapper();
-        if(authResponse.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundAuthException();
-        ModifyPaypointReqDto modifyPaypointReqDto = om.convertValue(authResponse.getBody(),ModifyPaypointReqDto.class);
-        Integer totalPoint = modifyPaypointReqDto.getPoint();
+        ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId, point);
+        Integer totalPoint = modifyPointResDto.getPoint();
 
         //브랜드명 뽑기(없으면 null)
         String brand = Pay.getMap(action);

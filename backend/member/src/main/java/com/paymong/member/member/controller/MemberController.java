@@ -5,6 +5,8 @@ import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.NullPointerException;
 import com.paymong.auth.global.exception.PayPointException;
 import com.paymong.auth.global.response.ErrorResponse;
+import com.paymong.member.global.exception.NotFoundException;
+import com.paymong.member.global.exception.PayPointException;
 import com.paymong.member.member.dto.request.ModifyPointReqDto;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth/member")
+@RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;

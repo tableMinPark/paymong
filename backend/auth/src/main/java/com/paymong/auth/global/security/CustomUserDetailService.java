@@ -1,7 +1,6 @@
 package com.paymong.auth.global.security;
 
 import com.paymong.auth.auth.entity.Member;
-import com.paymong.auth.auth.service.AuthService;
 import com.paymong.auth.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -41,12 +41,16 @@ public class MapController {
             Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
             List<FindAllMapCollectResDto> findAllMapCollectResDto = mapService.findAllMapCollect(
                 memberId);
+            log.info("code : {}, message : {}", ErrorStateCode.SUCCESS.getCode(),
+                ErrorStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().body(findAllMapCollectResDto);
         } catch (CommonCodeException e) {
-            log.error(ErrorStateCode.COMMONCODE.getMessage());
+            log.info("code : {}, message : {}", ErrorStateCode.COMMONCODE.getCode(),
+                ErrorStateCode.COMMONCODE.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.COMMONCODE));
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
+            log.info("code : {}, message : {}", ErrorStateCode.RUNTIME.getCode(),
+                ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }
@@ -58,18 +62,24 @@ public class MapController {
         try {
             log.info("findMap - Call");
             mapService.findMap(memberId, addMapReqDto.getCode());
+            log.info("code : {}, message : {}", ErrorStateCode.SUCCESS.getCode(),
+                ErrorStateCode.SUCCESS.getMessage());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             log.info("addMap - Call");
-            try{
+            try {
                 mapService.addMap(memberId, addMapReqDto.getCode());
+                log.info("code : {}, message : {}", ErrorStateCode.SUCCESS.getCode(),
+                    ErrorStateCode.SUCCESS.getMessage());
                 return ResponseEntity.ok().build();
-            }catch (Exception ex){
-                log.error(ErrorStateCode.RUNTIME.getMessage());
+            } catch (Exception ex) {
+                log.info("code : {}, message : {}", ErrorStateCode.RUNTIME.getCode(),
+                    ErrorStateCode.RUNTIME.getMessage());
                 return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
             }
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
+            log.info("code : {}, message : {}", ErrorStateCode.RUNTIME.getCode(),
+                ErrorStateCode.RUNTIME.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
         }
     }

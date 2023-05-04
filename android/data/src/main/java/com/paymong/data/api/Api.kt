@@ -44,7 +44,7 @@ interface Api {
 
                 Log.d("intercept - request", chain.request().toString())
 
-                return if (accessToken != null) {
+                return if ("" != accessToken) {
                     val token = "Bearer $accessToken"
                     val newRequest = chain.request().newBuilder()
                         .addHeader("Authorization", token)

@@ -1,17 +1,13 @@
-package com.paymong.auth.auth.dto.request;
+package com.paymong.member.member.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginReqDto {
+public class SecureReqDto {
 
     private String playerId;
-
-    private String password;
 }

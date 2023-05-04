@@ -6,10 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindByPlayIdResDto {
-    private String memberId;
+@Builder
+public class SecureResDto {
+    private Long memberId;
+
+    private Integer point;
+
+    private String password;
+
     private String playerId;
+
+    private String mapCode;
+
 }

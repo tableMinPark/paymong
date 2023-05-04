@@ -6,12 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginReqDto {
+@Builder
+public class SecureReqDto {
 
-    private String playerId;
-
-    private String password;
+    private String palyerId;
 }

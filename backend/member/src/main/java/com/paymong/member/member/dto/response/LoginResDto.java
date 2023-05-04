@@ -1,4 +1,4 @@
-package com.paymong.auth.auth.dto.request;
+package com.paymong.member.member.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindByPlayIdReqDto {
+public class LoginResDto {
+    private Long memberId;
+
+    private String mapCode;
+
+    private String point;
 
 }

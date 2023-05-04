@@ -5,8 +5,10 @@ import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.NullPointerException;
 import com.paymong.auth.global.exception.PayPointException;
 import com.paymong.auth.global.response.ErrorResponse;
+import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.global.exception.PayPointException;
+import com.paymong.member.global.response.ErrorResponse;
 import com.paymong.member.member.dto.request.ModifyPointReqDto;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,17 +38,18 @@ public class MemberController {
     String headerMember;
 
     @GetMapping("/info")
-    public ResponseEntity<Object> findMemberInfo() {
+    public ResponseEntity<Object> findMemberInfo(HttpServletRequest httpServletRequest) {
         log.info("findMemberInfo - Call");
+        Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
         try {
-            FindMemberInfoResDto findMemberInfoResDto = memberService.findMemberInfo();
+            FindMemberInfoResDto findMemberInfoResDto = memberService.findMemberInfo(memberId);
             return ResponseEntity.ok().body(findMemberInfoResDto);
         } catch (NotFoundException e) {
-            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
-            return ResponseEntity.ok().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+            log.error(PaypointStateCode.NOTEXIST.getMessage());
+            return ResponseEntity.ok().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.error(PaypointStateCode.UNKNOWN.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
     }
 
@@ -63,14 +67,14 @@ public class MemberController {
             return ResponseEntity.ok().body(modifyPointResDto);
 
         } catch (NotFoundException e) {
-            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
+            log.error(PaypointStateCode.NOTEXIST.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
         } catch (NullPointerException e) {
-            log.error(ErrorStateCode.NULLPOINTER.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NULLPOINTER));
+            log.error(PaypointStateCode.UNAVAILABLE.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNAVAILABLE));
         } catch (RuntimeException e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.error(PaypointStateCode.UNKNOWN.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
     }
 
@@ -88,14 +92,11 @@ public class MemberController {
                 modifyPointDto.getContent());
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
-            log.error(ErrorStateCode.NOTFOUNDUSER.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.NOTFOUNDUSER));
-        } catch (PayPointException e) {
-            log.error(ErrorStateCode.PAYPOINT.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.PAYPOINT));
+            log.error(PaypointStateCode.NOTEXIST.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
         } catch (Exception e) {
-            log.error(ErrorStateCode.RUNTIME.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.error(PaypointStateCode.UNKNOWN.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }
 
     }

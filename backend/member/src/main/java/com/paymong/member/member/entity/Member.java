@@ -38,4 +38,7 @@ public class Member {
     @Column(name = "point")
     private Long point;
 
+    @Column(name = "map_code")
+    private String mapCode;
+
 }

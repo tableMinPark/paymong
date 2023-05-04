@@ -1,5 +1,6 @@
 package com.paymong.auth.global.security;
 
+import com.paymong.auth.auth.dto.response.SecureResDto;
 import com.paymong.auth.auth.entity.Auth;
 import com.paymong.auth.auth.entity.Member;
 
@@ -27,13 +28,13 @@ public class CustomUserDetail implements UserDetails {
 
     private List<String> roles = new ArrayList<>();    //권한 목록
 
-    public static UserDetails of(Member member) {
+    public static UserDetails of(SecureResDto member) {
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
         return CustomUserDetail.builder()
             .email(member.getPlayerId())
             .password(member.getPassword())
-            .roles(member.getRoles().stream()
-                .map(Auth::getRole)
-                .collect(Collectors.toList()))
+            .roles(roles)
             .build();
     }
 

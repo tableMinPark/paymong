@@ -3,8 +3,11 @@ package com.paymong.member.member.controller;
 import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.global.response.ErrorResponse;
+import com.paymong.member.member.dto.request.LoginReqDto;
 import com.paymong.member.member.dto.request.ModifyPointReqDto;
+import com.paymong.member.member.dto.request.SecureReqDto;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
+import com.paymong.member.member.dto.response.LoginResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
 import com.paymong.member.member.service.MemberService;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,5 +98,35 @@ public class MemberController {
 
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody LoginReqDto loginReqDto){
+        log.info("Member login - Call");
+        try{
+            LoginResDto loginResDto = memberService.login(loginReqDto);
+            return ResponseEntity.ok().body(loginResDto);
+        }catch (NotFoundException e){
+            try{
+                LoginResDto loginResDto =memberService.register(loginReqDto);
+                return ResponseEntity.ok().body(loginResDto);
+            }catch (Exception ex){
+                return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
+            }
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
+        }
+    }
+
+    @PostMapping("/secure")
+    public ResponseEntity<Object> secure(@RequestBody SecureReqDto secureReqDto){
+        log.info("Member secure - Call");
+        try{
+            memberService.secure(secureReqDto.getPlayerId());
+            return ResponseEntity.ok().build();
+        } catch (NotFoundException e){
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
+        }
+    }
 
 }

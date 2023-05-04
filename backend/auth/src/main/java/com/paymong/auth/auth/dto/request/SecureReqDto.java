@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindByPlayIdReqDto {
+@Builder
+public class SecureReqDto {
 
+    private String palyerId;
 }

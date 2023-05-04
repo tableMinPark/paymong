@@ -12,6 +12,10 @@ class LoginViewModel : ViewModel() {
     var isAuthenticated by mutableStateOf(false)
     private var loginRepository: LoginRepository = LoginRepository()
 
+    init {
+
+    }
+
     override fun onCleared() {
         super.onCleared()
     }

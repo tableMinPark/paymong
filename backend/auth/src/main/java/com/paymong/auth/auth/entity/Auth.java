@@ -32,19 +32,11 @@ public class Auth implements GrantedAuthority {
     @Column(name = "auth_id")
     private Long authId;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "member_id")
+    private String memberId;
 
     @Column(name = "role")
     private String role;
-
-    public static Auth of(String role, Member member) {
-        return Auth.builder()
-            .member(member)
-            .role(role)
-            .build();
-    }
 
     @Override
     public String getAuthority() {

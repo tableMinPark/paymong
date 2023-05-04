@@ -31,11 +31,6 @@ public class AuthController {
         try {
             LoginResDto loginResDto = authService.login(loginRequestDto);
             return ResponseEntity.ok().body(loginResDto);
-        } catch (NotFoundException e) {
-            // 없으면 회원 등록
-            LoginResDto loginResDto = authService.register(loginRequestDto);
-            log.info("register - Call");
-            return ResponseEntity.badRequest().body(loginResDto);
         } catch (UnAuthException e) {
             log.error(ErrorStateCode.UNAUTHORIXED.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.UNAUTHORIXED));

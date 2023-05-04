@@ -27,9 +27,14 @@ public class InformationController {
     @Value("${header.mong}")
     String headerMong;
 
+    @Value("${header.member}")
+    String headerMember;
+
     @GetMapping("/mong")
     public ResponseEntity<Object> findMong(HttpServletRequest httpServletRequest){
         String mongIdStr = httpServletRequest.getHeader(headerMong);
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        log.info("{}", memberIdStr);
 
         try{
             // 아직 map코드는 안받음

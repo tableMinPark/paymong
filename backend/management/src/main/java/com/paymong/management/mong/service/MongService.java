@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -46,7 +47,7 @@ public class MongService {
         AddMongResVo addMongResVo = new AddMongResVo(newMong);
         // 무슨 이유인진 몰라도 null로 처리됨..
         addMongResVo.setWeight(5);
-        addMongResVo.setBorn(LocalDate.now());
+        addMongResVo.setBorn(LocalDateTime.now());
 
         return addMongResVo;
     }

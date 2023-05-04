@@ -6,8 +6,10 @@ import com.paymong.management.feed.service.FeedService;
 import com.paymong.management.feed.vo.FeedFoodReqVo;
 import com.paymong.management.feed.vo.FeedSnackReqVo;
 import com.paymong.management.global.code.ManagementStateCode;
+import com.paymong.management.global.exception.GatewayException;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,13 +32,15 @@ public class FeedController {
     String headerMong;
     /* 음식 먹이기 */
     @PutMapping("/food")
-    public ResponseEntity<Object> feedFood(FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> feedFood(@RequestBody FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("{} 먹어", feedFoodReqVo.getFoodCode());
         try {
-            if(feedFoodReqVo.getFoodCode() == null || mongId == null){
+            if(feedFoodReqVo.getFoodCode() == null || mongIdStr == null || mongIdStr.equals("")){
                 throw new NullPointerException();
             }
+            Long mongId = Long.parseLong(mongIdStr);
             feedFoodReqVo.setMongId(mongId);
             feedService.feedFood(feedFoodReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
@@ -52,18 +53,26 @@ public class FeedController {
         }catch (NotFoundActionException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
+        }catch (UnknownException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
         }
     }
 
     /* 간식 먹이기 */
     @PutMapping("/snack")
-    public ResponseEntity<Object> feedSnack(FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> feedSnack(@RequestBody FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+
         try {
-            if(feedSnackReqVo.getSnackCode() == null || mongId == null){
+            if(feedSnackReqVo.getSnackCode() == null || mongIdStr == null || mongIdStr.equals("")){
                 throw new NullPointerException();
             }
+            Long mongId = Long.parseLong(mongIdStr);
             feedSnackReqVo.setMongId(mongId);
             feedService.feedSnack(feedSnackReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
@@ -76,6 +85,12 @@ public class FeedController {
         }catch (NotFoundActionException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_ACTION.getCode(), ManagementStateCode.NOT_ACTION.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_ACTION));
+        }catch (UnknownException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNKNOWN.getCode(), ManagementStateCode.UNKNOWN.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNKNOWN));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
         }
     }
 }

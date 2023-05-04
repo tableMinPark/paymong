@@ -16,7 +16,7 @@ public class FindMongDto {
     private String stateCode;
     private Integer poopCount;
     private String mapCode;
-    private Boolean isDie;
+
 
     public FindMongDto(Mong mong){
         this.mongId = mong.getMongId();
@@ -24,6 +24,5 @@ public class FindMongDto {
         this.mongCode = mong.getCode();
         this.stateCode = mong.getStateCode();
         this.poopCount = mong.getPoopCount();
-        this.isDie = mong.getIsDie();
     }
 }

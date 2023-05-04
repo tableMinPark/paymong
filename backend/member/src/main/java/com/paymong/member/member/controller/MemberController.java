@@ -1,20 +1,13 @@
 package com.paymong.member.member.controller;
 
-import com.paymong.auth.global.code.ErrorStateCode;
-import com.paymong.auth.global.exception.NotFoundException;
-import com.paymong.auth.global.exception.NullPointerException;
-import com.paymong.auth.global.exception.PayPointException;
-import com.paymong.auth.global.response.ErrorResponse;
 import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.exception.NotFoundException;
-import com.paymong.member.global.exception.PayPointException;
 import com.paymong.member.global.response.ErrorResponse;
 import com.paymong.member.member.dto.request.ModifyPointReqDto;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
 import com.paymong.member.member.service.MemberService;
 import javax.servlet.http.HttpServletRequest;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -71,7 +63,8 @@ public class MemberController {
             return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
         } catch (NullPointerException e) {
             log.error(PaypointStateCode.UNAVAILABLE.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNAVAILABLE));
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(PaypointStateCode.UNAVAILABLE));
         } catch (RuntimeException e) {
             log.error(PaypointStateCode.UNKNOWN.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));

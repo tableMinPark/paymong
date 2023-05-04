@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddPaypointResDto {
-    Long point;
+    Integer point;
     String mapCode;
 }

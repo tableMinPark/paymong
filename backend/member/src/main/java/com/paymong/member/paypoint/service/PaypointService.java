@@ -47,7 +47,7 @@ public class PaypointService {
 
         //가격 반영보내기
         ModifyPointResDto modifyPointResDto = memberService.modifyPoint(memberId, point);
-        Long totalPoint = modifyPointResDto.getPoint();
+        Integer totalPoint = modifyPointResDto.getPoint();
 
         //브랜드명 뽑기(없으면 null)
         String brand = Pay.getMap(action);

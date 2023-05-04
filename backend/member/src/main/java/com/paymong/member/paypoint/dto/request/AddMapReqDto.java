@@ -1,4 +1,4 @@
-package com.paymong.member.paypoint.dto;
+package com.paymong.member.paypoint.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindMapByNameResDto {
+public class AddMapReqDto {
     String code;
-    String name;
 }

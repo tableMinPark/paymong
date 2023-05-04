@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum GroupStateCode {
-    FOOD("FO"),
+    FOOD("FD"),
     SNACK("SN");
     private final String code;
 

@@ -11,7 +11,7 @@ import com.paymong.member.member.entity.Member;
 import com.paymong.member.member.repository.MemberRepository;
 import com.paymong.member.member.vo.FindMongReqVo;
 import com.paymong.member.member.vo.FindMongResVo;
-import com.paymong.member.paypoint.dto.AddPointReqDto;
+import com.paymong.member.paypoint.dto.response.AddPointReqDto;
 import com.paymong.member.paypoint.service.PaypointService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

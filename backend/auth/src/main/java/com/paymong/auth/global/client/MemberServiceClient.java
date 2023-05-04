@@ -1,21 +1,20 @@
 package com.paymong.auth.global.client;
 
-import com.paymong.auth.auth.dto.request.FindByPlayIdReqDto;
 import com.paymong.auth.auth.dto.request.LoginReqDto;
-import com.paymong.auth.member.dto.request.AddPointReqDto;
+import com.paymong.auth.auth.dto.request.MemberRegisterReqDto;
+import com.paymong.auth.auth.dto.request.SecureReqDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "member")
 public interface MemberServiceClient {
 
     @PostMapping("/member/login")
-    ResponseEntity<Object> memberLogin(FindByPlayIdReqDto findByPlayIdReqDto);
+    ResponseEntity<Object> memberLogin(LoginReqDto loginReqDto);
 
-    @PostMapping("/member/register")
-    ResponseEntity<Object> memberRegister(FindByPlayIdReqDto findByPlayIdReqDto);
+    @PostMapping("/member/secure")
+    ResponseEntity<Object> secure(SecureReqDto secureReqDto);
 
 }

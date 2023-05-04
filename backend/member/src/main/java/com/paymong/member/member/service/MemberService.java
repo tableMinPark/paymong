@@ -3,7 +3,9 @@ package com.paymong.member.member.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.member.global.client.ManagementServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
+import com.paymong.member.member.dto.request.LoginReqDto;
 import com.paymong.member.member.dto.response.FindMemberInfoResDto;
+import com.paymong.member.member.dto.response.LoginResDto;
 import com.paymong.member.member.dto.response.ModifyPointResDto;
 import com.paymong.member.member.entity.Member;
 import com.paymong.member.member.repository.MemberRepository;
@@ -27,6 +29,7 @@ public class MemberService {
 
 
     private final PaypointService paypointService;
+
 
     @Transactional
     public Member findByMemberPlayerId(String playerId) throws RuntimeException {
@@ -74,10 +77,32 @@ public class MemberService {
 
         String memberIdStr = Long.toString(memberId);
         paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
-        
 
         Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
+    }
+
+    @Transactional
+    public LoginResDto login(LoginReqDto loginReqDto) {
+        Member member = memberRepository.findByPlayerId(loginReqDto.getPlayerId())
+            .orElseThrow(() -> new NotFoundException());
+        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
+            .memberId(member.getMemberId()).build();
+    }
+
+    @Transactional
+    public LoginResDto register(LoginReqDto loginReqDto) {
+        Member member = Member.builder().password(loginReqDto.getPassword())
+            .playerId(loginReqDto.getPlayerId()).point(0).mapCode("MP000").build();
+        memberRepository.save(member);
+        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
+            .memberId(member.getMemberId()).build();
+    }
+
+    @Transactional
+    public void secure(String palyerId) {
+        Member member = memberRepository.findByPlayerId(palyerId)
+            .orElseThrow(() -> new NotFoundException());
 
     }
 

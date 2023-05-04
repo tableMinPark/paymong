@@ -6,3 +6,9 @@ data class LoginResDto(
 ) {
     constructor() : this("", "")
 }
+
+data class ReissueResDto(
+    val accessToken: String
+) {
+    constructor() : this("")
+}

@@ -25,7 +25,7 @@ fun Landing(
 ) {
     LaunchedEffect(key1 = true){
         delay(2000)
-        if(appViewModel.getMemberId() == 0L) {
+        if(appViewModel.loginCheck()) {
             navController.navigate(AppNavItem.Main.route){
                 popUpTo(navController.graph.id) {
                     inclusive = true

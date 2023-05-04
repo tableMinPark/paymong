@@ -75,6 +75,7 @@ public class MongService {
         return findMongStatusDto;
     }
 
+    // 배틀부분
     @Transactional
     public FindMongBattleDto findMongBattle(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());

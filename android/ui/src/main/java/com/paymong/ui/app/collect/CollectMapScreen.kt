@@ -38,9 +38,11 @@ fun CollectMap(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
+                collectMapViewModel.map()
                 LazyColumn(
                     Modifier.fillMaxSize()
                 ) {
+                    val cnt = collectMapViewModel.mapList.size / 2
                     items(16){
                             index -> ComponentRow(index = index*2, collectMapViewModel)
                     }
@@ -89,13 +91,13 @@ fun ComponentRow(
             .weight(1f)
             .fillMaxSize()
             .padding(start = 15.dp, end = 5.dp)){
-            Component(MapCode.valueOf(collectMapViewModel.mapList[index]).mapName, MapCode.valueOf(collectMapViewModel.mapList[index]).code)
+            Component(collectMapViewModel.mapList[index].name, MapCode.valueOf(collectMapViewModel.mapList[index].code).code)
         }
         Box(modifier = Modifier
             .weight(1f)
             .fillMaxSize()
             .padding(start = 5.dp, end = 15.dp)){
-            Component(MapCode.valueOf(collectMapViewModel.mapList[index+1]).mapName, MapCode.valueOf(collectMapViewModel.mapList[index+1]).code)
+            Component(collectMapViewModel.mapList[index+1].name, MapCode.valueOf(collectMapViewModel.mapList[index+1].code).code)
         }
 
     }

@@ -57,6 +57,4 @@ public class Mong {
     private LocalTime sleepEnd;
     @Column(name = "active")
     private Boolean active;
-    @Column(name = "is_die")
-    private Boolean isDie;
 }

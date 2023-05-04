@@ -10,7 +10,8 @@ public enum MongConditionCode implements BasicCode{
     SLEEP("CD002","수면"),
     SOMNOLENCE("CD003","졸림"),
     HUNGRY("CD004","배고픔"),
-    DIE("CD005","죽음")
+    DIE("CD005","죽음"),
+    GRADUATE("CD006","졸업")
     ;
     private final String code;
     private final String message;

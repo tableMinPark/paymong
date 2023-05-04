@@ -1,12 +1,15 @@
 package com.paymong.domain.app
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
+import com.paymong.data.model.request.CreateReqDto
+import com.paymong.data.repository.CreateRepository
 import com.paymong.domain.entity.MongInfo
 import com.paymong.domain.entity.MongSetting
 import kotlinx.coroutines.Job
@@ -22,7 +25,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var mongname by mutableStateOf("")
     var mongsleepStart by mutableStateOf("")
     var mongsleepEnd by mutableStateOf("")
-    var mongSetting by mutableStateOf(MongSetting())
+
+    private var createRepository: CreateRepository = CreateRepository()
 
     init {
         if(::load.isInitialized) load.cancel()
@@ -54,8 +58,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         mongInfo = MongInfo(
             mongInfo.name,
             mongCode,
-            mongInfo.born,
-            mongInfo.weight
+            mongInfo.weight,
+            mongInfo.born
         )
     }
 
@@ -71,15 +75,18 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         mongsleepEnd = sleepEnd
     }
 
-    fun setMongSetting(){
-        mongSetting = MongSetting(
-            mongname,
-            mongsleepStart,
-            mongsleepEnd
-        )
+    fun create(){
+        var res = createRepository.create(CreateReqDto(mongname,mongsleepStart,mongsleepEnd))
+        if (res != null) {
+            mongInfo = MongInfo(
+                res.name,
+                CharacterCode.valueOf(res.mongCode),
+                res.weight,
+                res.born
+            )
+        }
+        Log.d("createRes",res.toString())
     }
-
-
     private fun findPoopCount() {
         poopCount = 0
     }
@@ -99,7 +106,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val name = ""
         val weight = 0
         val mongCode = "CH444"
-        mongInfo = MongInfo(name, CharacterCode.valueOf(mongCode), LocalDateTime.now(), weight)
+        mongInfo = MongInfo(name, CharacterCode.valueOf(mongCode), weight, LocalDateTime.now())
     }
 
     override fun onCleared() {

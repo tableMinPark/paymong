@@ -361,6 +361,7 @@ fun WakeDialog(
                         setWakeValue(newTime)
                         setShowWakeDialog(false)
                         appViewModel.setMongSleepEnd(newTime.toString())
+                        appViewModel.create()
                     }
                 )
             }

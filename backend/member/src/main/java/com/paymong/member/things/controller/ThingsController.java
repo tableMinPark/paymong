@@ -35,7 +35,7 @@ public class ThingsController {
         }
     }
 
-    @GetMapping("")
+    @GetMapping("/addable")
     public ResponseEntity<Object> findAddableThings(@RequestHeader(value = "MemberId") String memberIdStr) {
         log.info("findAddableThings - Call");
 

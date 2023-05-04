@@ -1,4 +1,4 @@
-package com.paymong.member.paypoint.dto;
+package com.paymong.member.things.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPaypointResDto {
-    Integer point;
-    String mapCode;
+public class FindAddableThingsResDto {
+    String thingsCode;
+    String thingsName;
 }

@@ -79,10 +79,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setMongSleepEnd(sleepEnd:String){
         mongsleepEnd = sleepEnd
+        Log.d("사이",mongsleepEnd)
+        create()
+        Log.d("끝","끝")
     }
 
     fun create(){
         var res = createRepository.create(CreateReqDto(mongname,mongsleepStart,mongsleepEnd))
+        Log.d("create", res.toString())
         if (res != null) {
             mongInfo = MongInfo(
                 res.name,

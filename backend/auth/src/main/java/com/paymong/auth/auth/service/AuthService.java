@@ -13,6 +13,7 @@ import com.paymong.auth.global.exception.ForbiddenException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.TimeoutException;
 import com.paymong.auth.global.exception.TokenInvalidException;
+import com.paymong.auth.global.exception.TokenUnauthException;
 import com.paymong.auth.global.redis.RefreshToken;
 import com.paymong.auth.global.redis.RefreshTokenRedisRepository;
 import com.paymong.auth.global.security.TokenInfo;
@@ -112,6 +113,10 @@ public class AuthService {
         // 사용자가 로그인을 다시 해야함
         RefreshToken refreshToken = refreshTokenRedisRepository.findById(userName)
             .orElseThrow(() -> new ForbiddenException());
+
+        // 리프레쉬 토큰 불일치
+        if(!refreshToken.getRefreshToken().equals(token))throw new TokenUnauthException();
+
 
         RefreshToken newRefreshToken =
             RefreshToken.builder()

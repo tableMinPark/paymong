@@ -9,12 +9,12 @@ import com.paymong.auth.global.exception.ForbiddenException;
 import com.paymong.auth.global.exception.NotFoundException;
 import com.paymong.auth.global.exception.TimeoutException;
 import com.paymong.auth.global.exception.TokenInvalidException;
-import com.paymong.auth.global.exception.UnAuthException;
+import com.paymong.auth.global.exception.TokenUnauthException;
 import com.paymong.auth.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -81,12 +81,16 @@ public class AuthController {
         } catch (ForbiddenException e) {
             log.info("code : {}, message : {}", ErrorStateCode.REFRESH_TOKEN_EXPIRE.getCode(),
                 ErrorStateCode.REFRESH_TOKEN_EXPIRE.name());
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse(ErrorStateCode.REFRESH_TOKEN_EXPIRE));
         }catch (TokenInvalidException e){
             log.info("code : {}, message : {}", ErrorStateCode.TOKEN_INVALID.getCode(),ErrorStateCode.TOKEN_INVALID.getMessage());
             return ResponseEntity.badRequest()
                 .body(new ErrorResponse(ErrorStateCode.TOKEN_INVALID));
+        }catch (TokenUnauthException e){
+            log.info("code : {}, message : {}", ErrorStateCode.TOKEN_UNAUTH.getCode(),ErrorStateCode.TOKEN_UNAUTH.getMessage());
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(ErrorStateCode.TOKEN_UNAUTH));
         }catch (TimeoutException e) {
             log.info("code : {}, message : {}", ErrorStateCode.REDIS.getCode(),
                 ErrorStateCode.REDIS.name());

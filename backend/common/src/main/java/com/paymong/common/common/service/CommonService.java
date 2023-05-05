@@ -1,5 +1,6 @@
 package com.paymong.common.common.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.response.CommonCodeDto;
@@ -9,8 +10,9 @@ import com.paymong.common.common.entity.CommonCode;
 import com.paymong.common.common.entity.GroupCode;
 import com.paymong.common.common.repository.CommonCodeRepository;
 import com.paymong.common.common.repository.GroupCodeRepository;
-import com.paymong.common.global.client.PayPointServiceClient;
+import com.paymong.common.global.client.ManagementServiceClient;
 import com.paymong.common.global.exception.NotFoundException;
+import com.paymong.common.global.vo.request.FindLastBuyReqVo;
 import com.paymong.common.global.vo.response.FindLastBuyResVo;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +32,7 @@ public class CommonService {
 
     private final GroupCodeRepository groupCodeRepository;
 
-    private final PayPointServiceClient payPointServiceClient;
+    private final ManagementServiceClient managementServiceClient;
 
     @Transactional
     public List<CommonCodeDto> findAllCommonCode(
@@ -59,7 +61,7 @@ public class CommonService {
     }
 
     @Transactional
-    public FindAllFoodResDto findAllFood(String foodCategory, String mongKey)
+    public FindAllFoodResDto findAllFood(String mongId, String foodCategory)
         throws RuntimeException {
 
         GroupCode groupCode = groupCodeRepository.findById(foodCategory.replace("\"", ""))
@@ -71,14 +73,14 @@ public class CommonService {
 
         FindAllFoodResDto findAllFoodResDto = new FindAllFoodResDto(
             commonCodeList.stream().map(e -> {
-                // payPointService 완성되면 마치면 연결해보기
-//                ObjectMapper om = new ObjectMapper();
-//                FindLastBuyResVo findLastBuyResVo = om.convertValue(
-//                    payPointServiceClient.findLastBuy(new FindLastBuyReqVo(foodCategory, mongKey))
-//                        .getBody(), FindLastBuyResVo.class);
 
-                FindLastBuyResVo findLastBuyResVo = FindLastBuyResVo.builder().lastBuy(
-                    LocalDateTime.now()).build();
+                ObjectMapper om = new ObjectMapper();
+                FindLastBuyResVo findLastBuyResVo = om.convertValue(
+                    managementServiceClient.findLastBuy(mongId, new FindLastBuyReqVo(foodCategory))
+                        .getBody(), FindLastBuyResVo.class);
+
+//                FindLastBuyResVo findLastBuyResVo = FindLastBuyResVo.builder().lastBuy(
+//                    LocalDateTime.now()).build();
 
                 return Food.of(e, findLastBuyResVo.getLastBuy());
             }).collect(Collectors.toList()));
@@ -95,8 +97,9 @@ public class CommonService {
     }
 
     @Transactional
-    public CommonCodeDto findCodeByName(String name) throws RuntimeException{
-        CommonCode commonCode = commonCodeRepository.findByName(name).orElseThrow(()->new NotFoundException());
+    public CommonCodeDto findCodeByName(String name) throws RuntimeException {
+        CommonCode commonCode = commonCodeRepository.findByName(name)
+            .orElseThrow(() -> new NotFoundException());
         return CommonCodeDto.of(commonCode);
     }
 

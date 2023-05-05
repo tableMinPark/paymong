@@ -38,7 +38,7 @@ public class SecurityConfig {
             .csrf().disable()
 
             .authorizeRequests() // 요청에 대한 사용권한 체크
-            .antMatchers("/auth/login","/auth/member/management/paypoint","/auth/member/paypoint").permitAll()
+            .antMatchers("/auth/login", "/auth/reissue").permitAll()
             .antMatchers("/auth/**").hasAnyAuthority("USER")
             .anyRequest().permitAll()
 
@@ -53,13 +53,13 @@ public class SecurityConfig {
             .formLogin().disable();
 
         http.addFilterBefore(new TokenAuthenticationFilter(tokenProvider, customUserDetailService),
-                UsernamePasswordAuthenticationFilter.class);
+            UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

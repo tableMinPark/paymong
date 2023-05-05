@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.main
 
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +42,10 @@ fun MainInteraction(
     MainInteractionUI(animationState, pagerState, coroutineScope, navController, viewModel)
 
 }
+
+
+
+
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -78,20 +84,35 @@ fun MainInteractionUI(
     }
 
 
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Column(
         modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
                 .fillMaxSize(1f)
     ) {
+
+
         Box () {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
-
             ) {
 //
-
                 Box(
-                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Battle.route) }
+                    modifier = Modifier.clickable {
+                        ButtonSoundPlay()
+                        navController.navigate(WatchNavItem.Battle.route)
+                    }
                         .width(boxWidth.dp).height(boxHeight.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -111,14 +132,16 @@ fun MainInteractionUI(
                 }
             }
 
-
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().padding(top=marginTop.dp, bottom= 5.dp)
             ) {
 
                 Box(
-                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Feed.route) }
+                    modifier = Modifier.clickable {
+                        ButtonSoundPlay()
+                        navController.navigate(WatchNavItem.Feed.route)
+                    }
                         .width(boxWidth.dp).height(boxHeight.dp).padding(start = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -144,7 +167,10 @@ fun MainInteractionUI(
                 }
 
                 Box(
-                    modifier = Modifier.clickable { navController.navigate(WatchNavItem.Activity.route) }
+                    modifier = Modifier.clickable {
+                        ButtonSoundPlay()
+                        navController.navigate(WatchNavItem.Activity.route)
+                    }
                         .width(boxWidth.dp).height(boxHeight.dp).padding(end = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -179,6 +205,7 @@ fun MainInteractionUI(
 
             Box(
                 modifier = Modifier.clickable {
+                    ButtonSoundPlay()
                     animationState.value = AnimationCode.Sleep
                     navController.navigate(WatchNavItem.Main.route) {
                         popUpTo(navController.graph.findStartDestination().id)
@@ -208,6 +235,7 @@ fun MainInteractionUI(
         }
 
             Box ( modifier = Modifier.clickable {
+                ButtonSoundPlay()
                 animationState.value = AnimationCode.Poop
                 navController.navigate(WatchNavItem.Main.route){
                     popUpTo(navController.graph.findStartDestination().id)
@@ -235,6 +263,8 @@ fun MainInteractionUI(
             }
         }
     }
+
+
 }
 
 @OptIn(ExperimentalPagerApi::class)

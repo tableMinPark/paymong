@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.activity
 
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,6 +77,18 @@ fun ActivityPreview() {
 fun SmallWatch(    navController: NavHostController,
                    viewModel: ActivityViewModel ) {
 
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -86,7 +100,7 @@ fun SmallWatch(    navController: NavHostController,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { navController.navigate(WatchNavItem.Training.route) },
+                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.Training.route) },
                 modifier = Modifier.size(width = 200.dp, height = 95.dp),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -112,7 +126,7 @@ fun SmallWatch(    navController: NavHostController,
                 .padding(top = 5.dp)
         ){
             Button(
-                onClick = { navController.navigate(WatchNavItem.Walking.route) },
+                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.Walking.route) },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -131,6 +145,18 @@ fun SmallWatch(    navController: NavHostController,
 fun BigWatch(    navController: NavHostController,
                    viewModel: ActivityViewModel ) {
 
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -141,7 +167,7 @@ fun BigWatch(    navController: NavHostController,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { navController.navigate(WatchNavItem.Training.route) },
+                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.Training.route) },
                 modifier = Modifier
                     .size(width = 200.dp, height = 100.dp)
                     .weight(1f),
@@ -166,7 +192,7 @@ fun BigWatch(    navController: NavHostController,
                 .padding(top = 5.dp)
         ){
             Button(
-                onClick = { navController.navigate(WatchNavItem.Walking.route) },
+                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.Walking.route) },
                 modifier = Modifier
                     .size(width = 200.dp, height = 100.dp)
                     .weight(1f),

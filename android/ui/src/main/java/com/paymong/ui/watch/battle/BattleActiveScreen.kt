@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.media.SoundPool
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -31,6 +32,7 @@ import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.*
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
@@ -73,7 +75,6 @@ fun BattleActive(
     }
 
 
-
     if (battleViewModel.matchingState == MatchingCode.SELECT_BEFORE){
         navController.navigate(WatchNavItem.BattleSelectBefore.route) {
             popUpTo(0)
@@ -96,11 +97,46 @@ fun BattleActive(
     }
 
 
+
     val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     BattleBackgroundGif()
     val defence = painterResource(R.drawable.defence)
     val attack = painterResource(R.drawable.attack)
+
+
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val attackSound = soundPool.load(context, com.paymong.ui.R.raw.attack_sound, 1)
+    val defenceSound = soundPool.load(context, com.paymong.ui.R.raw.defence_sound, 1)
+
+    fun AttackSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(attackSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+    fun DefenceSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(defenceSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -173,6 +209,7 @@ fun BattleActive(
                         )}
 
                         Row(modifier = Modifier.size(characterSize.dp)) {
+                            AttackSoundPlay()
                             AttackGif()
 //                            Image(
 //                                painter = attack,
@@ -195,6 +232,7 @@ fun BattleActive(
 
                         Row() {
                             Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceSoundPlay()
                                 DefenceGif()
                             }
                         }
@@ -211,6 +249,7 @@ fun BattleActive(
                                 )}
 
                             Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackSoundPlay()
                                 AttackGif()
 //                                Image(
 //                                    painter = attack,
@@ -230,6 +269,7 @@ fun BattleActive(
                             )}
 
                             Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceSoundPlay()
                                 DefenceGif()
                             }
                         }
@@ -341,6 +381,7 @@ fun BattleActive(
                                 )}
 
                             Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackSoundPlay()
                                 AttackGif()
 //                                Image(
 //                                    painter = attack,
@@ -362,6 +403,7 @@ fun BattleActive(
                                 )}
 
                             Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceSoundPlay()
                                 DefenceGif()
                             }
                         }
@@ -377,6 +419,7 @@ fun BattleActive(
                                 )}
 
                             Row(modifier = Modifier.size(characterSize.dp)) {
+                                AttackSoundPlay()
                                 AttackGif()
 //                                Image(
 //                                    painter = attack,
@@ -396,6 +439,7 @@ fun BattleActive(
                             )}
 
                             Row(modifier = Modifier.size(characterSize.dp).padding(start=10.dp)) {
+                                DefenceSoundPlay()
                                 DefenceGif()
                             }
                         }

@@ -2,8 +2,6 @@ package com.paymong.member.things.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.member.global.client.CommonServiceClient;
-import com.paymong.member.global.exception.NotFoundMapException;
-import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
 import com.paymong.member.things.dto.request.FindAddableThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
@@ -57,23 +55,17 @@ public class ThingsService {
         //things code 리스트받아오기
         ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
         ThingsCommonCodeList thingsCommonCodeList =  om.convertValue(response.getBody(), ThingsCommonCodeList.class);
-        System.out.println(thingsCommonCodeList.getCommonCodeDtoList());
-
 
         //나의 things code 리스트 가져오기
         Map<String,Integer> check = new HashMap<>();
         List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
-        for(Things things : myThings){
-            check.put(things.getThingsCode(),1);
-        }
+        for(Things things : myThings) check.put(things.getThingsCode(),1);
 
         List<FindAddableThingsResDto> ret = new ArrayList<>();
-
         //나한테 없는 코드 찾기
         for( ThingsCommonCode thingsCode : thingsCommonCodeList.getCommonCodeDtoList()){
-            if(!check.containsKey(thingsCode.getCode())){
+            if(!check.containsKey(thingsCode.getCode()))
                 ret.add(new FindAddableThingsResDto(thingsCode.getCode(), thingsCode.getName()));
-            }
         }
         return ret;
     }

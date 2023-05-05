@@ -4,6 +4,7 @@ import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.response.ErrorResponse;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
+import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
 import com.paymong.member.things.entity.Things;
 import com.paymong.member.things.service.ThingsService;
@@ -40,8 +41,8 @@ public class ThingsController {
         log.info("findAddableThings - Call");
 
         try {
-            thingsService.findAddableThings(memberIdStr);
-            return ResponseEntity.ok().body(null);
+            List<FindAddableThingsResDto> ret = thingsService.findAddableThings(memberIdStr);
+            return ResponseEntity.ok().body(ret);
         } catch (Exception e) {
             System.out.println(e);
             log.error(PaypointStateCode.UNKNOWN.getMessage());

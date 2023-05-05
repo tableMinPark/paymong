@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.battle
 
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -47,6 +49,19 @@ fun BattleLanding(
     }
 
 
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
     Column(
@@ -55,6 +70,7 @@ fun BattleLanding(
         modifier = Modifier
             .fillMaxHeight()
             .clickable {
+                ButtonSoundPlay()
                 navController.navigate(WatchNavItem.BattleWait.route) {
                     popUpTo(0)
                     launchSingleTop = true

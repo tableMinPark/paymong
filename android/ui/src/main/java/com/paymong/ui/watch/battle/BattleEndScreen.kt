@@ -1,5 +1,7 @@
 package com.paymong.ui.watch.battle
 
+import android.media.SoundPool
+import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -39,9 +42,57 @@ fun BattleEnd(
         }
     }
 
+
+
+
     val bg = painterResource(R.drawable.battle_bg)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     BattleBackgroundGif()
+
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val winSound = soundPool.load(context, com.paymong.ui.R.raw.win_sound, 1)
+    val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun WinSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(winSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+    fun LoseSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(loseSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+    fun ButtonSoundPlay () {
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -82,9 +133,11 @@ fun BattleEnd(
         ) {
             if (battleViewModel.win) {
                 val win = painterResource(R.drawable.win)
+                WinSoundPlay()
                 Image(painter = win, contentDescription = null, modifier = Modifier.width(150.dp))
             } else {
                 val lose = painterResource(R.drawable.lose)
+                LoseSoundPlay()
                 Image(painter = lose, contentDescription = null, modifier = Modifier.width(150.dp))
             }
         }
@@ -109,7 +162,7 @@ fun BattleEnd(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .clickable {
-
+                        ButtonSoundPlay()
                         navController.navigate(WatchNavItem.BattleLanding.route) {
                             popUpTo(0)
                             launchSingleTop = true

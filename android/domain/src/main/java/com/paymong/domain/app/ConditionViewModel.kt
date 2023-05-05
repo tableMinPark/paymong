@@ -5,31 +5,43 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paymong.data.repository.InformationRepository
 import com.paymong.domain.entity.MongStats
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class ConditionViewModel : ViewModel() {
 
-    private lateinit var load : Job
     var mongStats by mutableStateOf(MongStats())
 
-    init {
-        if(::load.isInitialized) load.cancel()
+    private val informationRepository: InformationRepository = InformationRepository()
 
-        load = viewModelScope.launch {
+    private fun findMongCondition() {
+        viewModelScope.launch(Dispatchers.IO) {
+            informationRepository.findMongStats()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect { data ->
+                    mongStats = MongStats(
+                        data.mongId,
+                        data.name,
+                        data.health,
+                        data.satiety,
+                        data.strength,
+                        data.sleep,
+                    )
+                }
+        }
+    }
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
             findMongCondition()
         }
     }
 
-    fun findMongCondition() {
-        val name = "별별이"
-        val health = 0.35f
-        val satiety = 0.62f
-        val strength = 0.80f
-        val sleep = 0.23f
-        mongStats = MongStats(name, health, satiety, strength, sleep)
-    }
 
     override fun onCleared() {
         super.onCleared()

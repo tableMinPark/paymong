@@ -1,6 +1,6 @@
 package com.paymong.data.model.request
 
-data class CreateReqDto(
+data class AddMongReqDto(
     val name: String,
     val sleepStart: String,
     val sleepEnd: String

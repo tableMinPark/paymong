@@ -38,6 +38,10 @@ public class AuthController {
                 ErrorStateCode.SUCCESS.name());
             return ResponseEntity.ok().body(loginResDto);
         } catch (NotFoundException e) {
+            log.info("code : {}, message : {}", ErrorStateCode.GATEWAY.getCode(),
+                ErrorStateCode.GATEWAY.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.GATEWAY));
+        } catch (TimeoutException e){
             log.info("code : {}, message : {}", ErrorStateCode.REDIS.getCode(),
                 ErrorStateCode.REDIS.name());
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.REDIS));

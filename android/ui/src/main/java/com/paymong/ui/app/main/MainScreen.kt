@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
@@ -31,7 +30,6 @@ import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
-import com.paymong.domain.app.MainViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import java.text.NumberFormat
@@ -43,14 +41,14 @@ import java.util.*
 fun Main(
     navController: NavController,
     appViewModel: AppViewModel,
-    mainViewModel: MainViewModel = viewModel()
 ) {
-    // 배경
-    val findBgCode = mainViewModel.background
-    val bgCode = MapCode.valueOf(findBgCode)
-    val bg = painterResource(bgCode.code)
+    appViewModel.mainInit()
 
-    if(findBgCode == "MP000"){
+    // 배경
+    val findBgCode = appViewModel.mapCode
+    val bg = painterResource(findBgCode.code)
+
+    if(findBgCode == MapCode.MP000){
         BgGif()
     } else {
         Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
@@ -62,7 +60,7 @@ fun Main(
     val characterState = remember { mutableStateOf(CharacterCode.CH444) }
 
     Top(navController, appViewModel)
-    MakeEgg(appViewModel)
+    MakeEgg(navController, appViewModel)
     Btn(navController, characterState)
 }
 
@@ -88,7 +86,10 @@ fun Help(navController: NavController){
 }
 
 @Composable
-fun Info(navController: NavController){
+fun Info(
+    appViewModel: AppViewModel,
+    navController: NavController
+){
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -98,7 +99,9 @@ fun Info(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.InfoDetail.route) }
+                    onClick = {
+                        navController.navigate(AppNavItem.InfoDetail.route)
+                    }
                 )
                 .width(40.dp)
         )
@@ -160,7 +163,7 @@ fun Top(
     ) {
         Row {
             Help(navController)
-            Info(navController)
+            Info(appViewModel, navController)
         }
         Point(navController, appViewModel)
     }
@@ -218,7 +221,7 @@ fun NicknameDialog(
                         setValue(name.value)
                         setShowDialog(false)
                         setShowSleepDialog(true)
-                        appViewModel.setMongName(name.value)
+                        appViewModel.mongname = name.value
 //                        characterState.value = CharacterCode.CH003
                     },
                     colors = ButtonDefaults.buttonColors(PayMongBlue),
@@ -323,7 +326,7 @@ fun SleepDialog(
                         Log.d("sleepTime",newTime.toString())
                         setShowSleepDialog(false)
                         setShowWakeDialog(true)
-                        appViewModel.setMongSleepStart(newTime.toString())
+                        appViewModel.mongsleepStart = newTime.toString()
                     }
                 )
             }
@@ -361,8 +364,8 @@ fun WakeDialog(
                         setWakeValue(newTime)
                         Log.d("wakeTime",newTime.toString())
                         setShowWakeDialog(false)
-                        appViewModel.setMongSleepEnd(newTime.toString())
-//                        appViewModel.create()
+                        appViewModel.mongsleepEnd = newTime.toString()
+                        appViewModel.addMong()
                     }
                 )
             }
@@ -371,7 +374,10 @@ fun WakeDialog(
 }
 
 @Composable
-fun MakeEgg(appViewModel: AppViewModel){
+fun MakeEgg(
+    navController: NavController,
+    appViewModel: AppViewModel
+){
     val dialogOpen = remember {mutableStateOf(false)}
     val sleepDialogOpen = remember {mutableStateOf(false)}
     val wakeDialogOpen = remember {mutableStateOf(false)}
@@ -415,7 +421,9 @@ fun MakeEgg(appViewModel: AppViewModel){
     ) {
         val isClicked = remember { mutableStateOf(false) }
 
-        if (appViewModel.mongInfo.mongCode == CharacterCode.CH444) {
+        val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
+
+        if (code >= 400) {
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
                 fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White,
                 modifier = Modifier.clickable(
@@ -426,7 +434,7 @@ fun MakeEgg(appViewModel: AppViewModel){
                     }
                 )
             )
-        } else if (appViewModel.mongInfo.mongCode != CharacterCode.CH444){
+        } else {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -436,23 +444,26 @@ fun MakeEgg(appViewModel: AppViewModel){
                         modifier = Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = {
-                                appViewModel.setMongCode(CharacterCode.CH100)
-                                isClicked.value = false
-                            }
+                            onClick = { appViewModel.eggTouchCount++ }
                         )
                     )
                 }
                 else{
                     Text(text = " \n ", lineHeight = 50.sp, fontSize = 20.sp,)
                 }
-                Image(painter = painterResource(appViewModel.getResourceCode()), contentDescription = null,
+                Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode), contentDescription = null,
                     modifier = Modifier
                         .height(250.dp)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { isClicked.value = true }
+                            onClick = {
+                                if (code < 100){
+                                    isClicked.value = true
+                                } else {
+                                    navController.navigate(AppNavItem.Condition.route)
+                                }
+                            }
                         )
                 )
             }

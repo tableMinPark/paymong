@@ -10,11 +10,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.paymong.common.navigation.AppNavItem
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
+import com.paymong.common.code.LoginCode
+import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.delay
 
 
@@ -24,8 +25,11 @@ fun Landing(
     appViewModel: AppViewModel
 ) {
     LaunchedEffect(key1 = true){
+        appViewModel.loginCheck()
         delay(2000)
-        if(appViewModel.loginCheck()) {
+
+        if(appViewModel.loginState == LoginCode.LOGIN_SUCCESS) {
+            appViewModel.loginState = LoginCode.LOGIN
             navController.navigate(AppNavItem.Main.route){
                 popUpTo(navController.graph.id) {
                     inclusive = true
@@ -34,7 +38,8 @@ fun Landing(
                 navController.graph.setStartDestination(AppNavItem.Main.route)
                 launchSingleTop =true
             }
-        } else{
+        } else if (appViewModel.loginState == LoginCode.LOGIN_FAIL){
+            appViewModel.loginState = LoginCode.LOADING
             navController.navigate(AppNavItem.Login.route)
         }
     }

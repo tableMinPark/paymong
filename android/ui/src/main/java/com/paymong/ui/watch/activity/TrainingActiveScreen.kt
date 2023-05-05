@@ -1,7 +1,9 @@
 package com.paymong.ui.watch.activity
 
+import android.media.SoundPool
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -168,7 +170,53 @@ fun SmallWatch (
 ) {
     // Small Watch
 
-        Column(
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val winSound = soundPool.load(context, com.paymong.ui.R.raw.win_sound, 1)
+    val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun WinSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(winSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+    fun LoseSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(loseSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+    fun ButtonSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+
+
+    Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight().clickable {
@@ -225,6 +273,7 @@ fun SmallWatch (
 
             if (TraingviewModel.isTrainingEnd) {
                 if (TraingviewModel.count >= 1) {
+
                     Box(
 
                         modifier = Modifier.fillMaxWidth()
@@ -243,7 +292,9 @@ fun SmallWatch (
                             modifier = Modifier.width(160.dp).height(80.dp).padding(bottom=7.dp)
                         )
                     }
+                    WinSoundPlay()
                 } else {
+
                     Box(
 
                         modifier = Modifier.fillMaxWidth()
@@ -263,6 +314,7 @@ fun SmallWatch (
 
                         )
                     }
+                    LoseSoundPlay()
                 }
 //                    Box(Modifier.size(80.dp))
             } else {
@@ -297,6 +349,7 @@ fun SmallWatch (
                             .fillMaxWidth()
                             .fillMaxHeight()
                             .clickable {
+                                ButtonSoundPlay()
                                 TraingviewModel.screenClick() {
                                     navController.navigate(WatchNavItem.Activity.route) {
                                         popUpTo(navController.graph.findStartDestination().id)
@@ -342,6 +395,51 @@ fun BigWatch (
     navController: NavHostController,
     viewModel: TrainingViewModel
 ) {
+
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val winSound = soundPool.load(context, com.paymong.ui.R.raw.win_sound, 1)
+    val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun WinSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(winSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+    fun LoseSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(loseSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
+
+    fun ButtonSoundPlay () {
+
+
+        val waitLimit = 1000
+        var waitCounter = 0
+        var throttle = 10
+        while ( soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
+            waitCounter++
+            SystemClock.sleep(throttle.toLong())
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -402,6 +500,7 @@ fun BigWatch (
 
         if (TraingviewModel.isTrainingEnd) {
             if (TraingviewModel.count >= 1) {
+
                 Box(
 
                     modifier = Modifier.fillMaxWidth()
@@ -420,7 +519,9 @@ fun BigWatch (
                         modifier = Modifier.width(180.dp).height(100.dp).padding(bottom=12.dp)
                     )
                 }
+                WinSoundPlay()
             } else {
+
                 Box(
 
                     modifier = Modifier.fillMaxWidth()
@@ -440,6 +541,7 @@ fun BigWatch (
 
                     )
                 }
+                LoseSoundPlay()
             }
 //                    Box(Modifier.size(80.dp))
         } else {
@@ -474,6 +576,7 @@ fun BigWatch (
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
+                            ButtonSoundPlay()
                             TraingviewModel.screenClick() {
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)

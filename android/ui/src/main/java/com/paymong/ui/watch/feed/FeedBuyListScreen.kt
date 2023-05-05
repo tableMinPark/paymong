@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.feed
 
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -8,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -108,6 +110,21 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
         viewModel.payPoint.toString()
     }
 
+
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+
+
     Column(
 //        verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -172,22 +189,6 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
             }
         }
 
-        // * name *
-
-
-        // * foodCode *
-
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(text = viewModel.foodCode, textAlign = TextAlign.Center)
-//        }
-
-
-
-        // * foodImg & Light button & Left button *
-
 
 
         Box(modifier = Modifier
@@ -208,7 +209,8 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { viewModel.prevButtonClick() },
+                    onClick = {ButtonSoundPlay();
+                        viewModel.prevButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -272,7 +274,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                 modifier = Modifier.fillMaxWidth()
             ){
                 Button(
-                    onClick = { viewModel.nextButtonClick() },
+                    onClick = {ButtonSoundPlay(); viewModel.nextButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {

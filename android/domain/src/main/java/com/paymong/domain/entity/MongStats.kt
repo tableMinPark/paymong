@@ -1,11 +1,10 @@
 package com.paymong.domain.entity
 
 data class MongStats(
-    val name: String,
-    val health: Float,
-    val satiety: Float,
-    val strength: Float,
-    val sleep: Float
-) {
-    constructor() : this("", 0.0F, 0.0F, 0.0F, 0.0F)
-}
+    val mongId: Long = 0L,
+    val name: String = "",
+    val health: Float = 0.0F,
+    val satiety: Float = 0.0F,
+    val strength: Float = 0.0F,
+    val sleep: Float = 0.0F
+)

@@ -26,21 +26,19 @@ import com.paymong.common.code.MapCode
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
-import com.paymong.domain.app.MainViewModel
+import com.paymong.domain.app.InfoDetailViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 
 @Composable
 fun InfoDetail(
     navController: NavController,
-    appViewModel : AppViewModel = viewModel()
+    appViewModel : AppViewModel
 ) {
-    val mainViewModel : MainViewModel = viewModel()
-    val findBgCode = mainViewModel.background
-    val bgCode = MapCode.valueOf(findBgCode)
-    val bg = painterResource(bgCode.code)
+    val findBgCode = appViewModel.mapCode
+    val bg = painterResource(findBgCode.code)
 
-    if(findBgCode == "MP000"){
+    if(findBgCode == MapCode.MP000){
         BgGif()
     } else {
         Image(
@@ -77,7 +75,7 @@ fun Card(appViewModel : AppViewModel){
         val firstColors = listOf(PayMongRed, PayMongRed200, PayMongRed)
         val secondColors = listOf(PayMongYellow, PayMongYellow200, PayMongYellow)
         val thirdColors = listOf(PayMongBlue, PayMongBlue200, PayMongBlue)
-        val colors = when(appViewModel.mongInfo.mongCode.code.substring(2,3)){            // 내부에서 계산해서 view 로 넘겨야함
+        val colors = when(appViewModel.mong.mongCode.code.substring(2,3)){            // 내부에서 계산해서 view 로 넘겨야함
             "0" -> eggColors
             "1" -> firstColors
             "2"-> secondColors
@@ -103,23 +101,28 @@ fun Card(appViewModel : AppViewModel){
             contentAlignment = Alignment.Center
         ) {
         }
-        Info(appViewModel.mongInfo.name, appViewModel.mongInfo.mongCode, appViewModel.getAge(), appViewModel.mongInfo.weight)
+        Info(appViewModel)
+        // appViewModel.mongInfo.name, appViewModel.mongInfo.mongCode, appViewModel.getAge(), appViewModel.mongInfo.weight
+        // name: String, mongCode: CharacterCode, age: String, weight: Number
     }
 }
 
 @Composable
-fun Info(name: String, mongCode: CharacterCode, age: String, weight: Number){
-    val character = painterResource(mongCode.resourceCode)
+fun Info(
+    appViewModel: AppViewModel,
+    infoDetailViewModel: InfoDetailViewModel = viewModel()
+){
+    val character = painterResource(appViewModel.mong.mongCode.resourceCode)
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = name, fontFamily = dalmoori, fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 20.dp))
+        Text(text = appViewModel.mong.name, fontFamily = dalmoori, fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 20.dp))
         Image(painter = character, contentDescription = null,
             modifier = Modifier.height(150.dp)
         )
-        Text(text = age, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 20.dp))
-        Text(text = String.format("%dkg",weight), fontFamily = dalmoori, fontSize = 20.sp)
+        Text(text = infoDetailViewModel.age, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 20.dp))
+        Text(text = String.format("%dkg", infoDetailViewModel.mongInfo.weight), fontFamily = dalmoori, fontSize = 20.sp)
     }
 }
 

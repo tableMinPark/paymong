@@ -1,5 +1,6 @@
 package com.paymong.ui.app.collect
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.common.code.MapCode
@@ -29,6 +31,7 @@ fun CollectMap(
     navController: NavController,
     collectMapViewModel : CollectMapViewModel = viewModel()
 ) {
+    collectMapViewModel.map()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -38,12 +41,16 @@ fun CollectMap(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                collectMapViewModel.map()
                 LazyColumn(
                     Modifier.fillMaxSize()
                 ) {
-                    val cnt = collectMapViewModel.mapList.size / 2
-                    items(16){
+                    Log.d("mapList",collectMapViewModel.mapList.toString())
+                    var cnt = collectMapViewModel.mapList.size / 2
+                    if(collectMapViewModel.mapList.size%2 == 1){
+                        cnt += 1
+                    }
+                    Log.d("cnt", cnt.toString())
+                    items(cnt){
                             index -> ComponentRow(index = index*2, collectMapViewModel)
                     }
                 }
@@ -65,13 +72,26 @@ fun Component(mapName :String, mapCode: Int){ // map 이름 + map 사진
             modifier = Modifier.padding(bottom = 5.dp)
         )
         Box(contentAlignment = Alignment.Center){
-            Image(
-                painter = mapImg, contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(15.dp))
-                    .border(width = 10.dp,Color.White.copy(alpha = 0.5f),RoundedCornerShape(15.dp))
-            )
+            if(mapCode==R.drawable.none){
+                Image(
+                    painter = mapImg, contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(15.dp))
+                )
+            } else {
+                Image(
+                    painter = mapImg, contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(15.dp))
+                        .border(
+                            width = 10.dp,
+                            Color.White.copy(alpha = 0.5f),
+                            RoundedCornerShape(15.dp)
+                        )
+                )
+            }
         }
     }
 }
@@ -81,6 +101,8 @@ fun ComponentRow(
     index: Int,
     collectMapViewModel: CollectMapViewModel
 ){
+    var text = "???"
+    var code = R.drawable.none_map
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,15 +113,36 @@ fun ComponentRow(
             .weight(1f)
             .fillMaxSize()
             .padding(start = 15.dp, end = 5.dp)){
-            Component(collectMapViewModel.mapList[index].name, MapCode.valueOf(collectMapViewModel.mapList[index].code).code)
+            if(collectMapViewModel.mapList[index].name != null){
+                text = collectMapViewModel.mapList[index].name.toString()
+            }
+            if(collectMapViewModel.mapList[index].code != null){
+                code = collectMapViewModel.mapList[index].code?.let { MapCode.valueOf(it).code }!!
+            }
+            Component(text, code)
         }
-        Box(modifier = Modifier
-            .weight(1f)
-            .fillMaxSize()
-            .padding(start = 5.dp, end = 15.dp)){
-            Component(collectMapViewModel.mapList[index+1].name, MapCode.valueOf(collectMapViewModel.mapList[index+1].code).code)
+        Log.d("index",(index).toString()+" "+(index+1).toString()+" "+collectMapViewModel.mapList.size.toString())
+        if(index+1<collectMapViewModel.mapList.size){
+            Box(modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .padding(start = 5.dp, end = 15.dp)){
+                if(collectMapViewModel.mapList[index+1].name != null){
+                    text = collectMapViewModel.mapList[index+1].name.toString()
+                }
+                if(collectMapViewModel.mapList[index+1].code != null){
+                    code = collectMapViewModel.mapList[index+1].code?.let { MapCode.valueOf(it).code }!!
+                }
+                Component(text, code)
+            }
+        } else{
+            Box(modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .padding(start = 5.dp, end = 15.dp)){
+                Component("", R.drawable.none)
+            }
         }
-
     }
 }
 

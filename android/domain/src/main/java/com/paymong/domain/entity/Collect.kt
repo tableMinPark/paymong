@@ -1,9 +1,8 @@
 package com.paymong.domain.entity
-
 data class Collect(
-    val isOpen : Boolean,
-    val name : String,
-    val code : String
+    val isOpen: Boolean,
+    val name: String?,
+    val code: String?
 ) {
-    constructor() : this(false, "", "")
+    constructor() : this(false, null, null)
 }

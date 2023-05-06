@@ -1,6 +1,7 @@
 package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
+import com.paymong.management.global.exception.AlreadyExistMongException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -56,6 +57,9 @@ public class MongController {
         }catch(NotFoundMongException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (AlreadyExistMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.ALREADY_EXIST.getCode(), ManagementStateCode.ALREADY_EXIST.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.ALREADY_EXIST));
         }
 
     }

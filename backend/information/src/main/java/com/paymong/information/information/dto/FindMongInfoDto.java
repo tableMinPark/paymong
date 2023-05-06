@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class FindMongInfoDto {
     private Long mongId;
     private String name;
     private Integer weight;
-    private LocalDate born;
+    private LocalDateTime born;
 
     public FindMongInfoDto(Mong mong){
         this.mongId = mong.getMongId();

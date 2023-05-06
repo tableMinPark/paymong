@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class FeedSnackReqVo {
     private Long mongId;
+    private Long memberId;
     private String snackCode;
 
     public FeedSnackReqVo(FeedSnackReqDto feedSnackReqDto){

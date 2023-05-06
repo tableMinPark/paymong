@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -30,7 +31,7 @@ public class Mong {
     @Column(name = "name")
     private String name;
     @Column(name = "reg_dt")
-    private LocalDate regDt;
+    private LocalDateTime regDt;
     @Column(name = "weight")
     private Integer weight;
     @Column(name = "age")

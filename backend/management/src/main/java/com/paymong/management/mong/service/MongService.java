@@ -1,6 +1,7 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.client.CommonServiceClient;
+import com.paymong.management.global.exception.AlreadyExistMongException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.dto.FindRandomEggDto;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -32,6 +34,10 @@ public class MongService {
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
 
+        Optional<Mong> chkMong = mongRepository.findByMemberIdAndActive(addMongReqVo.getMemberId(), true);
+        if(chkMong.isPresent()){
+            throw new AlreadyExistMongException();
+        }
         FindRandomEggDto findRandomEggDto = commonServiceClient.findRandomEgg();
 
         Mong mong = Mong.builder()

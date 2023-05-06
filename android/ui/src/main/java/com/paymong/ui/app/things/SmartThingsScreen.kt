@@ -5,9 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,19 +47,22 @@ fun SmartThings(
     ) {
         Box(Modifier.padding(it)) {
             Column(
-                modifier = Modifier.padding(30.dp)
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxSize()
             ) {
                 Desc()
                 Spacer(modifier = Modifier.height(20.dp))
                 AddThings(navController)
-                ThingsList()
+                Spacer(modifier = Modifier.height(20.dp))
+                ThingsList(smartThingsViewModel)
             }
         }
     }
 }
 
 @Composable
-fun Desc(){
+private fun Desc(){
     Box(modifier = Modifier
         .clip(RoundedCornerShape(30.dp))
         .background(color = Color.White.copy(alpha = 0.5f)),
@@ -103,7 +111,7 @@ fun Desc(){
 }
 
 @Composable
-fun AddThings(navController:NavController){
+private fun AddThings(navController:NavController){
     Box(modifier = Modifier
         .clip(RoundedCornerShape(30.dp))
         .background(color = Color.White.copy(alpha = 0.5f)),
@@ -140,15 +148,61 @@ fun AddThings(navController:NavController){
 }
 
 @Composable
-fun ThingsList(){
-
+private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
+    smartThingsViewModel.things()
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .clip(RoundedCornerShape(30.dp))
+        .background(color = Color.White.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.TopCenter
+    ){
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(color = Color.White.copy(alpha = 0.2f))
+                    .padding(10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical =  10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("연동된 기기명", textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                    Text("루틴 이름", textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                    Text("", fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.2f))
+                }
+            }
+            LazyColumn(){
+                items(smartThingsViewModel.thingsList.size){index ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(smartThingsViewModel.thingsList[index].thingsName, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                        Text(smartThingsViewModel.thingsList[index].routine, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                        Icon(Icons.Filled.Close, contentDescription = null, tint = Color.White, modifier = Modifier.weight(0.2f))
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Preview(showBackground = false)
 @Composable
 fun ThingsPreview() {
-    val navController = rememberNavController()
+    val smartThingsViewModel:SmartThingsViewModel = viewModel()
     PaymongTheme {
-        AddThings(navController)
+        ThingsList(smartThingsViewModel)
     }
 }

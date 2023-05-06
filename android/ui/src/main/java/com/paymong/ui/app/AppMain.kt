@@ -7,18 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.wear.compose.navigation.SwipeDismissableNavHost
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.CollectMapViewModel
-import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
 import com.paymong.ui.app.collect.CollectMap
@@ -29,6 +23,8 @@ import com.paymong.ui.app.landing.Landing
 import com.paymong.ui.app.login.Login
 import com.paymong.ui.app.main.Main
 import com.paymong.ui.app.paypoint.PayPoint
+import com.paymong.ui.app.things.AddSmartThings
+import com.paymong.ui.app.things.SmartThings
 
 @Composable
 fun AppMain() {
@@ -63,6 +59,12 @@ fun AppMainNav(){
         composable(route = AppNavItem.InfoDetail.route) {
             val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
             InfoDetail(navController, appViewModel)
+        }
+        composable(route = AppNavItem.SmartThings.route){
+            SmartThings(navController)
+        }
+        composable(route = AppNavItem.AddSmartThings.route){
+            AddSmartThings(navController)
         }
         composable(route = AppNavItem.Condition.route) {
             Condition(navController)

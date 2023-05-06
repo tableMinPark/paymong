@@ -19,4 +19,13 @@ class MemberRepository(
             }
         }
     }
+
+    fun pointList(): Flow<List<PointInfoResDto>> = flow {
+        val response = api.pointList()
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(response.body()!!)
+            }
+        }
+    }
 }

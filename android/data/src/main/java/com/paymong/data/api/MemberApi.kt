@@ -10,4 +10,7 @@ import retrofit2.http.POST
 interface MemberApi {
     @GET("/member/info")
     suspend fun findMember() : Response<FindMemberResDto>
+
+    @GET("/member/paypoint/list")
+    suspend fun pointList() : Response<List<PointInfoResDto>>
 }

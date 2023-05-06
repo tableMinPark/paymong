@@ -30,19 +30,33 @@ public class FeedController {
     private final FeedService feedService;
     @Value("${header.mong}")
     String headerMong;
+
+    @Value("${header.member}")
+    String headerMember;
     /* 음식 먹이기 */
     @PutMapping("/food")
     public ResponseEntity<Object> feedFood(@RequestBody FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-        LOGGER.info("{} 먹어", feedFoodReqVo.getFoodCode());
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
         try {
-            if(feedFoodReqVo.getFoodCode() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(feedFoodReqVo.getFoodCode() == null){
+                throw new NullPointerException();
+            }
+            if(mongIdStr == null || mongIdStr.equals("")){
+                throw new NullPointerException();
+            }
+            if(memberIdStr == null || memberIdStr.equals("")){
                 throw new NullPointerException();
             }
             Long mongId = Long.parseLong(mongIdStr);
+            Long memberId = Long.parseLong(memberIdStr);
+
             feedFoodReqVo.setMongId(mongId);
+            feedFoodReqVo.setMemberId(memberId);
+
             feedService.feedFood(feedFoodReqVo);
+
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
@@ -67,14 +81,25 @@ public class FeedController {
     public ResponseEntity<Object> feedSnack(@RequestBody FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
         try {
-            if(feedSnackReqVo.getSnackCode() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(feedSnackReqVo.getSnackCode() == null){
+                throw new NullPointerException();
+            }
+            if(mongIdStr == null || mongIdStr.equals("")){
+                throw new NullPointerException();
+            }
+            if(memberIdStr == null || memberIdStr.equals("")){
                 throw new NullPointerException();
             }
             Long mongId = Long.parseLong(mongIdStr);
+            Long memberId = Long.parseLong(memberIdStr);
+
             feedSnackReqVo.setMongId(mongId);
+            feedSnackReqVo.setMemberId(memberId);
+
             feedService.feedSnack(feedSnackReqVo);
+
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());

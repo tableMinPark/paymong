@@ -20,12 +20,12 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ClientService {
-    private final AuthServiceClient authServiceClient;
+    private final MemberServiceClient memberServiceClient;
     private final CommonServiceClient commonServiceClient;
 
     public void addPoint(String memberId, AddPointDto addPayDto) throws GatewayException {
         try {
-            authServiceClient.addPoint(memberId, addPayDto);
+            memberServiceClient.addPoint(memberId, addPayDto);
         }catch (Exception e){
             throw new GatewayException();
         }

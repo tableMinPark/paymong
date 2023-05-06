@@ -6,3 +6,8 @@ data class FindMemberResDto(
     val mongCode : String,
     val point : Long
 )
+
+data class PointInfoResDto(
+    val content : String,
+    val price : Int
+)

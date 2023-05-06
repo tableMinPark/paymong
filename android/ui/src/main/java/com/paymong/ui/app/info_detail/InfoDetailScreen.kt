@@ -122,7 +122,7 @@ fun Info(
             modifier = Modifier.height(150.dp)
         )
         Text(text = infoDetailViewModel.age, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 20.dp))
-        Text(text = String.format("%dkg", infoDetailViewModel.mongInfo.weight), fontFamily = dalmoori, fontSize = 20.sp)
+        Text(text = String.format("%dg", infoDetailViewModel.mongInfo.weight), fontFamily = dalmoori, fontSize = 20.sp)
     }
 }
 

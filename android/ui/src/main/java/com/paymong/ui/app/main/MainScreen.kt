@@ -61,7 +61,7 @@ fun Main(
 
     Top(navController, appViewModel)
     MakeEgg(navController, appViewModel)
-    Btn(navController, characterState)
+    Btn(navController, appViewModel)
 }
 
 @Composable
@@ -419,8 +419,6 @@ fun MakeEgg(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val isClicked = remember { mutableStateOf(false) }
-
         val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
 
         if (code >= 400) {
@@ -438,18 +436,16 @@ fun MakeEgg(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(isClicked.value){
+                if(appViewModel.eggTouchCount > 10){
                     Text(text = "성장을 위해\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
-                        fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White,
-                        modifier = Modifier.clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = { appViewModel.eggTouchCount++ }
-                        )
+                        fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
+                    Log.d("성장", "10번 클릭 넘엇서!")
                 }
                 else{
-                    Text(text = " \n ", lineHeight = 50.sp, fontSize = 20.sp,)
+                    Text(text = " ${appViewModel.eggTouchCount}\n ", lineHeight = 50.sp, fontSize = 20.sp,
+                        fontFamily = dalmoori, fontWeight = FontWeight.Bold, color = Color.White
+                    )
                 }
                 Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode), contentDescription = null,
                     modifier = Modifier
@@ -458,11 +454,7 @@ fun MakeEgg(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                if (code < 100){
-                                    isClicked.value = true
-                                } else {
-                                    navController.navigate(AppNavItem.Condition.route)
-                                }
+                                appViewModel.eggTouchCount++
                             }
                         )
                 )
@@ -472,7 +464,8 @@ fun MakeEgg(
 }
 
 @Composable
-fun Btn(navController: NavController, characterState: MutableState<CharacterCode>){
+fun Btn(navController: NavController,
+        appViewModel: AppViewModel){
 
     Row(
         modifier = Modifier
@@ -501,7 +494,7 @@ fun Btn(navController: NavController, characterState: MutableState<CharacterCode
                 fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
             )
         }
-        if (characterState.value != CharacterCode.CH444){
+        if (appViewModel.mong.mongCode.code != "CH444"){ // chcode>=ch100일때만 나오도록 변경
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(horizontal = 10.dp)

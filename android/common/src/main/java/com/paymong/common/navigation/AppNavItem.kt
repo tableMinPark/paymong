@@ -7,6 +7,8 @@ sealed class AppNavItem(
     object Login: AppNavItem("login")
     object Main: AppNavItem("main")
     object InfoDetail: AppNavItem("info_detail")
+    object SmartThings: AppNavItem("smart_things")
+    object AddSmartThings: AppNavItem("add_smart_things")
     object Condition: AppNavItem("condition")
     object PayPoint: AppNavItem("pay_point")
     object Help: AppNavItem("help")

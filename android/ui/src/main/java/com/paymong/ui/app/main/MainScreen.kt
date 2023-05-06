@@ -111,6 +111,27 @@ fun Info(
 }
 
 @Composable
+fun Things(
+    appViewModel: AppViewModel,
+    navController: NavController
+){
+    Box(
+        contentAlignment = Alignment.Center
+    ){
+        Image(painterResource(R.drawable.things), contentDescription = null,
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        navController.navigate(AppNavItem.SmartThings.route)
+                    }
+                )
+        )
+    }
+}
+
+@Composable
 fun Point(
     navController: NavController,
     appViewModel: AppViewModel
@@ -126,7 +147,8 @@ fun Point(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { navController.navigate(AppNavItem.PayPoint.route) }
-                ).padding(horizontal = 20.dp)
+                )
+                .padding(horizontal = 20.dp)
         )
         Row(
             modifier = Modifier.width(100.dp),
@@ -164,6 +186,7 @@ fun Top(
         Row {
             Help(navController)
             Info(appViewModel, navController)
+            Things(appViewModel, navController)
         }
         Point(navController, appViewModel)
     }

@@ -10,5 +10,5 @@ interface CollectApi {
     @GET("/collect/map")
     suspend fun map() : Response<List<MapResDto>>
     @GET("/collect/mong")
-    suspend fun mong() : Response<MongResDto>
+    suspend fun mong() : Response<List<MongResDto>>
 }

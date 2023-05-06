@@ -23,6 +23,7 @@ import com.paymong.common.R
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.CollectPayMongViewModel
+import com.paymong.domain.entity.Collect
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PayMongPurple
@@ -35,6 +36,8 @@ fun CollectPayMong(
     navController: NavController,
     collectPayMongViewModel: CollectPayMongViewModel = viewModel()
 ) {
+    // db 수정되면 viewmodel init 지우고 mong으로
+    // collectPayMongViewModel.mong()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -44,7 +47,7 @@ fun CollectPayMong(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                val grouped = collectPayMongViewModel.mongList.groupBy { it.substring(2,3) }
+                val grouped = collectPayMongViewModel.mongList.groupBy { it.code!!.substring(2,3) }
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ){
@@ -87,7 +90,7 @@ fun PayMongHeader(title : String){
     }
 }
 @Composable
-fun ImageList(list : List<String>, index:Int){
+fun ImageList(list : List<Collect>, index:Int){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,8 +101,12 @@ fun ImageList(list : List<String>, index:Int){
             var mongImg = R.drawable.none
             var text = ""
             if((index + i - 1)<list.size) {
-                mongImg = CharacterCode.valueOf(list[index + i - 1]).resourceCode
-                text = CharacterCode.valueOf(list[index + i - 1]).codeName
+                mongImg = CharacterCode.valueOf(list[index + i - 1].code!!).resourceCode
+                text = list[index + i - 1].name.toString()
+                if(!list[index+i-1].isOpen){
+                    mongImg = R.drawable.none_ch
+                    text = "???"
+                }
             }
             Box(modifier = Modifier
                 .weight(1f)

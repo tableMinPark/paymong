@@ -6,12 +6,8 @@ data class MapResDto(
     val mapCode: String
 )
 
-data class MongList(
+data class MongResDto(
     val isOpen: Boolean,
     val name: String,
     val characterCode: String
-)
-
-data class MongResDto(
-    val map: List<MongList>
 )

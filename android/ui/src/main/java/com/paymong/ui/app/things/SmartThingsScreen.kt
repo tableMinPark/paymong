@@ -149,7 +149,7 @@ private fun AddThings(navController:NavController){
 
 @Composable
 private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
-    smartThingsViewModel.things()
+    smartThingsViewModel.connectedThings()
     Box(modifier = Modifier
         .fillMaxHeight()
         .clip(RoundedCornerShape(30.dp))
@@ -181,15 +181,15 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                 }
             }
             LazyColumn(){
-                items(smartThingsViewModel.thingsList.size){index ->
+                items(smartThingsViewModel.connectedThingsList.size){index ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(smartThingsViewModel.thingsList[index].thingsName, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
-                        Text(smartThingsViewModel.thingsList[index].routine, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                        Text(smartThingsViewModel.connectedThingsList[index].thingsName, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                        Text(smartThingsViewModel.connectedThingsList[index].routine, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
                         Icon(Icons.Filled.Close, contentDescription = null, tint = Color.White, modifier = Modifier.weight(0.2f))
                     }
                 }

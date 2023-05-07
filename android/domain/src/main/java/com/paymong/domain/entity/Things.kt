@@ -9,3 +9,8 @@ data class Things(
     val routine : String,
     val regDt : LocalDateTime
 )
+
+data class AddThings(
+    val thingsName : String,
+    var isSelect : Boolean
+)

@@ -1,10 +1,8 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
-import com.paymong.management.mong.scheduler.HealthScheduler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

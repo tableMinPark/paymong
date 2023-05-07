@@ -25,7 +25,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class TrainingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
-    private final MongRepository mongRepository;
+
     private final ClientService clientService;
     private final StatusService statusService;
     @Transactional
@@ -36,6 +36,7 @@ public class TrainingService {
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
+        LOGGER.info("member : {}, point : {}", memberId, status.getPoint());
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(memberId), new AddPointDto(status.getPoint(), "훈련"));
 

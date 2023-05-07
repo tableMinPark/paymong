@@ -1,5 +1,6 @@
 package com.paymong.ui.app.main
 
+import android.media.SoundPool
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +68,18 @@ fun Main(
 
 @Composable
 fun Help(navController: NavController){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -75,7 +89,8 @@ fun Help(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.Help.route) }
+                    onClick = {ButtonSoundPlay();
+                        navController.navigate(AppNavItem.Help.route) }
                 )
                 .height(40.dp)
                 .padding(horizontal = 20.dp)
@@ -90,6 +105,16 @@ fun Info(
     appViewModel: AppViewModel,
     navController: NavController
 ){
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -99,7 +124,7 @@ fun Info(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {
+                    onClick = {ButtonSoundPlay();
                         navController.navigate(AppNavItem.InfoDetail.route)
                     }
                 )
@@ -115,6 +140,16 @@ fun Things(
     appViewModel: AppViewModel,
     navController: NavController
 ){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -123,7 +158,7 @@ fun Things(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {
+                    onClick = {ButtonSoundPlay();
                         navController.navigate(AppNavItem.SmartThings.route)
                     }
                 )
@@ -136,6 +171,17 @@ fun Point(
     navController: NavController,
     appViewModel: AppViewModel
 ){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -146,7 +192,7 @@ fun Point(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.PayPoint.route) }
+                    onClick = {ButtonSoundPlay(); navController.navigate(AppNavItem.PayPoint.route) }
                 )
                 .padding(horizontal = 20.dp)
         )
@@ -490,6 +536,17 @@ fun MakeEgg(
 fun Btn(navController: NavController,
         appViewModel: AppViewModel){
 
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -506,9 +563,11 @@ fun Btn(navController: NavController,
             Image(painter = btn2Bg, contentDescription = null,
                 modifier = Modifier
                     .clickable(
+
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { navController.navigate(AppNavItem.Collect.route) }
+                        onClick = {ButtonSoundPlay();
+                            navController.navigate(AppNavItem.Collect.route) }
                     )
                     .width(150.dp)
             )
@@ -526,9 +585,11 @@ fun Btn(navController: NavController,
                 Image(painter = btn2Bg, contentDescription = null,
                     modifier = Modifier
                         .clickable(
+
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { navController.navigate(AppNavItem.Condition.route) }
+                            onClick = {ButtonSoundPlay();
+                                navController.navigate(AppNavItem.Condition.route) }
                         )
                         .width(150.dp)
                 )

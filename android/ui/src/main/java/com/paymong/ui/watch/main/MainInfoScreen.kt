@@ -55,7 +55,7 @@ fun MainInfoUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = String.format("맵 코드 : %s", mapViewModel.background), textAlign = TextAlign.Center)
+            Text(text = String.format("맵 코드 : %s", mapViewModel.mapCode), textAlign = TextAlign.Center)
         }
         Row(
             horizontalArrangement = Arrangement.Center,

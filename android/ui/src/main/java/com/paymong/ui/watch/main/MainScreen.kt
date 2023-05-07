@@ -31,11 +31,13 @@ fun Main(
     navController: NavHostController
 ) {
     val viewModel : MainViewModel = viewModel()
-    var findCode = viewModel.background
-    var bgCode = MapCode.valueOf(findCode)
-    var bg = painterResource(bgCode.code)
+    val bgCode = viewModel.mapCode
+    val bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    MainBackgroundGif()
+    if(bgCode==MapCode.MP000){
+        MainBackgroundGif()
+    }
+
     Column {
         HorizontalPager(
             count = 4,

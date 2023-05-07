@@ -1,10 +1,12 @@
 package com.paymong.ui.watch.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
@@ -18,6 +20,8 @@ import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
 import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.ui.theme.PayMongBlue
+import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.landing.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +40,12 @@ fun Main(
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     if(bgCode==MapCode.MP000){
         MainBackgroundGif()
+    } else{
+        if(pagerState.currentPage!=1) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(alpha = 0.4f))
+            )
+        }
     }
 
     Column {
@@ -53,8 +63,8 @@ fun Main(
             }
         }
         HorizontalPagerIndicator(
-            activeColor = MaterialTheme.colors.primary,
-            inactiveColor = MaterialTheme.colors.secondary,
+            activeColor = PayMongNavy,
+            inactiveColor = Color.White,
             indicatorWidth = 6.dp,
             pagerState = pagerState,
             modifier = Modifier

@@ -2,6 +2,7 @@ package com.paymong.ui.watch.main
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import com.paymong.domain.watch.main.MainConditionViewModel
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 
 import androidx.compose.ui.res.painterResource
@@ -85,7 +87,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.health,
+                progress = viewModel.mongStats.health,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongRed,
             )
@@ -103,7 +105,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.satiety,
+                progress = viewModel.mongStats.satiety,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongYellow,
             )
@@ -129,7 +131,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.strength,
+                progress = viewModel.mongStats.strength,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongGreen,
             )
@@ -148,7 +150,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.sleep,
+                progress = viewModel.mongStats.sleep,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongBlue,
             )
@@ -180,7 +182,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.health,
+                progress = viewModel.mongStats.health,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongRed,
             )
@@ -198,7 +200,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.satiety,
+                progress = viewModel.mongStats.satiety,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongYellow,
             )
@@ -224,7 +226,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.strength,
+                progress = viewModel.mongStats.strength,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongGreen,
             )
@@ -243,7 +245,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.sleep,
+                progress = viewModel.mongStats.sleep,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongBlue,
             )

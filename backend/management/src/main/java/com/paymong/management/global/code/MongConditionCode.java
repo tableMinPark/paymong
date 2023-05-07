@@ -2,6 +2,8 @@ package com.paymong.management.global.code;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum MongConditionCode implements BasicCode{
     NORMAL("CD000","정상"),
@@ -28,6 +30,13 @@ public enum MongConditionCode implements BasicCode{
     MongConditionCode(final String code, final String message){
         this.code = code;
         this.message = message;
+    }
+
+    public static MongConditionCode codeOf(String code){
+        return Arrays.stream(values())
+                .filter(value -> value.getCode().equals(code))
+                .findFirst()
+                .orElse(null);
     }
 
 }

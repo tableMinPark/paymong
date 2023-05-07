@@ -1,8 +1,6 @@
-package com.paymong.management.mong.scheduler;
+package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.scheduler.ManagementScheduler;
-import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.service.MongService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

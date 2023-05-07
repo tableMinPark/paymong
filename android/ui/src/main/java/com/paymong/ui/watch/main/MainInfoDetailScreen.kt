@@ -12,18 +12,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Text
 import com.paymong.domain.watch.main.MainInfoDetailViewModel
+import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun MainInfoDetail() {
-    val viewModel: MainInfoDetailViewModel = viewModel()
-    MainInfoDetailUI(viewModel)
+    val mainviewModel: MainInfoViewModel = viewModel()
+    val infoviewModel: MainInfoDetailViewModel = viewModel()
+    MainInfoDetailUI(mainviewModel, infoviewModel)
 }
 
 @Composable
 fun MainInfoDetailUI(
-    viewModel: MainInfoDetailViewModel
+    mainviewModel: MainInfoViewModel,
+    infoviewModel: MainInfoDetailViewModel
 ) {
 
     val configuration = LocalConfiguration.current
@@ -51,9 +54,11 @@ fun MainInfoDetailUI(
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
         ) {
-            Text(text = viewModel.name,
+            Text(text = mainviewModel.mong.name,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = nameFontSize.sp)
@@ -62,7 +67,7 @@ fun MainInfoDetailUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = viewModel.age,
+            Text(text = infoviewModel.age,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = ageFontSize.sp,
@@ -72,7 +77,7 @@ fun MainInfoDetailUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = String.format("%dkg", viewModel.weight),
+            Text(text = String.format("%dg", infoviewModel.mongInfo.weight),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = weightFontSize.sp)

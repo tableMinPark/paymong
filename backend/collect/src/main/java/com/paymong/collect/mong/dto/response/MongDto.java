@@ -26,8 +26,6 @@ public class MongDto {
             this.setIsOpen(true);
         } else {
             this.setIsOpen(false);
-            this.setName(null);
-            this.setCharacterCode(null);
         }
         return this;
     }

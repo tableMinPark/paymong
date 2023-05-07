@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient("member")
 public interface MemberServiceClient {
 
-    @PostMapping("/member/point")
+    @PostMapping("/member/paypoint/point")
     public ResponseEntity<Object> addPoint(@RequestHeader(value = "MemberId") String memberIdStr,
                                               @RequestBody AddPointDto addPointDto);
 }

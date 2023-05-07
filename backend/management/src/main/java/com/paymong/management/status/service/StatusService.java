@@ -1,5 +1,6 @@
 package com.paymong.management.status.service;
 
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.entity.Mong;
@@ -38,7 +39,7 @@ public class StatusService {
             // 스케줄러
         }
         // sleep 최대 20
-        Integer sleep = checkLevel(1, mong.getSleep(), statusResDto.getSleep());
+        Integer sleep = checkLevel(level == 0 ? 0 : 1, mong.getSleep(), statusResDto.getSleep());
         // weight 레벨별 최소 5 15 25 35 최대 99
         Integer weight = checkWeight(level, mong.getWeight(), statusResDto.getWeight());
 
@@ -47,6 +48,18 @@ public class StatusService {
         mong.setSatiety(satiety);
         mong.setSleep(sleep);
         mong.setWeight(weight);
+    }
+
+    public MongConditionCode checkCondition(Mong mong) {
+        if(mong.getPoopCount() == 4 || mong.getHealth() == 0){
+            return MongConditionCode.SICK;
+        }else if(mong.getSleep() < 2){
+            return MongConditionCode.SOMNOLENCE;
+        }else if(mong.getSatiety() < 5){
+            return MongConditionCode.HUNGRY;
+        }else{
+            return MongConditionCode.NORMAL;
+        }
     }
 
     private Integer checkLevel(Integer level, Integer value, Integer add){

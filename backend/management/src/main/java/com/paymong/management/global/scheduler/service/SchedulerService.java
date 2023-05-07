@@ -1,14 +1,12 @@
 package com.paymong.management.global.scheduler.service;
 
 import com.paymong.management.mong.scheduler.DeathScheduler;
-import com.paymong.management.mong.scheduler.HealthScheduler;
+import com.paymong.management.global.scheduler.HealthScheduler;
 import com.paymong.management.poop.scheduler.PoopScheduler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Component
 @RequiredArgsConstructor

@@ -2,13 +2,13 @@ package com.paymong.member.things.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.member.global.client.CommonServiceClient;
-import com.paymong.member.global.exception.NotFoundMapException;
-import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
+import com.paymong.member.things.dto.request.FindAddableThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
 import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
 import com.paymong.member.things.dto.response.ThingsCommonCode;
+import com.paymong.member.things.dto.response.ThingsCommonCodeList;
 import com.paymong.member.things.entity.Things;
 import com.paymong.member.things.repository.ThingsRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,14 +49,25 @@ public class ThingsService {
     public List<FindAddableThingsResDto> findAddableThings(String memberIdStr) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         String groupCode = "ST";
-        Map<String, String> req = new HashMap<>();
-        req.put("commonCode",groupCode);
-        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
-        if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapException();
-        ObjectMapper om = new ObjectMapper();
-        //List<ThingsCommonCode>  = om.convertValue(response.getBody(), ThingsCommonCode.class);
+        FindAddableThingsReqDto req = new FindAddableThingsReqDto(groupCode);
 
-        return null;
+        ObjectMapper om = new ObjectMapper();
+        //things code 리스트받아오기
+        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
+        ThingsCommonCodeList thingsCommonCodeList =  om.convertValue(response.getBody(), ThingsCommonCodeList.class);
+
+        //나의 things code 리스트 가져오기
+        Map<String,Integer> check = new HashMap<>();
+        List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
+        for(Things things : myThings) check.put(things.getThingsCode(),1);
+
+        List<FindAddableThingsResDto> ret = new ArrayList<>();
+        //나한테 없는 코드 찾기
+        for( ThingsCommonCode thingsCode : thingsCommonCodeList.getCommonCodeDtoList()){
+            if(!check.containsKey(thingsCode.getCode()))
+                ret.add(new FindAddableThingsResDto(thingsCode.getCode(), thingsCode.getName()));
+        }
+        return ret;
     }
 
 

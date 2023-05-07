@@ -1,5 +1,6 @@
 package com.paymong.ui.app.collect
 
+import android.media.SoundPool
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -8,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +25,10 @@ import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun Collect(navController: NavController) {
+
+
+
+
     Scaffold(
         topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
         backgroundColor = PayMongNavy
@@ -42,8 +48,21 @@ fun Collect(navController: NavController) {
 
 @Composable
 fun Btn(navController: NavController, btnText: String, route: String){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Button(
-        onClick = { navController.navigate(route){
+        onClick = {
+            ButtonSoundPlay()
+            navController.navigate(route){
             popUpTo("collect")
             navController.graph.setStartDestination(AppNavItem.Main.route)
         } },

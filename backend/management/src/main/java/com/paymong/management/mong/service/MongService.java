@@ -1,6 +1,7 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.client.CommonServiceClient;
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.AlreadyExistMongException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -36,7 +37,13 @@ public class MongService {
 
         Optional<Mong> chkMong = mongRepository.findByMemberIdAndActive(addMongReqVo.getMemberId(), true);
         if(chkMong.isPresent()){
-            throw new AlreadyExistMongException();
+            // 이미 있는데 그친구가 DIE가 아닌 경우 에러 처리
+            if(!chkMong.get().getStateCode().equals(MongConditionCode.DIE)){
+                throw new AlreadyExistMongException();
+            }else{
+                // 이미 있지만 DIE인 경우 비활성화 하고 새로 생성
+                chkMong.get().setActive(false);
+            }
         }
         FindRandomEggDto findRandomEggDto = commonServiceClient.findRandomEgg();
 
@@ -69,29 +76,5 @@ public class MongService {
         return findMongResVo;
     }
 
-    @Transactional
-    public void reduceHealth(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
-                .orElseThrow(() -> new NotFoundMongException());
-        if(!mong.getActive()) throw new NotFoundMongException();
-        Integer poop = mong.getPoopCount();
-        Integer health = mong.getHealth();
-        Integer penalty = mong.getPenalty();
-        if(health == 0){
-            // 체력이 0인데 관리를 안하면 괘씸죄
-            mong.setPenalty(penalty + 1);
-        }else{
-            if(poop == 0){
-                health = health - 1 < 0 ? 0 : health - 1;
-                mong.setHealth(health);
-            }else{
-                health = health - (poop*poop) < 0 ? 0 : health - (poop*poop);
-                mong.setHealth(health);
-            }
-            if(health == 0){
-                LOGGER.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
-            }
-        }
 
-    }
 }

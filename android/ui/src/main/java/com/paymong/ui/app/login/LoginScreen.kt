@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.games.AuthenticationResult
@@ -23,9 +22,10 @@ import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.paymong.common.R
-import com.paymong.common.code.LoginCode
+import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.app.AppInstallViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
@@ -33,12 +33,13 @@ import com.paymong.ui.theme.PaymongTheme
 @Composable
 fun Login(
     navController: NavController,
-    appViewModel: AppViewModel = viewModel()
+    appViewModel: AppViewModel,
+    appInstallViewModel : AppInstallViewModel
 ) {
     val context = LocalContext.current as Activity
     // 로그인 성공
-    if (appViewModel.loginState == LoginCode.LOGIN_SUCCESS) {
-        appViewModel.loginState = LoginCode.LOGIN
+    if (appViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
+        appViewModel.loginState = LandingCode.LOGIN
         navController.navigate(AppNavItem.Main.route) {
             popUpTo(navController.graph.id) {
                 inclusive = true
@@ -48,8 +49,8 @@ fun Login(
         }
     }
     // 로그인 실패
-    else if(appViewModel.loginState == LoginCode.LOGIN_FAIL) {
-        appViewModel.loginState = LoginCode.LOADING
+    else if(appViewModel.loginState == LandingCode.LOGIN_FAIL) {
+        appViewModel.loginState = LandingCode.LOADING
         Toast.makeText(
             context,
             ToastMessage.LOGIN_FAIL.message,
@@ -85,6 +86,23 @@ fun Login(
                     onClick = { login(context, gamesSignInClient, appViewModel) }
                 )
             )
+        }
+
+        if (appInstallViewModel.isInstall == LandingCode.NOT_INSTALL) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val google = painterResource(R.drawable.google_login)
+
+                Image(painter = google, contentDescription = null,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null, // 애니메이션 제거
+                        onClick = { appInstallViewModel.openPlayStoreOnWearDevicesWithoutApp() }
+                    )
+                )
+            }
         }
     }
 }

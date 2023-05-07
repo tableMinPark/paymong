@@ -51,6 +51,7 @@ dependencies {
     // multi-module
     implementation project(path: ':common')
     implementation project(path: ':ui')
+    implementation project(path: ':domain')
     // android
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.activity:activity-compose:$compose_ui_version"
@@ -60,6 +61,9 @@ dependencies {
 //    implementation platform('com.google.firebase:firebase-bom:31.5.0')
 //    implementation 'com.google.firebase:firebase-analytics-ktx'
 //    implementation 'com.google.firebase:firebase-auth-ktx'
+    // phone-wearable
+    implementation "androidx.wear:wear-remote-interactions:1.0.0"
+    implementation "com.google.android.gms:play-services-wearable:18.0.0"
     // test
     testImplementation 'junit:junit:4.12'
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"

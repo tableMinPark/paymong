@@ -1,13 +1,14 @@
 package com.paymong.domain.app
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
-import com.paymong.common.code.LoginCode
+import com.paymong.common.code.LandingCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.request.AddMongReqDto
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     // 로그인 플래그
-    var loginState by mutableStateOf(LoginCode.LOADING)
+    var loginState by mutableStateOf(LandingCode.LOADING)
     // google play game 인가 여부
     var isAuthenticated by mutableStateOf(false)
 
@@ -59,12 +60,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun login(playerId : String) {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.login(LoginReqDto(playerId))
-                .catch { loginState = LoginCode.LOGIN_FAIL }
+                .catch { loginState = LandingCode.LOGIN_FAIL }
                 .collect { values ->
                     loginState = if (values)
-                        LoginCode.LOGIN_SUCCESS
+                        LandingCode.LOGIN_SUCCESS
                     else
-                        LoginCode.LOGIN_FAIL
+                        LandingCode.LOGIN_FAIL
                 }
         }
     }
@@ -73,14 +74,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.reissue()
                 .catch {
-                    loginState = LoginCode.LOGIN_FAIL
+                    loginState = LandingCode.LOGIN_FAIL
                 }
                 .collect {values ->
                     loginState = if (values)
-                        LoginCode.LOGIN_SUCCESS
+                        LandingCode.LOGIN_SUCCESS
                     else
-                        LoginCode.LOGIN_FAIL
+                        LandingCode.LOGIN_FAIL
                 }
+            Log.e("loginCheck()", loginState.toString())
         }
     }
 

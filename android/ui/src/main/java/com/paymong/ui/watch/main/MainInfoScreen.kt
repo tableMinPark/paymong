@@ -55,25 +55,15 @@ fun MainInfoUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = String.format("맵 코드 : %s", mapViewModel.mapCode), textAlign = TextAlign.Center)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
             Text(text = String.format("똥 개수 : %d", viewModel.poopCount), textAlign = TextAlign.Center)
         }
         Row(
                 horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
         ) {
-
-        val findCode = viewModel.characterCode
-        val chCode = CharacterCode.valueOf(findCode)
-        val character = painterResource(chCode.resourceCode)
-        Image(painter = character, contentDescription = null, modifier = Modifier.width(characterSize.dp))
-//            Text(text = String.format("캐릭터 코드 : %s %s", animationState.value, viewModel.characterCode), textAlign = TextAlign.Center)
-    }
+            val character = painterResource(viewModel.mong.mongCode.resourceCode)
+            Image(painter = character, contentDescription = null, modifier = Modifier.width(characterSize.dp))
+        }
     }
 }
 

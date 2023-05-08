@@ -32,9 +32,9 @@ fun Main(
     animationState: MutableState<AnimationCode>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    mainviewModel : MainViewModel
 ) {
-    val mainviewModel : MainViewModel = viewModel()
     val bgCode = mainviewModel.mapCode
     val bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
@@ -82,9 +82,10 @@ fun MainPreview() {
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+    val mainviewModel: MainViewModel = viewModel()
 
     PaymongTheme {
-        Main(animationState, pagerState, coroutineScope, navController)
+        Main(animationState, pagerState, coroutineScope, navController, mainviewModel)
     }
 }
 

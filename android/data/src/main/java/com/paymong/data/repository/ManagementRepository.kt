@@ -5,6 +5,7 @@ import com.paymong.data.api.Api
 import com.paymong.data.api.ManagementApi
 import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.AddMongResDto
+import com.paymong.data.model.response.FoodResDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -14,6 +15,15 @@ class ManagementRepository(
     fun addMong(addMongReqDto: AddMongReqDto): Flow<AddMongResDto> = flow {
         val response = api.addMong(addMongReqDto)
         if (response.code() == 200) {
+            response.body()?.let {
+                emit(response.body()!!)
+            }
+        }
+    }
+
+    fun getFoodList(foodCategory: String): Flow<List<FoodResDto>> = flow {
+        val response = api.getFood(foodCategory)
+        if(response.code() == 200){
             response.body()?.let {
                 emit(response.body()!!)
             }

@@ -36,8 +36,7 @@ fun CollectPayMong(
     navController: NavController,
     collectPayMongViewModel: CollectPayMongViewModel = viewModel()
 ) {
-    // db 수정되면 viewmodel init 지우고 mong으로
-    // collectPayMongViewModel.mong()
+    collectPayMongViewModel.mong()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center

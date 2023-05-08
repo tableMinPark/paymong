@@ -42,7 +42,9 @@ fun Main(
     navController: NavController,
     appViewModel: AppViewModel,
 ) {
-    appViewModel.mainInit()
+    LaunchedEffect(key1 = true) {
+        appViewModel.mainInit()
+    }
 
     // 배경
     val findBgCode = appViewModel.mapCode

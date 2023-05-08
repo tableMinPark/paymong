@@ -53,8 +53,6 @@ dependencies {
     // multi-module
     implementation project(path: ':common')
     implementation project(path: ':domain')
-    // games
-    implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
     // coil (gif)
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("io.coil-kt:coil-gif:1.4.0")

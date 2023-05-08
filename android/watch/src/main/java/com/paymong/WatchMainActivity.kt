@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -15,23 +16,29 @@ import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
 import com.paymong.ui.watch.WatchMain
 
-class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
+class WatchMainActivity : ComponentActivity(),
+    CapabilityClient.OnCapabilityChangedListener {
     companion object {
         private const val PERMISSION_CHECK = 100
-
         private const val CAPABILITY_PHONE_APP = "app_paymong"
-        private const val ANDROID_MARKET_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
+        private const val PLAYER_ID_KEY = "com.paymong.player.id"
     }
 
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
+
+    private var playerId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

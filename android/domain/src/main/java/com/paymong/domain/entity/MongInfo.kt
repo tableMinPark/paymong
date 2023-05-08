@@ -7,7 +7,6 @@ data class Mong(
     val mongId : Long = 0L,
     val name : String = "",
     val mongCode : CharacterCode = CharacterCode.CH444
-
 )
 
 data class MongInfo(

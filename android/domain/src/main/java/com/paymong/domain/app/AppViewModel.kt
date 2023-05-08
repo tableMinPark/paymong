@@ -23,11 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
-    // 로그인 플래그
-    var loginState by mutableStateOf(LandingCode.LOADING)
-    // google play game 인가 여부
-    var isAuthenticated by mutableStateOf(false)
-
     // 몽 생성
     var mongname by mutableStateOf("")
     var mongsleepStart by mutableStateOf("")
@@ -46,7 +41,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val memberRepository: MemberRepository = MemberRepository()
     private val informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
-    private val authRepository: AuthRepository = AuthRepository()
 
     // 메인화면 진입시 초기화
     fun mainInit() {
@@ -55,37 +49,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             findPoint()
         }
     }
-
-    // 로그인
-    fun login(playerId : String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            authRepository.login(LoginReqDto(playerId))
-                .catch { loginState = LandingCode.LOGIN_FAIL }
-                .collect { values ->
-                    loginState = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
-                }
-        }
-    }
-    // 랜딩화면 로그인 확인
-    fun loginCheck() {
-        viewModelScope.launch(Dispatchers.IO) {
-            authRepository.reissue()
-                .catch {
-                    loginState = LandingCode.LOGIN_FAIL
-                }
-                .collect {values ->
-                    loginState = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
-                }
-            Log.e("loginCheck()", loginState.toString())
-        }
-    }
-
     // 몽 생성
     fun addMong(){
         viewModelScope.launch(Dispatchers.IO) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,47 +17,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.games.AuthenticationResult
-import com.google.android.gms.games.GamesSignInClient
-import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.Player
-import com.google.android.gms.tasks.Task
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.AppInstallViewModel
-import com.paymong.domain.app.AppViewModel
+import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun Login(
     navController: NavController,
-    appViewModel: AppViewModel,
-    appInstallViewModel : AppInstallViewModel
+    appLandinglViewModel : AppLandinglViewModel
 ) {
-    val context = LocalContext.current as Activity
-    // 로그인 성공
-    if (appViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
-        appViewModel.loginState = LandingCode.LOGIN
-        navController.navigate(AppNavItem.Main.route) {
-            popUpTo(navController.graph.id) {
-                inclusive = true
+    LaunchedEffect(key1 = true) {
+        // 웨어러블 최초 등록 여부 확인
+        appLandinglViewModel.registCheck()
+
+        if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
+            appLandinglViewModel.landingCode = LandingCode.LOADING
+            navController.navigate(AppNavItem.Main.route) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+                navController.graph.setStartDestination(AppNavItem.Main.route)
+                launchSingleTop = true
             }
-            navController.graph.setStartDestination(AppNavItem.Main.route)
-            launchSingleTop = true
         }
     }
-    // 로그인 실패
-    else if(appViewModel.loginState == LandingCode.LOGIN_FAIL) {
-        appViewModel.loginState = LandingCode.LOADING
-        Toast.makeText(
-            context,
-            ToastMessage.LOGIN_FAIL.message,
-            Toast.LENGTH_LONG
-        ).show()
-    }
+
 
     BgGif()
     Column(
@@ -72,23 +61,25 @@ fun Login(
                 .fillMaxWidth()
                 .padding(80.dp))
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ){
-            val google = painterResource(R.drawable.google_login)
-            val gamesSignInClient = PlayGames.getGamesSignInClient(context)
+        // 웨어러블이 등록되어 있는 경우
+        if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ){
+                val google = painterResource(R.drawable.google_login)
 
-            Image(painter = google, contentDescription = null,
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null, // 애니메이션 제거
-                    onClick = { login(context, gamesSignInClient, appViewModel) }
+                Image(painter = google, contentDescription = null,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null, // 애니메이션 제거
+                        onClick = { appLandinglViewModel.googlePlayLogin() }
+                    )
                 )
-            )
+            }
         }
-
-        if (appInstallViewModel.isInstall == LandingCode.NOT_INSTALL) {
+        // 웨어러블 기기에 앱이 설치되어 있지 않은 경우
+        if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -99,40 +90,27 @@ fun Login(
                     modifier = Modifier.clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null, // 애니메이션 제거
-                        onClick = { appInstallViewModel.openPlayStoreOnWearDevicesWithoutApp() }
+                        onClick = { appLandinglViewModel.openPlayStoreOnWearDevicesWithoutApp() }
                     )
                 )
             }
         }
-    }
-}
+        // 웨어러블 기기에 앱이 설치되어 있는 경우
+        if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val google = painterResource(R.drawable.google_login)
 
-fun login(
-    context: Activity,
-    gamesSignInClient : GamesSignInClient,
-    appViewModel: AppViewModel
-) {
-    // 로그인 시도
-    gamesSignInClient.signIn()
-    // 로그인 리스너
-    gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-        appViewModel.isAuthenticated = isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
-        // 로그인 성공
-        if (appViewModel.isAuthenticated) {
-            PlayGames.getPlayersClient(context).currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
-                val playerId = mTask?.result?.playerId.toString()
-
-                Log.d("LoginScreen - Call", appViewModel.isAuthenticated.toString())
-                appViewModel.login(playerId)
+                Image(painter = google, contentDescription = null,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null, // 애니메이션 제거
+                        onClick = { appLandinglViewModel.registWearable() }
+                    )
+                )
             }
-        }
-        // 계정을 찾을 수 없음
-        else {
-            Toast.makeText(
-                context,
-                ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
-                Toast.LENGTH_LONG
-            ).show()
         }
     }
 }

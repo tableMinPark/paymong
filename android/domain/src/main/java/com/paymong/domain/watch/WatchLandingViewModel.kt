@@ -4,20 +4,24 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
 import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
+import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.Wearable
 import com.paymong.common.code.LandingCode
-import com.paymong.common.code.ToastMessage
+import com.paymong.data.model.request.LoginReqDto
+import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -33,8 +37,47 @@ class WatchLandingViewModel(
         private const val ANDROID_MARKET_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
     }
 
+    // 로그인 플래그
+    var loginState by mutableStateOf(LandingCode.LOADING)
+    private val authRepository: AuthRepository = AuthRepository()
+    private val dataApplicationRepository = DataApplicationRepository()
+
     var landingCode by mutableStateOf(LandingCode.LOADING)
     var androidPhoneNodeWithApp: Node? = null
+
+    // 로그인
+    fun login() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playerId = dataApplicationRepository.getValue("playerId")
+
+            if (playerId != "") {
+                authRepository.login(LoginReqDto(playerId))
+                    .catch { loginState = LandingCode.LOGIN_FAIL }
+                    .collect { values ->
+                        loginState = if (values)
+                            LandingCode.LOGIN_SUCCESS
+                        else
+                            LandingCode.LOGIN_FAIL
+                    }
+            }
+        }
+    }
+    // 랜딩화면 로그인 확인
+    fun loginCheck() {
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.reissue()
+                .catch {
+                    loginState = LandingCode.LOGIN_FAIL
+                }
+                .collect {values ->
+                    loginState = if (values)
+                        LandingCode.LOGIN_SUCCESS
+                    else
+                        LandingCode.LOGIN_FAIL
+                }
+            Log.e("loginCheck()", loginState.toString())
+        }
+    }
 
     fun installCheck() {
         viewModelScope.launch {
@@ -43,7 +86,6 @@ class WatchLandingViewModel(
             }
         }
     }
-
     private suspend fun checkIfPhoneHasApp() {
         try {
             val capabilityInfo = capabilityClient
@@ -71,15 +113,12 @@ class WatchLandingViewModel(
             }
             // 폰 연결 O & 설치 됨
             else {
-
-                // playerId 받아옴
                 landingCode = LandingCode.VALID
             }
         } else {
             // 이미 한번 로그인한 사람
             landingCode = LandingCode.VALID
         }
-
     }
     fun openAppInStoreOnPhone() {
         val intent = when (PhoneTypeHelper.getPhoneDeviceType(getApplication())) {

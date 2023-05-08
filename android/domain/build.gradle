@@ -48,6 +48,8 @@ dependencies {
     // multi-module
     implementation project(path: ':common')
     implementation project(path: ':data')
+    // games
+    implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
     // gps
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     // socket

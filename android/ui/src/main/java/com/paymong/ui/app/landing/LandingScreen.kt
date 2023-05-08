@@ -14,7 +14,7 @@ import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
-import com.paymong.domain.app.AppInstallViewModel
+import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.delay
@@ -23,27 +23,33 @@ import kotlinx.coroutines.delay
 @Composable
 fun Landing(
     navController: NavController,
-    appViewModel: AppViewModel,
-    appInstallViewModel : AppInstallViewModel
+    appLandinglViewModel : AppLandinglViewModel
 ) {
     LaunchedEffect(key1 = true){
-        appViewModel.loginCheck()
-        appInstallViewModel.installCheck()
         delay(2000)
+        // 리프레시 로그인 여부 확인
+        appLandinglViewModel.refreshLogin()
+    }
 
-        if(appViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
-            appViewModel.loginState = LandingCode.LOGIN
-            navController.navigate(AppNavItem.Main.route){
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
-                // 스택 첫 화면 메인화면으로 변경
-                navController.graph.setStartDestination(AppNavItem.Main.route)
-                launchSingleTop =true
+    // 리프레시 로그인 성공
+    if(appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
+        appLandinglViewModel.landingCode = LandingCode.LOADING
+        navController.navigate(AppNavItem.Main.route){
+            popUpTo(navController.graph.id) {
+                inclusive = true
             }
-        } else if (appViewModel.loginState == LandingCode.LOGIN_FAIL){
-            appViewModel.loginState = LandingCode.LOADING
-            navController.navigate(AppNavItem.Login.route)
+            // 스택 첫 화면 메인화면으로 변경
+            navController.graph.setStartDestination(AppNavItem.Main.route)
+            launchSingleTop =true
+        }
+    }
+    // 리프레시 로그인 실패
+    else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL){
+        appLandinglViewModel.landingCode = LandingCode.LOADING
+        navController.navigate(AppNavItem.Login.route){
+            popUpTo(navController.graph.id) {
+                inclusive = true
+            }
         }
     }
     

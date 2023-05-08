@@ -1,8 +1,7 @@
 package com.paymong.ui.watch.landing
 
-import android.app.Activity
 import android.os.Build
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -43,13 +42,36 @@ fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
     LaunchedEffect(key1 = true){
+        watchLandingViewModel.loginCheck()
         delay(2000)
-        watchLandingViewModel.installCheck()
+
+        // 로그인 성공 (리프레시 있음)
+        if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
+            Log.e("Landing", "로그인 성공")
+            watchLandingViewModel.loginState = LandingCode.LOGIN
+            navController.navigate(WatchNavItem.Main.route){
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+                // 스택 첫 화면 메인화면으로 변경
+                navController.graph.setStartDestination(WatchNavItem.Main.route)
+                launchSingleTop =true
+            }
+        } 
+        // 로그인 실패 (리프레시 없음)
+        else if (watchLandingViewModel.loginState == LandingCode.LOGIN_FAIL){
+            Log.e("Landing", "로그인 실패")
+            watchLandingViewModel.loginState = LandingCode.LOADING
+            // 모바일 앱 설치 여부 확인
+            watchLandingViewModel.installCheck()
+            
+            // playerId 가 있거나 모바일 앱으로부터 playerId를 받아온 경우
+            if (watchLandingViewModel.landingCode == LandingCode.VALID){
+                watchLandingViewModel.login()
+            }
+        }
     }
 
-    if (watchLandingViewModel.landingCode == LandingCode.VALID) {
-        navController.navigate(WatchNavItem.Main.route)
-    }
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

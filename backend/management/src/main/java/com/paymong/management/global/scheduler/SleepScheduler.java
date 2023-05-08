@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,18 +35,73 @@ public class SleepScheduler implements ManagementScheduler{
         if(schedulerMap.containsKey(mongId)){
             log.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
             schedulerMap.get(mongId).getDynamicScheduler().shutdown();
+            schedulerMap.get(mongId).getStaticScheduler().shutdown();
+            schedulerMap.get(mongId).getMinusScheduler().shutdown();
+            schedulerMap.remove(mongId);
 
         }else{
             log.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
     }
 
+    public void stopMinusScheduler(Long mongId){
+        if(schedulerMap.containsKey(mongId)){
+            log.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
+            schedulerMap.get(mongId).getMinusScheduler().shutdown();
+
+        }else{
+            log.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
+        }
+    }
+    public void awakeScheduler(Long mongId){
+        if(!schedulerMap.containsKey(mongId)){
+            log.info("{}이 없습니다.", mongId);
+            return;
+        }
+        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
+        schedulerDto.getDynamicScheduler().shutdown();
+        try {
+            Duration diff = Duration.between(schedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
+            Long expire = diff.toMinutes();
+            sleepTask.awakeMong(mongId, expire);
+            healthScheduler.startScheduler(mongId);
+            satietyScheduler.startScheduler(mongId);
+            poopScheduler.startScheduler(mongId);
+            deathScheduler.restartScheduler(mongId);
+            minusScheduler(mongId);
+        }catch (NotFoundMongException e){
+            log.info("{}의 몽이 없습니다.", mongId);
+            stopScheduler(mongId);
+        }
+    }
     @Override
     public void startScheduler(Long mongId) {
         if(!schedulerMap.containsKey(mongId)){
             log.info("{}이 없습니다.", mongId);
+            return;
         }
 
+        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
+        schedulerDto.setStartTime(LocalDateTime.now());
+        try {
+            sleepTask.sleepMong(mongId);
+            healthScheduler.stopScheduler(mongId);
+            satietyScheduler.stopScheduler(mongId);
+            poopScheduler.stopScheduler(mongId);
+            deathScheduler.pauseScheduler(mongId);
+            stopMinusScheduler(mongId);
+        }catch (NotFoundMongException e){
+            log.info("{}의 몽이 없습니다.", mongId);
+            stopScheduler(mongId);
+        }
+
+        log.info("new {}를 추가합니다.", this.getClass().getSimpleName());
+
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.initialize();
+        scheduler.setThreadNamePrefix("dynamic-sleep-");
+        scheduler.schedule(getAwakeRunnable(mongId), Instant.now().plusSeconds(60L * 60L * 3L));
+        schedulerDto.setDynamicScheduler(scheduler);
     }
 
     public void initScheduler(Long mongId, LocalTime sleepStart, LocalTime sleepEnd){
@@ -54,19 +110,31 @@ public class SleepScheduler implements ManagementScheduler{
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.initialize();
         scheduler.setThreadNamePrefix("static-sleep-");
-
         schedulerMap.put(mongId, schedulerDto);
 
         if(checkTime(sleepStart, sleepEnd)){
             scheduler.schedule(getSleepRunnable(mongId), Instant.now());
         }
-
+        log.info("new {}를 추가합니다.", this.getClass().getSimpleName());
         scheduler.schedule(getSleepRunnable(mongId), getCronTrigger(sleepStart));
         scheduler.schedule(getAwakeRunnable(mongId), getCronTrigger(sleepEnd));
         schedulerDto.setStaticScheduler(scheduler);
+        minusScheduler(mongId);
+    }
 
+    public void minusScheduler(Long mongId){
+        if(!schedulerMap.containsKey(mongId)){
+            log.info("{}이 없습니다.", mongId);
+            return;
+        }
+        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.initialize();
+        scheduler.setThreadNamePrefix("minus-sleep-");
+        log.info("new {} minus Scheduler를 추가합니다.", this.getClass().getSimpleName());
+        scheduler.scheduleWithFixedDelay(getRunnable(mongId), Date.from(Instant.now().plusSeconds(getDelay())), getDelay() * 1000L);
 
-
+        schedulerDto.setMinusScheduler(scheduler);
     }
 
     public Boolean checkTime(LocalTime sleepStart, LocalTime sleepEnd){
@@ -87,7 +155,14 @@ public class SleepScheduler implements ManagementScheduler{
 
     @Override
     public Runnable getRunnable(Long mongId) {
-        return null;
+
+        return () -> {
+            try {
+                sleepTask.minusSleep(mongId);
+            }catch (NotFoundMongException e){
+                stopScheduler(mongId);
+            }
+        };
     }
 
     public Runnable getSleepRunnable(Long mongId){
@@ -100,6 +175,7 @@ public class SleepScheduler implements ManagementScheduler{
                 satietyScheduler.stopScheduler(mongId);
                 poopScheduler.stopScheduler(mongId);
                 deathScheduler.pauseScheduler(mongId);
+                stopMinusScheduler(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
             }
@@ -117,7 +193,9 @@ public class SleepScheduler implements ManagementScheduler{
                 satietyScheduler.startScheduler(mongId);
                 poopScheduler.startScheduler(mongId);
                 deathScheduler.restartScheduler(mongId);
+                minusScheduler(mongId);
             }catch (NotFoundMongException e){
+                log.info("{}의 몽이 없습니다.", mongId);
                 stopScheduler(mongId);
             }
 
@@ -135,6 +213,6 @@ public class SleepScheduler implements ManagementScheduler{
 
     @Override
     public Long getDelay() {
-        return null;
+        return 30L * 60L;
     }
 }

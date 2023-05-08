@@ -17,5 +17,6 @@ public class SleepSchedulerDto {
     private LocalDateTime startTime;
     private ThreadPoolTaskScheduler staticScheduler;
     private ThreadPoolTaskScheduler dynamicScheduler;
+    private ThreadPoolTaskScheduler minusScheduler;
 
 }

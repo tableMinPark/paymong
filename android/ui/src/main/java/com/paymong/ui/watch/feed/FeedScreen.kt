@@ -28,18 +28,15 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
-fun Feed(navController: NavHostController) {
-    val viewModel: FeedViewModel = viewModel()
-    FeedUI(navController, viewModel)
+fun Feed(navController: NavHostController, feedViewModel: FeedViewModel) {
+    FeedUI(navController, feedViewModel)
 }
 
 @Composable
 fun FeedUI(
     navController: NavHostController,
-    viewModel: FeedViewModel
+    feedViewModel: FeedViewModel
 ) {
-
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val screenHeightDp = configuration.screenHeightDp
@@ -49,41 +46,31 @@ fun FeedUI(
     MainBackgroundGif()
 
     if (screenWidthDp < 200) {
-        SmallWatch( navController, viewModel)
+        SmallWatch( navController, feedViewModel)
     }
     else {
-        BigWatch( navController, viewModel)
+        BigWatch( navController, feedViewModel)
     }
 
-
-}
-
-
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun FeedPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    PaymongTheme {
-        Feed(navController)
+    if(feedViewModel.foodCategory != ""){
+        navController.navigate(WatchNavItem.FeedBuyList.route)
     }
 }
 
 @Composable
-fun SmallWatch(    navController: NavHostController,
-                   viewModel: FeedViewModel) {
-
+fun SmallWatch(
+    navController: NavHostController,
+   feedViewModel: FeedViewModel
+) {
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
         .build()
     val context = LocalContext.current
     val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-
     fun ButtonSoundPlay () {
         soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }
-
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -94,7 +81,12 @@ fun SmallWatch(    navController: NavHostController,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.FeedBuyList.route + "/RICE") },
+                onClick = {
+                    ButtonSoundPlay()
+                    feedViewModel.foodCategory = "FD"
+                    feedViewModel.getFoodList("FD")
+//                    navController.navigate(WatchNavItem.FeedBuyList.route + "/RICE")
+                          },
                 modifier = Modifier.size(width = 200.dp, height = 95.dp),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -124,7 +116,11 @@ fun SmallWatch(    navController: NavHostController,
                 .padding(top = 5.dp)
         ) {
             Button(
-                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.FeedBuyList.route + "/SNACK") },
+                onClick = {
+                    ButtonSoundPlay()
+                    feedViewModel.foodCategory = "SN"
+                    feedViewModel.getFoodList("SN")
+                          },
                 modifier = Modifier.size(width = 200.dp, height = 95.dp),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -141,20 +137,19 @@ fun SmallWatch(    navController: NavHostController,
 
 
 @Composable
-fun BigWatch(    navController: NavHostController,
-                   viewModel: FeedViewModel) {
-
+fun BigWatch(
+    navController: NavHostController,
+    feedViewModel: FeedViewModel
+) {
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
         .build()
     val context = LocalContext.current
     val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-
     fun ButtonSoundPlay () {
         soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }
-
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -165,7 +160,11 @@ fun BigWatch(    navController: NavHostController,
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.FeedBuyList.route + "/RICE") },
+                onClick = {
+                    ButtonSoundPlay()
+                    feedViewModel.foodCategory = "FD"
+                    feedViewModel.getFoodList("FD")
+                          },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -189,7 +188,11 @@ fun BigWatch(    navController: NavHostController,
                 .padding(top = 5.dp)
         ) {
             Button(
-                onClick = {ButtonSoundPlay(); navController.navigate(WatchNavItem.FeedBuyList.route + "/SNACK") },
+                onClick = {
+                    ButtonSoundPlay()
+                    feedViewModel.foodCategory = "SN"
+                    feedViewModel.getFoodList("SN")
+                          },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -197,8 +200,17 @@ fun BigWatch(    navController: NavHostController,
                 Text(text = "간식",
                     fontFamily = dalmoori,
                     fontSize = 24.sp)
-
             }
         }
+    }
+}
+
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun FeedPreview() {
+    val navController = rememberSwipeDismissableNavController()
+    val feedViewModel: FeedViewModel = viewModel()
+    PaymongTheme {
+        Feed(navController, feedViewModel)
     }
 }

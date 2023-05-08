@@ -1,6 +1,7 @@
 package com.paymong.ui.watch.feed
 
 import android.media.SoundPool
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -26,7 +27,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.feed.FeedBuyListViewModel
+import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.common.R
 import com.paymong.ui.theme.PayMongBlue
 import com.paymong.ui.theme.PaymongTheme
@@ -42,10 +43,11 @@ fun FeedBuyList(
     animationState: MutableState<AnimationCode>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    feedViewModel: FeedViewModel
 ) {
-    val viewModel: FeedBuyListViewModel = viewModel()
-    FeedBuyListUI(animationState, pagerState, coroutineScope, navController, viewModel)
+
+    FeedBuyListUI(animationState, pagerState, coroutineScope, navController, feedViewModel)
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -55,43 +57,23 @@ fun FeedBuyListUI(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    viewModel: FeedBuyListViewModel
+    feedViewModel: FeedViewModel
 ) {
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val screenHeightDp = configuration.screenHeightDp
 
-
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
     if (screenWidthDp < 200) {
-        SmallWatch(animationState, pagerState, coroutineScope, navController, viewModel)
+        feedViewModel.current()
+        SmallWatch(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
     else {
-        BigWatch(animationState, pagerState, coroutineScope, navController, viewModel)
-    }
-
-
-
-
-
-}
-
-
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun FeedBuyListPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val navController = rememberSwipeDismissableNavController()
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
-    PaymongTheme {
-        FeedBuyList(animationState, pagerState, coroutineScope, navController)
+        feedViewModel.current()
+        BigWatch(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
 }
 
@@ -101,16 +83,14 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                  pagerState: PagerState,
                  coroutineScope: CoroutineScope,
                  navController: NavHostController,
-                 viewModel: FeedBuyListViewModel
+                 feedViewModel: FeedViewModel
 ) {
 
-    val payPointText = if (viewModel.payPoint.toString().length > 5) {
-        viewModel.payPoint.toString().substring(0, 5) + "+"
+    val payPointText = if (feedViewModel.payPoint.toString().length > 5) {
+        feedViewModel.payPoint.toString().substring(0, 5) + "+"
     } else {
-        viewModel.payPoint.toString()
+        feedViewModel.payPoint.toString()
     }
-
-
 
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
@@ -118,15 +98,11 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
     val context = LocalContext.current
     val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-
     fun ButtonSoundPlay () {
         soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }
 
-
-
     Column(
-//        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(1f)
@@ -134,30 +110,21 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
             .wrapContentWidth(Alignment.CenterHorizontally)
 
     ) {
-
-
-
         // * User Point *
         Box(modifier = Modifier
             .padding(bottom = 15.dp)
             .height(20.dp)
-
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
-
-
         )
         {
-
             Image(
                 painter = painterResource(id = R.drawable.pointbackground),
                 contentDescription = "pointbackground",
                 modifier = Modifier
                     .height(20.dp)
                     .fillMaxWidth()
-
             )
-
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -182,35 +149,25 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                     fontSize = 10.sp,
                     color = Color(0xFF0C4DA2),
                     modifier = Modifier.padding(start = 4.dp),
-
-
-                    )
-
+                )
             }
         }
-
-
 
         Box(modifier = Modifier
             .height(80.dp)
             .fillMaxWidth()
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
-
-
-        )
-
-
-        {
-
+        ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
-
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {ButtonSoundPlay();
-                        viewModel.prevButtonClick() },
+                    onClick = {
+                        ButtonSoundPlay();
+                        feedViewModel.prevButtonClick()
+                              },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -220,14 +177,13 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                         modifier = Modifier.size(25.dp)
                     )
                 }
-
             }
 
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val drawableId = when (viewModel.foodCode) {
+                val drawableId = when (feedViewModel.foodCode) {
                     "FD000" -> R.drawable.fd000 // 별사탕
                     "FD001" -> R.drawable.fd001 // 사과
                     "FD002" -> R.drawable.fd002 // 삼각김밥
@@ -247,13 +203,18 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                     else -> R.drawable.pointlogo
                 }
                 Column(modifier = Modifier.fillMaxHeight(1f)) {
-                    Row( modifier = Modifier.height(20.dp).fillMaxWidth(),
+                    Row( modifier = Modifier
+                        .height(20.dp)
+                        .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,) {
-                        Text(text = viewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
+                        Text(text = feedViewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
                             fontSize = 16.sp)
                     }
 
-                    Row(modifier = Modifier.height(80.dp).fillMaxWidth().padding(top=10.dp),
+                    Row(modifier = Modifier
+                        .height(80.dp)
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
                         horizontalArrangement = Arrangement.Center,) {
                         Image(
                             painter = painterResource(id = drawableId),
@@ -274,7 +235,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                 modifier = Modifier.fillMaxWidth()
             ){
                 Button(
-                    onClick = {ButtonSoundPlay(); viewModel.nextButtonClick() },
+                    onClick = {ButtonSoundPlay(); feedViewModel.nextButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -305,7 +266,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
 
             Button(
                 onClick = {
-                    viewModel.selectButtonClick()
+                    feedViewModel.selectButtonClick()
                     animationState.value = AnimationCode.Feed
                     coroutineScope.launch { pagerState.scrollToPage(1) }
                     navController.navigate(WatchNavItem.Main.route){
@@ -351,7 +312,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                                 .padding(bottom = 2.dp)
                         )
                         Text(
-                            text = String.format(" %d", viewModel.price),
+                            text = String.format(" %d", feedViewModel.price),
                             textAlign = TextAlign.Center,
                             fontFamily = dalmoori,
                             color = Color(0xFF0C4DA2) ,
@@ -377,13 +338,13 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                  pagerState: PagerState,
                  coroutineScope: CoroutineScope,
                  navController: NavHostController,
-                 viewModel: FeedBuyListViewModel
+                 feedViewModel: FeedViewModel
 ) {
 
-    val payPointText = if (viewModel.payPoint.toString().length > 5) {
-        viewModel.payPoint.toString().substring(0, 5) + "+"
+    val payPointText = if (feedViewModel.payPoint.toString().length > 5) {
+        feedViewModel.payPoint.toString().substring(0, 5) + "+"
     } else {
-        viewModel.payPoint.toString()
+        feedViewModel.payPoint.toString()
     }
 
     Column(
@@ -459,7 +420,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
 //            horizontalArrangement = Arrangement.Center,
 //            modifier = Modifier.fillMaxWidth()
 //        ) {
-//            Text(text = viewModel.foodCode, textAlign = TextAlign.Center)
+//            Text(text = feedViewModel.foodCode, textAlign = TextAlign.Center)
 //        }
 
 
@@ -486,7 +447,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { viewModel.prevButtonClick() },
+                    onClick = { feedViewModel.prevButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -503,7 +464,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val drawableId = when (viewModel.foodCode) {
+                val drawableId = when (feedViewModel.foodCode) {
                     "FD000" -> R.drawable.fd000 // 별사탕
                     "FD001" -> R.drawable.fd001 // 사과
                     "FD002" -> R.drawable.fd002 // 삼각김밥
@@ -523,13 +484,18 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                     else -> R.drawable.pointlogo
                 }
                 Column(modifier = Modifier.fillMaxHeight(1f)) {
-                    Row( modifier = Modifier.height(21.dp).fillMaxWidth(),
+                    Row( modifier = Modifier
+                        .height(21.dp)
+                        .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,) {
-                        Text(text = viewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
+                        Text(text = feedViewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
                             fontSize = 21.sp)
                     }
 
-                    Row(modifier = Modifier.height(85.dp).fillMaxWidth().padding(top=10.dp),
+                    Row(modifier = Modifier
+                        .height(85.dp)
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
                         horizontalArrangement = Arrangement.Center,) {
                         Image(
                             painter = painterResource(id = drawableId),
@@ -550,7 +516,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                 modifier = Modifier.fillMaxWidth()
             ){
                 Button(
-                    onClick = { viewModel.nextButtonClick() },
+                    onClick = { feedViewModel.nextButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -581,7 +547,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
 
             Button(
                 onClick = {
-                    viewModel.selectButtonClick()
+                    feedViewModel.selectButtonClick()
                     animationState.value = AnimationCode.Feed
                     coroutineScope.launch { pagerState.scrollToPage(1) }
                     navController.navigate(WatchNavItem.Main.route){
@@ -627,7 +593,7 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                                 .padding(bottom = 2.dp)
                         )
                         Text(
-                            text = String.format(" %d", viewModel.price),
+                            text = String.format(" %d", feedViewModel.price),
                             textAlign = TextAlign.Center,
                             fontFamily = dalmoori,
                             color = Color(0xFF0C4DA2) ,
@@ -643,5 +609,20 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
 
 
         }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun FeedBuyListPreview() {
+    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
+    val navController = rememberSwipeDismissableNavController()
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    val feedViewModel: FeedViewModel = viewModel()
+
+    PaymongTheme {
+        FeedBuyList(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
 }

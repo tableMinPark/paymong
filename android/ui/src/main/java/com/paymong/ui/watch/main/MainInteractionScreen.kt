@@ -86,14 +86,14 @@ fun MainInteractionUI(
         soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }
 
-//    if(mainviewModel.isClicked){
-//        mainviewModel.isClicked = false
-//        navController.navigate(WatchNavItem.Main.route) {
-//            popUpTo(navController.graph.findStartDestination().id)
-//            launchSingleTop = true
-//            coroutineScope.launch { pagerState.animateScrollToPage(1) }
-//        }
-//    }
+    if(mainviewModel.isClicked){
+        mainviewModel.isClicked = false
+        navController.navigate(WatchNavItem.Main.route) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+            coroutineScope.launch { pagerState.animateScrollToPage(1) }
+        }
+    }
 
     Column(
         modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
@@ -200,7 +200,6 @@ fun MainInteractionUI(
                     ButtonSoundPlay()
                     animationState.value = AnimationCode.Sleep
                     mainviewModel.sleep()
-
                 }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             ){
@@ -227,11 +226,6 @@ fun MainInteractionUI(
                     ButtonSoundPlay()
                     animationState.value = AnimationCode.Poop
                     mainviewModel.poop()
-                    navController.navigate(WatchNavItem.Main.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-                        coroutineScope.launch { pagerState.animateScrollToPage(1) }
-                    }
                 }.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             ){

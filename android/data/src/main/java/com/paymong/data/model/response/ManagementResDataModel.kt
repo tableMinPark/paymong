@@ -33,3 +33,10 @@ data class FindMongStatsResDto(
     val strength: Float,
     val sleep: Float
 )
+
+data class FoodResDto(
+    val name: String,
+    val foodCode: String,
+    val price: Int,
+    val lastBuy: LocalDateTime
+)

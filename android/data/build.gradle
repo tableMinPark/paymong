@@ -37,10 +37,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
-//    implementation 'com.google.code.gson:gson:2.8.6'
-//    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
-//    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"
-//    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
     // test
     testImplementation 'junit:junit:4.12'
 }

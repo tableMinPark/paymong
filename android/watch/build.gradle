@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.paymong.watch'
+    namespace 'com.paymong'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.paymong.watch"
+        applicationId "com.paymong"
         minSdk 30
         targetSdk 33
         versionCode 1
@@ -48,6 +48,8 @@ dependencies {
     // multi-module
     implementation project(path: ':common')
     implementation project(path: ':ui')
+    implementation project(path: ':domain')
+    implementation project(path: ':data')
     // android
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
@@ -58,4 +60,13 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     // compose
     implementation "androidx.activity:activity-compose:$compose_ui_version"
+    // phone-wearable
+    implementation "androidx.wear:wear-remote-interactions:1.0.0"
+    implementation "com.google.android.gms:play-services-wearable:18.0.0"
+//    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
+//    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+//    implementation "androidx.wear:wear:1.2.0"
+//    implementation "androidx.wear:wear-phone-interactions:1.1.0-alpha03"
+//    implementation "androidx.wear:wear-remote-interactions:1.0.0"
 }

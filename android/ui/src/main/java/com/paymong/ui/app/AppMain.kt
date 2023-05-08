@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.CollectMapViewModel
+import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
 import com.paymong.ui.app.collect.CollectMap
@@ -27,17 +28,17 @@ import com.paymong.ui.app.things.AddSmartThings
 import com.paymong.ui.app.things.SmartThings
 
 @Composable
-fun AppMain() {
+fun AppMain(appLandinglViewModel : AppLandinglViewModel) {
     Scaffold(
     ) {
         Box(Modifier.padding(it)){
-            AppMainNav()
+            AppMainNav(appLandinglViewModel)
         }
     }
 }
 
 @Composable
-fun AppMainNav(){
+fun AppMainNav(appLandinglViewModel : AppLandinglViewModel){
     val navController = rememberNavController()
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
 
@@ -46,11 +47,10 @@ fun AppMainNav(){
         startDestination = AppNavItem.Landing.route)
     {
         composable(route = AppNavItem.Landing.route){
-            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
-            Landing(navController, appViewModel)
+            Landing(navController, appLandinglViewModel)
         }
         composable(route = AppNavItem.Login.route){
-            Login(navController)
+            Login(navController, appLandinglViewModel)
         }
         composable(route = AppNavItem.Main.route){
             val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)

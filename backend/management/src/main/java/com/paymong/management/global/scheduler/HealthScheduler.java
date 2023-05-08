@@ -10,7 +10,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,24 +23,16 @@ import java.util.concurrent.TimeUnit;
 public class HealthScheduler implements ManagementScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthScheduler.class);
     private static final Map<Long, ThreadPoolTaskScheduler> schedulerMap = new HashMap<>();
-    private static final Map<Long, ThreadPoolTaskScheduler> deathSchedulerMap = new HashMap<>();
     private final HealthTask healthTask;
+    private final DeathScheduler deathScheduler;
     @Override
     public void stopScheduler(Long mongId) {
         if(schedulerMap.containsKey(mongId)){
             LOGGER.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
             schedulerMap.get(mongId).shutdown();
+            schedulerMap.remove(mongId);
         }else{
             LOGGER.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
-        }
-    }
-
-    public void stopDeathScheduler(Long mongId){
-        if(deathSchedulerMap.containsKey(mongId)){
-            LOGGER.info("{}의 {} death scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
-            deathSchedulerMap.get(mongId).shutdown();
-        }else{
-            LOGGER.info("{}의 {} death scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
     }
 
@@ -55,14 +49,6 @@ public class HealthScheduler implements ManagementScheduler {
         schedulerMap.put(mongId, scheduler);
     }
 
-    public void startDeathScheduler(Long mongId){
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.initialize();
-        scheduler.setThreadNamePrefix("health-Death-" + mongId + "-");
-        LOGGER.info("건강악화로 {}의 죽음 스케쥴러를 시작합니다.", this.getClass().getSimpleName());
-        scheduler.schedule(getDeathRunnable(mongId),Instant.now().plusSeconds(60L * 60L * 3L));
-        deathSchedulerMap.put(mongId, scheduler);
-    }
 
     @Override
     public Runnable getRunnable(Long mongId) {
@@ -70,23 +56,13 @@ public class HealthScheduler implements ManagementScheduler {
             try {
                 if(!healthTask.reduceHealth(mongId)){
                     stopScheduler(mongId);
-                    startDeathScheduler(mongId);
+                    deathScheduler.startScheduler(mongId);
                 }
                 ;
             } catch (NotFoundMongException e) {
                 stopScheduler(mongId);
             }
 
-        };
-    }
-
-    public Runnable getDeathRunnable(Long mongId){
-        return () -> {
-            try {
-                healthTask.deathMong(mongId);
-            }catch (NotFoundMongException e){
-                stopDeathScheduler(mongId);
-            }
         };
     }
 

@@ -5,7 +5,6 @@ import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
-import com.paymong.management.mong.scheduler.DeathScheduler;
 import com.paymong.management.status.dto.FindStatusResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

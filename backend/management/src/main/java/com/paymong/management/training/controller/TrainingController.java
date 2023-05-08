@@ -5,8 +5,10 @@ import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.training.dto.TrainingReqDto;
 import com.paymong.management.training.dto.WalkingReqDto;
 import com.paymong.management.training.service.TrainingService;
+import com.paymong.management.training.vo.TrainingReqVo;
 import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,15 +32,22 @@ public class TrainingController {
     @Value("${header.member}")
     String headerMember;
     @PutMapping
-    public ResponseEntity<Object> training(HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> training(@RequestBody TrainingReqDto trainingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
         try {
+            if(trainingReqDto.getTrainingCount() == null)throw new NullPointerException();
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
             Long memberId = Long.parseLong(memberIdStr);
-            trainingService.training(mongId, memberId);
+
+            TrainingReqVo trainingReqVo = new TrainingReqVo();
+            trainingReqVo.setWalkingCount(trainingReqDto.getTrainingCount());
+            trainingReqVo.setMongId(mongId);
+            trainingReqVo.setMemberId(memberId);
+
+            trainingService.training(trainingReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
@@ -56,7 +65,7 @@ public class TrainingController {
     }
 
     @PutMapping("/walking")
-    public ResponseEntity<Object> walking(WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> walking(@RequestBody WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
         try {

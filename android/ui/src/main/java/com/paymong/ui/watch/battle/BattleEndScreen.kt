@@ -27,6 +27,7 @@ import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.battle.BattleViewModel
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
@@ -34,6 +35,7 @@ import com.paymong.ui.theme.dalmoori
 fun BattleEnd(
     navController: NavHostController,
     battleViewModel: BattleViewModel,
+
 ) {
     if (battleViewModel.matchingState == MatchingCode.FINDING){
         navController.navigate(WatchNavItem.BattleLanding.route) {
@@ -103,21 +105,8 @@ fun BattleEnd(
         ) {
 
 
-            var findCode = ""
-            val chCode : CharacterCode
-            val player: Painter
 
-            if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.characterCodeA
-                chCode = CharacterCode.valueOf(findCode)
-                player = painterResource(chCode.resourceCode)
-
-            } else {
-                findCode = battleViewModel.characterCodeB
-                chCode = CharacterCode.valueOf(findCode)
-                player = painterResource(chCode.resourceCode)
-            }
-
+            val player = painterResource(battleViewModel.mongCode.resourceCode)
             Image(painter = player, contentDescription = null, modifier = Modifier.width(150.dp))
         }
     }

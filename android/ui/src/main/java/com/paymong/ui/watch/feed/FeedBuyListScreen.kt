@@ -68,11 +68,11 @@ fun FeedBuyListUI(
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
     if (screenWidthDp < 200) {
-        feedViewModel.current()
+//        feedViewModel.current()
         SmallWatch(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
     else {
-        feedViewModel.current()
+//        feedViewModel.current()
         BigWatch(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
 }

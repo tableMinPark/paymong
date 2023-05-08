@@ -8,6 +8,7 @@ import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
 import com.paymong.common.common.dto.response.Food;
 import com.paymong.common.common.service.CommonService;
 import com.paymong.common.global.code.CommonStateCode;
+import com.paymong.common.global.exception.InformationException;
 import com.paymong.common.global.exception.NotFoundException;
 import com.paymong.common.global.response.ErrorResponse;
 import java.util.List;
@@ -95,7 +96,12 @@ public class CommonController {
                 CommonStateCode.NOTFOUND_FOODCODE.name());
             return ResponseEntity.badRequest()
                 .body(new ErrorResponse(CommonStateCode.NOTFOUND_FOODCODE));
-        } catch (RuntimeException e) {
+        } catch (InformationException e){
+            log.info("code : {}, message : {}", CommonStateCode.INFORMATION.getCode(),
+                CommonStateCode.INFORMATION.name());
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(CommonStateCode.INFORMATION));
+        } catch(RuntimeException e) {
             log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(),
                 CommonStateCode.RUNTIME.name());
             return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));

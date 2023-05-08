@@ -40,6 +40,18 @@
          </receiver>
 
         <service
+            android:name="com.paymong.AppDataLayerListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/start-activity"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".NotificationListener"
             android:enabled="true"
             android:exported="false"

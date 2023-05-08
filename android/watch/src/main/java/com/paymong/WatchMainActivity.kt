@@ -14,31 +14,23 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.*
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
 import com.paymong.ui.watch.WatchMain
 
-class WatchMainActivity : ComponentActivity(),
-    CapabilityClient.OnCapabilityChangedListener {
+class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
     companion object {
         private const val PERMISSION_CHECK = 100
         private const val CAPABILITY_PHONE_APP = "app_paymong"
-        private const val PLAYER_ID_KEY = "com.paymong.player.id"
     }
 
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
+    private lateinit var messageClient: MessageClient
+
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
-
-    private var playerId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +38,14 @@ class WatchMainActivity : ComponentActivity(),
         // 설치여부확인
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
-        watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, this.application)
+        messageClient = Wearable.getMessageClient(this)
+
+        watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
+
         // 필수 권한 확인
         checkPermission()
+
         // 화면 켜짐 유지
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -64,11 +60,11 @@ class WatchMainActivity : ComponentActivity(),
     }
     override fun onPause() {
         super.onPause()
-        Wearable.getCapabilityClient(this).removeListener(this, CAPABILITY_PHONE_APP)
+        capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
     }
     override fun onResume() {
         super.onResume()
-        Wearable.getCapabilityClient(this).addListener(this, CAPABILITY_PHONE_APP)
+        capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
     }
     // 필수 권한 확인
     private fun checkPermission() {

@@ -11,28 +11,25 @@ import androidx.lifecycle.*
 import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.tasks.Tasks
-import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.Node
-import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.*
 import com.paymong.common.code.LandingCode
 import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
+import com.paymong.domain.app.AppLandinglViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class WatchLandingViewModel(
     private var capabilityClient: CapabilityClient,
     private var remoteActivityHelper: RemoteActivityHelper,
+    private val messageClient: MessageClient,
     application: Application
 )  : AndroidViewModel(application) {
     companion object {
+        private const val START_APP_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_PHONE_APP = "app_paymong"
         private const val ANDROID_MARKET_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
     }
@@ -45,23 +42,7 @@ class WatchLandingViewModel(
     var landingCode by mutableStateOf(LandingCode.LOADING)
     var androidPhoneNodeWithApp: Node? = null
 
-    // 로그인
-    fun login() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val playerId = dataApplicationRepository.getValue("playerId")
 
-            if (playerId != "") {
-                authRepository.login(LoginReqDto(playerId))
-                    .catch { loginState = LandingCode.LOGIN_FAIL }
-                    .collect { values ->
-                        loginState = if (values)
-                            LandingCode.LOGIN_SUCCESS
-                        else
-                            LandingCode.LOGIN_FAIL
-                    }
-            }
-        }
-    }
     // 랜딩화면 로그인 확인
     fun loginCheck() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -78,12 +59,25 @@ class WatchLandingViewModel(
             Log.e("loginCheck()", loginState.toString())
         }
     }
-
     fun installCheck() {
         viewModelScope.launch {
             launch {
                 checkIfPhoneHasApp()
             }
+        }
+    }
+    // 로그인
+    fun login() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playerId = dataApplicationRepository.getValue("playerId")
+            authRepository.login(LoginReqDto(playerId))
+                .catch { loginState = LandingCode.LOGIN_FAIL }
+                .collect { values ->
+                    loginState = if (values)
+                        LandingCode.LOGIN_SUCCESS
+                    else
+                        LandingCode.LOGIN_FAIL
+                }
         }
     }
     private suspend fun checkIfPhoneHasApp() {
@@ -108,12 +102,11 @@ class WatchLandingViewModel(
         if (playId == "") {
             // 폰 연결 O & 설치 안됨
             if (androidPhoneNodeWithApp == null) {
-                // 설치 진행
                 landingCode = LandingCode.NOT_INSTALL
             }
             // 폰 연결 O & 설치 됨
             else {
-                landingCode = LandingCode.VALID
+                landingCode = LandingCode.INSTALL
             }
         } else {
             // 이미 한번 로그인한 사람
@@ -141,16 +134,44 @@ class WatchLandingViewModel(
             }
         }
     }
+    
+    fun openAppOnPhone() {
+        Log.d("openAppOnPhone()", "모바일에서 앱 열기")
+        viewModelScope.launch {
+            try {
+                val nodes = capabilityClient
+                    .getCapability(CAPABILITY_PHONE_APP, CapabilityClient.FILTER_REACHABLE)
+                    .await()
+                    .nodes
+
+                // Send a message to all nodes in parallel
+                nodes.map { node ->
+                    async {
+                        messageClient.sendMessage(node.id,
+                            START_APP_ACTIVITY_PATH, byteArrayOf())
+                            .await()
+                    }
+                }.awaitAll()
+
+                Log.d("registWearable()", "Starting activity requests sent successfully")
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } catch (exception: Exception) {
+                Log.d("registWearable()", "Starting activity failed: $exception")
+            }
+        }
+    }
 }
 
 class WatchLandingViewModelFactory(
     private var capabilityClient: CapabilityClient,
     private val remoteActivityHelper: RemoteActivityHelper,
+    private val messageClient: MessageClient,
     private val application: Application
 ): ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(WatchLandingViewModel::class.java)){
-            return WatchLandingViewModel(capabilityClient, remoteActivityHelper, application) as T
+            return WatchLandingViewModel(capabilityClient, remoteActivityHelper, messageClient, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }

@@ -44,32 +44,39 @@ fun Landing(
     LaunchedEffect(key1 = true){
         watchLandingViewModel.loginCheck()
         delay(2000)
-
-        // 로그인 성공 (리프레시 있음)
-        if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
-            Log.e("Landing", "로그인 성공")
-            watchLandingViewModel.loginState = LandingCode.LOGIN
-            navController.navigate(WatchNavItem.Main.route){
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
-                // 스택 첫 화면 메인화면으로 변경
-                navController.graph.setStartDestination(WatchNavItem.Main.route)
-                launchSingleTop =true
+    }
+    // 로그인  (리프레시 있는 경우)
+    if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
+        Log.e("Landing", "로그인 성공")
+        watchLandingViewModel.loginState = LandingCode.LOGIN
+        navController.navigate(WatchNavItem.Main.route){
+            popUpTo(navController.graph.id) {
+                inclusive = true
             }
-        } 
-        // 로그인 실패 (리프레시 없음)
-        else if (watchLandingViewModel.loginState == LandingCode.LOGIN_FAIL){
-            Log.e("Landing", "로그인 실패")
-            watchLandingViewModel.loginState = LandingCode.LOADING
-            // 모바일 앱 설치 여부 확인
-            watchLandingViewModel.installCheck()
-            
-            // playerId 가 있거나 모바일 앱으로부터 playerId를 받아온 경우
-            if (watchLandingViewModel.landingCode == LandingCode.VALID){
-                watchLandingViewModel.login()
-            }
+            // 스택 첫 화면 메인화면으로 변경
+            navController.graph.setStartDestination(WatchNavItem.Main.route)
+            launchSingleTop =true
         }
+    }
+    // 로그인 실패 (리프레시 없음)
+    else if (watchLandingViewModel.loginState == LandingCode.LOGIN_FAIL){
+        Log.e("Landing", "로그인 실패 (리프레시 없음)")
+        watchLandingViewModel.loginState = LandingCode.LOADING
+        // 모바일 앱 설치 여부 확인
+        watchLandingViewModel.installCheck()
+    }
+    // playerId 가 있거나 모바일 앱으로부터 playerId를 받아온 경우
+    else if (watchLandingViewModel.landingCode == LandingCode.VALID){
+        Log.e("Landing", "playerId 있음")
+        watchLandingViewModel.login()
+    }
+    // 연결과 설치는 되있지만 playerId가 없는 경우 (최초 인증하지 않은 경우)
+    else if (watchLandingViewModel.landingCode == LandingCode.INSTALL){
+        Log.e("Landing", "playerId 없음")
+    }
+    // 연결만 되어있고 설치가 안되어있는 경우
+    else if  (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL){
+        Log.e("Landing", "모바일에 설치 안됨!")
     }
 
 
@@ -92,6 +99,8 @@ fun Landing(
             .clickable {
                 if (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL) {
                     watchLandingViewModel.openAppInStoreOnPhone()
+                } else if (watchLandingViewModel.landingCode == LandingCode.INSTALL) {
+                    watchLandingViewModel.openAppOnPhone()
                 }
             },
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,9 +115,16 @@ fun Landing(
                 color = PayMongRed200,
                 fontSize = fontSize.sp,
             )
-        } else {
-            Logo()
-        }
+        } else if (watchLandingViewModel.landingCode == LandingCode.INSTALL) {
+            Text(
+                text = "초기 설정이 필요합니다.\n\n터치해서\n모바일 앱에서 초기 설정하기",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+                fontFamily = dalmoori,
+                color = PayMongRed200,
+                fontSize = fontSize.sp,
+            )
+        } else Logo()
     }
 }
 

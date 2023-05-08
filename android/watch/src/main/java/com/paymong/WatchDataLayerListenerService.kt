@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
-class DataLayerListenerService : WearableListenerService() {
+class WatchDataLayerListenerService : WearableListenerService() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val dataApplicationRepository: DataApplicationRepository = DataApplicationRepository()
@@ -19,7 +19,7 @@ class DataLayerListenerService : WearableListenerService() {
         super.onMessageReceived(messageEvent)
 
         when (messageEvent.path) {
-            START_ACTIVITY_PATH -> {
+            START_WEAR_ACTIVITY_PATH -> {
                 val playerId = messageEvent.data.decodeToString()
                 Log.d("DataLayerListenerService", playerId)
                 dataApplicationRepository.setValue("playerId", playerId)
@@ -37,6 +37,6 @@ class DataLayerListenerService : WearableListenerService() {
     }
 
     companion object {
-        private const val START_ACTIVITY_PATH = "/start-activity"
+        private const val START_WEAR_ACTIVITY_PATH = "/start-activity"
     }
 }

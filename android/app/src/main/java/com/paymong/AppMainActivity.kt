@@ -40,7 +40,6 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
     }
 
-
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var nodeClient: NodeClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
@@ -82,7 +81,6 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     }
     // 워치가 연결되어 있을 때 앱 설치 여부 확인 ############################
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        Log.e("mainActivity", "change")
         appLandinglViewModel.wearNodesWithApp = capabilityInfo.nodes
         appLandinglViewModel.installCheck()
     }

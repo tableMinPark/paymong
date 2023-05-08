@@ -41,11 +41,9 @@ class MainViewModel : ViewModel() {
     var isClicked by mutableStateOf(false)
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            findMong()
-            findMongCondition()
-            findMongInfo()
-        }
+        findMong()
+        findMongCondition()
+        findMongInfo()
     }
 
     override fun onCleared() {
@@ -53,7 +51,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun findMong() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             informationRepository.findMong()
                 .catch {
                     it.printStackTrace()
@@ -72,7 +70,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun findMongCondition() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             informationRepository.findMongStats()
                 .catch {
                     it.printStackTrace()
@@ -91,7 +89,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun findMongInfo() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             informationRepository.findMongInfo()
                 .catch {
                     it.printStackTrace()
@@ -117,7 +115,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun stroke(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             managementRepository.stroke()
                 .catch {
                     it.printStackTrace()
@@ -128,7 +126,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun sleep(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             managementRepository.sleep()
                 .catch {
                     it.printStackTrace()
@@ -141,7 +139,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun poop(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             managementRepository.poop()
                 .catch {
                     it.printStackTrace()

@@ -36,12 +36,10 @@ class AppLandinglViewModel(
     application: Application
 )  : AndroidViewModel(application) {
     companion object {
-        private const val START_ACTIVITY_PATH = "/start-activity"
+        private const val START_WEAR_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
         private const val PLAY_STORE_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
     }
-
-    private var playerId: String = ""
 
     private val authRepository: AuthRepository = AuthRepository()
     private val dataApplicationRepository: DataApplicationRepository = DataApplicationRepository()
@@ -51,7 +49,6 @@ class AppLandinglViewModel(
     var allConnectedNodes: List<Node>? = null
 
     init {
-        dataApplicationRepository.setValue("watchId", "")
     }
 
     // 리프레시 토큰 로그인
@@ -70,12 +67,12 @@ class AppLandinglViewModel(
                 }
         }
     }
-
     // 웨어러블 최초 등록 여부 확인
     fun registCheck() {
         viewModelScope.launch {
             val watchId = dataApplicationRepository.getValue("watchId")
             Log.e("registCheck()", watchId)
+
             if (watchId != "") {
                 Log.e("registCheck()", "REGIST_WEARABLE_SUCCESS")
                 landingCode = LandingCode.REGIST_WEARABLE_SUCCESS
@@ -86,7 +83,6 @@ class AppLandinglViewModel(
             }
         }
     }
-
     fun googlePlayLogin() {
         // 로그인 시도
         gamesSignInClient.signIn()
@@ -96,8 +92,7 @@ class AppLandinglViewModel(
             // 로그인 성공
             if (isAuthenticated) {
                 playersClient.currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
-                    playerId = mTask?.result?.playerId.toString()
-                    Log.d("googlePlayLogin()", playerId)
+                    val playerId = mTask?.result?.playerId.toString()
                     login(playerId)
                 }
             }
@@ -111,18 +106,41 @@ class AppLandinglViewModel(
             }
         }
     }
-
+    fun googlePlayRegist() {
+        // 로그인 시도
+        gamesSignInClient.signIn()
+        // 로그인 리스너
+        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+            val isAuthenticated = isAuthenticatedTask.isSuccessful && isAuthenticatedTask.result.isAuthenticated
+            // 로그인 성공
+            if (isAuthenticated) {
+                playersClient.currentPlayer.addOnCompleteListener { mTask: Task<Player?>? ->
+                    val playerId = mTask?.result?.playerId.toString()
+                    registWearable(playerId)
+                    login(playerId)
+                }
+            }
+            // 계정을 찾을 수 없음
+            else {
+                Toast.makeText(
+                    getApplication(),
+                    ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
     // 로그인
     private fun login(playerId : String) {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.login(LoginReqDto(playerId))
-                .catch { landingCode = LandingCode.LOADING }
+                .catch { landingCode = LandingCode.LOGIN_FAIL }
                 .collect { values ->
                     Log.d("login()", values.toString())
                     landingCode = if (values)
                         LandingCode.LOGIN_SUCCESS
                     else
-                        LandingCode.REGIST_WEARABLE_SUCCESS
+                        LandingCode.LOGIN_FAIL
                 }
         }
     }
@@ -166,24 +184,12 @@ class AppLandinglViewModel(
         val wearNodesWithApp = wearNodesWithApp
         // 연결된 기기가 있고 설치된 경우
         if (wearNodesWithApp != null && wearNodesWithApp.isNotEmpty()) {
-            Log.d("wearableAppInstallRequest()", "HAS_WEARABLE_SUCCESS")
             landingCode = LandingCode.HAS_WEARABLE_SUCCESS
-            Toast.makeText(
-                getApplication(),
-                ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
-                Toast.LENGTH_SHORT
-            ).show()
         }
         // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
         if (wearNodesWithApp != null && wearNodesWithApp.isEmpty()) {
             Log.d("wearableAppInstallRequest()", "HAS_WEARABLE_FAIL")
             landingCode = LandingCode.HAS_WEARABLE_FAIL
-            // 와치에 설치할 수 있도록 설치 페이지 띄울 수 있는 요청 보냄
-            Toast.makeText(
-                getApplication(),
-                ToastMessage.WEARABLE_INSTALL_REQUEST.message,
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
     fun openPlayStoreOnWearDevicesWithoutApp() {
@@ -213,7 +219,7 @@ class AppLandinglViewModel(
             }
         }
     }
-    fun registWearable() {
+    fun registWearable(playerId: String) {
         Log.e("registWearable()", "start")
         viewModelScope.launch {
             try {
@@ -225,8 +231,15 @@ class AppLandinglViewModel(
                 // Send a message to all nodes in parallel
                 nodes.map { node ->
                     async {
-                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, playerId.toByteArray())
-                            .await()
+                        if (node.id != "") {
+                            dataApplicationRepository.setValue("watchId", node.id)
+                            messageClient.sendMessage(
+                                node.id,
+                                START_WEAR_ACTIVITY_PATH,
+                                playerId.toByteArray()
+                            )
+                                .await()
+                        }
                     }
                 }.awaitAll()
 

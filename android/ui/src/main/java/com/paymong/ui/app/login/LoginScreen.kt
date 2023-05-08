@@ -33,17 +33,56 @@ fun Login(
     LaunchedEffect(key1 = true) {
         // 웨어러블 최초 등록 여부 확인
         appLandinglViewModel.registCheck()
-
-        if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
-            appLandinglViewModel.landingCode = LandingCode.LOADING
-            navController.navigate(AppNavItem.Main.route) {
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
-                navController.graph.setStartDestination(AppNavItem.Main.route)
-                launchSingleTop = true
+    }
+    if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
+        appLandinglViewModel.landingCode = LandingCode.LOGIN
+        Log.d("Login()", "LOGIN_SUCCESS")
+        navController.navigate(AppNavItem.Main.route) {
+            popUpTo(navController.graph.id) {
+                inclusive = true
             }
+            navController.graph.setStartDestination(AppNavItem.Main.route)
+            launchSingleTop = true
         }
+    } 
+    // 등록된 와치가 있는 경우
+    else if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS) {
+        Log.d("Login()", "REGIST_WEARABLE_SUCCESS")
+//        Toast.makeText(
+//            getApplication(),
+//            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+    }
+    // 연결된 기기가 있고 설치된 경우
+    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
+        Log.d("Login()", "HAS_WEARABLE_SUCCESS")
+//        Toast.makeText(
+//            getApplication(),
+//            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+
+    
+    }
+    // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
+    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
+        Log.d("Login()", "HAS_WEARABLE_FAIL")
+//        Toast.makeText(
+//            getApplication(),
+//            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+
+        // 와치에 설치할 수 있도록 설치 페이지 띄울 수 있는 요청 보냄
+        appLandinglViewModel.openPlayStoreOnWearDevicesWithoutApp()
+    } else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL) {
+        Log.d("Login()", "LOGIN_FAIL")
+//        Toast.makeText(
+//            getApplication(),
+//            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
     }
 
 
@@ -61,8 +100,10 @@ fun Login(
                 .fillMaxWidth()
                 .padding(80.dp))
         }
-        // 웨어러블이 등록되어 있는 경우
-        if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS) {
+
+        // 웨어러블이 등록되어 있는 경우 or 로그인 실패한 경우 (구글 로그인 버튼)
+        if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS ||
+            appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -78,8 +119,9 @@ fun Login(
                 )
             }
         }
-        // 웨어러블 기기에 앱이 설치되어 있지 않은 경우
-        if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
+        // 웨어러블이 등록되지 않은 경우 (웨어러블 기기 등록 버튼 필요 + 최초 등록 안됨)
+        if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS ||
+            appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -90,24 +132,7 @@ fun Login(
                     modifier = Modifier.clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null, // 애니메이션 제거
-                        onClick = { appLandinglViewModel.openPlayStoreOnWearDevicesWithoutApp() }
-                    )
-                )
-            }
-        }
-        // 웨어러블 기기에 앱이 설치되어 있는 경우
-        if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val google = painterResource(R.drawable.google_login)
-
-                Image(painter = google, contentDescription = null,
-                    modifier = Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null, // 애니메이션 제거
-                        onClick = { appLandinglViewModel.registWearable() }
+                        onClick = { appLandinglViewModel.googlePlayRegist() }
                     )
                 )
             }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +21,8 @@ public class MymapController {
     @GetMapping("/mymap")
     public ResponseEntity<Object> findMymap(){
         log.info("findMymap - Call");
+        LocalDateTime cur = LocalDateTime.now();
+        System.out.println(cur);
 
         return null;
     }

@@ -97,7 +97,7 @@ public class MemberService {
         memberRepository.save(member);
         Long memberId = member.getMemberId();
 
-        //맵정해주자 여기서!
+        //mymap init
         Mymap mymap = Mymap.builder()
                 .mapCode("MP000")
                 .memberId(memberId)

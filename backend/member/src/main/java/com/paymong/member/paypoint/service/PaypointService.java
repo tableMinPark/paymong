@@ -63,6 +63,7 @@ public class PaypointService {
 
         AddPaypointResDto addPayResDto = AddPaypointResDto.builder()
                 .point(totalPoint)
+                .mapCode("MP000")
                 .build();
         if (brand != null){
             ObjectMapper om = new ObjectMapper();

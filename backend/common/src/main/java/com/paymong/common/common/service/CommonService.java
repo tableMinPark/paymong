@@ -1,10 +1,8 @@
 package com.paymong.common.common.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.response.CommonCodeDto;
-import com.paymong.common.common.dto.response.FindAllFoodResDto;
 import com.paymong.common.common.dto.response.Food;
 import com.paymong.common.common.entity.CommonCode;
 import com.paymong.common.common.entity.GroupCode;
@@ -12,9 +10,9 @@ import com.paymong.common.common.repository.CommonCodeRepository;
 import com.paymong.common.common.repository.GroupCodeRepository;
 import com.paymong.common.global.client.ManagementServiceClient;
 import com.paymong.common.global.exception.NotFoundException;
-import com.paymong.common.global.vo.request.FindLastBuyReqVo;
 import com.paymong.common.global.vo.response.FindLastBuyResVo;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -61,29 +59,37 @@ public class CommonService {
     }
 
     @Transactional
-    public FindAllFoodResDto findAllFood(String mongId, String foodCategory)
+    public List<Food> findAllFood(String foodCategory, String mongId)
         throws RuntimeException {
 
-        GroupCode groupCode = groupCodeRepository.findById(foodCategory.replace("\"", ""))
+        GroupCode groupCode = groupCodeRepository.findByCode(foodCategory.replace("\"", ""))
             .orElseThrow(() -> new NotFoundException());
 
         log.info("foodCategory - {}", foodCategory);
 
         List<CommonCode> commonCodeList = commonCodeRepository.findAllByGroupCode(groupCode);
 
-        FindAllFoodResDto findAllFoodResDto = new FindAllFoodResDto(
+        List<Food> findAllFoodResDto =
             commonCodeList.stream().map(e -> {
+                FindLastBuyResVo findLastBuyResVo = new FindLastBuyResVo();
 
-                ObjectMapper om = new ObjectMapper();
-                FindLastBuyResVo findLastBuyResVo = om.convertValue(
-                    managementServiceClient.findLastBuy(mongId, new FindLastBuyReqVo(foodCategory))
-                        .getBody(), FindLastBuyResVo.class);
+//                try {
+//                    ObjectMapper om = new ObjectMapper();
+//                    findLastBuyResVo = om.convertValue(
+//                        managementServiceClient.findLastBuy(mongId,
+//                                new FindLastBuyReqVo(foodCategory))
+//                            .getBody(), FindLastBuyResVo.class);
+//                    return Food.of(e, findLastBuyResVo.getLastBuy());
+//                } catch (Exception ex) {
+//                    return Food.of(e, null);
+//                }
+                return Food.of(e, null);
+            }).collect(Collectors.toList());
 
-//                FindLastBuyResVo findLastBuyResVo = FindLastBuyResVo.builder().lastBuy(
-//                    LocalDateTime.now()).build();
+        LocalDateTime date = LocalDateTime.now();
 
-                return Food.of(e, findLastBuyResVo.getLastBuy());
-            }).collect(Collectors.toList()));
+        findAllFoodResDto.get(0)
+            .setLastBuy(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         return findAllFoodResDto;
     }

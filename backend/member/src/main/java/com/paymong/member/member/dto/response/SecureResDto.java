@@ -19,11 +19,9 @@ public class SecureResDto {
 
     private String playerId;
 
-    private String mapCode;
 
     public SecureResDto of(Member member)  {
         return SecureResDto.builder()
-            .mapCode(member.getMapCode())
             .memberId(member.getMemberId())
             .password(member.getPassword())
             .playerId(member.getPlayerId())

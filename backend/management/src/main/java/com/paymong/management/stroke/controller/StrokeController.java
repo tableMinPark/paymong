@@ -29,15 +29,20 @@ public class StrokeController {
     String headerMong;
     @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
-
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
         try {
-            if(mongId == null) {
+            if(mongIdStr == null || mongIdStr.equals("")) {
                 throw new NullPointerException();
             }
+            Long mongId = Long.parseLong(mongIdStr);
             StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(mongId);
-            strokeService.strokeMong(strokeMongReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            if(strokeService.strokeMong(strokeMongReqVo)){
+                return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            }else{
+                LOGGER.info("{}는 쓰다듬을 수 없음", mongId);
+                return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.CANT_STROKE));
+            }
+
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

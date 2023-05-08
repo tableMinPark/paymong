@@ -1,8 +1,8 @@
 package com.paymong.management.global.scheduler.service;
 
-import com.paymong.management.mong.scheduler.DeathScheduler;
+import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.HealthScheduler;
-import com.paymong.management.poop.scheduler.PoopScheduler;
+import com.paymong.management.global.scheduler.PoopScheduler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

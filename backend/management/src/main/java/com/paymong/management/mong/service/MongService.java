@@ -62,6 +62,8 @@ public class MongService {
         addMongResVo.setWeight(5);
         addMongResVo.setBorn(LocalDateTime.now());
 
+        // 스케줄러 활성화... 굳이 알에서 ?
+        // 빨리 진화를 짜야겠구만유
         return addMongResVo;
     }
 

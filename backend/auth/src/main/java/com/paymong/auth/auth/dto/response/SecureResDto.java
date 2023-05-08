@@ -18,6 +18,4 @@ public class SecureResDto {
 
     private String playerId;
 
-    private String mapCode;
-
 }

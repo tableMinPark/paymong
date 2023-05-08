@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BackgroundService {
+public class MymapService {
 
     public void findMap() throws RuntimeException{
 

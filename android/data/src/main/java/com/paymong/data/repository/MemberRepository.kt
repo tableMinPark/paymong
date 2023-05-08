@@ -4,6 +4,7 @@ import com.paymong.data.api.Api
 import com.paymong.data.api.ManagementApi
 import com.paymong.data.api.MemberApi
 import com.paymong.data.model.request.AddMongReqDto
+import com.paymong.data.model.request.AddThingsReqDto
 import com.paymong.data.model.response.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -34,6 +35,24 @@ class MemberRepository(
         if(response.code() == 200){
             response.body()?.let {
                 emit(response.body()!!)
+            }
+        }
+    }
+
+    fun addThings(addThings: AddThingsReqDto): Flow<Boolean> = flow {
+        val response = api.addThings(addThings)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
+            }
+        }
+    }
+
+    fun deleteThings(thingsId: Long): Flow<Boolean> = flow {
+        val response = api.deleteThings(thingsId)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
             }
         }
     }

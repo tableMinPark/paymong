@@ -13,7 +13,7 @@ data class Things(
     constructor(): this(0,ThingsCode.ST000,"","null", LocalDateTime.now())
 }
 
-data class AddThings(
+data class AddThingsDevice(
     val thingsCode: ThingsCode,
     var thingsName : String
 )

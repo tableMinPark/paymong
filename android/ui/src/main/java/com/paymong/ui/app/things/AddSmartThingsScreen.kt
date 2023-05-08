@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.R
@@ -36,10 +38,25 @@ fun AddSmartThings(
     smartThingsViewModel: SmartThingsViewModel = viewModel()
 ) {
     Scaffold(
-        topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route) },
+        topBar = { TopBar("스마트싱스", navController, AppNavItem.SmartThings.route) },
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)) {
+            smartThingsViewModel.toConnectThings()
+
+            val dialogOpen = remember { mutableStateOf(false) }
+            val msg = remember { mutableStateOf("") }
+            if(dialogOpen.value){
+                Alert(
+                    setShowDialog = { dialogOpen.value = it },
+                    msg.value,
+                    smartThingsViewModel
+                )
+            }
+            if(smartThingsViewModel.isAdd){
+                smartThingsViewModel.isAdd = false
+                navController.navigate(AppNavItem.SmartThings.route)
+            }
             Column(
                 modifier = Modifier
                     .padding(20.dp)
@@ -64,7 +81,18 @@ fun AddSmartThings(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = {
-                                    //api
+                                    if (smartThingsViewModel.routine == "") {
+                                        msg.value = "루틴 이름을 입력해주세요."
+                                        dialogOpen.value = true
+                                    } else if (smartThingsViewModel.isSelect == -1) {
+                                        msg.value = "연동할 기기를 선택해주세요."
+                                        dialogOpen.value = true
+                                    }
+
+                                    if(smartThingsViewModel.routine != "" && smartThingsViewModel.isSelect != -1){
+                                        smartThingsViewModel.addThings()
+                                        smartThingsViewModel.isAdd = true
+                                    }
                                 }
                             )
                             .width(110.dp)
@@ -115,7 +143,6 @@ private fun Desc(){
 
 @Composable
 private fun AddThings(smartThingsViewModel:SmartThingsViewModel){
-    var value by remember{ mutableStateOf("")}
     Box(modifier = Modifier
         .fillMaxWidth()
         .clip(RoundedCornerShape(15.dp))
@@ -123,8 +150,8 @@ private fun AddThings(smartThingsViewModel:SmartThingsViewModel){
         contentAlignment = Alignment.Center
     ){
         TextField(
-            value = value,
-            onValueChange = { newText -> value = newText },
+            value = smartThingsViewModel.routine,
+            onValueChange = { newText -> smartThingsViewModel.routine = newText },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
@@ -201,7 +228,6 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                 }
             }
             if(isOpen) {
-                smartThingsViewModel.toConnectThings()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -209,23 +235,33 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                     horizontalAlignment = Alignment.Start
                 ) {
                     for(i in 0 until smartThingsViewModel.thingsList.size) {
-                        Box(modifier = Modifier.fillMaxWidth()
-                            .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
-                            }
-                        )){
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp, 15.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = {
+                                        smartThingsViewModel.isSelect = i
+                                        Log.d("select", i.toString())
+                                    }
+                                )
+                        ) {
                             Text(
                                 smartThingsViewModel.thingsList[i].thingsName,
                                 textAlign = TextAlign.Start,
                                 fontFamily = dalmoori,
                                 fontSize = 15.sp,
-                                color = Color.White,
-                                modifier = Modifier
-                                    .padding(20.dp, 15.dp)
+                                color = Color.White
                             )
+                            if(i == smartThingsViewModel.isSelect){
+                                Icon(Icons.Filled.Check, contentDescription = null, tint = Color.White, modifier =  Modifier.size(15.dp))
+                            }
                         }
+
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -236,6 +272,41 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                                 .height(1.dp))
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Alert(
+    setShowDialog: (Boolean) -> Unit,
+    msg: String,
+    smartThingsViewModel: SmartThingsViewModel
+){
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp),
+            color = Color.White.copy(alpha = 0.8f)
+        ) {
+            Column(
+                modifier = Modifier.padding(30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(msg,
+                    fontFamily = dalmoori,
+                    color = Color.Black)
+                Button(
+                    onClick = {
+                        setShowDialog(false)
+                    },
+                    colors = ButtonDefaults.buttonColors(PayMongBlue),
+                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
+                ) {
+                    Text(text = "확인", fontFamily = dalmoori, color = Color.Black)
                 }
             }
         }

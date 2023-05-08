@@ -1,6 +1,5 @@
 package com.paymong.data.repository
 
-import android.util.Log
 import com.paymong.data.api.Api
 import com.paymong.data.api.ManagementApi
 import com.paymong.data.model.request.AddMongReqDto
@@ -51,6 +50,24 @@ class ManagementRepository(
         val response = api.poop()
         if(response.code() == 200){
             response.body()?.let{
+                emit(true)
+            }
+        }
+    }
+
+    fun training(trainingCount: Int): Flow<Boolean> = flow {
+        val response = api.training(trainingCount)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
+            }
+        }
+    }
+
+    fun walking(walkingCount: Int): Flow<Boolean> = flow {
+        val response = api.walking(walkingCount)
+        if(response.code() == 200){
+            response.body()?.let {
                 emit(true)
             }
         }

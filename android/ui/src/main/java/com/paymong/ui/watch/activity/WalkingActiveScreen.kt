@@ -30,60 +30,36 @@ import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.activity.WalkingViewModel
+import com.paymong.domain.watch.activity.TrainingViewModel
 import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun WalkingActive(navController: NavHostController) {
-    val viewModel: WalkingViewModel = viewModel()
-//    viewModel.setSensor(LocalContext.current)
-    WalkingActiveUI(navController, viewModel)
-}
-
-@Composable
-fun WalkingActiveUI(
+fun WalkingActive(
     navController: NavHostController,
-    viewModel: WalkingViewModel
+    trainingViewModel: TrainingViewModel
 ) {
-
-
+//    viewModel.setSensor(LocalContext.current)
+    trainingViewModel.walkingInit()
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val screenHeightDp = configuration.screenHeightDp
 
     val img = painterResource(R.drawable.walking_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     WalkingBackgroundGif()
 
     if (screenWidthDp < 200) {
-        SmallWatch( navController, viewModel)
+        WalkingSmallWatch(navController, trainingViewModel)
     }
     else {
-        BigWatch( navController, viewModel)
-
-    }
-
-
-}
-
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun WalkingPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    PaymongTheme {
-        WalkingActive(navController)
+        WalkingBigWatch(navController, trainingViewModel)
     }
 }
-
 
 @ExperimentalCoilApi
 @Composable
-fun WalkingBackgroundGif(
-
-) {
+fun WalkingBackgroundGif() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {
@@ -104,426 +80,446 @@ fun WalkingBackgroundGif(
         ),
         contentDescription = null,
         modifier = Modifier
-//            .padding(top = 10.dp)
     )
 }
 
-
-
 @Composable
-fun SmallWatch (  navController: NavHostController,
-                  viewModel: WalkingViewModel)
-{ Column(
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .fillMaxHeight()
-
+fun WalkingSmallWatch (
+    navController: NavHostController,
+    trainingViewModel: TrainingViewModel
 ) {
-
-    Box(
-        modifier = Modifier.height(10.dp) )
-    // 00:00
-    Box(
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxHeight()
     ) {
-        Text(text = String.format("%02d:%02d", viewModel.minute, viewModel.second),
-            fontFamily = dalmoori,
-            fontSize = 16.sp
-        )
-    }
-    Spacer(modifier = Modifier.height(5.dp))
-    // 0 걸음
-    Box(
-
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-
-
-
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(start=25.dp)
-        ){
-            Text(text = String.format("%d", viewModel.count),
-                fontFamily = dalmoori,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Bottom)
-            )
-            Text(text =" 걸음",
-                fontFamily = dalmoori,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Bottom)
-            )}}
-
-
-    if (viewModel.isWalkingEnd) {
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically,
-
-            modifier = Modifier.width(100.dp).height(85.dp).padding(top=25.dp)
-
-
+        Box(modifier = Modifier.height(10.dp))
+        // 00:00
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
         ) {
-
-
-
             Text(
-                text = "?산책 종료?",
-                modifier = Modifier,
+                text = String.format(
+                    "%02d:%02d",
+                    trainingViewModel.walkMinute,
+                    trainingViewModel.walkSecond
+                ),
                 fontFamily = dalmoori,
-                textAlign = TextAlign.Center,
-                fontSize = 15.sp,
-                color = Color(0xFFffffff)
+                fontSize = 16.sp
             )
         }
+        Spacer(modifier = Modifier.height(5.dp))
+        // 0 걸음
+        Box(
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
 
 
-    } else {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=5.dp)
         ) {
-            val viewModel: MainViewModel = viewModel()
-            val chCode = viewModel.mong.mongCode
-            val chA = painterResource(chCode.resourceCode)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(80.dp).height(80.dp))
-
-        }
-    }
-
-    if (viewModel.isWalkingEnd) {
-        if(viewModel.realWalkingEnd){
-            navController.navigate(WatchNavItem.Activity.route) {
-                popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
-            }
-        }
-        Box() {
             Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.fillMaxWidth().padding(start=40.dp)
-            ) {
-
-
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(20.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .clickable {
-                                viewModel.walkingEnd()
-                                viewModel.realWalkingEnd = true
-                            }
-                    )
-
-
-
-                    Text(
-                        text = "YES",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 12.sp,
-                        color = Color(0xFF0C4DA2)
-                    )
-
-
-                }
-
-
-            }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth().padding(end=40.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(20.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .clickable {
-                                viewModel.isWalkingEnd = false
-                            }
-                    )
-
-
-
-                    Text(
-                        text = "NO",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 12.sp,
-                        color = Color(0xFF0C4DA2)
-                    )
-
-
-                }
-            }
-
-        }
-    }else {
-
-        Box(modifier = Modifier
-            .width(60.dp)
-            .height(20.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-        )
-        {
-
-
-            Image(
-                painter = painterResource(id = R.drawable.blue_bnt),
-                contentDescription = "blue_bnt",
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
-
-                    .clickable {
-                        viewModel.isWalkingEnd = true
-                    }
-            )
-
-
-
-            Text(
-                text = "종료",
-                modifier = Modifier.fillMaxWidth()
-                    .fillMaxHeight()
-                    .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally),
-                fontFamily = dalmoori,
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp,
-                color = Color(0xFF0C4DA2)
-            )
-
-
-        }
-
-    } }}
-
-
-@Composable
-fun BigWatch (  navController: NavHostController,
-                  viewModel: WalkingViewModel)
-{ Column(
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .fillMaxHeight()
-
-) {
-
-    Box(
-        modifier = Modifier.height(10.dp) )
-    // 00:00
-    Box(
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-    ) {
-        Text(text = String.format("%02d:%02d", viewModel.minute, viewModel.second),
-            fontFamily = dalmoori,
-            fontSize = 20.sp
-        )
-    }
-    Spacer(modifier = Modifier.height(5.dp))
-    // 0 걸음
-    Box(
-
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-
-
-
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(start=25.dp)
-        ){
-            Text(text = String.format("%d", viewModel.count),
-                fontFamily = dalmoori,
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Bottom)
-            )
-            Text(text =" 걸음",
-                fontFamily = dalmoori,
-                fontSize = 17.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Bottom)
-            )}}
-
-
-    if (viewModel.isWalkingEnd) {
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically,
-
-            modifier = Modifier.width(100.dp).height(100.dp).padding(top=30.dp)
-
-
-        ) {
-
-
-
-            Text(
-                text = "?산책 종료?",
-                modifier = Modifier,
-                fontFamily = dalmoori,
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp,
-                color = Color(0xFFffffff)
-            )
-        }
-
-
-    } else {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(top=5.dp)
-        ) {
-            val viewModel: MainViewModel = viewModel()
-            val chCode = viewModel.mong.mongCode
-            val chA = painterResource(chCode.resourceCode)
-            Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp).height(100.dp))
-
-        }
-    }
-
-    if (viewModel.isWalkingEnd) {
-        if(viewModel.realWalkingEnd){
-            navController.navigate(WatchNavItem.Activity.route) {
-                popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
-            }
-        }
-
-        Box(modifier = Modifier.padding(top=5.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.fillMaxWidth().padding(start=60.dp)
+                    .padding(start = 25.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(30.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .clickable {
-                                viewModel.walkingEnd()
-                                viewModel.realWalkingEnd = true
-                            }
-                    )
-                    Text(
-                        text = "YES",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        color = Color(0xFF0C4DA2)
-                    )
-                }
+                Text(
+                    text = String.format("%d", trainingViewModel.walkCount),
+                    fontFamily = dalmoori,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+                Text(
+                    text = " 걸음",
+                    fontFamily = dalmoori,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
             }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth().padding(end=60.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(30.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .clickable {
-                                viewModel.isWalkingEnd = false
-                            }
-                    )
-
-                    Text(
-                        text = "NO",
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        color = Color(0xFF0C4DA2)
-                    )
-                }
-            }
-
         }
-    } else {
-        Box(modifier = Modifier
-            .width(60.dp)
-            .height(30.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.blue_bnt),
-                contentDescription = "blue_bnt",
+
+        if (trainingViewModel.isWalkingEnd) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(85.dp)
+                    .padding(top = 25.dp)
+            ) {
+                Text(
+                    text = "?산책 종료?",
+                    modifier = Modifier,
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 15.sp,
+                    color = Color(0xFFffffff)
+                )
+            }
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
-                    .clickable {
-                        viewModel.isWalkingEnd = true
+                    .padding(top = 5.dp)
+            ) {
+                val mainviewModel: MainViewModel = viewModel()
+                val chCode = mainviewModel.mong.mongCode
+                val chA = painterResource(chCode.resourceCode)
+                Image(
+                    painter = chA, contentDescription = null, modifier = Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                )
+            }
+        }
+
+        if (trainingViewModel.isWalkingEnd) {
+            if (trainingViewModel.realWalkingEnd) {
+                navController.navigate(WatchNavItem.Activity.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
+            }
+            Box() {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 40.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(20.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    trainingViewModel.walkingEnd()
+                                    trainingViewModel.realWalkingEnd = true
+                                }
+                        )
+                        Text(
+                            text = "YES",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
                     }
-            )
-            Text(
-                text = "종료",
-                modifier = Modifier.fillMaxWidth()
-                    .fillMaxHeight()
+                }
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 40.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(20.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    trainingViewModel.isWalkingEnd = false
+                                }
+                        )
+                        Text(
+                            text = "NO",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
+                    }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(20.dp)
                     .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally),
-                fontFamily = dalmoori,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                color = Color(0xFF0C4DA2)
-            )
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clickable {
+                            trainingViewModel.isWalkingEnd = true
+                        }
+                )
+                Text(
+                    text = "종료",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp,
+                    color = Color(0xFF0C4DA2)
+                )
+            }
         }
     }
 }
+
+
+@Composable
+fun WalkingBigWatch (
+    navController: NavHostController,
+    trainingViewModel: TrainingViewModel
+){
+    Column(
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+        .fillMaxHeight()
+) {
+        Box(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        ) {
+            Text(
+                text = String.format(
+                    "%02d:%02d",
+                    trainingViewModel.walkMinute,
+                    trainingViewModel.walkSecond
+                ),
+                fontFamily = dalmoori,
+                fontSize = 20.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 25.dp)
+            ) {
+                Text(
+                    text = String.format("%d", trainingViewModel.walkCount),
+                    fontFamily = dalmoori,
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+                Text(
+                    text = " 걸음",
+                    fontFamily = dalmoori,
+                    fontSize = 17.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
+        }
+
+        if (trainingViewModel.isWalkingEnd) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(100.dp)
+                    .padding(top = 30.dp)
+            ) {
+                Text(
+                    text = "?산책 종료?",
+                    modifier = Modifier,
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = Color(0xFFffffff)
+                )
+            }
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp)
+            ) {
+                val mainviewModel: MainViewModel = viewModel()
+                val chCode = mainviewModel.mong.mongCode
+                val chA = painterResource(chCode.resourceCode)
+                Image(
+                    painter = chA, contentDescription = null, modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)
+                )
+            }
+        }
+
+        if (trainingViewModel.isWalkingEnd) {
+            if (trainingViewModel.realWalkingEnd) {
+                navController.navigate(WatchNavItem.Activity.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
+            }
+            Box(modifier = Modifier.padding(top = 5.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 60.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(30.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    trainingViewModel.walkingEnd()
+                                    trainingViewModel.realWalkingEnd = true
+                                }
+                        )
+                        Text(
+                            text = "YES",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 60.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(30.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    trainingViewModel.isWalkingEnd = false
+                                }
+                        )
+                        Text(
+                            text = "NO",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
+                    }
+                }
+
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(30.dp)
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clickable {
+                            trainingViewModel.isWalkingEnd = true
+                        }
+                )
+                Text(
+                    text = "종료",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = Color(0xFF0C4DA2)
+                )
+            }
+        }
+    }
+}
+
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun WalkingPreview() {
+    val navController = rememberSwipeDismissableNavController()
+    val trainingViewModel: TrainingViewModel = viewModel()
+    PaymongTheme {
+        WalkingActive(navController, trainingViewModel)
+    }
 }

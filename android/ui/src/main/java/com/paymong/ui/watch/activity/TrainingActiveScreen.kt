@@ -42,23 +42,12 @@ import com.paymong.domain.watch.main.MainViewModel
 
 @Composable
 fun TrainingActive(
-    navController: NavHostController
-) {
-    val viewModel: TrainingViewModel = viewModel()
-    TrainingActiveUI(navController, viewModel)
-}
-
-@Composable
-fun TrainingActiveUI(
     navController: NavHostController,
-    viewModel: TrainingViewModel
+    traingviewModel: TrainingViewModel
 ) {
+    traingviewModel.trainingInit()
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val screenHeightDp = configuration.screenHeightDp
-
-    println(screenWidthDp)
-
 
     // Background
     val img = painterResource(R.drawable.training_bg)
@@ -66,40 +55,25 @@ fun TrainingActiveUI(
     TrainingBackgroundGif()
 
     if (screenWidthDp < 200) {
-        SmallWatch(   navController, viewModel)
+        SmallWatch(navController, traingviewModel)
     }
     else {
-        BigWatch( navController, viewModel)
-
+        BigWatch(navController, traingviewModel)
     }
 
-
     // GIF
-    if (viewModel.isTrainingEnd) {
+    if (traingviewModel.isTrainingEnd) {
         null
     } else {
         LoadingGif()
     }
-
 }
 
-
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun TrainingPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    PaymongTheme {
-        TrainingActive(navController)
-    }
-}
 
 
 @ExperimentalCoilApi
 @Composable
-fun LoadingGif(
-
-) {
+fun LoadingGif() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {
@@ -120,15 +94,12 @@ fun LoadingGif(
         ),
         contentDescription = null,
         modifier = Modifier
-//            .padding(top = 10.dp)
     )
 }
 
 @ExperimentalCoilApi
 @Composable
-fun TrainingBackgroundGif(
-
-) {
+fun TrainingBackgroundGif() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {
@@ -149,18 +120,14 @@ fun TrainingBackgroundGif(
         ),
         contentDescription = null,
         modifier = Modifier
-//            .padding(top = 10.dp)
     )
 }
-
 
 @Composable
 fun SmallWatch (
     navController: NavHostController,
     traingviewModel: TrainingViewModel
 ) {
-    // Small Watch
-
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1)
         .build()
@@ -171,8 +138,6 @@ fun SmallWatch (
 
 
     fun WinSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -182,8 +147,6 @@ fun SmallWatch (
         }
     }
     fun LoseSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -192,10 +155,7 @@ fun SmallWatch (
             SystemClock.sleep(throttle.toLong())
         }
     }
-
     fun ButtonSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -204,8 +164,6 @@ fun SmallWatch (
             SystemClock.sleep(throttle.toLong())
         }
     }
-
-
 
     Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -219,7 +177,6 @@ fun SmallWatch (
                 }
             }
         ) {
-
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .wrapContentHeight(Alignment.CenterVertically)
@@ -255,26 +212,18 @@ fun SmallWatch (
 
             // Character
 
-            val viewModel: MainViewModel = viewModel()
-            val chCode = viewModel.mong.mongCode
+            val mainviewModel: MainViewModel = viewModel()
+            val chCode = mainviewModel.mong.mongCode
             val chA = painterResource(chCode.resourceCode)
-
 
             if (traingviewModel.isTrainingEnd) {
                 if (traingviewModel.count >= 50) {
-
                     Box(
-
                         modifier = Modifier.fillMaxWidth()
                             .height(60.dp)
                             .wrapContentHeight(Alignment.CenterVertically)
                             .wrapContentWidth(Alignment.CenterHorizontally)
                     ) {
-//                        Image(
-//                            painter = chA,
-//                            contentDescription = null,
-//                            modifier = Modifier.width(80.dp).height(80.dp)
-//                        )
                         Image(
                             painter = painterResource(id = R.drawable.success),
                             contentDescription = "success",
@@ -283,19 +232,12 @@ fun SmallWatch (
                     }
                     WinSoundPlay()
                 } else {
-
                     Box(
-
                         modifier = Modifier.fillMaxWidth()
                             .height(60.dp)
                             .wrapContentHeight(Alignment.CenterVertically)
                             .wrapContentWidth(Alignment.CenterHorizontally)
                     ) {
-//                        Image(
-//                            painter = chA,
-//                            contentDescription = null,
-//                            modifier = Modifier.width(80.dp).height(80.dp)
-//                        )
                         Image(
                             painter = painterResource(id = R.drawable.fail),
                             contentDescription = "fail",
@@ -305,10 +247,8 @@ fun SmallWatch (
                     }
                     LoseSoundPlay()
                 }
-//                    Box(Modifier.size(80.dp))
             } else {
                 Box(
-
                     modifier = Modifier.fillMaxWidth()
                         .wrapContentHeight(Alignment.CenterVertically)
                         .wrapContentWidth(Alignment.CenterHorizontally)
@@ -320,72 +260,64 @@ fun SmallWatch (
                     )
                 }
             }
-
-
-
-                if (traingviewModel.isTrainingEnd) {
-                    Box(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(30.dp)
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .clickable {
-                                ButtonSoundPlay()
-                                traingviewModel.screenClick() {
-                                    navController.navigate(WatchNavItem.Activity.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
+            if (traingviewModel.isTrainingEnd) {
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(30.dp)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                ) {
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clickable {
+                            ButtonSoundPlay()
+                            traingviewModel.screenClick() {
+                                navController.navigate(WatchNavItem.Activity.route) {
+                                    popUpTo(navController.graph.findStartDestination().id)
+                                    launchSingleTop = true
                                 }
                             }
-                    )
+                        }
+                )
+                Text(
+                    text = "종료",
+                    modifier = Modifier.fillMaxWidth()
+                        .fillMaxHeight()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = 11.sp,
+                    color = Color(0xFF0C4DA2)
+                ) }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .height(10.dp)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                ) {
                     Text(
-                        text = "종료",
-                        modifier = Modifier.fillMaxWidth()
-                            .fillMaxHeight()
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        text = "터치해서 훈련하기",
                         fontFamily = dalmoori,
-                        textAlign = TextAlign.Center,
-                        fontSize = 11.sp,
-                        color = Color(0xFF0C4DA2)
-                    ) }
-                } else {
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .height(10.dp)
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    ) {
-                        Text(
-                            text = "터치해서 훈련하기",
-                            fontFamily = dalmoori,
-                            fontSize = 9.sp
-                        )
-                    }
+                        fontSize = 9.sp
+                    )
                 }
             }
     }
-
-
+}
 
 @Composable
 fun BigWatch (
     navController: NavHostController,
     traingviewModel: TrainingViewModel
 ) {
-
-
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1)
         .build()
@@ -394,10 +326,7 @@ fun BigWatch (
     val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
     val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-
     fun WinSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -407,8 +336,6 @@ fun BigWatch (
         }
     }
     fun LoseSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -417,10 +344,7 @@ fun BigWatch (
             SystemClock.sleep(throttle.toLong())
         }
     }
-
     fun ButtonSoundPlay () {
-
-
         val waitLimit = 1000
         var waitCounter = 0
         var throttle = 10
@@ -461,12 +385,9 @@ fun BigWatch (
         Spacer(modifier = Modifier.height(5.dp))
 
         Box(
-
             modifier = Modifier.fillMaxWidth()
                 .wrapContentHeight(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.CenterHorizontally)
-
-
         ) {
             Text(
                 text = String.format("%d", traingviewModel.count),
@@ -479,26 +400,18 @@ fun BigWatch (
 
         // Character
 
-        val viewModel: MainViewModel = viewModel()
-        val chCode = viewModel.mong.mongCode
+        val mainviewModel: MainViewModel = viewModel()
+        val chCode = mainviewModel.mong.mongCode
         val chA = painterResource(chCode.resourceCode)
-
 
         if (traingviewModel.isTrainingEnd) {
             if (traingviewModel.count >= 50) {
-
                 Box(
-
                     modifier = Modifier.fillMaxWidth()
                         .height(90.dp)
                         .wrapContentHeight(Alignment.CenterVertically)
                         .wrapContentWidth(Alignment.CenterHorizontally)
                 ) {
-//                        Image(
-//                            painter = chA,
-//                            contentDescription = null,
-//                            modifier = Modifier.width(80.dp).height(80.dp)
-//                        )
                     Image(
                         painter = painterResource(id = R.drawable.success),
                         contentDescription = "success",
@@ -507,19 +420,12 @@ fun BigWatch (
                 }
                 WinSoundPlay()
             } else {
-
                 Box(
-
                     modifier = Modifier.fillMaxWidth()
                         .height(90.dp)
                         .wrapContentHeight(Alignment.CenterVertically)
                         .wrapContentWidth(Alignment.CenterHorizontally)
                 ) {
-//                        Image(
-//                            painter = chA,
-//                            contentDescription = null,
-//                            modifier = Modifier.width(80.dp).height(80.dp)
-//                        )
                     Image(
                         painter = painterResource(id = R.drawable.fail),
                         contentDescription = "fail",
@@ -529,10 +435,8 @@ fun BigWatch (
                 }
                 LoseSoundPlay()
             }
-//                    Box(Modifier.size(80.dp))
         } else {
             Box(
-
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(Alignment.CenterVertically)
                     .wrapContentWidth(Alignment.CenterHorizontally)
@@ -544,9 +448,6 @@ fun BigWatch (
                 )
             }
         }
-
-
-
         if (traingviewModel.isTrainingEnd) {
             Box(
                 modifier = Modifier
@@ -583,7 +484,6 @@ fun BigWatch (
                     color = Color(0xFF0C4DA2)
                 ) }
         } else {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -599,7 +499,15 @@ fun BigWatch (
             }
         }
     }
+}
 
 
-
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun TrainingPreview() {
+    val navController = rememberSwipeDismissableNavController()
+    val traingviewModel: TrainingViewModel = viewModel()
+    PaymongTheme {
+        TrainingActive(navController, traingviewModel)
+    }
 }

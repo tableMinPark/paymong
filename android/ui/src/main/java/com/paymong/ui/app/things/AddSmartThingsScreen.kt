@@ -214,8 +214,6 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                smartThingsViewModel.thingsList[i].isSelect = true
-                                Log.d(smartThingsViewModel.thingsList[i].thingsName, smartThingsViewModel.thingsList[i].isSelect.toString())
                             }
                         )){
                             Text(

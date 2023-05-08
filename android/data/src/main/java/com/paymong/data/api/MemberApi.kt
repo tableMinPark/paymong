@@ -13,4 +13,10 @@ interface MemberApi {
 
     @GET("/member/paypoint/list")
     suspend fun pointList() : Response<List<PointInfoResDto>>
+
+    @GET("/member/things")
+    suspend fun findThings() : Response<List<ThingsResDto>>
+
+    @GET("/member/things/addable")
+    suspend fun addFindThings() : Response<List<AddThingsResDto>>
 }

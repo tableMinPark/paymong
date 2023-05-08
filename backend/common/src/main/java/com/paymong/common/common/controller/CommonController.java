@@ -7,7 +7,7 @@ import com.paymong.common.common.dto.response.CommonCodeDto;
 import com.paymong.common.common.dto.response.FindAllCommonCodeResDto;
 import com.paymong.common.common.dto.response.FindAllFoodResDto;
 import com.paymong.common.common.service.CommonService;
-import com.paymong.common.global.code.ErrorStateCode;
+import com.paymong.common.global.code.CommonStateCode;
 import com.paymong.common.global.exception.NotFoundException;
 import com.paymong.common.global.response.ErrorResponse;
 import java.util.List;
@@ -35,12 +35,15 @@ public class CommonController {
         try {
             List<CommonCodeDto> commonCodeDtoList = commonService.findAllCommonCode(
                 findAllCommonCodeReqDto);
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(), CommonStateCode.SUCCESS.name());
             return ResponseEntity.ok().body(new FindAllCommonCodeResDto(commonCodeDtoList));
         } catch (NotFoundException e) {
+            log.info("code : {}, message : {}", CommonStateCode.NOTFOUND_GROUPCODE.getCode(), CommonStateCode.NOTFOUND_GROUPCODE.name());
             return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorStateCode.NOTFOUND_GROUPCODE));
+                .body(new ErrorResponse(CommonStateCode.NOTFOUND_GROUPCODE));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(), CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
         }
     }
 
@@ -48,10 +51,12 @@ public class CommonController {
     public ResponseEntity<Object> findCommonCode(FindCommonCodeReqDto findCommonCodeReqDto) {
         log.info("findCommonCode - Call");
         try {
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(), CommonStateCode.SUCCESS.name());
             CommonCodeDto commonCodeDto = commonService.findCommonCode(findCommonCodeReqDto);
             return ResponseEntity.ok().body(commonCodeDto);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(), CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
         }
     }
 
@@ -60,25 +65,30 @@ public class CommonController {
         log.info("findRandomEgg - Call");
         try {
             CommonCodeDto commonCodeDto = commonService.findRandomEgg();
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(), CommonStateCode.SUCCESS.name());
             return ResponseEntity.ok().body(commonCodeDto);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(), CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
         }
     }
 
     @GetMapping("/food/{foodCategory}")
-    public ResponseEntity<Object> findAllFood(@RequestHeader(value = "Mongkey") String mongKey,
+    public ResponseEntity<Object> findAllFood(@RequestHeader(value = "MongId") String mongId,
         @PathVariable("foodCategory") String foodCategory) {
         log.info("findAllFood - Call");
         log.info("foodCategory - {}", foodCategory);
         try {
-            FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongKey);
+            FindAllFoodResDto findAllFoodResDto = commonService.findAllFood(foodCategory, mongId);
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(), CommonStateCode.SUCCESS.name());
             return ResponseEntity.ok().body(findAllFoodResDto);
         } catch (NotFoundException e) {
+            log.info("code : {}, message : {}", CommonStateCode.NOTFOUND_FOODCODE.getCode(), CommonStateCode.NOTFOUND_FOODCODE.name());
             return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorStateCode.NOTFOUND_FOODCODE));
+                .body(new ErrorResponse(CommonStateCode.NOTFOUND_FOODCODE));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(), CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
         }
     }
 
@@ -87,12 +97,15 @@ public class CommonController {
         log.info("findCodeByName - Call");
         try{
             CommonCodeDto commonCodeDto = commonService.findCodeByName(findCodeByNameReqDto.getName());
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(), CommonStateCode.SUCCESS.name());
             return ResponseEntity.ok().body(commonCodeDto);
         }catch (NotFoundException e){
+            log.info("code : {}, message : {}", CommonStateCode.NOTFOUND_COMMONCODE.getCode(), CommonStateCode.NOTFOUND_COMMONCODE.name());
             return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorStateCode.NOTFOUND_COMMONCODE));
+                .body(new ErrorResponse(CommonStateCode.NOTFOUND_COMMONCODE));
         }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(), CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
         }
     }
 

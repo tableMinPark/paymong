@@ -4,6 +4,7 @@ import com.paymong.management.mong.entity.Mong;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -15,7 +16,7 @@ public class AddMongResVo {
     private String name;
     private String mongCode;
     private Integer weight;
-    private LocalDate born;
+    private LocalDateTime born;
 
     public AddMongResVo(Mong mong){
         this.name = mong.getName();

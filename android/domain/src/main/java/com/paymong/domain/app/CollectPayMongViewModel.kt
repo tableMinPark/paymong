@@ -12,39 +12,36 @@ import kotlinx.coroutines.launch
 
 class CollectPayMongViewModel : ViewModel() {
 
-    private lateinit var load : Job
     var mongList = mutableListOf<Collect>()
     private var collectRepository: CollectRepository = CollectRepository()
 
     init {
-        if(::load.isInitialized) load.cancel()
+        viewModelScope.launch {
 
-        load = viewModelScope.launch {
-
-            for(i in 0..5){
-                val index = i.toString()
-                mongList.add(Collect(false,"", "CH00${index}"))
-            }
-            for(i in 0..2){
-                val index = i.toString()
-                mongList.add(Collect(true,"", "CH10${index}"))
-            }
-            for(i in 0..2){
-                val index = i.toString()
-                for(j in 0..3){
-                    val middle = j.toString()
-                    mongList.add(Collect(true,"", "CH2${middle}${index}"))
-                }
-            }
-            for(i in 0..2){
-                val index = i.toString()
-                for(j in 0..3){
-                    val middle = j.toString()
-                    mongList.add(Collect(true,"", "CH3${middle}${index}"))
-                }
-            }
-            mongList.add(Collect(true,"", "CH203"))
-            mongList.add(Collect(true,"", "CH303"))
+//            for(i in 0..5){
+//                val index = i.toString()
+//                mongList.add(Collect(false,"", "CH00${index}"))
+//            }
+//            for(i in 0..2){
+//                val index = i.toString()
+//                mongList.add(Collect(true,"", "CH10${index}"))
+//            }
+//            for(i in 0..2){
+//                val index = i.toString()
+//                for(j in 0..3){
+//                    val middle = j.toString()
+//                    mongList.add(Collect(true,"", "CH2${middle}${index}"))
+//                }
+//            }
+//            for(i in 0..2){
+//                val index = i.toString()
+//                for(j in 0..3){
+//                    val middle = j.toString()
+//                    mongList.add(Collect(true,"", "CH3${middle}${index}"))
+//                }
+//            }
+//            mongList.add(Collect(true,"", "CH203"))
+//            mongList.add(Collect(true,"", "CH303"))
         }
     }
 

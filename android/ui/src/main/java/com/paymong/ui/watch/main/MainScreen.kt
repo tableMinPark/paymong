@@ -34,8 +34,8 @@ fun Main(
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
-    val viewModel : MainViewModel = viewModel()
-    val bgCode = viewModel.mapCode
+    val mainviewModel : MainViewModel = viewModel()
+    val bgCode = mainviewModel.mapCode
     val bg = painterResource(bgCode.code)
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     if(bgCode==MapCode.MP000){
@@ -56,10 +56,10 @@ fun Main(
         ) {
                 page: Int ->
             when (page) {
-                0 -> MainCondition()
-                1 -> MainInfo(animationState)
-                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController)
-                3 -> MainInfoDetail()
+                0 -> MainCondition(mainviewModel)
+                1 -> MainInfo(animationState, mainviewModel)
+                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController, mainviewModel)
+                3 -> MainInfoDetail(mainviewModel)
             }
         }
         HorizontalPagerIndicator(

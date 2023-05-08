@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BackgroundController {
 
     private BackgroundService backgroundService;
-    
+
     @GetMapping("/map")
     public ResponseEntity<Object> findMap(){
         log.info("findMap - Call");

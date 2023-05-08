@@ -1,6 +1,8 @@
 package com.paymong.member.member.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.member.background.entity.Mymap;
+import com.paymong.member.background.repository.MymapRepository;
 import com.paymong.member.global.client.ManagementServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.member.dto.request.LoginReqDto;
@@ -24,11 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
     private final ManagementServiceClient managementServiceClient;
-
-
     private final PaypointService paypointService;
+    private final MymapRepository mymapRepository;
 
 
     @Transactional
@@ -95,10 +95,14 @@ public class MemberService {
         Member member = Member.builder().password(loginReqDto.getPassword())
             .playerId(loginReqDto.getPlayerId()).point(0).build();
         memberRepository.save(member);
+        Long memberId = member.getMemberId();
 
         //맵정해주자 여기서!
-        //~~
-
+        Mymap mymap = Mymap.builder()
+                .mapCode("MP000")
+                .memberId(memberId)
+                .build();
+        mymapRepository.save(mymap);
 
         return LoginResDto.builder().point(member.getPoint()).memberId(member.getMemberId()).build();
     }

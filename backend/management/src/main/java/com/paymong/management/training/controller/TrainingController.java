@@ -68,20 +68,29 @@ public class TrainingController {
     public ResponseEntity<Object> walking(@RequestBody WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("count : {} , mongId : {}, memberId : {}", walkingReqDto.getWalkingCount(), mongIdStr, memberIdStr);
         try {
-            if(walkingReqDto.getWalkingCount() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(walkingReqDto.getWalkingCount() == null ){
+                LOGGER.info("count가 비었음");
+                throw new NullPointerException();
+
+            }
+            if(mongIdStr == null || mongIdStr.equals("")) {
+                LOGGER.info("mongId가 비었음");
                 throw new NullPointerException();
             }
-            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+            if(memberIdStr == null || memberIdStr.equals("")) {
+                LOGGER.info("memberId가 비었음");
+                throw new NullPointerException();
+            }
 
             Long mongId = Long.parseLong(mongIdStr);
             Long memberId = Long.parseLong(memberIdStr);
 
             WalkingReqVo walkingReqVo = new WalkingReqVo();
-            walkingReqVo.setWalkingCount(walkingReqVo.getWalkingCount());
+            walkingReqVo.setWalkingCount(walkingReqDto.getWalkingCount());
             walkingReqVo.setMongId(mongId);
             walkingReqVo.setMemberId(memberId);
-
             trainingService.walking(walkingReqVo);
             return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
         }catch (NullPointerException e){

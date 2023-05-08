@@ -34,6 +34,8 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.watch.main.Poops
+import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -502,31 +504,67 @@ fun MakeEgg(
                 )
             )
         } else {
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(appViewModel.eggTouchCount > 10){
-                    Text(text = "성장을 위해\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
-                        fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                    )
-                    Log.d("성장", "10번 클릭 넘엇서!")
-                }
-                else{
-                    Text(text = " ${appViewModel.eggTouchCount}\n ", lineHeight = 50.sp, fontSize = 20.sp,
-                        fontFamily = dalmoori, fontWeight = FontWeight.Bold, color = Color.White
-                    )
-                }
-                Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode), contentDescription = null,
-                    modifier = Modifier
-                        .height(250.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
-                                appViewModel.eggTouchCount++
-                            }
+                Box(contentAlignment = Alignment.Center,) {
+                    if (appViewModel.eggTouchCount > 10) {
+                        Text(
+                            text = "성장을 위해\n화면을 터치해주세요.",
+                            textAlign = TextAlign.Center,
+                            lineHeight = 50.sp,
+                            fontFamily = dalmoori,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
-                )
+                        Log.d("성장", "10번 클릭 넘엇서!")
+                        CreateImageList()
+                    } else {
+                        Text(
+                            text = " ${appViewModel.eggTouchCount}\n ",
+                            lineHeight = 50.sp,
+                            fontSize = 20.sp,
+                            fontFamily = dalmoori,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+//                    Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                    Image(painter = painterResource(R.drawable.ch001),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(250.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    appViewModel.eggTouchCount++
+                                }
+                            )
+                    )
+                    CreateImageList()
+                    val poopCount = appViewModel.poopCount
+                    val poopSize = 60
+
+                    if (poopCount == 1) {
+                        Poops(0, 300, 150, 0, poopSize)
+                    } else if (poopCount == 2) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                    } else if (poopCount == 3) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                        Poops(150, 0, 300, 0, poopSize)
+                    } else if (poopCount == 4) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                        Poops(150, 0, 300, 0, poopSize)
+                        Poops(0, 180, 320, 0, poopSize)
+                    }
+
+                }
             }
         }
     }
@@ -610,5 +648,33 @@ fun InfoPreview() {
 //        MainUI(navController, viewModel)
 //        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
 //        Top(navController)
+    }
+}
+
+
+@Composable
+fun CreateImageList() {
+    val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3,)
+
+    Box(Modifier.fillMaxSize().padding(top=150.dp)) {
+        var currentIndex by remember { mutableStateOf(0) }
+
+        LaunchedEffect(Unit) {
+
+            delay(800L)
+            currentIndex = 0
+            delay(800L)
+            currentIndex = 1
+            delay(800L)
+            currentIndex = 2
+
+
+        }
+
+        Image(
+            painter = painterResource(id = imageList[currentIndex]),
+            contentDescription = null,
+            modifier = Modifier.size(500.dp)
+        )
     }
 }

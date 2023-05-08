@@ -12,6 +12,7 @@ import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
 import com.paymong.management.status.service.StatusService;
+import com.paymong.management.training.vo.TrainingReqVo;
 import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,19 +30,21 @@ public class TrainingService {
     private final ClientService clientService;
     private final StatusService statusService;
     @Transactional
-    public void training(Long mongId, Long memberId) throws Exception{
+    public void training(TrainingReqVo trainingReqVo) throws Exception{
 
         // training action 찾기
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto("AT005");
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
-        LOGGER.info("member : {}, point : {}", memberId, status.getPoint());
+        LOGGER.info("member : {}, point : {}", trainingReqVo.getMemberId(), status.getPoint());
         // auth 서비스로 전송
-        clientService.addPoint(String.valueOf(memberId), new AddPointDto(status.getPoint(), "훈련"));
+        clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련"));
 
-        // 수치값 변경
-        statusService.modifyMongStatus(mongId, status);
+        if(trainingReqVo.getWalkingCount() >= 50){
+            // 수치값 변경
+            statusService.modifyMongStatus(trainingReqVo.getMongId(), status);
+        }
 
     }
 

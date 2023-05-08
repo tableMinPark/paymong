@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.MemberRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -22,6 +23,7 @@ import java.time.ZoneId
 
 class WalkingViewModel : ViewModel() {
     var isWalkingEnd by mutableStateOf(false)
+    var realWalkingEnd by mutableStateOf(false)
     var minute by mutableStateOf(0)
     var second by mutableStateOf(0)
     var count by mutableStateOf(0)
@@ -86,29 +88,18 @@ class WalkingViewModel : ViewModel() {
             }
             // 시간 초과 종료
             isWalkingEnd = true
-            walkingEnd()
         }
     }
 
-    private fun walkingEnd() {
+    fun walkingEnd() {
         // 산책 종료 후 결과 저장
-        isWalkingEnd = true
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.walking(count)
                 .catch {
                     it.printStackTrace()
                 }
                 .collect{
                 }
-        }
-    }
-
-    fun screenClick(navigate : () ->Unit) {
-        if (isWalkingEnd){
-            navigate()
-        } else {
-            // 사용자 선택 종료
-            walkingEnd()
         }
     }
 

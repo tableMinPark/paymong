@@ -201,7 +201,12 @@ fun SmallWatch (  navController: NavHostController,
     }
 
     if (viewModel.isWalkingEnd) {
-
+        if(viewModel.realWalkingEnd){
+            navController.navigate(WatchNavItem.Activity.route) {
+                popUpTo(navController.graph.findStartDestination().id)
+                launchSingleTop = true
+            }
+        }
         Box() {
             Row(
                 horizontalArrangement = Arrangement.Start,
@@ -221,12 +226,8 @@ fun SmallWatch (  navController: NavHostController,
                         contentDescription = "blue_bnt",
                         modifier = Modifier.fillMaxWidth().fillMaxHeight()
                             .clickable {
-                                viewModel.screenClick() {
-                                    navController.navigate(WatchNavItem.Activity.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
-                                }
+                                viewModel.walkingEnd()
+                                viewModel.realWalkingEnd = true
                             }
                     )
 
@@ -264,12 +265,7 @@ fun SmallWatch (  navController: NavHostController,
                         contentDescription = "blue_bnt",
                         modifier = Modifier.fillMaxWidth().fillMaxHeight()
                             .clickable {
-                                viewModel.screenClick() {
-                                    navController.navigate(WatchNavItem.Activity.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
-                                }
+                                viewModel.isWalkingEnd = false
                             }
                     )
 
@@ -310,9 +306,7 @@ fun SmallWatch (  navController: NavHostController,
                     .fillMaxHeight()
 
                     .clickable {
-                        viewModel.screenClick() {
-
-                        }
+                        viewModel.isWalkingEnd = true
                     }
             )
 
@@ -427,14 +421,18 @@ fun BigWatch (  navController: NavHostController,
     }
 
     if (viewModel.isWalkingEnd) {
+        if(viewModel.realWalkingEnd){
+            navController.navigate(WatchNavItem.Activity.route) {
+                popUpTo(navController.graph.findStartDestination().id)
+                launchSingleTop = true
+            }
+        }
 
         Box(modifier = Modifier.padding(top=5.dp)) {
             Row(
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier.fillMaxWidth().padding(start=60.dp)
             ) {
-
-
                 Box(
                     modifier = Modifier
                         .width(50.dp)
@@ -447,17 +445,10 @@ fun BigWatch (  navController: NavHostController,
                         contentDescription = "blue_bnt",
                         modifier = Modifier.fillMaxWidth().fillMaxHeight()
                             .clickable {
-                                viewModel.screenClick() {
-                                    navController.navigate(WatchNavItem.Activity.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
-                                }
+                                viewModel.walkingEnd()
+                                viewModel.realWalkingEnd = true
                             }
                     )
-
-
-
                     Text(
                         text = "YES",
                         modifier = Modifier.fillMaxWidth().fillMaxHeight()
@@ -468,11 +459,7 @@ fun BigWatch (  navController: NavHostController,
                         fontSize = 14.sp,
                         color = Color(0xFF0C4DA2)
                     )
-
-
                 }
-
-
             }
             Row(
                 horizontalArrangement = Arrangement.End,
@@ -490,16 +477,9 @@ fun BigWatch (  navController: NavHostController,
                         contentDescription = "blue_bnt",
                         modifier = Modifier.fillMaxWidth().fillMaxHeight()
                             .clickable {
-                                viewModel.screenClick() {
-                                    navController.navigate(WatchNavItem.Activity.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
-                                }
+                                viewModel.isWalkingEnd = false
                             }
                     )
-
-
 
                     Text(
                         text = "NO",
@@ -511,39 +491,27 @@ fun BigWatch (  navController: NavHostController,
                         fontSize = 14.sp,
                         color = Color(0xFF0C4DA2)
                     )
-
-
                 }
             }
 
         }
-    }else {
-
+    } else {
         Box(modifier = Modifier
             .width(60.dp)
             .height(30.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
-        )
-        {
-
-
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.blue_bnt),
                 contentDescription = "blue_bnt",
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-
                     .clickable {
-                        viewModel.screenClick() {
-
-                        }
+                        viewModel.isWalkingEnd = true
                     }
             )
-
-
-
             Text(
                 text = "종료",
                 modifier = Modifier.fillMaxWidth()
@@ -555,8 +523,7 @@ fun BigWatch (  navController: NavHostController,
                 fontSize = 14.sp,
                 color = Color(0xFF0C4DA2)
             )
-
-
         }
-
-    } }}
+    }
+}
+}

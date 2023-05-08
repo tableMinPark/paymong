@@ -26,10 +26,8 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.TrainingViewModel
-import com.paymong.domain.watch.main.MainInfoViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
@@ -39,11 +37,7 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-
-
-
-
-
+import com.paymong.domain.watch.main.MainViewModel
 
 
 @Composable
@@ -265,9 +259,8 @@ fun SmallWatch (
 
             // Character
 
-            val viewModel: MainInfoViewModel = viewModel()
-            var findCode = viewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
+            val viewModel: MainViewModel = viewModel()
+            val chCode = viewModel.mong.mongCode
             val chA = painterResource(chCode.resourceCode)
 
 
@@ -492,9 +485,8 @@ fun BigWatch (
 
         // Character
 
-        val viewModel: MainInfoViewModel = viewModel()
-        var findCode = viewModel.characterCode
-        var chCode = CharacterCode.valueOf(findCode)
+        val viewModel: MainViewModel = viewModel()
+        val chCode = viewModel.mong.mongCode
         val chA = painterResource(chCode.resourceCode)
 
 

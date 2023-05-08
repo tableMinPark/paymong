@@ -2,13 +2,11 @@ package com.paymong.ui.watch.main
 
 import android.media.SoundPool
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -18,16 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.main.MainInteractionViewModel
 import com.paymong.common.R
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,16 +34,11 @@ fun MainInteraction(
     animationState: MutableState<AnimationCode>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    mainviewModel : MainViewModel
 ) {
-    val viewModel: MainInteractionViewModel = viewModel()
-    MainInteractionUI(animationState, pagerState, coroutineScope, navController, viewModel)
-
+    MainInteractionUI(animationState, pagerState, coroutineScope, navController, mainviewModel)
 }
-
-
-
-
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -56,7 +47,7 @@ fun MainInteractionUI(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    viewModel: MainInteractionViewModel
+    mainviewModel : MainViewModel
 ) {
 
     val configuration = LocalConfiguration.current
@@ -85,31 +76,35 @@ fun MainInteractionUI(
         thirdRowPadding = 15
     }
 
-
-
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
         .build()
     val context = LocalContext.current
     val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-
     fun ButtonSoundPlay () {
         soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }
+
+//    if(mainviewModel.isClicked){
+//        mainviewModel.isClicked = false
+//        navController.navigate(WatchNavItem.Main.route) {
+//            popUpTo(navController.graph.findStartDestination().id)
+//            launchSingleTop = true
+//            coroutineScope.launch { pagerState.animateScrollToPage(1) }
+//        }
+//    }
 
     Column(
         modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
                 .fillMaxSize(1f)
     ) {
-
-
         Box () {
+            //BATTLE
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-//
                 Box(
                     modifier = Modifier.clickable {
                         ButtonSoundPlay()
@@ -134,11 +129,12 @@ fun MainInteractionUI(
                 }
             }
 
+            //FEED ACTIVITY
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().padding(top=marginTop.dp, bottom= 5.dp)
             ) {
-
+                //FEED
                 Box(
                     modifier = Modifier.clickable {
                         ButtonSoundPlay()
@@ -151,10 +147,7 @@ fun MainInteractionUI(
                         modifier = Modifier
                             .size(buttonSize.dp),
                         contentAlignment = Alignment.Center
-                    )
-
-                    {
-//                Text(text = "FEED", textAlign = TextAlign.Center)
+                    ){
                         val feed = painterResource(R.drawable.feed)
                         val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_orange)
@@ -168,6 +161,7 @@ fun MainInteractionUI(
                     }
                 }
 
+                //ACTIVITY
                 Box(
                     modifier = Modifier.clickable {
                         ButtonSoundPlay()
@@ -179,10 +173,7 @@ fun MainInteractionUI(
                     Box(
                         modifier = Modifier.size(buttonSize.dp),
                         contentAlignment = Alignment.Center
-                    )
-
-                    {
-//                Text(text = "Activity", textAlign = TextAlign.Center)
+                    ){
                         val activity = painterResource(R.drawable.activity)
                         val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_green)
@@ -198,59 +189,56 @@ fun MainInteractionUI(
             }
         }
 
-
-
+        //SLEEP POOP
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
         ) {
-
+            //SLEEP
             Box(
                 modifier = Modifier.clickable {
                     ButtonSoundPlay()
                     animationState.value = AnimationCode.Sleep
+                    mainviewModel.sleep()
+
+                }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
+                contentAlignment = Alignment.Center
+            ){
+                Box (
+                    modifier = Modifier.size(buttonSize.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val sleep = painterResource(R.drawable.sleep)
+                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
+                    val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
+                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
+                    Image(painter = interactionBntBorder, contentDescription = null,)
+                    Image(
+                        painter = sleep,
+                        contentDescription = null,
+                        modifier = Modifier.size(buttonIconSize.dp)
+                    )
+                }
+            }
+
+            //POOP
+            Box (
+                modifier = Modifier.clickable {
+                    ButtonSoundPlay()
+                    animationState.value = AnimationCode.Poop
+                    mainviewModel.poop()
                     navController.navigate(WatchNavItem.Main.route) {
                         popUpTo(navController.graph.findStartDestination().id)
                         launchSingleTop = true
                         coroutineScope.launch { pagerState.animateScrollToPage(1) }
                     }
-                }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
+                }.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
-            )
-
-            {   Box ( modifier = Modifier.size(buttonSize.dp),
-                contentAlignment = Alignment.Center
-            )
-            {
-//                Text(text = "SLEEP", textAlign = TextAlign.Center)
-                val sleep = painterResource(R.drawable.sleep)
-                val interactionBnt = painterResource(R.drawable.interaction_bnt)
-                val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
-                Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                Image(painter = interactionBntBorder, contentDescription = null,)
-                Image(
-                    painter = sleep,
-                    contentDescription = null,
-                    modifier = Modifier.size(buttonIconSize.dp)
-                )
-            }
-        }
-
-            Box ( modifier = Modifier.clickable {
-                ButtonSoundPlay()
-                animationState.value = AnimationCode.Poop
-                navController.navigate(WatchNavItem.Main.route){
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop =true
-                    coroutineScope.launch {pagerState.animateScrollToPage(1) }
-                }}.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
-                contentAlignment = Alignment.Center
-            )
-            {    Box ( modifier = Modifier.size(buttonSize.dp),
-                contentAlignment = Alignment.Center
-            )
-                {
-//                Text(text = "POOP", textAlign = TextAlign.Center)
+            ){
+                Box (
+                    modifier = Modifier.size(buttonSize.dp),
+                    contentAlignment = Alignment.Center
+                ){
                     val poop = painterResource(R.drawable.poop)
                     val interactionBnt = painterResource(R.drawable.interaction_bnt)
                     val interactionBntBorder = painterResource(R.drawable.interaction_bnt_purple)
@@ -265,8 +253,6 @@ fun MainInteractionUI(
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -277,7 +263,8 @@ fun MainInteractionPreview() {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberSwipeDismissableNavController()
+    val mainviewModel:MainViewModel = viewModel()
     PaymongTheme {
-        MainInteraction(animationState, pagerState, coroutineScope, navController)
+        MainInteraction(animationState, pagerState, coroutineScope, navController, mainviewModel)
     }
 }

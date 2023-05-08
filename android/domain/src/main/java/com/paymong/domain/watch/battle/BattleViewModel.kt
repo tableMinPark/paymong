@@ -15,19 +15,25 @@ import androidx.lifecycle.viewModelScope
 import com.paymong.domain.watch.socket.SocketService
 import com.google.android.gms.location.*
 import com.google.gson.Gson
+import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
+import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.response.BattleErrorResDto
 import com.paymong.data.model.response.BattleMessageResDto
+import com.paymong.data.repository.InformationRepository
 import com.paymong.domain.entity.BattleActive
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.paymong.domain.entity.Mong
+import com.paymong.domain.watch.main.MainViewModel
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.catch
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 @SuppressLint("MissingPermission")
 class BattleViewModel (application: Application): AndroidViewModel(application)  {
+
+
 
     private var context : Context
 
@@ -36,11 +42,23 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
 
     private var characterId = 0L
 
+    var mongCode by mutableStateOf(CharacterCode.CH444)
+    private val informationRepository: InformationRepository = InformationRepository()
+
+
     init {
+
         Log.d("battle", "init - Call")
+        findMong()
         context = application
         Log.d("viewmodel", "viewModel 생성")
+
+
+
+
     }
+
+
 
     override fun onCleared() {
         super.onCleared()
@@ -261,12 +279,46 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
         }
     }
 
+
+
+    private fun findMong() {
+        viewModelScope.launch(Dispatchers.IO) {
+            informationRepository.findMong()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect { data ->
+                    mongCode = CharacterCode.valueOf(data.mongCode)
+
+                }
+        }
+    }
+
+
+
     private fun findCharacterId(battleRoomId: String) {
         Log.d("battle", battleRoomId)
-        
+
         // api 호출
 
-        characterCodeA = "CH102"
-        characterCodeB = "CH100"
+            // characterCodeB에 소켓 에서 내려온 상대방 Code 넣기
+
+        if (battleActive.order == "A") {
+            characterCodeA = mongCode.code
+//            characterCodeA = viewModel.mong.mongCode.code
+
+            characterCodeB = "CH100"
+        }
+        else {
+            characterCodeA = "CH100"
+            characterCodeB = mongCode.code
+        }
     }
+
+
+
+
+
 }
+
+

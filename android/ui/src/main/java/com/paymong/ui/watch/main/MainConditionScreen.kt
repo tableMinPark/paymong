@@ -2,7 +2,6 @@ package com.paymong.ui.watch.main
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,74 +9,56 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.CircularProgressIndicator
-import com.paymong.domain.watch.main.MainConditionViewModel
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.paymong.common.R
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.*
 
 @Composable
-fun MainCondition() {
-    val viewModel: MainConditionViewModel = viewModel()
-    MainConditionUI(viewModel)
+fun MainCondition(
+    mainviewModel : MainViewModel
+) {
+    MainConditionUI(mainviewModel)
 }
 
 @Composable
 fun MainConditionUI(
-    viewModel: MainConditionViewModel
+    mainviewModel: MainViewModel
 ) {
-
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
-
     Column(
-            verticalArrangement = Arrangement.SpaceAround,
-    modifier = Modifier.fillMaxHeight()
+        verticalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxHeight()
     ) {
-
-
         if (screenWidthDp < 200) {
-            SmallWatch(viewModel)
+            SmallWatch(mainviewModel)
         }
         else {
-            BigWatch( viewModel)
+            BigWatch(mainviewModel)
         }
-
-
-
-    }
-
-}
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun MainConditionPreview() {
-    PaymongTheme {
-        MainCondition()
     }
 }
 
 
+
 @Composable
-fun SmallWatch( viewModel: MainConditionViewModel) {
+fun SmallWatch(
+    mainviewModel: MainViewModel
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth().height(90.dp)
     ) {
-
-
-
         // * Health *
         Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, end = 5.dp))
         {
-//            Text(text = String.format("%f", viewModel.health), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.health ),
                 contentDescription = "health",
@@ -87,7 +68,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.health,
+                progress = mainviewModel.mongStats.health,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongRed,
             )
@@ -95,7 +76,6 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
 
         // * satiety *
         Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, start = 5.dp)) {
-//             Text(text = String.format("%f", viewModel.satiety), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.satiety ),
                 contentDescription = "satiety",
@@ -105,7 +85,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.satiety,
+                progress = mainviewModel.mongStats.satiety,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongYellow,
             )
@@ -118,10 +98,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth().padding(top=10.dp)
     ) {
-
-        // * Health *
         Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(bottom = 20.dp, end = 5.dp) ) {
-//            Text(text = String.format("%f", viewModel.strength), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.strength ),
                 contentDescription = "strength",
@@ -131,7 +108,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.strength,
+                progress = mainviewModel.mongStats.strength,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongGreen,
             )
@@ -140,7 +117,6 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
 
         // * Sleep *
         Box(contentAlignment = Alignment.Center,  modifier = Modifier.padding(bottom = 20.dp, start = 5.dp) ) {
-//            Text(text = String.format("%f", viewModel.sleep), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.sleep ),
                 contentDescription = "sleep",
@@ -150,7 +126,7 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(60.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.sleep,
+                progress = mainviewModel.mongStats.sleep,
                 strokeWidth = 4.dp,
                 indicatorColor = PayMongBlue,
             )
@@ -161,18 +137,15 @@ fun SmallWatch( viewModel: MainConditionViewModel) {
 
 
 @Composable
-fun BigWatch( viewModel: MainConditionViewModel) {
+fun BigWatch(
+    mainviewModel: MainViewModel
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
     ) {
-
-
-
-        // * Health *
         Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, end = 5.dp))
         {
-//            Text(text = String.format("%f", viewModel.health), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.health ),
                 contentDescription = "health",
@@ -182,15 +155,13 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.health,
+                progress = mainviewModel.mongStats.health,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongRed,
             )
         }
 
-        // * satiety *
         Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, start = 5.dp)) {
-//             Text(text = String.format("%f", viewModel.satiety), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.satiety ),
                 contentDescription = "health",
@@ -200,7 +171,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.satiety,
+                progress = mainviewModel.mongStats.satiety,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongYellow,
             )
@@ -208,15 +179,11 @@ fun BigWatch( viewModel: MainConditionViewModel) {
 
     }
 
-
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-
-        // * Health *
         Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(bottom = 20.dp, end = 5.dp) ) {
-//            Text(text = String.format("%f", viewModel.strength), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.strength ),
                 contentDescription = "strength",
@@ -226,16 +193,13 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.strength,
+                progress = mainviewModel.mongStats.strength,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongGreen,
             )
         }
 
-
-        // * Sleep *
         Box(contentAlignment = Alignment.Center,  modifier = Modifier.padding(bottom = 20.dp, start = 5.dp) ) {
-//            Text(text = String.format("%f", viewModel.sleep), textAlign = TextAlign.Center)
             Image(
                 painter = painterResource(id = R.drawable.sleep ),
                 contentDescription = "strength",
@@ -245,7 +209,7 @@ fun BigWatch( viewModel: MainConditionViewModel) {
                 modifier = Modifier.size(70.dp),
                 startAngle = 271f,
                 endAngle = 270f,
-                progress = viewModel.mongStats.sleep,
+                progress = mainviewModel.mongStats.sleep,
                 strokeWidth = 5.dp,
                 indicatorColor = PayMongBlue,
             )
@@ -254,4 +218,11 @@ fun BigWatch( viewModel: MainConditionViewModel) {
     }
 }
 
-
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun MainConditionPreview() {
+    val mainviewModel : MainViewModel = viewModel()
+    PaymongTheme {
+        MainCondition(mainviewModel)
+    }
+}

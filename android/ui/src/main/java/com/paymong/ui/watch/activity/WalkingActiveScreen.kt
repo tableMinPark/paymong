@@ -29,10 +29,9 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.WalkingViewModel
-import com.paymong.domain.watch.main.MainInfoViewModel
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
@@ -193,9 +192,8 @@ fun SmallWatch (  navController: NavHostController,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth().padding(top=5.dp)
         ) {
-            val viewModel : MainInfoViewModel = viewModel()
-            var findCode = viewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
+            val viewModel: MainViewModel = viewModel()
+            val chCode = viewModel.mong.mongCode
             val chA = painterResource(chCode.resourceCode)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(80.dp).height(80.dp))
 
@@ -420,9 +418,8 @@ fun BigWatch (  navController: NavHostController,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth().padding(top=5.dp)
         ) {
-            val viewModel : MainInfoViewModel = viewModel()
-            var findCode = viewModel.characterCode
-            var chCode = CharacterCode.valueOf(findCode)
+            val viewModel: MainViewModel = viewModel()
+            val chCode = viewModel.mong.mongCode
             val chA = painterResource(chCode.resourceCode)
             Image(painter = chA, contentDescription = null, modifier = Modifier.width(100.dp).height(100.dp))
 

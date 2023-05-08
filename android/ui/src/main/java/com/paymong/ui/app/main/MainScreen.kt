@@ -1,5 +1,6 @@
 package com.paymong.ui.app.main
 
+import android.media.SoundPool
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +34,8 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.watch.main.Poops
+import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -68,6 +72,18 @@ fun Main(
 
 @Composable
 fun Help(navController: NavController){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -77,7 +93,8 @@ fun Help(navController: NavController){
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.Help.route) }
+                    onClick = {ButtonSoundPlay();
+                        navController.navigate(AppNavItem.Help.route) }
                 )
                 .height(40.dp)
                 .padding(horizontal = 20.dp)
@@ -92,6 +109,16 @@ fun Info(
     appViewModel: AppViewModel,
     navController: NavController
 ){
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -101,7 +128,7 @@ fun Info(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {
+                    onClick = {ButtonSoundPlay();
                         navController.navigate(AppNavItem.InfoDetail.route)
                     }
                 )
@@ -117,6 +144,16 @@ fun Things(
     appViewModel: AppViewModel,
     navController: NavController
 ){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -125,7 +162,7 @@ fun Things(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {
+                    onClick = {ButtonSoundPlay();
                         navController.navigate(AppNavItem.SmartThings.route)
                     }
                 )
@@ -138,6 +175,17 @@ fun Point(
     navController: NavController,
     appViewModel: AppViewModel
 ){
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -148,7 +196,7 @@ fun Point(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { navController.navigate(AppNavItem.PayPoint.route) }
+                    onClick = {ButtonSoundPlay(); navController.navigate(AppNavItem.PayPoint.route) }
                 )
                 .padding(horizontal = 20.dp)
         )
@@ -458,31 +506,67 @@ fun MakeEgg(
                 )
             )
         } else {
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(appViewModel.eggTouchCount > 10){
-                    Text(text = "성장을 위해\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
-                        fontFamily = dalmoori, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                    )
-                    Log.d("성장", "10번 클릭 넘엇서!")
-                }
-                else{
-                    Text(text = " ${appViewModel.eggTouchCount}\n ", lineHeight = 50.sp, fontSize = 20.sp,
-                        fontFamily = dalmoori, fontWeight = FontWeight.Bold, color = Color.White
-                    )
-                }
-                Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode), contentDescription = null,
-                    modifier = Modifier
-                        .height(250.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
-                                appViewModel.eggTouchCount++
-                            }
+                Box(contentAlignment = Alignment.Center,) {
+                    if (appViewModel.eggTouchCount > 10) {
+                        Text(
+                            text = "성장을 위해\n화면을 터치해주세요.",
+                            textAlign = TextAlign.Center,
+                            lineHeight = 50.sp,
+                            fontFamily = dalmoori,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
-                )
+                        Log.d("성장", "10번 클릭 넘엇서!")
+                        CreateImageList()
+                    } else {
+                        Text(
+                            text = " ${appViewModel.eggTouchCount}\n ",
+                            lineHeight = 50.sp,
+                            fontSize = 20.sp,
+                            fontFamily = dalmoori,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+//                    Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                    Image(painter = painterResource(R.drawable.ch001),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(250.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    appViewModel.eggTouchCount++
+                                }
+                            )
+                    )
+                    CreateImageList()
+                    val poopCount = appViewModel.poopCount
+                    val poopSize = 60
+
+                    if (poopCount == 1) {
+                        Poops(0, 300, 150, 0, poopSize)
+                    } else if (poopCount == 2) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                    } else if (poopCount == 3) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                        Poops(150, 0, 300, 0, poopSize)
+                    } else if (poopCount == 4) {
+                        Poops(0, 300, 150, 0, poopSize)
+                        Poops(280, 0, 200, 0, poopSize)
+                        Poops(150, 0, 300, 0, poopSize)
+                        Poops(0, 180, 320, 0, poopSize)
+                    }
+
+                }
             }
         }
     }
@@ -491,6 +575,17 @@ fun MakeEgg(
 @Composable
 fun Btn(navController: NavController,
         appViewModel: AppViewModel){
+
+
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .build()
+    val context = LocalContext.current
+    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
+
+    fun ButtonSoundPlay () {
+        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
 
     Row(
         modifier = Modifier
@@ -508,9 +603,11 @@ fun Btn(navController: NavController,
             Image(painter = btn2Bg, contentDescription = null,
                 modifier = Modifier
                     .clickable(
+
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { navController.navigate(AppNavItem.Collect.route) }
+                        onClick = {ButtonSoundPlay();
+                            navController.navigate(AppNavItem.Collect.route) }
                     )
                     .width(150.dp)
             )
@@ -528,9 +625,11 @@ fun Btn(navController: NavController,
                 Image(painter = btn2Bg, contentDescription = null,
                     modifier = Modifier
                         .clickable(
+
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { navController.navigate(AppNavItem.Condition.route) }
+                            onClick = {ButtonSoundPlay();
+                                navController.navigate(AppNavItem.Condition.route) }
                         )
                         .width(150.dp)
                 )
@@ -551,5 +650,33 @@ fun InfoPreview() {
 //        MainUI(navController, viewModel)
 //        SleepDialog(setSleepValue = {LocalDateTime.now()}, setShowSleepDialog = { true },setShowWakeDialog = {false}, "sub" )
 //        Top(navController)
+    }
+}
+
+
+@Composable
+fun CreateImageList() {
+    val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3,)
+
+    Box(Modifier.fillMaxSize().padding(top=150.dp)) {
+        var currentIndex by remember { mutableStateOf(0) }
+
+        LaunchedEffect(Unit) {
+
+            delay(800L)
+            currentIndex = 0
+            delay(800L)
+            currentIndex = 1
+            delay(800L)
+            currentIndex = 2
+
+
+        }
+
+        Image(
+            painter = painterResource(id = imageList[currentIndex]),
+            contentDescription = null,
+            modifier = Modifier.size(500.dp)
+        )
     }
 }

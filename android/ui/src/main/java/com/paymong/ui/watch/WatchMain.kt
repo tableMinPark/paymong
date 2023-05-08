@@ -14,6 +14,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.WatchLandingViewModel
+import com.paymong.domain.watch.activity.TrainingViewModel
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.domain.watch.main.MainViewModel
@@ -71,10 +72,12 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
             Activity(navController)
         }
         composable(route = WatchNavItem.Training.route){
-            TrainingActive(navController)
+            val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
+            TrainingActive(navController, trainingViewModel)
         }
         composable(route = WatchNavItem.Walking.route){
-            WalkingActive(navController)
+            val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
+            WalkingActive(navController, trainingViewModel)
         }
 
         // Battle

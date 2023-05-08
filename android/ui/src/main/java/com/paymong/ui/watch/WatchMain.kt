@@ -6,8 +6,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -17,6 +15,8 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.battle.BattleViewModel
+import com.paymong.domain.watch.feed.FeedViewModel
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
@@ -32,7 +32,6 @@ fun WatchMain(watchLandingViewModel : WatchLandingViewModel) {
     }
 }
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
@@ -40,6 +39,7 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState(1)
     val coroutineScope = rememberCoroutineScope()
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
 
     SwipeDismissableNavHost(
         navController = navController,
@@ -52,22 +52,18 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
 
         // Main
         composable( route = WatchNavItem.Main.route) {
-            Main(animationState, pagerState, coroutineScope, navController)
+            val mainViewModel = viewModel<MainViewModel>(viewModelStoreOwner)
+            Main(animationState, pagerState, coroutineScope, navController, mainViewModel)
         }
 
         // Feed
         composable( route = WatchNavItem.Feed.route){
-            Feed(navController)
+            val feedViewModel = viewModel<FeedViewModel>(viewModelStoreOwner)
+            Feed(navController, feedViewModel)
         }
-        composable(
-            route = WatchNavItem.FeedBuyList.route  + "/{foodCategory}",
-            arguments = listOf(
-                navArgument("foodCategory") {
-                    type = NavType.StringType
-                }
-            )
-        ){
-            FeedBuyList(animationState, pagerState, coroutineScope, navController)
+        composable( route = WatchNavItem.FeedBuyList.route){
+            val feedViewModel = viewModel<FeedViewModel>(viewModelStoreOwner)
+            FeedBuyList(animationState, pagerState, coroutineScope, navController, feedViewModel)
         }
 
         // Activity

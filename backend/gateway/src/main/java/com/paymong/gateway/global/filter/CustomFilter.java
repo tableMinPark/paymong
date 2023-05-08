@@ -107,6 +107,8 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             exchange.getRequest().mutate().header("MemberId", memberId).build();
             exchange.getRequest().mutate().header("MongId", mongId).build();
+            log.info("request path - {}", request.getPath());
+            log.info("request uri - {}", request.getURI());
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

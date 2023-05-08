@@ -86,17 +86,21 @@ public class MemberService {
     public LoginResDto login(LoginReqDto loginReqDto) {
         Member member = memberRepository.findByPlayerId(loginReqDto.getPlayerId())
             .orElseThrow(() -> new NotFoundException());
-        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
+        return LoginResDto.builder().point(member.getPoint())
             .memberId(member.getMemberId()).build();
     }
 
     @Transactional
     public LoginResDto register(LoginReqDto loginReqDto) {
         Member member = Member.builder().password(loginReqDto.getPassword())
-            .playerId(loginReqDto.getPlayerId()).point(0).mapCode("MP000").build();
+            .playerId(loginReqDto.getPlayerId()).point(0).build();
         memberRepository.save(member);
-        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
-            .memberId(member.getMemberId()).build();
+
+        //맵정해주자 여기서!
+        //~~
+
+
+        return LoginResDto.builder().point(member.getPoint()).memberId(member.getMemberId()).build();
     }
 
     @Transactional

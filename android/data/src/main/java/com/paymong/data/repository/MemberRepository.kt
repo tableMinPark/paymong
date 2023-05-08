@@ -28,4 +28,22 @@ class MemberRepository(
             }
         }
     }
+
+    fun findThings(): Flow<List<ThingsResDto>> = flow {
+        val response = api.findThings()
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(response.body()!!)
+            }
+        }
+    }
+
+    fun addFindThings(): Flow<List<AddThingsResDto>> = flow {
+        val response = api.addFindThings()
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(response.body()!!)
+            }
+        }
+    }
 }

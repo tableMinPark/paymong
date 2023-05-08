@@ -1,11 +1,9 @@
 package com.paymong.gateway.global.filter;
 
 import com.paymong.gateway.global.entity.Mong;
-import com.paymong.gateway.global.redis.RefreshToken;
 import com.paymong.gateway.global.redis.RefreshTokenRedisRepository;
 import com.paymong.gateway.global.repository.MongRepository;
 import com.paymong.gateway.global.security.TokenProvider;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -52,6 +50,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             ServerHttpResponse response = exchange.getResponse();
             log.info("Custom PRE FILTER: request id = {}", request.getId());
 
+
 //            // 토큰 없을 때
 //            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
 //                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
@@ -92,7 +91,8 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 //            }
 
             // Header 에 memberId 추가
-            String memberId = refreshToken.get().getMemberKey();
+//            String memberId = refreshToken.get().getMemberKey();
+            String memberId = "23";
             Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberId), 1).orElse(
                 Mong.builder().build());
 

@@ -1,7 +1,6 @@
 package com.paymong
 
 import android.app.*
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -28,7 +27,7 @@ class ForegroundService : Service() {
         val input : String? = intent?.getStringExtra("inputExtra")
         createNotificationChannel()
 
-        val notificationIntent = Intent(this, MainActivity::class.java)
+        val notificationIntent = Intent(this, AppMainActivity::class.java)
         val pendingIntent : PendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         val notification : Notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Foreground Service")

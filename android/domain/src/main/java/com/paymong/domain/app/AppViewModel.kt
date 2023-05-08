@@ -1,13 +1,14 @@
 package com.paymong.domain.app
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
-import com.paymong.common.code.LoginCode
+import com.paymong.common.code.LandingCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.request.AddMongReqDto
@@ -22,11 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
-    // 로그인 플래그
-    var loginState by mutableStateOf(LoginCode.LOADING)
-    // google play game 인가 여부
-    var isAuthenticated by mutableStateOf(false)
-
     // 몽 생성
     var mongname by mutableStateOf("")
     var mongsleepStart by mutableStateOf("")
@@ -45,7 +41,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val memberRepository: MemberRepository = MemberRepository()
     private val informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
-    private val authRepository: AuthRepository = AuthRepository()
 
     // 메인화면 진입시 초기화
     fun mainInit() {
@@ -54,36 +49,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             findPoint()
         }
     }
-
-    // 로그인
-    fun login(playerId : String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            authRepository.login(LoginReqDto(playerId))
-                .catch { loginState = LoginCode.LOGIN_FAIL }
-                .collect { values ->
-                    loginState = if (values)
-                        LoginCode.LOGIN_SUCCESS
-                    else
-                        LoginCode.LOGIN_FAIL
-                }
-        }
-    }
-    // 랜딩화면 로그인 확인
-    fun loginCheck() {
-        viewModelScope.launch(Dispatchers.IO) {
-            authRepository.reissue()
-                .catch {
-                    loginState = LoginCode.LOGIN_FAIL
-                }
-                .collect {values ->
-                    loginState = if (values)
-                        LoginCode.LOGIN_SUCCESS
-                    else
-                        LoginCode.LOGIN_FAIL
-                }
-        }
-    }
-
     // 몽 생성
     fun addMong(){
         viewModelScope.launch(Dispatchers.IO) {

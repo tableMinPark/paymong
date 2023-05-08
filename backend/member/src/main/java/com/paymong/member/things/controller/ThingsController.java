@@ -31,7 +31,6 @@ public class ThingsController {
     @GetMapping("")
     public ResponseEntity<Object> findThingsList(@RequestHeader(value = "MemberId") String memberIdStr) {
         log.info("findThingsList - Call");
-
         try {
             List<FindThingsListResDto> ret = thingsService.findThingsList(memberIdStr);
             return ResponseEntity.ok().body(ret);
@@ -44,7 +43,6 @@ public class ThingsController {
     @GetMapping("/addable")
     public ResponseEntity<Object> findAddableThings(@RequestHeader(value = "MemberId") String memberIdStr) {
         log.info("findAddableThings - Call");
-
         try {
             List<FindAddableThingsResDto> ret = thingsService.findAddableThings(memberIdStr);
             return ResponseEntity.ok().body(ret);
@@ -59,7 +57,6 @@ public class ThingsController {
     public ResponseEntity<Object> addThings(@RequestHeader(value = "MemberId") String memberIdStr,
                                             @RequestBody AddThingsReqDto addThingsResDto) {
         log.info("addThings - Call");
-
         try {
             Things ret = thingsService.addThings(memberIdStr, addThingsResDto);
             return ResponseEntity.ok().body(ret);
@@ -93,7 +90,6 @@ public class ThingsController {
             String thingsCode = thingsService.findThingsCode(memberId, routine);
             if (thingsCode.equals("ST000")){ //청소기
                 thingsService.doVacuum(memberIdStr, mongIdStr, thingsCode);
-                System.out.println("청소기 센서~");
             }else if (thingsCode.equals("ST001")){ //문열림센서
 
             }else if (thingsCode.equals("ST002")){ //허브무선충전

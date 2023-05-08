@@ -5,8 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paymong.data.repository.ManagementRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
@@ -15,12 +18,14 @@ class TrainingViewModel : ViewModel() {
     var isTrainingEnd by mutableStateOf(false)
     var second by mutableStateOf(0)
     var nanoSecond by mutableStateOf(0)
-    var count : Long = 0
+    var count by mutableStateOf(0)
 
     private lateinit var timer : Job
     private var nowTime : Long = 0
     private var interval : Long = 10
-    private val maxTime : Long = 1000  // 10000
+    private val maxTime : Long = 5000  // 10000
+
+    private var managementRepository: ManagementRepository = ManagementRepository()
 
     init {
         isTrainingEnd = false
@@ -51,7 +56,15 @@ class TrainingViewModel : ViewModel() {
 
     private fun trainingEnd() {
         // 훈련 종료 후 결과 저장
-        println(String.format("훈련 종료 후 저장 완료! : %d 번!", count))
+        viewModelScope.launch {
+            managementRepository.training(count)
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                }
+        }
+
     }
 
     fun screenClick(navigate : () ->Unit) {

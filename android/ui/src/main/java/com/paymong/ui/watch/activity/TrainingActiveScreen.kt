@@ -48,9 +48,6 @@ fun TrainingActive(
     TrainingActiveUI(navController, viewModel)
 }
 
-
-
-
 @Composable
 fun TrainingActiveUI(
     navController: NavHostController,
@@ -160,7 +157,7 @@ fun TrainingBackgroundGif(
 @Composable
 fun SmallWatch (
     navController: NavHostController,
-    viewModel: TrainingViewModel
+    traingviewModel: TrainingViewModel
 ) {
     // Small Watch
 
@@ -214,7 +211,7 @@ fun SmallWatch (
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight().clickable {
-                viewModel.screenClick() {
+                traingviewModel.screenClick() {
                     navController.navigate(WatchNavItem.Activity.route) {
                         popUpTo(navController.graph.findStartDestination().id)
                         launchSingleTop = true
@@ -222,7 +219,6 @@ fun SmallWatch (
                 }
             }
         ) {
-            val TraingviewModel: TrainingViewModel = viewModel()
 
                 Box(
                     modifier = Modifier.fillMaxWidth()
@@ -232,8 +228,8 @@ fun SmallWatch (
                     Text(
                         text = String.format(
                             "%02d:%02d",
-                            viewModel.second,
-                            viewModel.nanoSecond / 10000000
+                            traingviewModel.second,
+                            traingviewModel.nanoSecond / 10000000
                         ),
                         fontFamily = dalmoori,
                         fontSize = 16.sp
@@ -249,7 +245,7 @@ fun SmallWatch (
 
                 ) {
                     Text(
-                        text = String.format("%d", viewModel.count),
+                        text = String.format("%d", traingviewModel.count),
                         fontFamily = dalmoori,
                         fontSize = 20.sp
                     )
@@ -264,8 +260,8 @@ fun SmallWatch (
             val chA = painterResource(chCode.resourceCode)
 
 
-            if (TraingviewModel.isTrainingEnd) {
-                if (TraingviewModel.count >= 1) {
+            if (traingviewModel.isTrainingEnd) {
+                if (traingviewModel.count >= 50) {
 
                     Box(
 
@@ -327,7 +323,7 @@ fun SmallWatch (
 
 
 
-                if (TraingviewModel.isTrainingEnd) {
+                if (traingviewModel.isTrainingEnd) {
                     Box(
                         modifier = Modifier
                             .width(60.dp)
@@ -343,7 +339,7 @@ fun SmallWatch (
                             .fillMaxHeight()
                             .clickable {
                                 ButtonSoundPlay()
-                                TraingviewModel.screenClick() {
+                                traingviewModel.screenClick() {
                                     navController.navigate(WatchNavItem.Activity.route) {
                                         popUpTo(navController.graph.findStartDestination().id)
                                         launchSingleTop = true
@@ -386,7 +382,7 @@ fun SmallWatch (
 @Composable
 fun BigWatch (
     navController: NavHostController,
-    viewModel: TrainingViewModel
+    traingviewModel: TrainingViewModel
 ) {
 
 
@@ -438,7 +434,7 @@ fun BigWatch (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight().clickable {
-            viewModel.screenClick() {
+            traingviewModel.screenClick() {
                 navController.navigate(WatchNavItem.Activity.route) {
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop = true
@@ -446,8 +442,6 @@ fun BigWatch (
             }
         }
     ) {
-        val TraingviewModel: TrainingViewModel = viewModel()
-
         Box(
             modifier = Modifier.fillMaxWidth()
                 .wrapContentHeight(Alignment.CenterVertically)
@@ -456,8 +450,8 @@ fun BigWatch (
             Text(
                 text = String.format(
                     "%02d:%02d",
-                    viewModel.second,
-                    viewModel.nanoSecond / 10000000
+                    traingviewModel.second,
+                    traingviewModel.nanoSecond / 10000000
                 ),
                 fontFamily = dalmoori,
                 fontSize = 20.sp
@@ -475,7 +469,7 @@ fun BigWatch (
 
         ) {
             Text(
-                text = String.format("%d", viewModel.count),
+                text = String.format("%d", traingviewModel.count),
                 fontFamily = dalmoori,
                 fontSize = 25.sp
             )
@@ -490,8 +484,8 @@ fun BigWatch (
         val chA = painterResource(chCode.resourceCode)
 
 
-        if (TraingviewModel.isTrainingEnd) {
-            if (TraingviewModel.count >= 1) {
+        if (traingviewModel.isTrainingEnd) {
+            if (traingviewModel.count >= 50) {
 
                 Box(
 
@@ -553,7 +547,7 @@ fun BigWatch (
 
 
 
-        if (TraingviewModel.isTrainingEnd) {
+        if (traingviewModel.isTrainingEnd) {
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -569,7 +563,7 @@ fun BigWatch (
                         .fillMaxHeight()
                         .clickable {
                             ButtonSoundPlay()
-                            TraingviewModel.screenClick() {
+                            traingviewModel.screenClick() {
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)
                                     launchSingleTop = true

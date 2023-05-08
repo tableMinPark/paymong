@@ -28,4 +28,10 @@ interface ManagementApi {
 
     @GET("/common/food/{foodCategory}")
     suspend fun getFood(@Path("foodCategory") foodCategory:String) : Response<List<FoodResDto>>
+
+    @PUT("/management/training")
+    suspend fun training(@Body trainingCount: Int): Response<Boolean>
+
+    @PUT("/management/training/walking")
+    suspend fun walking(@Body walkingCount: Int): Response<Boolean>
 }

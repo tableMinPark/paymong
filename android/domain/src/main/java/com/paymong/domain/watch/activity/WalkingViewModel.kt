@@ -10,8 +10,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paymong.data.repository.ManagementRepository
+import com.paymong.data.repository.MemberRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
@@ -33,6 +37,8 @@ class WalkingViewModel : ViewModel() {
     private lateinit var stepSensor: Sensor
     private lateinit var stepSensorEventListener: SensorEventListener
 
+    private var managementRepository: ManagementRepository = ManagementRepository()
+
     init {
         // 값 초기화
         isWalkingEnd = false
@@ -40,6 +46,7 @@ class WalkingViewModel : ViewModel() {
         second = 0
         count = 0
         nowTime = 0
+        timerStart()
     }
 
     fun setSensor(context : Context) {
@@ -86,7 +93,14 @@ class WalkingViewModel : ViewModel() {
     private fun walkingEnd() {
         // 산책 종료 후 결과 저장
         isWalkingEnd = true
-        println(String.format("산책 종료 후 저장 완료! : %d 걸음!", count))
+        viewModelScope.launch {
+            managementRepository.walking(count)
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                }
+        }
     }
 
     fun screenClick(navigate : () ->Unit) {
@@ -100,6 +114,7 @@ class WalkingViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        sensorManager.unregisterListener(stepSensorEventListener)
+//        sensorManager.unregisterListener(stepSensorEventListener)
+        // sensorManager 초기값없다고 터짐요
     }
 }

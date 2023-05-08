@@ -38,7 +38,4 @@ public class Member {
     @Column(name = "point")
     private Integer point;
 
-    @Column(name = "map_code")
-    private String mapCode;
-
 }

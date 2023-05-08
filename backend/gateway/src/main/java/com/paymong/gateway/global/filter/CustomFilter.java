@@ -53,6 +53,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             ServerHttpResponse response = exchange.getResponse();
             log.info("Custom PRE FILTER: request id = {}", request.getId());
 
+
             // 토큰 없을 때
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
@@ -92,8 +93,9 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
                 return onError(exchange, "토큰 불일치", HttpStatus.UNAUTHORIZED);
             }
 
-            // Header 에 memberId 추가
+//             Header 에 memberId 추가
             String memberId = refreshToken.get().getMemberKey();
+//            String memberId = "23";
             Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberId), 1).orElse(
                 Mong.builder().build());
 
@@ -108,6 +110,8 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             exchange.getRequest().mutate().header("MemberId", memberId).build();
             exchange.getRequest().mutate().header("MongId", mongId).build();
+            log.info("request path - {}", request.getPath());
+            log.info("request uri - {}", request.getURI());
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

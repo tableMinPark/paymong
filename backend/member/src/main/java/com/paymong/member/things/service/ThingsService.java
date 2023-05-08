@@ -2,25 +2,32 @@ package com.paymong.member.things.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.member.global.client.CommonServiceClient;
-import com.paymong.member.global.exception.NotFoundMapException;
-import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
+import com.paymong.member.global.client.ManagementServiceClient;
+import com.paymong.member.global.exception.NotFoundException;
+import com.paymong.member.global.exception.NotFoundRoutineException;
+import com.paymong.member.member.entity.Member;
+import com.paymong.member.member.repository.MemberRepository;
+import com.paymong.member.paypoint.entity.PointHistory;
+import com.paymong.member.paypoint.repository.PaypointRepository;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
+import com.paymong.member.things.dto.request.FindAddableThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
 import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
 import com.paymong.member.things.dto.response.ThingsCommonCode;
+import com.paymong.member.things.dto.response.ThingsCommonCodeList;
 import com.paymong.member.things.entity.Things;
+import com.paymong.member.things.entity.ThingsHistory;
+import com.paymong.member.things.repository.ThingsHistoryRepository;
 import com.paymong.member.things.repository.ThingsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,7 +35,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ThingsService {
     private final ThingsRepository thingsRepository;
+    private final ThingsHistoryRepository thingsHistoryRepository;
     private final CommonServiceClient commonServiceClient;
+    private final ManagementServiceClient managementServiceClient;
+    private final MemberRepository memberRepository;
+    private final PaypointRepository paypointRepository;
 
     @Transactional
     public List<FindThingsListResDto> findThingsList(String memberIdStr) throws Exception{
@@ -48,19 +59,32 @@ public class ThingsService {
     public List<FindAddableThingsResDto> findAddableThings(String memberIdStr) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         String groupCode = "ST";
-        Map<String, String> req = new HashMap<>();
-        req.put("commonCode",groupCode);
-        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
-        if(response.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapException();
-        ObjectMapper om = new ObjectMapper();
-        //List<ThingsCommonCode>  = om.convertValue(response.getBody(), ThingsCommonCode.class);
+        FindAddableThingsReqDto req = new FindAddableThingsReqDto(groupCode);
 
-        return null;
+        ObjectMapper om = new ObjectMapper();
+        //things code 리스트받아오기
+        ResponseEntity<Object> response =  commonServiceClient.findAllCommonCode(req);
+        ThingsCommonCodeList thingsCommonCodeList =  om.convertValue(response.getBody(), ThingsCommonCodeList.class);
+
+        //나의 things code 리스트 가져오기
+        Map<String,Integer> check = new HashMap<>();
+        List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
+        for(Things things : myThings) check.put(things.getThingsCode(),1);
+
+        List<FindAddableThingsResDto> ret = new ArrayList<>();
+        //나한테 없는 코드 찾기
+        for( ThingsCommonCode thingsCode : thingsCommonCodeList.getCommonCodeDtoList()){
+            if(!check.containsKey(thingsCode.getCode()))
+                ret.add(new FindAddableThingsResDto(thingsCode.getCode(), thingsCode.getName()));
+        }
+        return ret;
     }
 
 
     public Things addThings(String memberIdStr, AddThingsReqDto addThingsReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
+        //중복체크
+
         Things added = Things.builder()
                 .memberId(memberId)
                 .thingsCode(addThingsReqDto.getThingsCode())
@@ -78,6 +102,49 @@ public class ThingsService {
         thingsRepository.deleteByMemberIdAndThingsId(memberId, thingsId);
     }
 
+    public String findThingsCode(Long memberId, String routine) throws RuntimeException{
+        Things things = thingsRepository.findByMemberIdAndRoutine(memberId, routine)
+                .orElseThrow(() -> new NotFoundRoutineException());
+        return things.getThingsCode();
+    }
 
+    @Transactional
+    public void doVacuum(String memberIdStr, String mongIdStr,String thingsCode){
+        Long memberId = Long.parseLong(memberIdStr);
+        if(mongIdStr.equals("") || mongIdStr == null) return;
+
+        Integer toDay = LocalDateTime.now().getDayOfMonth();
+        ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
+
+        ThingsHistory thingsHistory = ThingsHistory.builder()
+                .memberId(memberId)
+                .thingsCode(thingsCode)
+                .build();
+        thingsHistoryRepository.save(thingsHistory);
+
+        //똥치우기
+        ResponseEntity<Object> response = managementServiceClient.clearPoop(mongIdStr);
+        //System.out.println(response.getBody());
+
+        //하루한번만
+        if (!(prevThingsHistory == null || prevThingsHistory.getRegDt().getDayOfMonth()!=toDay))
+            return;
+
+        //보너스 포인트 적립
+        String action = "스마트싱스 청소 보너스";
+        Integer point = 500;
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .action(action)
+                .memberId(memberId)
+                .build();
+        PointHistory ret =  paypointRepository.save(pointHistory);
+
+        //가격 반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
+    }
 
 }

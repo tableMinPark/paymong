@@ -28,7 +28,10 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
-fun Feed(navController: NavHostController, feedViewModel: FeedViewModel) {
+fun Feed(
+    navController: NavHostController,
+    feedViewModel: FeedViewModel
+) {
     FeedUI(navController, feedViewModel)
 }
 
@@ -39,7 +42,6 @@ fun FeedUI(
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val screenHeightDp = configuration.screenHeightDp
 
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
@@ -84,8 +86,6 @@ fun SmallWatch(
                 onClick = {
                     ButtonSoundPlay()
                     feedViewModel.foodCategory = "FD"
-                    feedViewModel.getFoodList("FD")
-//                    navController.navigate(WatchNavItem.FeedBuyList.route + "/RICE")
                           },
                 modifier = Modifier.size(width = 200.dp, height = 95.dp),
                 shape = RectangleShape,
@@ -119,7 +119,6 @@ fun SmallWatch(
                 onClick = {
                     ButtonSoundPlay()
                     feedViewModel.foodCategory = "SN"
-                    feedViewModel.getFoodList("SN")
                           },
                 modifier = Modifier.size(width = 200.dp, height = 95.dp),
                 shape = RectangleShape,
@@ -163,9 +162,10 @@ fun BigWatch(
                 onClick = {
                     ButtonSoundPlay()
                     feedViewModel.foodCategory = "FD"
-                    feedViewModel.getFoodList("FD")
-                          },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                },
+                modifier = Modifier
+                    .size(width = 200.dp, height = 100.dp)
+                    .weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
@@ -191,9 +191,10 @@ fun BigWatch(
                 onClick = {
                     ButtonSoundPlay()
                     feedViewModel.foodCategory = "SN"
-                    feedViewModel.getFoodList("SN")
                           },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp).weight(1f),
+                modifier = Modifier
+                    .size(width = 200.dp, height = 100.dp)
+                    .weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {

@@ -44,29 +44,15 @@ fun FeedBuyList(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    feedViewModel: FeedViewModel
+    feedViewModel: FeedViewModel = viewModel()
 ) {
-
-    FeedBuyListUI(animationState, pagerState, coroutineScope, navController, feedViewModel)
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun FeedBuyListUI(
-    animationState: MutableState<AnimationCode>,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
-    navController: NavHostController,
-    feedViewModel: FeedViewModel
-) {
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val screenHeightDp = configuration.screenHeightDp
 
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
+
     if (screenWidthDp < 200) {
 //        feedViewModel.current()
         SmallWatch(animationState, pagerState, coroutineScope, navController, feedViewModel)
@@ -207,7 +193,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                         .height(20.dp)
                         .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,) {
-                        Text(text = feedViewModel.name, textAlign = TextAlign.Center, fontFamily = dalmoori,
+                        Text(text = feedViewModel.foodList[0].name, textAlign = TextAlign.Center, fontFamily = dalmoori,
                             fontSize = 16.sp)
                     }
 
@@ -356,31 +342,20 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
             .wrapContentWidth(Alignment.CenterHorizontally)
 
     ) {
-
-
-
         // * User Point *
         Box(modifier = Modifier
             .padding(bottom = 15.dp)
             .height(30.dp)
-
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
-
-
-        )
-        {
-
+        ){
             Image(
                 painter = painterResource(id = R.drawable.pointbackground),
                 contentDescription = "pointbackground",
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
-
             )
-
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -404,46 +379,18 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                     fontSize = 15.sp,
                     color = Color(0xFF0C4DA2),
                     modifier = Modifier.padding(start = 4.dp),
-
-
                     )
-
             }
         }
-
-        // * name *
-
-
-        // * foodCode *
-
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(text = feedViewModel.foodCode, textAlign = TextAlign.Center)
-//        }
-
-
-
-        // * foodImg & Light button & Left button *
-
-
 
         Box(modifier = Modifier
             .height(90.dp)
             .fillMaxWidth()
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.CenterHorizontally)
-
-
-        )
-
-
-        {
-
+        ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
-
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
@@ -452,18 +399,19 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.leftbnt ),
+                        painter = painterResource(id = R.drawable.leftbnt),
                         contentDescription = "leftbnt",
                         modifier = Modifier.size(30.dp)
                     )
                 }
-
             }
 
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val listCnt = feedViewModel.foodList.size
+                Log.d("cnt", listCnt.toString())
                 val drawableId = when (feedViewModel.foodCode) {
                     "FD000" -> R.drawable.fd000 // 별사탕
                     "FD001" -> R.drawable.fd001 // 사과

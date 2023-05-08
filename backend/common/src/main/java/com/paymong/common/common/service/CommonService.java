@@ -14,10 +14,11 @@ import com.paymong.common.common.entity.GroupCode;
 import com.paymong.common.common.repository.CommonCodeRepository;
 import com.paymong.common.common.repository.GroupCodeRepository;
 import com.paymong.common.global.client.InformationServiceClient;
+import com.paymong.common.global.code.GroupStateCode;
 import com.paymong.common.global.exception.InformationException;
 import com.paymong.common.global.exception.NotFoundException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.paymong.common.status.entitiy.Status;
+import com.paymong.common.status.repository.StatusRepository;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -36,6 +37,8 @@ public class CommonService {
     private final GroupCodeRepository groupCodeRepository;
 
     private final InformationServiceClient informationServiceClient;
+
+    private final StatusRepository statusRepository;
 
     @Transactional
     public List<CommonCodeDto> findAllCommonCode(
@@ -76,15 +79,26 @@ public class CommonService {
 
         List<Food> findAllFoodResDto =
             commonCodeList.stream().map(e -> {
-                FindLastBuyResDto findLastBuyResDto = new FindLastBuyResDto();
+                FindLastBuyResDto findLastBuyResDto;
                 try {
                     ObjectMapper om = new ObjectMapper();
                     om.registerModule(new JavaTimeModule());
                     om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
                     findLastBuyResDto = om.convertValue(
-                        informationServiceClient.findLastBuy(mongId, new FindLastBuyReqDto(e.getCode()))
+                        informationServiceClient.findLastBuy(mongId,
+                                new FindLastBuyReqDto(e.getCode()))
                             .getBody(), FindLastBuyResDto.class);
-                    return Food.of(e,findLastBuyResDto.getLastBuy());
+                    int price;
+                    if (foodCategory.equals(GroupStateCode.FOOD.getCode())) {
+                        String codeStr = "AT0" + e.getCode().charAt(3) + "0";
+                        Status status = statusRepository.findByCode(codeStr).orElseThrow();
+                        price = status.getPoint() * -1;
+                    } else {
+                        String codeStr = "AT0" + e.getCode().charAt(3) + "1";
+                        Status status = statusRepository.findByCode(codeStr).orElseThrow();
+                        price = status.getPoint() * -1;
+                    }
+                    return Food.of(e, price, findLastBuyResDto.getLastBuy());
                 } catch (Exception ex) {
                     log.error(ex.getMessage());
                     throw new InformationException();

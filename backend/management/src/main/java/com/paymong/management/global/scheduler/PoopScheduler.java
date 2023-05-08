@@ -1,7 +1,7 @@
-package com.paymong.management.poop.scheduler;
+package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.scheduler.ManagementScheduler;
+import com.paymong.management.global.scheduler.task.PoopTask;
 import com.paymong.management.poop.service.PoopService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,13 +24,14 @@ public class PoopScheduler implements ManagementScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoopScheduler.class);
     private static final Map<Long, ThreadPoolTaskScheduler> schedulerMap = new HashMap<>();
-    private final PoopService poopService;
+    private final PoopTask poopTask;
 
     @Override
     public void stopScheduler(Long mongId){
         if(schedulerMap.containsKey(mongId)){
             LOGGER.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
             schedulerMap.get(mongId).shutdown();
+            schedulerMap.remove(mongId);
         }else{
             LOGGER.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
@@ -51,7 +52,7 @@ public class PoopScheduler implements ManagementScheduler {
     public Runnable getRunnable(Long mongId) {
         return () -> {
             try {
-                poopService.addPoop(mongId);
+                poopTask.addPoop(mongId);
                 stopAndRunScheduler(mongId);
             } catch (NotFoundMongException e) {
                 stopScheduler(mongId);

@@ -14,6 +14,6 @@ public class LoginResDto {
 
     private String mapCode;
 
-    private String point;
+    private Integer point;
 
 }

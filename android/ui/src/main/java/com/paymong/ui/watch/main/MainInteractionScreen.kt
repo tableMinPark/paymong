@@ -89,9 +89,9 @@ fun MainInteractionUI(
     if(mainviewModel.isClicked){
         mainviewModel.isClicked = false
         navController.navigate(WatchNavItem.Main.route) {
+            coroutineScope.launch { pagerState.scrollToPage(1) }
             popUpTo(navController.graph.findStartDestination().id)
             launchSingleTop = true
-            coroutineScope.launch { pagerState.animateScrollToPage(1) }
         }
     }
 
@@ -198,6 +198,7 @@ fun MainInteractionUI(
             Box(
                 modifier = Modifier.clickable {
                     ButtonSoundPlay()
+                    mainviewModel.isClicked = true
                     animationState.value = AnimationCode.Sleep
                     mainviewModel.sleep()
                 }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
@@ -226,6 +227,7 @@ fun MainInteractionUI(
                     ButtonSoundPlay()
                     animationState.value = AnimationCode.Poop
                     mainviewModel.poop()
+                    mainviewModel.isClicked = true
                 }.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             ){

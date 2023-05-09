@@ -29,9 +29,9 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.common.R
-import com.paymong.ui.theme.PayMongBlue
+import com.paymong.common.code.FoodCode
+import com.paymong.domain.entity.Food
 import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.theme.Purple700
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +46,7 @@ fun FeedBuyList(
     navController: NavHostController,
     feedViewModel: FeedViewModel = viewModel()
 ) {
+    feedViewModel.getFoodList(feedViewModel.foodCategory)
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
@@ -171,20 +172,20 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
             ) {
                 val drawableId = when (feedViewModel.foodCode) {
                     "FD000" -> R.drawable.fd000 // 별사탕
-                    "FD001" -> R.drawable.fd001 // 사과
-                    "FD002" -> R.drawable.fd002 // 삼각김밥
-                    "FD003" -> R.drawable.fd003 // 샌드위치
-                    "FD004" -> R.drawable.fd004 // 피자
-                    "FD005" -> R.drawable.fd005 // 닭다리
-                    "FD006" -> R.drawable.fd006 // 스테이크
-                    "FD007" -> R.drawable.fd007 // 우주음식
+                    "FD001" -> R.drawable.fd010 // 사과
+                    "FD002" -> R.drawable.fd011 // 삼각김밥
+                    "FD003" -> R.drawable.fd012 // 샌드위치
+                    "FD004" -> R.drawable.fd020 // 피자
+                    "FD005" -> R.drawable.fd021 // 닭다리
+                    "FD006" -> R.drawable.fd022 // 스테이크
+                    "FD007" -> R.drawable.fd030 // 우주음식
 
                     "SN000" -> R.drawable.sn000 // 초콜릿
                     "SN001" -> R.drawable.sn001 // 사탕
                     "SN002" -> R.drawable.sn002 // 음료수
-                    "SN003" -> R.drawable.sn003 // 쿠키
-                    "SN004" -> R.drawable.sn004 // 케이크
-                    "SN005" -> R.drawable.sn005 // 감튀
+                    "SN003" -> R.drawable.sn010 // 쿠키
+                    "SN004" -> R.drawable.sn011 // 케이크
+                    "SN005" -> R.drawable.sn012 // 감튀
 
                     else -> R.drawable.pointlogo
                 }
@@ -203,7 +204,7 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                         .padding(top = 10.dp),
                         horizontalArrangement = Arrangement.Center,) {
                         Image(
-                            painter = painterResource(id = drawableId),
+                            painter = painterResource(FoodCode.valueOf(feedViewModel.foodCode).code),
                             contentDescription = "foodImg",
                             modifier = Modifier.size(80.dp)
 
@@ -267,7 +268,6 @@ fun SmallWatch(  animationState: MutableState<AnimationCode>,
                 ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
-
                 Box(modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(1f)
@@ -410,27 +410,6 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val listCnt = feedViewModel.foodList.size
-                Log.d("cnt", listCnt.toString())
-                val drawableId = when (feedViewModel.foodCode) {
-                    "FD000" -> R.drawable.fd000 // 별사탕
-                    "FD001" -> R.drawable.fd001 // 사과
-                    "FD002" -> R.drawable.fd002 // 삼각김밥
-                    "FD003" -> R.drawable.fd003 // 샌드위치
-                    "FD004" -> R.drawable.fd004 // 피자
-                    "FD005" -> R.drawable.fd005 // 닭다리
-                    "FD006" -> R.drawable.fd006 // 스테이크
-                    "FD007" -> R.drawable.fd007 // 우주음식
-
-                    "SN000" -> R.drawable.sn000 // 초콜릿
-                    "SN001" -> R.drawable.sn001 // 사탕
-                    "SN002" -> R.drawable.sn002 // 음료수
-                    "SN003" -> R.drawable.sn003 // 쿠키
-                    "SN004" -> R.drawable.sn004 // 케이크
-                    "SN005" -> R.drawable.sn005 // 감튀
-
-                    else -> R.drawable.pointlogo
-                }
                 Column(modifier = Modifier.fillMaxHeight(1f)) {
                     Row( modifier = Modifier
                         .height(21.dp)
@@ -440,13 +419,18 @@ fun BigWatch(  animationState: MutableState<AnimationCode>,
                             fontSize = 21.sp)
                     }
 
+                    var foodImg = R.drawable.none
+                    if(feedViewModel.foodCode!=""){
+                        foodImg = FoodCode.valueOf(feedViewModel.foodCode).code
+                    }
+
                     Row(modifier = Modifier
                         .height(85.dp)
                         .fillMaxWidth()
                         .padding(top = 10.dp),
                         horizontalArrangement = Arrangement.Center,) {
                         Image(
-                            painter = painterResource(id = drawableId),
+                            painter = painterResource(foodImg),
                             contentDescription = "foodImg",
                             modifier = Modifier.size(85.dp)
 

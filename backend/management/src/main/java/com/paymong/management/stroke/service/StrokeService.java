@@ -1,5 +1,6 @@
 package com.paymong.management.stroke.service;
 
+import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.StrokeScheduler;
 import com.paymong.management.history.entity.ActiveHistory;
@@ -31,7 +32,7 @@ public class StrokeService {
         mong.setStrokeCount(mong.getStrokeCount() + 1);
 
         ActiveHistory activeHistory = ActiveHistory.builder()
-                .activeCode("AT006")
+                .activeCode(MongActiveCode.STROKE.getCode())
                 .activeTime(LocalDateTime.now())
                 .mongId(strokeMongReqVo.getMongId())
                 .build();

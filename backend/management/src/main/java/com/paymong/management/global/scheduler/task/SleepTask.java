@@ -1,7 +1,10 @@
 package com.paymong.management.global.scheduler.task;
 
+import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.history.entity.ActiveHistory;
+import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.service.StatusService;
@@ -10,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -17,6 +22,7 @@ public class SleepTask {
 
     private final MongRepository mongRepository;
     private final StatusService statusService;
+    private final ActiveHistoryRepository activeHistoryRepository;
 
     @Transactional
     public void sleepMong(Long mongId) throws NotFoundMongException {
@@ -24,6 +30,15 @@ public class SleepTask {
                 .orElseThrow(() -> new NotFoundMongException());
 
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
+
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(MongActiveCode.SLEEP.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(mongId)
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
+
         mong.setStateCode(MongConditionCode.SLEEP.getCode());
     }
 
@@ -59,6 +74,14 @@ public class SleepTask {
             gauge = Integer.parseInt(String.valueOf(Math.round(scale * expire)));
             mong.setHealth(mong.getHealth() + gauge);
             mong.setSleep(mong.getSleep() + gauge);
+
+            ActiveHistory activeHistory = ActiveHistory.builder()
+                    .activeCode(MongActiveCode.AWAKE.getCode())
+                    .activeTime(LocalDateTime.now())
+                    .mongId(mongId)
+                    .build();
+
+            activeHistoryRepository.save(activeHistory);
         }
 
 

@@ -1,6 +1,7 @@
 package com.paymong.management.training.service;
 
 import com.paymong.management.global.client.ClientService;
+import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.dto.AddPointDto;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
@@ -28,7 +29,7 @@ public class TrainingService {
     public void training(TrainingReqVo trainingReqVo) throws Exception{
 
         // training action 찾기
-        FindStatusReqDto findStatusReqDto = new FindStatusReqDto("AT005");
+        FindStatusReqDto findStatusReqDto = new FindStatusReqDto(MongActiveCode.TRAINING.getCode());
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
@@ -61,7 +62,7 @@ public class TrainingService {
         }
 
         // training action 찾기
-        FindStatusReqDto findStatusReqDto = new FindStatusReqDto("AT004");
+        FindStatusReqDto findStatusReqDto = new FindStatusReqDto(MongActiveCode.WALKING.getCode());
 
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 

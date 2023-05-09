@@ -8,6 +8,8 @@ import com.paymong.management.global.dto.CommonCodeDto;
 import com.paymong.management.global.dto.FindCommonCodeDto;
 import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.history.entity.ActiveHistory;
+import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class FeedService {
     private final MongRepository mongRepository;
     private final ClientService clientService;
     private final StatusService statusService;
+    private final ActiveHistoryRepository activeHistoryRepository;
 
     @Transactional
     public void feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
@@ -52,6 +56,14 @@ public class FeedService {
         CommonCodeDto food = clientService.findCommonCode(new FindCommonCodeDto(feedFoodReqVo.getFoodCode()));
 
         LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
+
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(food.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(feedFoodReqVo.getMongId())
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
 
         clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
 
@@ -86,6 +98,14 @@ public class FeedService {
         CommonCodeDto food = clientService.findCommonCode(new FindCommonCodeDto(feedSnackReqVo.getSnackCode()));
 
         LOGGER.info("활동 코드 : {} , 간식 코드 : {}, 간식 이름 : {}, 간식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
+
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(food.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(feedSnackReqVo.getMongId())
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
 
         clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
 

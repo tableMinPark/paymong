@@ -63,7 +63,9 @@ public class DeathScheduler implements ManagementScheduler{
         SchedulerDto schedulerDto = new SchedulerDto();
         schedulerDto.setStartTime(LocalDateTime.now());
         schedulerDto.setExpire(60L * 60L * 3L);
-        schedulerDto.initScheduler("health-Death-", getRunnable(mongId));
+        schedulerDto.setMessage("health-Death-");
+        schedulerDto.setRunnable(getRunnable(mongId));
+        schedulerDto.initScheduler();
 
         log.info("건강악화로 {}의 죽음 스케쥴러를 시작합니다. 남은 기간 : {}", this.getClass().getSimpleName(), schedulerDto.getExpire());
 
@@ -74,7 +76,7 @@ public class DeathScheduler implements ManagementScheduler{
         if(schedulerMap.containsKey(mongId)){
             SchedulerDto schedulerDto = schedulerMap.get(mongId);
             schedulerDto.setStartTime(LocalDateTime.now());
-            schedulerDto.initScheduler("health-Death-", getRunnable(mongId));
+            schedulerDto.initScheduler();
             log.info("건강악화로 {}의 죽음 스케쥴러를 재시작합니다. 남은 기간 : {}", this.getClass().getSimpleName(), schedulerDto.getExpire());
 
         }else{

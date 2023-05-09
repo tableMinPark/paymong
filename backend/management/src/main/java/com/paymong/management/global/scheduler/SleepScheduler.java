@@ -29,6 +29,7 @@ public class SleepScheduler implements ManagementScheduler{
     private final HealthScheduler healthScheduler;
     private final PoopScheduler poopScheduler;
     private final SatietyScheduler satietyScheduler;
+    private final EvolutionScheduler evolutionScheduler;
 
     @Override
     public void stopScheduler(Long mongId) {
@@ -68,6 +69,7 @@ public class SleepScheduler implements ManagementScheduler{
             satietyScheduler.startScheduler(mongId);
             poopScheduler.startScheduler(mongId);
             deathScheduler.restartScheduler(mongId);
+            evolutionScheduler.restartScheduler(mongId);
             minusScheduler(mongId);
         }catch (NotFoundMongException e){
             log.info("{}의 몽이 없습니다.", mongId);
@@ -89,6 +91,7 @@ public class SleepScheduler implements ManagementScheduler{
             satietyScheduler.stopScheduler(mongId);
             poopScheduler.stopScheduler(mongId);
             deathScheduler.pauseScheduler(mongId);
+            evolutionScheduler.pauseScheduler(mongId);
             stopMinusScheduler(mongId);
         }catch (NotFoundMongException e){
             log.info("{}의 몽이 없습니다.", mongId);
@@ -175,6 +178,7 @@ public class SleepScheduler implements ManagementScheduler{
                 satietyScheduler.stopScheduler(mongId);
                 poopScheduler.stopScheduler(mongId);
                 deathScheduler.pauseScheduler(mongId);
+                evolutionScheduler.pauseScheduler(mongId);
                 stopMinusScheduler(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
@@ -193,6 +197,7 @@ public class SleepScheduler implements ManagementScheduler{
                 satietyScheduler.startScheduler(mongId);
                 poopScheduler.startScheduler(mongId);
                 deathScheduler.restartScheduler(mongId);
+                evolutionScheduler.restartScheduler(mongId);
                 minusScheduler(mongId);
             }catch (NotFoundMongException e){
                 log.info("{}의 몽이 없습니다.", mongId);

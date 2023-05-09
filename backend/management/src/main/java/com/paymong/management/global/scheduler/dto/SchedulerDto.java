@@ -18,8 +18,10 @@ public class SchedulerDto {
     // 초단위
     private Long expire;
     private ThreadPoolTaskScheduler scheduler;
+    private Runnable runnable;
+    private String message;
 
-    public void initScheduler(String message, Runnable runnable){
+    public void initScheduler(){
         this.scheduler = new ThreadPoolTaskScheduler();
         this.scheduler.initialize();
         this.scheduler.setThreadNamePrefix(message);

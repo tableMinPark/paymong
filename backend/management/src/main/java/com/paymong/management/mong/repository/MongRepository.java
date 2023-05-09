@@ -11,4 +11,6 @@ public interface MongRepository extends JpaRepository<Mong, Long> {
     Optional<Mong> findByMongId(Long mongId);
 
     Optional<Mong> findByMemberIdAndActive(Long memberId, Boolean active);
+
+    Optional<Mong> findByMongIdAndActive(Long mongId, Boolean active);
 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -75,6 +76,15 @@ fun SmallWatch(
         feedViewModel.payPoint.toString().substring(0, 5) + "+"
     } else {
         feedViewModel.payPoint.toString()
+    }
+
+    if(feedViewModel.isClick){
+        feedViewModel.isClick = false
+        navController.navigate(WatchNavItem.Main.route) {
+            coroutineScope.launch { pagerState.scrollToPage(1) }
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
     }
 
     val soundPool = SoundPool.Builder()
@@ -231,12 +241,10 @@ fun SmallWatch(
         ) {
             Button(
                 onClick = {
-                    feedViewModel.selectButtonClick()
-                    animationState.value = AnimationCode.Feed
-                    coroutineScope.launch { pagerState.scrollToPage(1) }
-                    navController.navigate(WatchNavItem.Main.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
+                    if(feedViewModel.isCanBuy){
+                        feedViewModel.isClick = true
+                        animationState.value = AnimationCode.Feed
+                        feedViewModel.selectButtonClick()
                     }
                 },
                 modifier = Modifier
@@ -251,11 +259,20 @@ fun SmallWatch(
                         .wrapContentHeight(Alignment.CenterVertically)
                         .wrapContentWidth(Alignment.CenterHorizontally)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if(!feedViewModel.isCanBuy){
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier.fillMaxWidth(),
+                            colorFilter = ColorFilter.tint(Color.Black)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -298,6 +315,15 @@ fun BigWatch(
         feedViewModel.payPoint.toString().substring(0, 5) + "+"
     } else {
         feedViewModel.payPoint.toString()
+    }
+
+    if(feedViewModel.isClick){
+        feedViewModel.isClick = false
+        navController.navigate(WatchNavItem.Main.route) {
+            coroutineScope.launch { pagerState.scrollToPage(1) }
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
     }
 
     Column(
@@ -411,7 +437,6 @@ fun BigWatch(
                             painter = painterResource(foodImg),
                             contentDescription = "foodImg",
                             modifier = Modifier.size(85.dp)
-
                         )
                     }
                 }
@@ -446,12 +471,10 @@ fun BigWatch(
         ) {
             Button(
                 onClick = {
-                    feedViewModel.selectButtonClick()
-                    animationState.value = AnimationCode.Feed
-                    coroutineScope.launch { pagerState.scrollToPage(1) }
-                    navController.navigate(WatchNavItem.Main.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
+                    if(feedViewModel.isCanBuy){
+                        feedViewModel.isClick = true
+                        animationState.value = AnimationCode.Feed
+                        feedViewModel.selectButtonClick()
                     }
                 },
                 modifier = Modifier
@@ -466,11 +489,20 @@ fun BigWatch(
                         .wrapContentHeight(Alignment.CenterVertically)
                         .wrapContentWidth(Alignment.CenterHorizontally)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_bnt),
-                        contentDescription = "blue_bnt",
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if(!feedViewModel.isCanBuy){
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier.fillMaxWidth(),
+                            colorFilter = ColorFilter.tint(Color.Black)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,

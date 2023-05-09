@@ -25,7 +25,7 @@ class FeedViewModel : ViewModel() {
     var name by mutableStateOf("")
     var foodCode by mutableStateOf("")
     var price by mutableStateOf(0)
-    var isCanBuy by mutableStateOf(false)
+    var isCanBuy by mutableStateOf(true)
 
     var foodList = mutableListOf<Food>()
     var currentFoodPosition by mutableStateOf(0)
@@ -33,13 +33,11 @@ class FeedViewModel : ViewModel() {
     private val memberRepository: MemberRepository = MemberRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
     var foodCategory by mutableStateOf("")
-    var index by mutableStateOf(0)
+    var isClick by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             getPoint()
-//            changeCurrentFoodPosition()
-//            if()
         }
     }
 
@@ -72,10 +70,6 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun current(){
-        changeCurrentFoodPosition()
-    }
-
     fun prevButtonClick() {
         currentFoodPosition--
         if (currentFoodPosition < 0)
@@ -91,8 +85,27 @@ class FeedViewModel : ViewModel() {
     }
 
     fun selectButtonClick() {
-        println(foodList[currentFoodPosition])
-        println("선택완료!")
+        if(foodCategory == "FD"){
+            viewModelScope.launch(Dispatchers.IO) {
+                managementRepository.eatFood(foodList[currentFoodPosition].foodCode)
+                    .catch {
+                        it.printStackTrace()
+                    }
+                    .collect{
+                        Log.d("buy food", foodList[currentFoodPosition].toString())
+                    }
+            }
+        } else{ // snack
+            viewModelScope.launch(Dispatchers.IO) {
+                managementRepository.eatSnack(foodList[currentFoodPosition].foodCode)
+                    .catch {
+                        it.printStackTrace()
+                    }
+                    .collect{
+                        Log.d("buy snack", foodList[currentFoodPosition].toString())
+                    }
+            }
+        }
     }
 
     private fun changeCurrentFoodPosition() {

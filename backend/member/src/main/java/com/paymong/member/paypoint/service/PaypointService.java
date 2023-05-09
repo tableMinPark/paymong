@@ -84,6 +84,10 @@ public class PaypointService {
             if(collectResponse.getStatusCode()== HttpStatus.BAD_REQUEST) throw new NotFoundMapCodeException();
 
             addPayResDto.setMapCode(mapCode);
+            
+            //mymap에 반영
+            
+            
         }
 
         return addPayResDto;

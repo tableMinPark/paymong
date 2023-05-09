@@ -1,33 +1,29 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.client.ClientService;
-import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.code.MongConditionCode;
-import com.paymong.management.global.dto.CommonCodeDto;
-import com.paymong.management.global.dto.FindCommonCodeDto;
-import com.paymong.management.global.dto.FindMongLevelCodeDto;
+import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.AlreadyExistMongException;
+import com.paymong.management.global.exception.GatewayException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.scheduler.EvolutionScheduler;
+import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
-import com.paymong.management.mong.dto.FindRandomEggDto;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
 import com.paymong.management.mong.vo.FindMongReqVo;
 import com.paymong.management.mong.vo.FindMongResVo;
+import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +32,8 @@ public class MongService {
     private final MongRepository mongRepository;
     private final ClientService clientService;
     private final SchedulerService schedulerService;
+    private final StatusService statusService;
+    private final EvolutionScheduler evolutionScheduler;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -95,5 +93,141 @@ public class MongService {
         schedulerService.startScheduler(mong);
     }
 
+    @Transactional
+    public void evolutionMong(Long mongId) throws NotFoundMongException, GatewayException {
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
+                .orElseThrow(()-> new NotFoundMongException());
 
+        boolean ok = false;
+        Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+        if(level == 0){
+            FindMongLevelCodeDto findMongLevelCodeDto = new FindMongLevelCodeDto();
+            findMongLevelCodeDto.setLevel(1);
+            findMongLevelCodeDto.setTier(0);
+
+            CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
+
+            mong.setCode(commonCodeDto.getCode());
+            mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            // collect service에 새로운 몽 추가
+            clientService.addMong(String.valueOf(mong.getMemberId()),
+                    new FindCommonCodeDto(commonCodeDto.getCode()));
+
+            findMongLevelCodeDto.setType(Integer.parseInt(commonCodeDto.getCode().substring(4,5)));
+
+            NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
+            evolutionScheduler.nextLevelScheduler(levelDto);
+        }else if(level == 1){
+            // 다음 티어 결정 - level 1 -> 2
+            FindMongLevelCodeDto findMongLevelCodeDto = checkTierByMong(mong);
+
+            CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
+
+            mong.setCode(commonCodeDto.getCode());
+            mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            // collect service에 새로운 몽 추가
+            clientService.addMong(String.valueOf(mong.getMemberId()),
+                    new FindCommonCodeDto(commonCodeDto.getCode()));
+
+            NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
+            evolutionScheduler.nextLevelScheduler(levelDto);
+        }else if(level == 2){
+            FindTotalPayDto findTotalPayDto = new FindTotalPayDto();
+            findTotalPayDto.setStartTime(mong.getRegDt());
+            findTotalPayDto.setEndTime(LocalDateTime.now());
+            TotalPointDto totalPointDto = clientService.findTotalPay(String.valueOf(mong.getMemberId()), findTotalPayDto);
+            // 다음 티어 결정 - level 2 -> 3
+            FindMongLevelCodeDto findMongLevelCodeDto = checkTierByPoint(mong, totalPointDto.getTotalPoint());
+
+            CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
+
+            mong.setCode(commonCodeDto.getCode());
+            mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            // collect service에 새로운 몽 추가
+            clientService.addMong(String.valueOf(mong.getMemberId()),
+                    new FindCommonCodeDto(commonCodeDto.getCode()));
+
+            NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
+            evolutionScheduler.nextLevelScheduler(levelDto);
+        }else{
+            // 해당 몽 졸업
+            ok = true;
+        }
+        if(ok){
+            mong.setStateCode(MongConditionCode.GRADUATE.getCode());
+            mong.setActive(false);
+        }else{
+            MongConditionCode condition = statusService.checkCondition(mong);
+            mong.setStateCode(condition.getCode());
+        }
+    }
+
+    private FindMongLevelCodeDto checkTierByMong(Mong mong){
+        FindMongLevelCodeDto findMongLevelCodeDto = new FindMongLevelCodeDto();
+        findMongLevelCodeDto.setLevel(2);
+        findMongLevelCodeDto.setType(Integer.parseInt(mong.getCode().substring(4,5)));
+        // 첫번째 분기 : 패널티
+        if(mong.getPenalty() < 2){
+            // 두번째 분기 : 트레이닝 횟수
+            if(mong.getTrainingCount() >= 16){
+                findMongLevelCodeDto.setTier(3);
+            }else{
+                findMongLevelCodeDto.setTier(2);
+            }
+        }else{
+            // 두번째 분기 2 : 쓰다듬은 횟수
+            if(mong.getStrokeCount() < 4){
+                findMongLevelCodeDto.setTier(0);
+                findMongLevelCodeDto.setType(3);
+            }else{
+                if(mong.getTrainingCount() >= 16){
+                    findMongLevelCodeDto.setTier(1);
+                }else{
+                    findMongLevelCodeDto.setTier(0);
+                }
+            }
+        }
+
+        return findMongLevelCodeDto;
+    }
+
+    private FindMongLevelCodeDto checkTierByPoint(Mong mong, Integer point){
+        FindMongLevelCodeDto findMongLevelCodeDto = new FindMongLevelCodeDto();
+        findMongLevelCodeDto.setLevel(3);
+        findMongLevelCodeDto.setType(Integer.parseInt(mong.getCode().substring(4,5)));
+        int tier = Integer.parseInt(mong.getCode().substring(3,4));
+
+        if(tier == 3){
+            if(point >= 50000){
+                findMongLevelCodeDto.setTier(3);
+            }else{
+                findMongLevelCodeDto.setTier(2);
+            }
+        }else if(tier == 2){
+            if(point >= 40000){
+                findMongLevelCodeDto.setTier(2);
+            }else{
+                findMongLevelCodeDto.setTier(1);
+            }
+        }else if(tier == 1){
+            if(point >= 30000){
+                findMongLevelCodeDto.setTier(1);
+            }else{
+                findMongLevelCodeDto.setTier(0);
+            }
+        }else if(tier == 0){
+            if(point >= 20000){
+                findMongLevelCodeDto.setTier(0);
+            }else{
+                findMongLevelCodeDto.setTier(0);
+                findMongLevelCodeDto.setType(3);
+            }
+        }
+
+        return findMongLevelCodeDto;
+
+    }
 }

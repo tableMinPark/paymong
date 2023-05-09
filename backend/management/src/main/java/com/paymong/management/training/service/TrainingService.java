@@ -38,6 +38,7 @@ public class TrainingService {
         FindStatusResDto status = clientService.findStatus(findStatusReqDto);
 
         LOGGER.info("member : {}, point : {}", trainingReqVo.getMemberId(), status.getPoint());
+
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련"));
 

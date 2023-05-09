@@ -13,12 +13,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class AddMongResVo {
+    private Long mongId;
     private String name;
     private String mongCode;
     private Integer weight;
     private LocalDateTime born;
 
     public AddMongResVo(Mong mong){
+        this.mongId = mong.getMongId();
         this.name = mong.getName();
         this.mongCode = mong.getCode();
         this.weight = mong.getWeight();

@@ -1,6 +1,7 @@
 package com.paymong.management.global.scheduler.task;
 
 import com.paymong.management.global.code.MongActiveCode;
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
@@ -31,7 +32,11 @@ public class PoopTask {
         if(poop == 4){
             // 패널티 적립
             mong.setPenalty(penalty + 1);
-
+            if(mong.getStateCode().equals(MongConditionCode.NORMAL.getCode())
+            || mong.getStateCode().equals(MongConditionCode.SOMNOLENCE.getCode())
+            || mong.getStateCode().equals(MongConditionCode.HUNGRY.getCode())) {
+                mong.setStateCode(MongConditionCode.SICK.getCode());
+            }
             ActiveHistory activeHistory = ActiveHistory.builder()
                     .activeCode(MongActiveCode.PENALTY.getCode())
                     .activeTime(LocalDateTime.now())

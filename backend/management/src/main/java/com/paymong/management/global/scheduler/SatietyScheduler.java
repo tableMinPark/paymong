@@ -37,6 +37,10 @@ public class SatietyScheduler implements ManagementScheduler {
 
     @Override
     public void startScheduler(Long mongId) {
+        if(schedulerMap.containsKey(mongId)){
+            LOGGER.info("이미 굶어 있습니다. {}", mongId);
+            return;
+        }
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.initialize();
 //        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class AddPointReqDto {
     String content;
     Integer point;
+    String code;
 }

@@ -56,6 +56,10 @@ public class MongService {
         findMongLevelCodeDto.setLevel(0);
 
         CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
+
+        clientService.addMong(String.valueOf(addMongReqVo.getMemberId()),
+                new FindCommonCodeDto(commonCodeDto.getCode()));
+
         Mong mong = Mong.builder()
                 .name(addMongReqVo.getName())
                 .memberId(addMongReqVo.getMemberId())
@@ -65,9 +69,6 @@ public class MongService {
                 .build();
 
         Mong newMong = mongRepository.save(mong);
-
-        clientService.addMong(String.valueOf(addMongReqVo.getMemberId()),
-                new FindCommonCodeDto(commonCodeDto.getCode()));
 
         AddMongResVo addMongResVo = new AddMongResVo(newMong);
         // 무슨 이유인진 몰라도 null로 처리됨..

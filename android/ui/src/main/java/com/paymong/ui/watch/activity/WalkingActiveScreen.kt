@@ -30,7 +30,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.activity.TrainingViewModel
+import com.paymong.domain.watch.activity.WalkingViewModel
 import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
@@ -38,10 +38,10 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun WalkingActive(
     navController: NavHostController,
-    trainingViewModel: TrainingViewModel
+    walkingViewModel: WalkingViewModel
 ) {
 //    viewModel.setSensor(LocalContext.current)
-    trainingViewModel.walkingInit()
+    walkingViewModel.walkingInit()
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
@@ -50,10 +50,10 @@ fun WalkingActive(
     WalkingBackgroundGif()
 
     if (screenWidthDp < 200) {
-        WalkingSmallWatch(navController, trainingViewModel)
+        WalkingSmallWatch(navController, walkingViewModel)
     }
     else {
-        WalkingBigWatch(navController, trainingViewModel)
+        WalkingBigWatch(navController, walkingViewModel)
     }
 }
 
@@ -86,7 +86,7 @@ fun WalkingBackgroundGif() {
 @Composable
 fun WalkingSmallWatch (
     navController: NavHostController,
-    trainingViewModel: TrainingViewModel
+    walkingViewModel: WalkingViewModel
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -105,8 +105,8 @@ fun WalkingSmallWatch (
             Text(
                 text = String.format(
                     "%02d:%02d",
-                    trainingViewModel.walkMinute,
-                    trainingViewModel.walkSecond
+                    walkingViewModel.walkMinute,
+                    walkingViewModel.walkSecond
                 ),
                 fontFamily = dalmoori,
                 fontSize = 16.sp
@@ -130,7 +130,7 @@ fun WalkingSmallWatch (
                     .padding(start = 25.dp)
             ) {
                 Text(
-                    text = String.format("%d", trainingViewModel.walkCount),
+                    text = String.format("%d", walkingViewModel.walkCount),
                     fontFamily = dalmoori,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
@@ -146,7 +146,7 @@ fun WalkingSmallWatch (
             }
         }
 
-        if (trainingViewModel.isWalkingEnd) {
+        if (walkingViewModel.isWalkingEnd) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -181,8 +181,8 @@ fun WalkingSmallWatch (
             }
         }
 
-        if (trainingViewModel.isWalkingEnd) {
-            if (trainingViewModel.realWalkingEnd) {
+        if (walkingViewModel.isWalkingEnd) {
+            if (walkingViewModel.realWalkingEnd) {
                 navController.navigate(WatchNavItem.Activity.route) {
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop = true
@@ -209,8 +209,8 @@ fun WalkingSmallWatch (
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
-                                    trainingViewModel.walkingEnd()
-                                    trainingViewModel.realWalkingEnd = true
+                                    walkingViewModel.walkingEnd()
+                                    walkingViewModel.realWalkingEnd = true
                                 }
                         )
                         Text(
@@ -247,7 +247,7 @@ fun WalkingSmallWatch (
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
-                                    trainingViewModel.isWalkingEnd = false
+                                    walkingViewModel.isWalkingEnd = false
                                 }
                         )
                         Text(
@@ -280,7 +280,7 @@ fun WalkingSmallWatch (
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
-                            trainingViewModel.isWalkingEnd = true
+                            walkingViewModel.isWalkingEnd = true
                         }
                 )
                 Text(
@@ -304,7 +304,7 @@ fun WalkingSmallWatch (
 @Composable
 fun WalkingBigWatch (
     navController: NavHostController,
-    trainingViewModel: TrainingViewModel
+    walkingViewModel: WalkingViewModel
 ){
     Column(
     verticalArrangement = Arrangement.Center,
@@ -322,8 +322,8 @@ fun WalkingBigWatch (
             Text(
                 text = String.format(
                     "%02d:%02d",
-                    trainingViewModel.walkMinute,
-                    trainingViewModel.walkSecond
+                    walkingViewModel.walkMinute,
+                    walkingViewModel.walkSecond
                 ),
                 fontFamily = dalmoori,
                 fontSize = 20.sp
@@ -343,7 +343,7 @@ fun WalkingBigWatch (
                     .padding(start = 25.dp)
             ) {
                 Text(
-                    text = String.format("%d", trainingViewModel.walkCount),
+                    text = String.format("%d", walkingViewModel.walkCount),
                     fontFamily = dalmoori,
                     fontSize = 25.sp,
                     textAlign = TextAlign.Center,
@@ -359,7 +359,7 @@ fun WalkingBigWatch (
             }
         }
 
-        if (trainingViewModel.isWalkingEnd) {
+        if (walkingViewModel.isWalkingEnd) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -394,8 +394,8 @@ fun WalkingBigWatch (
             }
         }
 
-        if (trainingViewModel.isWalkingEnd) {
-            if (trainingViewModel.realWalkingEnd) {
+        if (walkingViewModel.isWalkingEnd) {
+            if (walkingViewModel.realWalkingEnd) {
                 navController.navigate(WatchNavItem.Activity.route) {
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop = true
@@ -422,8 +422,8 @@ fun WalkingBigWatch (
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
-                                    trainingViewModel.walkingEnd()
-                                    trainingViewModel.realWalkingEnd = true
+                                    walkingViewModel.walkingEnd()
+                                    walkingViewModel.realWalkingEnd = true
                                 }
                         )
                         Text(
@@ -460,7 +460,7 @@ fun WalkingBigWatch (
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
-                                    trainingViewModel.isWalkingEnd = false
+                                    walkingViewModel.isWalkingEnd = false
                                 }
                         )
                         Text(
@@ -494,7 +494,7 @@ fun WalkingBigWatch (
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
-                            trainingViewModel.isWalkingEnd = true
+                            walkingViewModel.isWalkingEnd = true
                         }
                 )
                 Text(
@@ -518,8 +518,8 @@ fun WalkingBigWatch (
 @Composable
 fun WalkingPreview() {
     val navController = rememberSwipeDismissableNavController()
-    val trainingViewModel: TrainingViewModel = viewModel()
+    val walkingViewModel: WalkingViewModel = viewModel()
     PaymongTheme {
-        WalkingActive(navController, trainingViewModel)
+        WalkingActive(navController, walkingViewModel)
     }
 }

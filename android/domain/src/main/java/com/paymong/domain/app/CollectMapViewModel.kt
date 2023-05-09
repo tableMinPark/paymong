@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class CollectMapViewModel : ViewModel() {
-    private lateinit var load : Job
     var mapList = mutableListOf<Collect>()
     private var collectRepository: CollectRepository = CollectRepository()
 

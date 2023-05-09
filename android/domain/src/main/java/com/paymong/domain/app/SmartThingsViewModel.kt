@@ -1,5 +1,6 @@
 package com.paymong.domain.app
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,10 +22,16 @@ class SmartThingsViewModel : ViewModel() {
     var routine by mutableStateOf("")
 
     var isAdd by mutableStateOf(false)
-    var index by mutableStateOf(-1)
+    var thingsId:Long by mutableStateOf(0)
+    var isDelete by mutableStateOf(false)
 
     private var memberRepository: MemberRepository = MemberRepository()
 
+    init {
+        viewModelScope.launch(Dispatchers.IO){
+            connectedThings()
+        }
+    }
     fun connectedThings(){
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findThings()
@@ -70,12 +77,11 @@ class SmartThingsViewModel : ViewModel() {
 
     fun deleteThings(){
         viewModelScope.launch(Dispatchers.IO){
-            memberRepository.deleteThings(connectedThingsList[index].thingsId)
+            memberRepository.deleteThings(thingsId)
                 .catch {
                     it.printStackTrace()
                 }
                 .collect{
-                    connectedThings()
                 }
         }
     }

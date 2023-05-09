@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 
 interface MemberApi {
@@ -22,7 +23,7 @@ interface MemberApi {
     @POST("/member/things")
     suspend fun addThings(@Body addThings: AddThingsReqDto) : Response<Boolean>
 
-    @DELETE("/member/things")
+    @HTTP(method="DELETE", path = "/member/things", hasBody = true)
     suspend fun deleteThings(@Body thingsId: Long) : Response<Boolean>
 
     @GET("/member/things/addable")

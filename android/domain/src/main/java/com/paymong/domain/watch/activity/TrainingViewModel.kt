@@ -75,6 +75,7 @@ class TrainingViewModel : ViewModel() {
 
     fun screenClick(navigate : () ->Unit) {
         if (isTrainingEnd) {
+            isTrainingEnd = false
             navigate()
         } else {
             count++

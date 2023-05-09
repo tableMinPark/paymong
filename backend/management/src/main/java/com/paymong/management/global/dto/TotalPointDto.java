@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AddPointDto {
-    private Integer point;
-    private String content;
-    private String code;
+public class TotalPointDto {
+    private Integer totalPoint;
 }

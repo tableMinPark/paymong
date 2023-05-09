@@ -1,45 +1,47 @@
-package com.paymong.management.mong.scheduler;
+package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.scheduler.ManagementScheduler;
-import com.paymong.management.mong.service.DeathService;
-import com.paymong.management.mong.service.MongService;
+import com.paymong.management.global.scheduler.task.PoopTask;
+import com.paymong.management.poop.service.PoopService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class DeathScheduler implements ManagementScheduler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeathScheduler.class);
+public class PoopScheduler implements ManagementScheduler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoopScheduler.class);
     private static final Map<Long, ThreadPoolTaskScheduler> schedulerMap = new HashMap<>();
-    private final DeathService deathService;
+    private final PoopTask poopTask;
+
     @Override
-    public void stopScheduler(Long mongId) {
+    public void stopScheduler(Long mongId){
         if(schedulerMap.containsKey(mongId)){
             LOGGER.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
             schedulerMap.get(mongId).shutdown();
+            schedulerMap.remove(mongId);
         }else{
             LOGGER.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
-
     }
 
     @Override
-    public void startScheduler(Long mongId) {
+    public void startScheduler(Long mongId){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.initialize();
-//        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-//      scheduler.setPoolSize(Runtime.getRuntime().availableProcessors() * 2);
-        scheduler.setThreadNamePrefix("health-" + mongId + "-");
+        scheduler.setThreadNamePrefix("poop-" + mongId + "-");
         // 스케쥴러 시작
         LOGGER.info("new {}를 추가합니다.", this.getClass().getSimpleName());
         scheduler.schedule(getRunnable(mongId), Date.from(Instant.now().plusSeconds(getDelay())));
@@ -50,8 +52,8 @@ public class DeathScheduler implements ManagementScheduler {
     public Runnable getRunnable(Long mongId) {
         return () -> {
             try {
-                deathService.deathMong(mongId);
-
+                poopTask.addPoop(mongId);
+                stopAndRunScheduler(mongId);
             } catch (NotFoundMongException e) {
                 stopScheduler(mongId);
             }
@@ -61,11 +63,20 @@ public class DeathScheduler implements ManagementScheduler {
 
     @Override
     public Trigger getTrigger() {
-        return null;
+        return new PeriodicTrigger(5, TimeUnit.SECONDS);
     }
 
     @Override
     public Long getDelay() {
-        return 3L * 60L * 60L;
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+        long p = random.nextInt(31)+30;
+        return p*60L;
     }
+
+    private void stopAndRunScheduler(Long mongId){
+        stopScheduler(mongId);
+        startScheduler(mongId);
+    }
+
 }

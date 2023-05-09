@@ -1,17 +1,15 @@
 package com.paymong.management.training.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.LocalTime;
-
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WalkingReqVo {
+@Builder
+public class TrainingReqVo {
     private Long mongId;
     private Long memberId;
     private Integer walkingCount;

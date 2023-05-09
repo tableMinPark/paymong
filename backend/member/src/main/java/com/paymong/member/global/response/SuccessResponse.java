@@ -1,15 +1,14 @@
 package com.paymong.member.global.response;
 
 import com.paymong.member.global.code.BasicCode;
-import com.paymong.member.global.code.PaypointStateCode;
 import lombok.Data;
 
 @Data
-public class ErrorResponse {
+public class SuccessResponse {
     private String code;
     private String message;
 
-    public ErrorResponse(BasicCode managementStateCode){
+    public SuccessResponse(BasicCode managementStateCode){
         this.code = managementStateCode.getCode();
         this.message = managementStateCode.getMessage();
     }

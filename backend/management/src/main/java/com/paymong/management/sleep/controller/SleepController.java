@@ -32,6 +32,7 @@ public class SleepController {
     public ResponseEntity<Object> sleepMong(HttpServletRequest httpServletRequest) throws Exception{
 
         String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("잠자기/재우기를 시작합니다. id : {}", mongIdStr);
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);

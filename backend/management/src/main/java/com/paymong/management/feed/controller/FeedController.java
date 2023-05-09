@@ -39,6 +39,7 @@ public class FeedController {
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("밥을 먹습니다. id : {}", mongIdStr);
         try {
             if(feedFoodReqVo.getFoodCode() == null){
                 throw new NullPointerException();
@@ -82,6 +83,7 @@ public class FeedController {
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("간식을 먹습니다. id : {}", mongIdStr);
         try {
             if(feedSnackReqVo.getSnackCode() == null){
                 throw new NullPointerException();

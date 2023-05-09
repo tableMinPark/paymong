@@ -46,6 +46,10 @@ public class StatusService {
         mong.setSatiety(satiety);
         mong.setSleep(sleep);
         mong.setWeight(weight);
+
+        if(statusResDto.getCode().equals("AT004") || statusResDto.getCode().equals("AT005")){
+            mong.setTrainingCount(mong.getTrainingCount() + 1);
+        }
     }
 
     public MongConditionCode checkCondition(Mong mong) {

@@ -65,7 +65,7 @@ public class FeedService {
 
         activeHistoryRepository.save(activeHistory);
 
-        clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
+        clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
 
         statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
 
@@ -107,7 +107,7 @@ public class FeedService {
 
         activeHistoryRepository.save(activeHistory);
 
-        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매"));
+        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
 
         statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
     }

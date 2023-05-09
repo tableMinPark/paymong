@@ -30,6 +30,7 @@ public class StrokeController {
     @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("쓰다듬기를 시작합니다. id : {}", mongIdStr);
         try {
             if(mongIdStr == null || mongIdStr.equals("")) {
                 throw new NullPointerException();

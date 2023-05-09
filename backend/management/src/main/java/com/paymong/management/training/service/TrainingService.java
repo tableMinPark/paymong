@@ -1,14 +1,7 @@
 package com.paymong.management.training.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.client.ClientService;
-import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.dto.AddPointDto;
-import com.paymong.management.global.exception.NotFoundActionException;
-import com.paymong.management.global.exception.NotFoundMongException;
-import com.paymong.management.global.exception.UnknownException;
-import com.paymong.management.mong.entity.Mong;
-import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
 import com.paymong.management.status.service.StatusService;
@@ -17,8 +10,6 @@ import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
@@ -40,7 +31,7 @@ public class TrainingService {
         LOGGER.info("member : {}, point : {}", trainingReqVo.getMemberId(), status.getPoint());
 
         // auth 서비스로 전송
-        clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련"));
+        clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련", status.getCode()));
 
         if(trainingReqVo.getWalkingCount() >= 50){
             // 수치값 변경
@@ -64,11 +55,10 @@ public class TrainingService {
 
         Integer cnt = walkingReqVo.getWalkingCount()/500;
 
-
         Integer point = walkingReqVo.getWalkingCount()/100;
 
         // auth 서비스로 전송
-        clientService.addPoint(String.valueOf(walkingReqVo.getMemberId()), new AddPointDto(point * status.getPoint(), "산책"));
+        clientService.addPoint(String.valueOf(walkingReqVo.getMemberId()), new AddPointDto(point * status.getPoint(), "산책", status.getCode()));
 
         status.setStrength(status.getStrength() * (status.getStrength()*cnt));
 

@@ -53,7 +53,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun getFoodList(foodCategory: String){
+    fun getFoodList(){
         viewModelScope.launch(Dispatchers.IO) {
             managementRepository.getFoodList(foodCategory)
                 .catch {
@@ -66,6 +66,7 @@ class FeedViewModel : ViewModel() {
                             foodList.add(Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy))
                         }
                     changeCurrentFoodPosition()
+                    foodCategory = ""
                 }
         }
     }

@@ -48,7 +48,7 @@ fun FeedBuyList(
     navController: NavHostController,
     feedViewModel: FeedViewModel = viewModel()
 ) {
-    feedViewModel.getFoodList(feedViewModel.foodCategory)
+    feedViewModel.getFoodList()
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 

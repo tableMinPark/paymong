@@ -57,6 +57,7 @@ fun FeedUI(
     MainBackgroundGif()
 
 
+    feedViewModel.currentFoodPosition = 0
     if(feedViewModel.foodCategory != ""){
         navController.navigate(WatchNavItem.FeedBuyList.route)
     }

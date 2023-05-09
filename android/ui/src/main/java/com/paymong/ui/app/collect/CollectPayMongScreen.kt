@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,27 +48,53 @@ fun CollectPayMong(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                val grouped = collectPayMongViewModel.mongList.groupBy { it.code!!.substring(2,3) }
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    grouped.forEach { (level, mongforLevel) ->
-                        stickyHeader {
-                            var title = ""
-                            title =
-                                if(level == "0") "알" else if(level == "1") "1단계" else if(level == "2") "2단계" else "3단계"
-                            PayMongHeader(title)
-                        }
+                if(collectPayMongViewModel.mongList.size!=0) {
+                    val grouped =
+                        collectPayMongViewModel.mongList.groupBy { it.code!!.substring(2, 3) }
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        grouped.forEach { (level, mongforLevel) ->
+                            stickyHeader {
+                                var title = ""
+                                title =
+                                    if (level == "0") "알" else if (level == "1") "1단계" else if (level == "2") "2단계" else "3단계"
+                                PayMongHeader(title)
+                            }
 
-                        var cnt = 0
-                        cnt = if(mongforLevel.size%3==0){
-                            mongforLevel.size/3
-                        } else{
-                            mongforLevel.size/3+1
+                            var cnt = 0
+                            cnt = if (mongforLevel.size % 3 == 0) {
+                                mongforLevel.size / 3
+                            } else {
+                                mongforLevel.size / 3 + 1
+                            }
+
+                            items(cnt) { mong ->
+                                ImageList(mongforLevel, mong * 3)
+                            }
                         }
-                        items(cnt) { mong ->
-                            ImageList(mongforLevel, mong*3)
-                        }
+                    }
+                } else {
+                    val strokeWidth = 10.dp
+
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .drawBehind {
+                                    drawCircle(
+                                        PayMongNavy,
+                                        radius = size.width / 2 - strokeWidth.toPx() / 2,
+                                        style = Stroke(strokeWidth.toPx())
+                                    )
+                                }
+                                .fillMaxWidth(0.3f),
+                            color = Color.LightGray,
+                            strokeWidth = strokeWidth
+                        )
                     }
                 }
             }

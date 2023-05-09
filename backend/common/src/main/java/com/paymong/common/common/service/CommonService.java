@@ -123,4 +123,12 @@ public class CommonService {
         return CommonCodeDto.of(commonCode);
     }
 
+    @Transactional
+    public CommonCodeDto findRandomMong(){
+        List<CommonCode> commonCodeList = commonCodeRepository.findByCodeStartsWith("CH1");
+        Random random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
+        random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
+        return CommonCodeDto.of(commonCodeList.get(random.nextInt(commonCodeList.size())));
+    }
+
 }

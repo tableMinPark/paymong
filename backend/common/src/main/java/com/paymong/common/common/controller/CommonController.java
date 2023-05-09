@@ -129,4 +129,19 @@ public class CommonController {
         }
     }
 
+    @GetMapping("/levelup")
+    public ResponseEntity<Object> findRandomMong(){
+        log.info("findRandomMong - Call");
+        try{
+            CommonCodeDto commonCodeDto = commonService.findRandomMong();
+            log.info("code : {}, message : {}", CommonStateCode.SUCCESS.getCode(),
+                CommonStateCode.SUCCESS.name());
+            return ResponseEntity.ok().body(commonCodeDto);
+        }catch (RuntimeException e){
+            log.info("code : {}, message : {}", CommonStateCode.RUNTIME.getCode(),
+                CommonStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(CommonStateCode.RUNTIME));
+        }
+    }
+
 }

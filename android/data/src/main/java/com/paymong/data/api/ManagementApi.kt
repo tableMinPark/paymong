@@ -1,11 +1,7 @@
 package com.paymong.data.api
 
 import com.paymong.data.model.request.AddMongReqDto
-import com.paymong.data.model.response.AddMongResDto
-import com.paymong.data.model.response.FindMongInfoResDto
-import com.paymong.data.model.response.FindMongResDto
-import com.paymong.data.model.response.FindMongStatsResDto
-import com.paymong.data.model.response.FoodResDto
+import com.paymong.data.model.response.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,7 +14,7 @@ interface ManagementApi {
     suspend fun addMong(@Body addMongReqDto: AddMongReqDto) : Response<AddMongResDto>
 
     @PUT("/management/stroke")
-    suspend fun stroke() : Response<Boolean>
+    suspend fun stroke() : Response<ManagementResDto>
 
     @PUT("/management/sleep/toggle")
     suspend fun sleep() : Response<Boolean>

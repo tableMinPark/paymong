@@ -121,6 +121,8 @@ class MainViewModel : ViewModel() {
                     it.printStackTrace()
                 }
                 .collect{
+                    data ->
+                    isHappy = data.code=="200"
                 }
         }
     }

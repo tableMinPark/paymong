@@ -40,3 +40,8 @@ data class FoodResDto(
     val price: Int,
     val lastBuy: LocalDateTime
 )
+
+data class ManagementResDto(
+    val code: String,
+    val message: String
+)

@@ -6,6 +6,7 @@ import com.paymong.data.api.ManagementApi
 import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.AddMongResDto
 import com.paymong.data.model.response.FoodResDto
+import com.paymong.data.model.response.ManagementResDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -30,11 +31,11 @@ class ManagementRepository(
         }
     }
 
-    fun stroke() : Flow<Boolean> = flow {
+    fun stroke() : Flow<ManagementResDto> = flow {
         val response = api.stroke()
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }

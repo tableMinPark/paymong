@@ -100,7 +100,6 @@ public class ThingsService {
     public void removeThings(String memberIdStr, RemoveThingsReqDto removeThingsReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long thingsId = removeThingsReqDto.getThingsId();
-        System.out.println(memberId + ", "+thingsId+"!!" + LocalDateTime.now());
         thingsRepository.deleteByMemberIdAndThingsId(memberId, thingsId);
     }
 
@@ -139,6 +138,7 @@ public class ThingsService {
                 .point(point)
                 .action(action)
                 .memberId(memberId)
+                .code(thingsCode)
                 .build();
         PointHistory ret =  paypointRepository.save(pointHistory);
 

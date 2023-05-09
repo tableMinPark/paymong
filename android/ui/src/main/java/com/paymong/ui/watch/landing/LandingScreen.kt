@@ -48,7 +48,7 @@ fun Landing(
     // 로그인  (리프레시 있는 경우)
     if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
         Log.e("Landing", "로그인 성공")
-        watchLandingViewModel.loginState = LandingCode.LOGIN
+        watchLandingViewModel.loginState = LandingCode.DONE
         navController.navigate(WatchNavItem.Main.route){
             popUpTo(navController.graph.id) {
                 inclusive = true

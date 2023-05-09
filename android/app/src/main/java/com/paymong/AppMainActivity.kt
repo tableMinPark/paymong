@@ -28,6 +28,7 @@ import com.google.android.gms.wearable.NodeClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
+import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.app.AppLandingViewModelFactory
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.AppMain
@@ -51,7 +52,6 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     private lateinit var appLandingViewModelFactory : AppLandingViewModelFactory
     private lateinit var appLandinglViewModel : AppLandinglViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +68,9 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
 
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
+
+        val dataApplicationRepository = DataApplicationRepository()
+        dataApplicationRepository.setValue("watchId", "abcde")
 
         // 권한 확인 #######################################################
         if (!isNotificationPermissionGranted()){

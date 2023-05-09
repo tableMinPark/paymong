@@ -78,6 +78,7 @@ class AppLandinglViewModel(
                 landingCode = LandingCode.REGIST_WEARABLE_SUCCESS
             } else {
                 Log.e("registCheck()", "REGIST_WEARABLE_FAIL")
+                landingCode = LandingCode.REGIST_WEARABLE_FAIL
                 // 등록하지 않았으면 등록할 수 있는 기기 있는지 확인
                 installCheck()
             }
@@ -187,7 +188,7 @@ class AppLandinglViewModel(
             landingCode = LandingCode.HAS_WEARABLE_SUCCESS
         }
         // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
-        if (wearNodesWithApp != null && wearNodesWithApp.isEmpty()) {
+        else if (wearNodesWithApp != null && wearNodesWithApp.isEmpty()) {
             Log.d("wearableAppInstallRequest()", "HAS_WEARABLE_FAIL")
             landingCode = LandingCode.HAS_WEARABLE_FAIL
         }

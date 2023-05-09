@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.wear.compose.material.Text
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
@@ -35,7 +36,7 @@ fun Login(
         appLandinglViewModel.registCheck()
     }
     if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
-        appLandinglViewModel.landingCode = LandingCode.LOGIN
+        appLandinglViewModel.landingCode = LandingCode.DONE
         Log.d("Login()", "LOGIN_SUCCESS")
         navController.navigate(AppNavItem.Main.route) {
             popUpTo(navController.graph.id) {
@@ -54,6 +55,15 @@ fun Login(
 //            Toast.LENGTH_SHORT
 //        ).show()
     }
+    // 돈없어서 워치 없는 친구들 여기야 여기!
+    else if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_FAIL) {
+        Log.d("Login()", "REGIST_WEARABLE_FAIL")
+//        Toast.makeText(
+//            getApplication(),
+//            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+    }
     // 연결된 기기가 있고 설치된 경우
     else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
         Log.d("Login()", "HAS_WEARABLE_SUCCESS")
@@ -62,8 +72,6 @@ fun Login(
 //            ToastMessage.WEARABLE_INSTALL_SUCCESS.message,
 //            Toast.LENGTH_SHORT
 //        ).show()
-
-    
     }
     // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
     else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
@@ -76,7 +84,8 @@ fun Login(
 
         // 와치에 설치할 수 있도록 설치 페이지 띄울 수 있는 요청 보냄
         appLandinglViewModel.openPlayStoreOnWearDevicesWithoutApp()
-    } else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL) {
+    }
+    else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL) {
         Log.d("Login()", "LOGIN_FAIL")
 //        Toast.makeText(
 //            getApplication(),
@@ -99,6 +108,16 @@ fun Login(
             Image(painter = logo, contentDescription = null, modifier = Modifier
                 .fillMaxWidth()
                 .padding(80.dp))
+        }
+        if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_FAIL) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ){
+                val google = painterResource(R.drawable.google_login)
+
+                Text(text = "돈없어서 워치 못사는 사람은 겜 못해!")
+            }
         }
 
         // 웨어러블이 등록되어 있는 경우 or 로그인 실패한 경우 (구글 로그인 버튼)

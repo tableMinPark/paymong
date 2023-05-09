@@ -190,6 +190,8 @@ fun WalkingActive(
 
         if (walkingViewModel.isWalkingEnd) {
             if (walkingViewModel.realWalkingEnd) {
+                walkingViewModel.isWalkingEnd = false
+                walkingViewModel.realWalkingEnd = false
                 navController.navigate(WatchNavItem.Activity.route) {
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop = true

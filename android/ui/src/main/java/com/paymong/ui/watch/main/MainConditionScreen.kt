@@ -33,190 +33,107 @@ fun MainConditionUI(
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
+    var imageSize = 30
+    var circularSize = 70
+    var strokeWidth = 5
+
+    if (screenWidthDp < 200) {
+        imageSize = 25
+        circularSize = 60
+        strokeWidth= 4
+    }
+
+
+
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         modifier = Modifier.fillMaxHeight()
     ) {
-        if (screenWidthDp < 200) {
-            SmallWatch(mainviewModel)
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, end = 5.dp))
+            {
+                Image(
+                    painter = painterResource(id = R.drawable.health ),
+                    contentDescription = "health",
+                    modifier = Modifier.size(imageSize.dp)
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(circularSize.dp),
+                    startAngle = 271f,
+                    endAngle = 270f,
+                    progress = mainviewModel.mongStats.health,
+                    strokeWidth = strokeWidth.dp,
+                    indicatorColor = PayMongRed,
+                )
+            }
+
+            Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, start = 5.dp)) {
+                Image(
+                    painter = painterResource(id = R.drawable.satiety ),
+                    contentDescription = "satiety",
+                    modifier = Modifier.size(imageSize.dp)
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(circularSize.dp),
+                    startAngle = 271f,
+                    endAngle = 270f,
+                    progress = mainviewModel.mongStats.satiety,
+                    strokeWidth = strokeWidth.dp,
+                    indicatorColor = PayMongYellow,
+                )
+            }
+
         }
-        else {
-            BigWatch(mainviewModel)
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(bottom = 20.dp, end = 5.dp) ) {
+                Image(
+                    painter = painterResource(id = R.drawable.strength ),
+                    contentDescription = "strength",
+                    modifier = Modifier.size(imageSize.dp)
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(circularSize.dp),
+                    startAngle = 271f,
+                    endAngle = 270f,
+                    progress = mainviewModel.mongStats.strength,
+                    strokeWidth = strokeWidth.dp,
+                    indicatorColor = PayMongGreen,
+                )
+            }
+
+            Box(contentAlignment = Alignment.Center,  modifier = Modifier.padding(bottom = 20.dp, start = 5.dp) ) {
+                Image(
+                    painter = painterResource(id = R.drawable.sleep ),
+                    contentDescription = "sleep",
+                    modifier = Modifier.size(imageSize.dp)
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(circularSize.dp),
+                    startAngle = 271f,
+                    endAngle = 270f,
+                    progress = mainviewModel.mongStats.sleep,
+                    strokeWidth = strokeWidth.dp,
+                    indicatorColor = PayMongBlue,
+                )
+            }
+
         }
     }
 }
 
 
 
-@Composable
-fun SmallWatch(
-    mainviewModel: MainViewModel
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth().height(90.dp)
-    ) {
-        // * Health *
-        Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, end = 5.dp))
-        {
-            Image(
-                painter = painterResource(id = R.drawable.health ),
-                contentDescription = "health",
-                modifier = Modifier.size(25.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(60.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.health,
-                strokeWidth = 4.dp,
-                indicatorColor = PayMongRed,
-            )
-        }
-
-        // * satiety *
-        Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, start = 5.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.satiety ),
-                contentDescription = "satiety",
-                modifier = Modifier.size(25.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(60.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.satiety,
-                strokeWidth = 4.dp,
-                indicatorColor = PayMongYellow,
-            )
-        }
-
-    }
 
 
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth().padding(top=10.dp)
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(bottom = 20.dp, end = 5.dp) ) {
-            Image(
-                painter = painterResource(id = R.drawable.strength ),
-                contentDescription = "strength",
-                modifier = Modifier.size(25.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(60.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.strength,
-                strokeWidth = 4.dp,
-                indicatorColor = PayMongGreen,
-            )
-        }
 
 
-        // * Sleep *
-        Box(contentAlignment = Alignment.Center,  modifier = Modifier.padding(bottom = 20.dp, start = 5.dp) ) {
-            Image(
-                painter = painterResource(id = R.drawable.sleep ),
-                contentDescription = "sleep",
-                modifier = Modifier.size(25.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(60.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.sleep,
-                strokeWidth = 4.dp,
-                indicatorColor = PayMongBlue,
-            )
-        }
-
-    }
-}
-
-
-@Composable
-fun BigWatch(
-    mainviewModel: MainViewModel
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, end = 5.dp))
-        {
-            Image(
-                painter = painterResource(id = R.drawable.health ),
-                contentDescription = "health",
-                modifier = Modifier.size(30.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(70.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.health,
-                strokeWidth = 5.dp,
-                indicatorColor = PayMongRed,
-            )
-        }
-
-        Box(contentAlignment = Alignment.Center, modifier =  Modifier.padding(top = 30.dp, start = 5.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.satiety ),
-                contentDescription = "health",
-                modifier = Modifier.size(30.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(70.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.satiety,
-                strokeWidth = 5.dp,
-                indicatorColor = PayMongYellow,
-            )
-        }
-
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(bottom = 20.dp, end = 5.dp) ) {
-            Image(
-                painter = painterResource(id = R.drawable.strength ),
-                contentDescription = "strength",
-                modifier = Modifier.size(30.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(70.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.strength,
-                strokeWidth = 5.dp,
-                indicatorColor = PayMongGreen,
-            )
-        }
-
-        Box(contentAlignment = Alignment.Center,  modifier = Modifier.padding(bottom = 20.dp, start = 5.dp) ) {
-            Image(
-                painter = painterResource(id = R.drawable.sleep ),
-                contentDescription = "strength",
-                modifier = Modifier.size(30.dp)
-            )
-            CircularProgressIndicator(
-                modifier = Modifier.size(70.dp),
-                startAngle = 271f,
-                endAngle = 270f,
-                progress = mainviewModel.mongStats.sleep,
-                strokeWidth = 5.dp,
-                indicatorColor = PayMongBlue,
-            )
-        }
-
-    }
-}
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable

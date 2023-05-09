@@ -3,6 +3,9 @@ package com.paymong.management.status.service;
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.scheduler.DeathScheduler;
+import com.paymong.management.global.scheduler.HealthScheduler;
+import com.paymong.management.global.scheduler.SatietyScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
@@ -18,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class StatusService {
 
     private final MongRepository mongRepository;
+    private final DeathScheduler deathScheduler;
+    private final HealthScheduler healthScheduler;
+    private final SatietyScheduler satietyScheduler;
+
     @Transactional
     public void modifyMongStatus(Long mongId, FindStatusResDto statusResDto) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongId(mongId)
@@ -29,14 +36,10 @@ public class StatusService {
         Integer strength = checkLevel(level, mong.getStrength(), statusResDto.getStrength());
         // health 레벨 별 20 30 40
         Integer health = checkLevel(level, mong.getHealth(), statusResDto.getHealth());
-        if(health == 0) {
-            // 스케줄러}
-        }
+
         // satiety 레벨 별 20 30 40
         Integer satiety = checkLevel(level, mong.getSatiety(), statusResDto.getSatiety());
-        if(satiety == 0) {
-            // 스케줄러
-        }
+
         // sleep 최대 20
         Integer sleep = checkLevel(level == 0 ? 0 : 1, mong.getSleep(), statusResDto.getSleep());
         // weight 레벨별 최소 5 15 25 35 최대 99
@@ -47,6 +50,20 @@ public class StatusService {
         mong.setSatiety(satiety);
         mong.setSleep(sleep);
         mong.setWeight(weight);
+
+        MongConditionCode conditionCode = checkCondition(mong);
+        mong.setStateCode(conditionCode.getCode());
+
+        if(satiety == 0 || health == 0) {
+            // 스케줄러
+            deathScheduler.startScheduler(mongId);
+        }
+
+        if(satiety > 0 && health > 0){
+            deathScheduler.stopScheduler(mongId);
+            healthScheduler.startScheduler(mongId);
+            satietyScheduler.stopScheduler(mongId);
+        }
 
         if(statusResDto.getCode().equals(MongActiveCode.TRAINING.getCode()) || statusResDto.getCode().equals(MongActiveCode.WALKING.getCode())){
             mong.setTrainingCount(mong.getTrainingCount() + 1);

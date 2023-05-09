@@ -1,5 +1,6 @@
 package com.paymong.management.global.scheduler.task;
 
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
@@ -28,6 +29,13 @@ public class SatietyTask {
             satiety = satiety - (poop*poop) < 0 ? 0 : satiety - (poop*poop);
             mong.setSatiety(satiety);
         }
+
+        if(satiety < 5){
+            if(mong.getStateCode().equals(MongConditionCode.NORMAL.getCode())){
+                mong.setStateCode(MongConditionCode.HUNGRY.getCode());
+            }
+        }
+
         if(satiety == 0){
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
             return false;

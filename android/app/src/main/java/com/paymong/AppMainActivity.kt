@@ -69,8 +69,8 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
 
-        val dataApplicationRepository = DataApplicationRepository()
-        dataApplicationRepository.setValue("watchId", "abcde")
+//        val dataApplicationRepository = DataApplicationRepository()
+//        dataApplicationRepository.setValue("watchId", "abcde")
 
         // 권한 확인 #######################################################
         if (!isNotificationPermissionGranted()){

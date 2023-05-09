@@ -2,6 +2,7 @@ package com.paymong.ui.watch.landing
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,6 +31,7 @@ import coil.size.OriginalSize
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
+import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
@@ -45,9 +47,9 @@ fun Landing(
         watchLandingViewModel.loginCheck()
         delay(2000)
     }
+
     // 로그인  (리프레시 있는 경우)
     if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
-        Log.e("Landing", "로그인 성공")
         watchLandingViewModel.loginState = LandingCode.DONE
         navController.navigate(WatchNavItem.Main.route){
             popUpTo(navController.graph.id) {
@@ -60,23 +62,23 @@ fun Landing(
     }
     // 로그인 실패 (리프레시 없음)
     else if (watchLandingViewModel.loginState == LandingCode.LOGIN_FAIL){
-        Log.e("Landing", "로그인 실패 (리프레시 없음)")
-        watchLandingViewModel.loginState = LandingCode.LOADING
-        // 모바일 앱 설치 여부 확인
         watchLandingViewModel.installCheck()
-    }
-    // playerId 가 있거나 모바일 앱으로부터 playerId를 받아온 경우
-    else if (watchLandingViewModel.landingCode == LandingCode.VALID){
-        Log.e("Landing", "playerId 있음")
-        watchLandingViewModel.login()
     }
     // 연결과 설치는 되있지만 playerId가 없는 경우 (최초 인증하지 않은 경우)
     else if (watchLandingViewModel.landingCode == LandingCode.INSTALL){
-        Log.e("Landing", "playerId 없음")
+        Toast.makeText(
+            LocalContext.current,
+            ToastMessage.INSTALL.message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
     // 연결만 되어있고 설치가 안되어있는 경우
     else if  (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL){
-        Log.e("Landing", "모바일에 설치 안됨!")
+        Toast.makeText(
+            LocalContext.current,
+            ToastMessage.NOT_INSTALL.message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 

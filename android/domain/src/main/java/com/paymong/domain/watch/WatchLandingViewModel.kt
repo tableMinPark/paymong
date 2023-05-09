@@ -67,7 +67,7 @@ class WatchLandingViewModel(
         }
     }
     // 로그인
-    fun login() {
+    private fun login() {
         viewModelScope.launch(Dispatchers.IO) {
             val playerId = dataApplicationRepository.getValue("playerId")
             authRepository.login(LoginReqDto(playerId))
@@ -110,7 +110,7 @@ class WatchLandingViewModel(
             }
         } else {
             // 이미 한번 로그인한 사람
-            landingCode = LandingCode.VALID
+            login()
         }
     }
     fun openAppInStoreOnPhone() {

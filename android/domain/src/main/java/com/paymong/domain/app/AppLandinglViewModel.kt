@@ -59,7 +59,6 @@ class AppLandinglViewModel(
                     landingCode = LandingCode.LOGIN_FAIL
                 }
                 .collect {values ->
-                    Log.e("refreshLogin()", values.toString())
                     landingCode = if (values)
                         LandingCode.LOGIN_SUCCESS
                     else
@@ -71,15 +70,10 @@ class AppLandinglViewModel(
     fun registCheck() {
         viewModelScope.launch {
             val watchId = dataApplicationRepository.getValue("watchId")
-            Log.e("registCheck()", watchId)
 
             if (watchId != "") {
-                Log.e("registCheck()", "REGIST_WEARABLE_SUCCESS")
-                landingCode = LandingCode.REGIST_WEARABLE_SUCCESS
+                googlePlayLogin()
             } else {
-                Log.e("registCheck()", "REGIST_WEARABLE_FAIL")
-                landingCode = LandingCode.REGIST_WEARABLE_FAIL
-                // 등록하지 않았으면 등록할 수 있는 기기 있는지 확인
                 installCheck()
             }
         }
@@ -99,11 +93,7 @@ class AppLandinglViewModel(
             }
             // 계정을 찾을 수 없음
             else {
-                Toast.makeText(
-                    getApplication(),
-                    ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(getApplication(),ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -123,11 +113,7 @@ class AppLandinglViewModel(
             }
             // 계정을 찾을 수 없음
             else {
-                Toast.makeText(
-                    getApplication(),
-                    ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message,
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(getApplication(),ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -137,7 +123,6 @@ class AppLandinglViewModel(
             authRepository.login(LoginReqDto(playerId))
                 .catch { landingCode = LandingCode.LOGIN_FAIL }
                 .collect { values ->
-                    Log.d("login()", values.toString())
                     landingCode = if (values)
                         LandingCode.LOGIN_SUCCESS
                     else
@@ -175,22 +160,26 @@ class AppLandinglViewModel(
             val connectedNodes = nodeClient.connectedNodes.await()
             withContext(Dispatchers.Main) {
                 allConnectedNodes = connectedNodes
-                wearableAppInstallRequest()
+//                wearableAppInstallRequest()
             }
-        } catch (cancellationException: CancellationException) {
         } catch (throwable: Throwable) {
+            throwable.printStackTrace()
         }
     }
     private fun wearableAppInstallRequest() {
         val wearNodesWithApp = wearNodesWithApp
+
         // 연결된 기기가 있고 설치된 경우
         if (wearNodesWithApp != null && wearNodesWithApp.isNotEmpty()) {
             landingCode = LandingCode.HAS_WEARABLE_SUCCESS
         }
         // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
         else if (wearNodesWithApp != null && wearNodesWithApp.isEmpty()) {
-            Log.d("wearableAppInstallRequest()", "HAS_WEARABLE_FAIL")
             landingCode = LandingCode.HAS_WEARABLE_FAIL
+        }
+        // 연결된 기기가 없는경우 (최초 등록 여부는 앞에서 확인하기 때문에 여기까지 온 경우는 최초 등록 X, 기기없음의 경우)
+        else if (wearNodesWithApp == null) {
+            landingCode = LandingCode.REGIST_WEARABLE_FAIL
         }
     }
     fun openPlayStoreOnWearDevicesWithoutApp() {
@@ -203,25 +192,20 @@ class AppLandinglViewModel(
         nodesWithoutApp.forEach { node ->
             viewModelScope.launch {
                 try {
+                    delay(1000)
                     remoteActivityHelper
                         .startRemoteActivity(
                             targetIntent = intent,
                             targetNodeId = node.id
                         )
                         .await()
-                } catch (cancellationException: CancellationException) {
                 } catch (throwable: Throwable) {
-                    Toast.makeText(
-                        getApplication(),
-                        ToastMessage.INSTALL_FAIL.message,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    throwable.printStackTrace()
                 }
             }
         }
     }
-    fun registWearable(playerId: String) {
-        Log.e("registWearable()", "start")
+    private fun registWearable(playerId: String) {
         viewModelScope.launch {
             try {
                 val nodes = capabilityClient
@@ -243,12 +227,10 @@ class AppLandinglViewModel(
                         }
                     }
                 }.awaitAll()
-
-                Log.d("registWearable()", "Starting activity requests sent successfully")
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (exception: Exception) {
-                Log.d("registWearable()", "Starting activity failed: $exception")
+                exception.printStackTrace()
             }
         }
     }

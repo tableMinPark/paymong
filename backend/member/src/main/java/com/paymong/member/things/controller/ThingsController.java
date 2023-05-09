@@ -1,6 +1,5 @@
 package com.paymong.member.things.controller;
 
-import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.code.ThingsStateCode;
 import com.paymong.member.global.exception.NotFoundRoutineException;
 import com.paymong.member.global.exception.NotFoundThingsCodeException;
@@ -89,11 +88,11 @@ public class ThingsController {
         try {
             String thingsCode = thingsService.findThingsCode(memberId, routine);
             if (thingsCode.equals("ST000")){ //청소기
-                thingsService.doVacuum(memberIdStr, mongIdStr, thingsCode);
+                thingsService.alarmVacuum(memberIdStr, mongIdStr, thingsCode);
             }else if (thingsCode.equals("ST001")){ //문열림센서
-
+                thingsService.alarmOpenDoor(memberIdStr, mongIdStr, thingsCode);
             }else if (thingsCode.equals("ST002")){ //허브무선충전
-
+                thingsService.alarmHubCharge(memberIdStr, mongIdStr, thingsCode);
             }else if (thingsCode.equals("ST003")){ //스마트버튼
 
             }else{

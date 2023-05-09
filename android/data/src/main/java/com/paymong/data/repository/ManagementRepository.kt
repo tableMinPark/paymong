@@ -56,6 +56,24 @@ class ManagementRepository(
         }
     }
 
+    fun eatFood(foodCode: String) : Flow<Boolean> = flow {
+        val response = api.eatFood(foodCode)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
+            }
+        }
+    }
+
+    fun eatSnack(snackCode: String) : Flow<Boolean> = flow {
+        val response = api.eatSnack(snackCode)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
+            }
+        }
+    }
+
     fun training(trainingCount: Int): Flow<Boolean> = flow {
         val response = api.training(trainingCount)
         if(response.code() == 200){

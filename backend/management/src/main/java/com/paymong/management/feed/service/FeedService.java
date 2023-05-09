@@ -35,7 +35,10 @@ public class FeedService {
     @Transactional
     public void feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
         // foodCode에 따라 해당 액션 찾기
-        String foodCode = feedFoodReqVo.getFoodCode().substring(3,4);
+        String foodCode = feedFoodReqVo.getFoodCode().substring(0,2);
+        if(!foodCode.equals("FD")) throw new NotFoundActionException();
+
+        foodCode = feedFoodReqVo.getFoodCode().substring(3,4);
         int code = Integer.parseInt(foodCode);
 
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto();
@@ -57,6 +60,10 @@ public class FeedService {
 
         LOGGER.info("활동 코드 : {} , 음식 코드 : {}, 음식 이름 : {}, 음식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
 
+        clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
+
+        statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(food.getCode())
                 .activeTime(LocalDateTime.now())
@@ -65,22 +72,18 @@ public class FeedService {
 
         activeHistoryRepository.save(activeHistory);
 
-        clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
-
-        statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
-
     }
 
     @Transactional
     public void feedSnack(FeedSnackReqVo feedSnackReqVo) throws Exception{
-        // auth에서 mongId 받아오기
-
         // mongId로 해당 mong 찾기
         Mong mong = mongRepository.findByMongId(feedSnackReqVo.getMongId())
                 .orElseThrow(() -> new NotFoundMongException());
 
+        String foodCode = feedSnackReqVo.getSnackCode().substring(0,2);
+        if(!foodCode.equals("SN")) throw new NotFoundActionException();
         // foodCode에 따라 해당 액션 찾기
-        String foodCode = feedSnackReqVo.getSnackCode().substring(3,4);
+        foodCode = feedSnackReqVo.getSnackCode().substring(3,4);
         int code = Integer.parseInt(foodCode);
 
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto();
@@ -99,6 +102,10 @@ public class FeedService {
 
         LOGGER.info("활동 코드 : {} , 간식 코드 : {}, 간식 이름 : {}, 간식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
 
+        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
+
+        statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(food.getCode())
                 .activeTime(LocalDateTime.now())
@@ -106,9 +113,5 @@ public class FeedService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
-        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
-
-        statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
     }
 }

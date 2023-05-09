@@ -1,5 +1,6 @@
 package com.paymong.management.status.service;
 
+import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -47,7 +48,7 @@ public class StatusService {
         mong.setSleep(sleep);
         mong.setWeight(weight);
 
-        if(statusResDto.getCode().equals("AT004") || statusResDto.getCode().equals("AT005")){
+        if(statusResDto.getCode().equals(MongActiveCode.TRAINING.getCode()) || statusResDto.getCode().equals(MongActiveCode.WALKING.getCode())){
             mong.setTrainingCount(mong.getTrainingCount() + 1);
         }
     }

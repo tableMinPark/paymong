@@ -1,6 +1,7 @@
 package com.paymong.management.mong.service;
 
 import com.paymong.management.global.client.ClientService;
+import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.AlreadyExistMongException;
@@ -9,6 +10,8 @@ import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.EvolutionScheduler;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
+import com.paymong.management.history.entity.ActiveHistory;
+import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -34,6 +37,7 @@ public class MongService {
     private final SchedulerService schedulerService;
     private final StatusService statusService;
     private final EvolutionScheduler evolutionScheduler;
+    private ActiveHistoryRepository activeHistoryRepository;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -159,9 +163,25 @@ public class MongService {
         if(ok){
             mong.setStateCode(MongConditionCode.GRADUATE.getCode());
             mong.setActive(false);
+
+            ActiveHistory activeHistory = ActiveHistory.builder()
+                    .activeCode(MongActiveCode.GRADUATION.getCode())
+                    .activeTime(LocalDateTime.now())
+                    .mongId(mongId)
+                    .build();
+
+            activeHistoryRepository.save(activeHistory);
         }else{
             MongConditionCode condition = statusService.checkCondition(mong);
             mong.setStateCode(condition.getCode());
+
+            ActiveHistory activeHistory = ActiveHistory.builder()
+                    .activeCode(MongActiveCode.EVOLUTION.getCode())
+                    .activeTime(LocalDateTime.now())
+                    .mongId(mongId)
+                    .build();
+
+            activeHistoryRepository.save(activeHistory);
         }
     }
 

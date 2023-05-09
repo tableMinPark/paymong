@@ -131,10 +131,7 @@ class MainViewModel : ViewModel() {
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{ values ->
-                    if(values)
-                        isClicked = true
-                }
+                .collect{}
         }
     }
 
@@ -144,8 +141,7 @@ class MainViewModel : ViewModel() {
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{
-                }
+                .collect{}
         }
     }
 }

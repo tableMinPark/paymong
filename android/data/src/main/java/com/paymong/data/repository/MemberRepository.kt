@@ -1,9 +1,8 @@
 package com.paymong.data.repository
 
 import com.paymong.data.api.Api
-import com.paymong.data.api.ManagementApi
 import com.paymong.data.api.MemberApi
-import com.paymong.data.model.request.AddMongReqDto
+import com.paymong.data.model.request.AddPayReqDto
 import com.paymong.data.model.request.AddThingsReqDto
 import com.paymong.data.model.response.*
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +11,15 @@ import kotlinx.coroutines.flow.flow
 class MemberRepository(
     private val api: MemberApi = Api.getInstance().create(MemberApi::class.java)
 ) {
+    fun addPay(addPayReqDto: AddPayReqDto): Flow<Boolean> = flow {
+        val response = api.addPay(addPayReqDto)
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(true)
+            }
+        }
+    }
+
     fun findMember(): Flow<FindMemberResDto> = flow {
         val response = api.findMember()
         if (response.code() == 200) {
@@ -20,7 +28,6 @@ class MemberRepository(
             }
         }
     }
-
     fun pointList(): Flow<List<PointInfoResDto>> = flow {
         val response = api.pointList()
         if(response.code() == 200){
@@ -29,7 +36,6 @@ class MemberRepository(
             }
         }
     }
-
     fun findThings(): Flow<List<ThingsResDto>> = flow {
         val response = api.findThings()
         if(response.code() == 200){
@@ -38,7 +44,6 @@ class MemberRepository(
             }
         }
     }
-
     fun addThings(addThings: AddThingsReqDto): Flow<Boolean> = flow {
         val response = api.addThings(addThings)
         if(response.code() == 200){
@@ -47,7 +52,6 @@ class MemberRepository(
             }
         }
     }
-
     fun deleteThings(thingsId: Long): Flow<Boolean> = flow {
         val response = api.deleteThings(thingsId)
         if(response.code() == 200){

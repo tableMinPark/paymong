@@ -5,10 +5,19 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.Toast
+import com.paymong.data.model.request.AddPayReqDto
+import com.paymong.data.repository.MemberRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class NotificationListener : NotificationListenerService() {
     private var start = LocalDateTime.now()
+    private var memberRepository:MemberRepository = MemberRepository()
     init {
         start = LocalDateTime.now()
     }
@@ -30,15 +39,22 @@ class NotificationListener : NotificationListenerService() {
 //        $extraTitle : $extraText
 
         // samsungPay
-//        val extras = sbn.notification.extras
-//        val packageName: String = sbn.packageName ?: ""
-//        val message: List<String> = extras.get(Notification.EXTRA_TITLE).toString().split("\\")
+        val extras = sbn.notification.extras
+        val packageName: String = sbn.packageName ?: ""
+        val message: List<String> = extras.get(Notification.EXTRA_TITLE).toString().split("\\")
 
 
-//        val content : String = message[0]
-//        val price : Int = message[1].toInt()
-//
-//        Log.e("samsung pay", "$packageName : $content : $price : $start")
+        val content : String = message[0]
+        val price : Int = message[1].toInt()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            memberRepository.addPay(AddPayReqDto(content, price))
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{}
+        }
+        Log.e("samsung pay", "$packageName : $content : $price : $start")
 //        Toast.makeText(applicationContext, "$content : $price : $start", Toast.LENGTH_LONG).show()
     }
 }

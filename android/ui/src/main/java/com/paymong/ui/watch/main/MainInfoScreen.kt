@@ -85,7 +85,6 @@ fun MainInfoUI(
                             indication = null,
                         ){
                             mainviewModel.stroke()
-                            mainviewModel.isHappy = true
                             Handler(Looper.getMainLooper()).postDelayed({
                                 mainviewModel.isHappy = false
                             }, 2000)

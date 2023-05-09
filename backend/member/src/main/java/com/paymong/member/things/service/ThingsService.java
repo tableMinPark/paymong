@@ -100,7 +100,7 @@ public class ThingsService {
     public void removeThings(String memberIdStr, RemoveThingsReqDto removeThingsReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long thingsId = removeThingsReqDto.getThingsId();
-        System.out.println(memberId + ", "+thingsId+"!!");
+        System.out.println(memberId + ", "+thingsId+"!!" + LocalDateTime.now());
         thingsRepository.deleteByMemberIdAndThingsId(memberId, thingsId);
     }
 

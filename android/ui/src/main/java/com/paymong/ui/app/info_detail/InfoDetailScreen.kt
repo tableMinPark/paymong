@@ -52,11 +52,13 @@ fun InfoDetail(
         modifier = Modifier.fillMaxSize().clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { navController.navigate(AppNavItem.Main.route){
-                popUpTo("main"){
-                    inclusive = true
+            onClick = {
+                navController.navigate(AppNavItem.Main.route) {
+                    popUpTo("main") {
+                        inclusive = true
+                    }
                 }
-            } }
+            }
         ),
         contentAlignment = Alignment.Center
     ){

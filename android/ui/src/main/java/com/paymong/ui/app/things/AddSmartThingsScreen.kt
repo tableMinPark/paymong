@@ -55,7 +55,11 @@ fun AddSmartThings(
             }
             if(smartThingsViewModel.isAdd){
                 smartThingsViewModel.isAdd = false
-                navController.navigate(AppNavItem.SmartThings.route)
+                navController.navigate(AppNavItem.SmartThings.route) {
+                    popUpTo("smart_things") {
+                        inclusive = true
+                    }
+                }
             }
             Column(
                 modifier = Modifier
@@ -154,17 +158,17 @@ private fun AddThings(smartThingsViewModel:SmartThingsViewModel){
             onValueChange = { newText -> smartThingsViewModel.routine = newText },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 15.dp),
             textStyle = TextStyle(fontFamily = dalmoori, fontSize = 15.sp),
             singleLine = true,
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.White,
+                textColor = PayMongRed200,
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 cursorColor = Color.White,
-                placeholderColor = Color.White
+                placeholderColor = PayMongRed200
             ),
-            placeholder = { Text("반드시 설정한 루틴 이름을 입력하세요.", fontFamily = dalmoori, fontSize = 15.sp) }
+            placeholder = { Text("루틴이름을 입력해주세요.", fontFamily = dalmoori, fontSize = 15.sp) }
         )
     }
 }

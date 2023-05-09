@@ -47,6 +47,14 @@ fun SmartThings(
         topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route) },
         backgroundColor = PayMongNavy
     ) {
+        if(smartThingsViewModel.isDelete){
+            smartThingsViewModel.isDelete = false
+            navController.navigate(AppNavItem.SmartThings.route) {
+                popUpTo("smart_things") {
+                    inclusive = true
+                }
+            }
+        }
         Box(Modifier.padding(it)) {
             Column(
                 modifier = Modifier
@@ -151,7 +159,6 @@ private fun AddThings(navController:NavController){
 
 @Composable
 private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
-    smartThingsViewModel.connectedThings()
     val dialogOpen = remember { mutableStateOf(false) }
     if(dialogOpen.value){
         DeleteThings(
@@ -159,6 +166,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
             smartThingsViewModel
         )
     }
+
     Box(modifier = Modifier
         .fillMaxHeight()
         .clip(RoundedCornerShape(30.dp))
@@ -203,7 +211,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                             .weight(0.2f)
                             .clickable {
                                 dialogOpen.value = true
-                                smartThingsViewModel.index = index
+                                smartThingsViewModel.thingsId = smartThingsViewModel.connectedThingsList[index].thingsId
                             })
                     }
                 }
@@ -236,6 +244,7 @@ fun DeleteThings(
                     Button(
                         onClick = {
                             setShowDialog(false)
+                            smartThingsViewModel.isDelete = true
                             smartThingsViewModel.deleteThings()
                         },
                         colors = ButtonDefaults.buttonColors(PayMongBlue),

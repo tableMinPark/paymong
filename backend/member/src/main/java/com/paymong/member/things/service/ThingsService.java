@@ -96,9 +96,11 @@ public class ThingsService {
     }
 
 
+    @Transactional
     public void removeThings(String memberIdStr, RemoveThingsReqDto removeThingsReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long thingsId = removeThingsReqDto.getThingsId();
+        System.out.println(memberId + ", "+thingsId+"!!");
         thingsRepository.deleteByMemberIdAndThingsId(memberId, thingsId);
     }
 

@@ -100,7 +100,6 @@ public class ThingsService {
     public void removeThings(String memberIdStr, RemoveThingsReqDto removeThingsReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
         Long thingsId = removeThingsReqDto.getThingsId();
-        System.out.println(memberId + ", "+thingsId+"!!" + LocalDateTime.now());
         thingsRepository.deleteByMemberIdAndThingsId(memberId, thingsId);
     }
 
@@ -111,11 +110,13 @@ public class ThingsService {
     }
 
     @Transactional
-    public void doVacuum(String memberIdStr, String mongIdStr,String thingsCode){
+    public void alarmVacuum(String memberIdStr, String mongIdStr, String thingsCode){
         Long memberId = Long.parseLong(memberIdStr);
         if(mongIdStr.equals("") || mongIdStr == null) return;
 
-        Integer toDay = LocalDateTime.now().getDayOfMonth();
+        //청소기 모션 요청 보내기
+
+
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
         ThingsHistory thingsHistory = ThingsHistory.builder()
@@ -126,9 +127,9 @@ public class ThingsService {
 
         //똥치우기
         ResponseEntity<Object> response = managementServiceClient.clearPoop(mongIdStr);
-        //System.out.println(response.getBody());
 
         //하루한번만
+        Integer toDay = LocalDateTime.now().getDayOfMonth();
         if (!(prevThingsHistory == null || prevThingsHistory.getRegDt().getDayOfMonth()!=toDay))
             return;
 
@@ -139,8 +140,9 @@ public class ThingsService {
                 .point(point)
                 .action(action)
                 .memberId(memberId)
+                .code(thingsCode)
                 .build();
-        PointHistory ret =  paypointRepository.save(pointHistory);
+        paypointRepository.save(pointHistory);
 
         //가격 반영
         Member member = memberRepository.findByMemberId(memberId)
@@ -148,5 +150,83 @@ public class ThingsService {
         Integer prePoint = member.getPoint();
         member.setPoint(prePoint + point);
     }
+    @Transactional
+    public void alarmHubCharge(String memberIdStr, String mongIdStr, String thingsCode){
+        Long memberId = Long.parseLong(memberIdStr);
+        if(mongIdStr.equals("") || mongIdStr == null) return;
+        Long mongId = Long.parseLong(mongIdStr);
+
+        //충전 모션 요청 보내기
+
+
+        ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
+
+        //2시간에 한번만
+        LocalDateTime twoHourAgo = LocalDateTime.now().minusHours(2);
+        if (!(prevThingsHistory == null || prevThingsHistory.getRegDt().isBefore(twoHourAgo)))
+            return;
+        ThingsHistory thingsHistory = ThingsHistory.builder()
+                .memberId(memberId)
+                .thingsCode(thingsCode)
+                .build();
+        thingsHistoryRepository.save(thingsHistory);
+
+        //보너스 적립
+        String action = "스마트싱스 허브충전 보너스";
+        Integer point = 100;
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .action(action)
+                .memberId(memberId)
+                .code(thingsCode)
+                .build();
+        paypointRepository.save(pointHistory);
+
+        //가격 반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
+    }
+
+    @Transactional
+    public void alarmOpenDoor(String memberIdStr, String mongIdStr, String thingsCode){
+        Long memberId = Long.parseLong(memberIdStr);
+        if(mongIdStr.equals("") || mongIdStr == null) return;
+        Long mongId = Long.parseLong(mongIdStr);
+
+        //문열림 모션 요청 보내기
+
+
+        ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
+
+        //1시간에 한번만
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(2);
+        if (!(prevThingsHistory == null || prevThingsHistory.getRegDt().isBefore(oneHourAgo)))
+            return;
+        ThingsHistory thingsHistory = ThingsHistory.builder()
+                .memberId(memberId)
+                .thingsCode(thingsCode)
+                .build();
+        thingsHistoryRepository.save(thingsHistory);
+
+        //보너스 적립
+        String action = "스마트싱스 문열림센서 보너스";
+        Integer point = 75;
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .action(action)
+                .memberId(memberId)
+                .code(thingsCode)
+                .build();
+        paypointRepository.save(pointHistory);
+
+        //가격 반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
+    }
+
 
 }

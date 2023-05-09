@@ -33,4 +33,6 @@ public class PointHistory {
     @Column(name = "member_id")
     private Long memberId;
 
+    @Column(name = "code")
+    private String code;
 }

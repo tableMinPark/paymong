@@ -157,6 +157,18 @@ fun Things(
     Box(
         contentAlignment = Alignment.Center
     ){
+        val btn1Bg = painterResource(R.drawable.btn_1_bg)
+        Image(painter = btn1Bg, contentDescription = null,
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {ButtonSoundPlay();
+                        navController.navigate(AppNavItem.Help.route) }
+                )
+                .height(40.dp)
+                .padding(horizontal = 20.dp)
+        )
         Image(painterResource(R.drawable.things), contentDescription = null,
             modifier = Modifier
                 .clickable(
@@ -233,7 +245,7 @@ fun Top(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        Row {
+        Row (    horizontalArrangement = Arrangement.SpaceBetween){
             Help(navController)
             Info(appViewModel, navController)
             Things(appViewModel, navController)
@@ -522,7 +534,7 @@ fun MakeEgg(
                             color = Color.White
                         )
                         Log.d("성장", "10번 클릭 넘엇서!")
-                        CreateImageList()
+
                     } else {
                         Text(
                             text = " ${appViewModel.eggTouchCount}\n ",
@@ -533,8 +545,8 @@ fun MakeEgg(
                             color = Color.White
                         )
                     }
-//                    Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
-                    Image(painter = painterResource(R.drawable.ch001),
+                    Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+//                    Image(painter = painterResource(R.drawable.ch001),
                         contentDescription = null,
                         modifier = Modifier
                             .height(250.dp)
@@ -546,7 +558,9 @@ fun MakeEgg(
                                 }
                             )
                     )
-                    CreateImageList()
+                    // CreateEffect
+//                    CreateImageList()
+
                     val poopCount = appViewModel.poopCount
                     val poopSize = 60
 
@@ -658,7 +672,7 @@ fun InfoPreview() {
 fun CreateImageList() {
     val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3,)
 
-    Box(Modifier.fillMaxSize().padding(top=150.dp)) {
+    Box() {
         var currentIndex by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
@@ -669,6 +683,7 @@ fun CreateImageList() {
             currentIndex = 1
             delay(800L)
             currentIndex = 2
+            delay(800L)
 
 
         }

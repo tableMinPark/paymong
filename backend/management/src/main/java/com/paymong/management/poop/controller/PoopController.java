@@ -35,7 +35,7 @@ public class PoopController {
     @PutMapping
     public ResponseEntity<Object> removePoop(HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-
+        LOGGER.info("똥을 치웁니다. id : {}", mongIdStr);
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);

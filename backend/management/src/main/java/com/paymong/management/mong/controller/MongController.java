@@ -44,13 +44,16 @@ public class MongController {
     @PostMapping
     public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto, HttpServletRequest httpServletRequest) throws Exception{
         try{
-            LOGGER.info("name : {}", addMongReqDto.getName());
             if(addMongReqDto.getName() == null){
                 throw new NullPointerException();
             }
-            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
-            if(memberId == null) throw new NullPointerException();
+            String memberIdStr = httpServletRequest.getHeader(headerMember);
 
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+
+            Long memberId = Long.parseLong(memberIdStr);
+
+            LOGGER.info("훈련을 시작합니다. id : {}", memberId);
             AddMongReqVo addMongReqVo = new AddMongReqVo(addMongReqDto);
             addMongReqVo.setMemberId(memberId);
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
@@ -98,18 +101,6 @@ public class MongController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
         }
     }
-//
-//    @GetMapping("/stop")
-//    public ResponseEntity<Object> stopReduceHealth(@RequestParam("mongId") Long mongId){
-//        schedulerService.stopOf(1, mongId);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-//    }
-//
-//    @GetMapping("/death/stop")
-//    public ResponseEntity<Object> deathMong(@RequestParam("mongId") Long mongId){
-//        schedulerService.stopOf(3, mongId);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-//    }
 
     @GetMapping("/death")
     public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
@@ -135,6 +126,7 @@ public class MongController {
     @PutMapping("/evolution")
     public ResponseEntity<Object> evolutionMong(HttpServletRequest httpServletRequest){
         String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("진화를 시작합니다. id : {}", mongIdStr);
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);

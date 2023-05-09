@@ -35,6 +35,7 @@ public class TrainingController {
     public ResponseEntity<Object> training(@RequestBody TrainingReqDto trainingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("훈련을 시작합니다. id : {}", mongIdStr);
         try {
             if(trainingReqDto.getTrainingCount() == null)throw new NullPointerException();
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
@@ -68,6 +69,7 @@ public class TrainingController {
     public ResponseEntity<Object> walking(@RequestBody WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
         String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("산책을 시작합니다. id : {}", mongIdStr);
         LOGGER.info("count : {} , mongId : {}, memberId : {}", walkingReqDto.getWalkingCount(), mongIdStr, memberIdStr);
         try {
             if(walkingReqDto.getWalkingCount() == null ){

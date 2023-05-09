@@ -4,6 +4,11 @@ import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.ThingsCode
 import java.time.LocalDateTime
 
+data class AddPayResDto(
+    val point : Int,
+    val mapCode: String
+)
+
 data class FindMemberResDto(
     val mongCode : String,
     val point : Long

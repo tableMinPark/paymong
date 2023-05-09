@@ -17,7 +17,7 @@ public class Food {
     private String name;
     private String foodCode;
     private Integer price;
-    private String lastBuy;
+    private LocalDateTime lastBuy;
 
     public static Food of(CommonCode commonCode, Integer price, LocalDateTime lastBuy) {
 
@@ -26,14 +26,14 @@ public class Food {
                 .name(commonCode.getName())
                 .foodCode(commonCode.getCode())
                 .price(price)
-                .lastBuy(String.valueOf(lastBuy))
+                .lastBuy(lastBuy)
                 .build();
         } else {
             return Food.builder()
                 .name(commonCode.getName())
                 .foodCode(commonCode.getCode())
                 .price(price)
-                .lastBuy("")
+                .lastBuy(null)
                 .build();
         }
 

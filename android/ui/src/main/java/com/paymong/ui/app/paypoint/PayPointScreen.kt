@@ -8,13 +8,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +31,7 @@ import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.dalmoori
 
 @Composable
@@ -40,11 +46,13 @@ fun PayPoint(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { navController.navigate(AppNavItem.Main.route){
-                    popUpTo("main"){
-                        inclusive = true
+                onClick = {
+                    navController.navigate(AppNavItem.Main.route) {
+                        popUpTo("main") {
+                            inclusive = true
+                        }
                     }
-                } }
+                }
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -59,7 +67,8 @@ fun PointInfo(text:String, point: Int){
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text, fontFamily = dalmoori, fontSize = 20.sp,color = Color.White)
+        Text(text, fontFamily = dalmoori, fontSize = 18.sp,color = Color.White,
+            modifier = Modifier.weight(0.5f), overflow = TextOverflow.Ellipsis, maxLines = 1)
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -100,6 +109,23 @@ fun PayCard(payPointViewModel: PayPointViewModel) {
                 if(payPointViewModel.payList.size!=0){
                     items(payPointViewModel.payList.size){index ->
                         PointInfo(text = payPointViewModel.payList[index].action, point = payPointViewModel.payList[index].point)
+                    }
+                }
+                else{
+                    item(){
+                        val strokeWidth = 5.dp
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.drawBehind {
+                                drawCircle(
+                                    PayMongNavy,
+                                    radius = size.width / 2 - strokeWidth.toPx() / 2,
+                                    style = Stroke(strokeWidth.toPx())
+                                )
+                            },
+                            color = Color.LightGray,
+                            strokeWidth = strokeWidth
+                        )
                     }
                 }
             }

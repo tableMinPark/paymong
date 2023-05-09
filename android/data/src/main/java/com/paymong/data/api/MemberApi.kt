@@ -1,6 +1,7 @@
 package com.paymong.data.api
 
 import com.paymong.data.model.request.AddMongReqDto
+import com.paymong.data.model.request.AddPayReqDto
 import com.paymong.data.model.request.AddThingsReqDto
 import com.paymong.data.model.response.*
 import retrofit2.Response
@@ -11,6 +12,9 @@ import retrofit2.http.HTTP
 import retrofit2.http.POST
 
 interface MemberApi {
+    @POST("/member/paypoint")
+    suspend fun addPay(@Body addPayReqDto: AddPayReqDto) : Response<Boolean>
+
     @GET("/member/info")
     suspend fun findMember() : Response<FindMemberResDto>
 

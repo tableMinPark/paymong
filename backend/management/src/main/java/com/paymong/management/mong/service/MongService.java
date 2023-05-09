@@ -1,7 +1,11 @@
 package com.paymong.management.mong.service;
 
+import com.paymong.management.global.client.ClientService;
 import com.paymong.management.global.client.CommonServiceClient;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.dto.CommonCodeDto;
+import com.paymong.management.global.dto.FindCommonCodeDto;
+import com.paymong.management.global.dto.FindMongLevelCodeDto;
 import com.paymong.management.global.exception.AlreadyExistMongException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -30,7 +34,8 @@ import java.util.Random;
 public class MongService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongService.class);
     private final MongRepository mongRepository;
-    private final CommonServiceClient commonServiceClient;
+    private final ClientService clientService;
+    private final SchedulerService schedulerService;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -45,17 +50,22 @@ public class MongService {
                 chkMong.get().setActive(false);
             }
         }
-        FindRandomEggDto findRandomEggDto = commonServiceClient.findRandomEgg();
+        FindMongLevelCodeDto findMongLevelCodeDto = new FindMongLevelCodeDto();
+        findMongLevelCodeDto.setLevel(0);
 
+        CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
         Mong mong = Mong.builder()
                 .name(addMongReqVo.getName())
                 .memberId(addMongReqVo.getMemberId())
-                .code(findRandomEggDto.getCode())
+                .code(commonCodeDto.getCode())
                 .sleepStart(addMongReqVo.getSleepStart())
                 .sleepEnd(addMongReqVo.getSleepEnd())
                 .build();
 
         Mong newMong = mongRepository.save(mong);
+
+        clientService.addMong(String.valueOf(addMongReqVo.getMemberId()),
+                new FindCommonCodeDto(commonCodeDto.getCode()));
 
         AddMongResVo addMongResVo = new AddMongResVo(newMong);
         // 무슨 이유인진 몰라도 null로 처리됨..
@@ -76,6 +86,13 @@ public class MongService {
         findMongResVo.setMongId(mong.getMongId());
         findMongResVo.setMongCode(mong.getCode());
         return findMongResVo;
+    }
+
+    @Transactional
+    public void startScheduler(Long mongId) throws NotFoundMongException {
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
+                .orElseThrow(()-> new NotFoundMongException());
+        schedulerService.startScheduler(mong);
     }
 
 

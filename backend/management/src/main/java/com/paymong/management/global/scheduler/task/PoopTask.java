@@ -18,7 +18,7 @@ public class PoopTask {
     @Transactional
     public void addPoop(Long mongId) throws NotFoundMongException {
 
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
         if(!mong.getActive()) throw new NotFoundMongException();
         Integer poop = mong.getPoopCount();

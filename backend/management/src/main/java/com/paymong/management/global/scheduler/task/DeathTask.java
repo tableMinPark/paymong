@@ -18,7 +18,7 @@ public class DeathTask {
     private final MongRepository mongRepository;
     @Transactional
     public void deathMong(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
         mong.setStateCode(MongConditionCode.DIE.getCode());
         log.info("{} 의 mong이 죽었습니다.", mongId);

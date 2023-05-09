@@ -16,7 +16,7 @@ public class SatietyTask {
     private final MongRepository mongRepository;
     @Transactional
     public Boolean reduceSatiety(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
         if(!mong.getActive()) throw new NotFoundMongException();
         Integer poop = mong.getPoopCount();

@@ -1,27 +1,27 @@
 package com.paymong.management.global.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymong.management.global.code.ManagementStateCode;
-import com.paymong.management.global.dto.AddPointDto;
-import com.paymong.management.global.dto.CommonCodeDto;
-import com.paymong.management.global.dto.FindCommonCodeDto;
+import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.GatewayException;
-import com.paymong.management.global.exception.UnknownException;
-import com.paymong.management.global.response.ErrorResponse;
-import com.paymong.management.mong.dto.FindRandomEggDto;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class ClientService {
     private final MemberServiceClient memberServiceClient;
     private final CommonServiceClient commonServiceClient;
+    private final CollectServiceClient collectServiceClient;
+
+    public void addMong(String memberid, FindCommonCodeDto findCommonCodeDto) throws GatewayException {
+        try {
+            collectServiceClient.addMong(memberid, findCommonCodeDto);
+        }catch (Exception e){
+            throw new GatewayException();
+        }
+    }
 
     public void addPoint(String memberId, AddPointDto addPayDto) throws GatewayException {
         try {
@@ -51,4 +51,23 @@ public class ClientService {
         }
     }
 
+    public CommonCodeDto findMongLevelCode(FindMongLevelCodeDto findMongLevelCodeDto) throws GatewayException{
+        try {
+            ObjectMapper om = new ObjectMapper();
+            CommonCodeDto response = om.convertValue(commonServiceClient.findMongLevelCode(findMongLevelCodeDto).getBody(), CommonCodeDto.class);
+            return response;
+        }catch (Exception e){
+            throw new GatewayException();
+        }
+    }
+
+    public TotalPointDto findTotalPay(String memberId, FindTotalPayDto findTotalPayDto) throws GatewayException {
+        try {
+            ObjectMapper om = new ObjectMapper();
+            TotalPointDto response = om.convertValue(memberServiceClient.findTotalPay(memberId, findTotalPayDto).getBody(), TotalPointDto.class);
+            return response;
+        } catch (Exception e){
+            throw new GatewayException();
+        }
+    }
 }

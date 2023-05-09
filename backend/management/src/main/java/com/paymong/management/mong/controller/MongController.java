@@ -86,11 +86,16 @@ public class MongController {
         }
     }
 
-//    @GetMapping("/start")
-//    public ResponseEntity<Object> startReduceHealth(@RequestParam("mongId") Long mongId){
-//        schedulerService.startOf(1, mongId);
-//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-//    }
+    @GetMapping("/start")
+    public ResponseEntity<Object> startReduceHealth(@RequestParam("mongId") Long mongId){
+        try {
+            mongService.startScheduler(mongId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }
+    }
 //
 //    @GetMapping("/stop")
 //    public ResponseEntity<Object> stopReduceHealth(@RequestParam("mongId") Long mongId){

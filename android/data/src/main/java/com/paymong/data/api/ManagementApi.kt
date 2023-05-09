@@ -26,6 +26,12 @@ interface ManagementApi {
     @PUT("/management/poop")
     suspend fun poop() : Response<Boolean>
 
+    @PUT("/management/feed/food")
+    suspend fun eatFood(@Body foodCode: String) : Response<Boolean>
+
+    @PUT("/management/feed/snack")
+    suspend fun eatSnack(@Body snackCode: String) : Response<Boolean>
+
     @GET("/common/food/{foodCategory}")
     suspend fun getFood(@Path("foodCategory") foodCategory:String) : Response<List<FoodResDto>>
 

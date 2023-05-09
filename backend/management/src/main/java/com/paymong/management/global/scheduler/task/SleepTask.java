@@ -20,7 +20,7 @@ public class SleepTask {
 
     @Transactional
     public void sleepMong(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
@@ -30,7 +30,7 @@ public class SleepTask {
     @Transactional
     public void awakeMong(Long mongId, Long expire) throws NotFoundMongException {
         // expire 단위 분
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
@@ -69,7 +69,7 @@ public class SleepTask {
 
     @Transactional
     public void minusSleep(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
         log.info("{}이 졸려 집니다.",mongId);

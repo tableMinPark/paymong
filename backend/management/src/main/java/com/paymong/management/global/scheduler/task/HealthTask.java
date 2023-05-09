@@ -17,7 +17,7 @@ public class HealthTask {
     private final MongRepository mongRepository;
     @Transactional
     public Boolean reduceHealth(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findByMongId(mongId)
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
         if(!mong.getActive()) throw new NotFoundMongException();
         Integer poop = mong.getPoopCount();

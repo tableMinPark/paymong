@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StatusService {
 
     private final MongRepository mongRepository;
-    private final SchedulerService schedulerService;
     @Transactional
     public void modifyMongStatus(Long mongId, FindStatusResDto statusResDto) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongId(mongId)

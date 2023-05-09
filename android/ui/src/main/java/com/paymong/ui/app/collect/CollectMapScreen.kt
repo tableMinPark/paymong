@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,14 +46,37 @@ fun CollectMap(
                 LazyColumn(
                     Modifier.fillMaxSize()
                 ) {
-                    Log.d("mapList",collectMapViewModel.mapList.toString())
                     var cnt = collectMapViewModel.mapList.size / 2
                     if(collectMapViewModel.mapList.size%2 == 1){
                         cnt += 1
                     }
-                    Log.d("cnt", cnt.toString())
-                    items(cnt){
-                            index -> ComponentRow(index = index*2, collectMapViewModel)
+                    if(collectMapViewModel.mapList.size!=0) {
+                        items(cnt) { index ->
+                            ComponentRow(index = index * 2, collectMapViewModel)
+                        }
+                    } else{
+                        item(){
+                            val strokeWidth = 10.dp
+
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ){
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .drawBehind {
+                                            drawCircle(
+                                                PayMongNavy,
+                                                radius = size.width / 2 - strokeWidth.toPx() / 2,
+                                                style = Stroke(strokeWidth.toPx())
+                                            )
+                                        }
+                                        .fillMaxWidth(0.3f),
+                                    color = Color.LightGray,
+                                    strokeWidth = strokeWidth
+                                )
+                            }
+                        }
                     }
                 }
             }

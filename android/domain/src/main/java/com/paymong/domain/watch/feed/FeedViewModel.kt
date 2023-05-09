@@ -28,7 +28,6 @@ class FeedViewModel : ViewModel() {
     var isCanBuy by mutableStateOf(false)
 
     var foodList = mutableListOf<Food>()
-    var snackList = mutableListOf<Food>()
     var currentFoodPosition by mutableStateOf(0)
 
     private val memberRepository: MemberRepository = MemberRepository()
@@ -64,9 +63,11 @@ class FeedViewModel : ViewModel() {
                 }
                 .collect{
                         data ->
+                        foodList.clear()
                         for(i in data.indices){
-                            foodList[i] = Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy)
+                            foodList.add(Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy))
                         }
+                    changeCurrentFoodPosition()
                 }
         }
     }
@@ -79,14 +80,14 @@ class FeedViewModel : ViewModel() {
         currentFoodPosition--
         if (currentFoodPosition < 0)
             currentFoodPosition = foodList.size - 1
-//        changeCurrentFoodPosition()
+        changeCurrentFoodPosition()
     }
 
     fun nextButtonClick() {
         currentFoodPosition++
         if (currentFoodPosition >= foodList.size)
             currentFoodPosition = 0
-//        changeCurrentFoodPosition()
+        changeCurrentFoodPosition()
     }
 
     fun selectButtonClick() {
@@ -99,6 +100,8 @@ class FeedViewModel : ViewModel() {
         name = nowFood.name
         foodCode = nowFood.foodCode
         price = nowFood.price
-        isCanBuy = Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
+        if(nowFood.lastBuy!=null) {
+            isCanBuy = Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
+        }
     }
 }

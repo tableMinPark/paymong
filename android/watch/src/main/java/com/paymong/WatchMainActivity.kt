@@ -49,8 +49,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 수빈이
         // 주석풀어서 쓰면됨
         // 와치만 쓸때 쓰는거
-//        val dataApplicationRepository = DataApplicationRepository()
-//        dataApplicationRepository.setValue("playerId", "a_6641482048740515693")
+        val dataApplicationRepository = DataApplicationRepository()
+        dataApplicationRepository.setValue("playerId", "a_6641482048740515693")
 
 
 

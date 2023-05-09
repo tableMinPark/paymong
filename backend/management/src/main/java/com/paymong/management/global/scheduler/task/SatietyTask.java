@@ -18,20 +18,21 @@ public class SatietyTask {
     public Boolean reduceSatiety(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
-        if(!mong.getActive()) throw new NotFoundMongException();
+
         Integer poop = mong.getPoopCount();
         Integer satiety = mong.getSatiety();
         if(poop == 0){
             satiety = satiety - 1 < 0 ? 0 : satiety - 1;
-            mong.setHealth(satiety);
+            mong.setSatiety(satiety);
         }else{
             satiety = satiety - (poop*poop) < 0 ? 0 : satiety - (poop*poop);
-            mong.setHealth(satiety);
+            mong.setSatiety(satiety);
         }
         if(satiety == 0){
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
             return false;
         }
+        log.info("{}의 포만감이 감소하였습니다.", mongId);
         return true;
     }
 }

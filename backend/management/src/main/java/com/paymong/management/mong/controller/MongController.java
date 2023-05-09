@@ -2,6 +2,7 @@ package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.AlreadyExistMongException;
+import com.paymong.management.global.exception.GatewayException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.DeathScheduler;
@@ -32,12 +33,13 @@ public class MongController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongController.class);
     private final MongService mongService;
-    private final SchedulerService schedulerService;
-
-    private final DeathScheduler deathScheduler;;
+    private final DeathScheduler deathScheduler;
 
     @Value("${header.member}")
     String headerMember;
+
+    @Value("${header.mong}")
+    String headerMong;
     /* 몽 생성 */
     @PostMapping
     public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto, HttpServletRequest httpServletRequest) throws Exception{
@@ -128,5 +130,25 @@ public class MongController {
         Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
         deathScheduler.restartScheduler(mongId);
         return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @PutMapping("/evolution")
+    public ResponseEntity<Object> evolutionMong(HttpServletRequest httpServletRequest){
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        try {
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
+            mongService.evolutionMong(mongId);
+            return  ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
+        }
     }
 }

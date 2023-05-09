@@ -19,7 +19,7 @@ public class HealthTask {
     public Boolean reduceHealth(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
-        if(!mong.getActive()) throw new NotFoundMongException();
+
         Integer poop = mong.getPoopCount();
         Integer health = mong.getHealth();
         if(poop == 0){
@@ -33,6 +33,7 @@ public class HealthTask {
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
             return false;
         }
+        log.info("{}의 체력이 감소하였습니다.", mongId);
         return true;
     }
 }

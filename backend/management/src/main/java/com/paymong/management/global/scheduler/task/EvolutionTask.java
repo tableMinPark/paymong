@@ -95,13 +95,11 @@ public class EvolutionTask {
     }
 
     @Transactional
-    public void evolutionMong2Graduation(Long mongId) throws NotFoundMongException {
+    public void evolutionMong(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
         // 해당 몽 졸업
-        mong.setStateCode(MongConditionCode.GRADUATE.getCode());
-        mong.setActive(false);
-
+        mong.setStateCode(MongConditionCode.EVOLUTION_READY.getCode());
     }
 
     private FindMongLevelCodeDto checkTierByMong(Mong mong){

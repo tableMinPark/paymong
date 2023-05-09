@@ -81,24 +81,15 @@ public class EvolutionScheduler implements ManagementScheduler {
         }
 
         SchedulerDto schedulerDto = schedulerMap.get(levelDto.getMongId());
-        if(levelDto.getType() == 3){
-            log.info("{}는 못 키워서 졸업시킴", levelDto.getMongId());
-            schedulerDto.setExpire(0L);
-            schedulerDto.setMessage("graduation-");
-            schedulerDto.setRunnable(getRunnableGraduation(levelDto.getMongId()));
-        }else if(levelDto.getLevel() == 1){
+        if(levelDto.getLevel() == 1){
             schedulerDto.setExpire(60L*60L*12L);
             schedulerDto.setMessage("Evolution-to-level2-");
-            schedulerDto.setRunnable(getRunnableLevel2(levelDto.getMongId()));
         }else if(levelDto.getLevel() == 2){
             schedulerDto.setExpire(60L*60L*36L);
             schedulerDto.setMessage("Evolution-to-level3-");
-            schedulerDto.setRunnable(getRunnableLevel3(levelDto.getMongId()));
         }else if(levelDto.getLevel() == 3){
             schedulerDto.setExpire(60L*60L*24L);
             schedulerDto.setMessage("Evolution-to-graduation-");
-            schedulerDto.setRunnable(getRunnableGraduation(levelDto.getMongId()));
-
         }else{
             log.info("레벨이 맞지 않습니다.");
             return;
@@ -128,62 +119,14 @@ public class EvolutionScheduler implements ManagementScheduler {
 
         return () -> {
             try {
-                NextLevelDto levelDto
-                        = evolutionTask.evolutionMong2Level1(mongId);
-                nextLevelScheduler(levelDto);
-            }catch (NotFoundMongException e){
-                stopScheduler(mongId);
-            }catch (GatewayException e){
-                stopScheduler(mongId);
-            }
-
-        };
-    }
-
-    public Runnable getRunnableLevel2(Long mongId) {
-
-        return () -> {
-            try {
-                NextLevelDto levelDto
-                        = evolutionTask.evolutionMong2Level2(mongId);
-                nextLevelScheduler(levelDto);
-            }catch (NotFoundMongException e){
-                stopScheduler(mongId);
-            }catch (GatewayException e){
-                stopScheduler(mongId);
-            }
-
-        };
-    }
-
-    public Runnable getRunnableLevel3(Long mongId) {
-
-        return () -> {
-            try {
-                NextLevelDto levelDto
-                        = evolutionTask.evolutionMong2Level3(mongId);
-                nextLevelScheduler(levelDto);
-            }catch (NotFoundMongException e){
-                stopScheduler(mongId);
-            }catch (GatewayException e){
-                stopScheduler(mongId);
-            }
-
-        };
-    }
-
-    public Runnable getRunnableGraduation(Long mongId) {
-
-        return () -> {
-            try {
-                evolutionTask.evolutionMong2Graduation(mongId);
-                stopScheduler(mongId);
+                evolutionTask.evolutionMong(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
             }
 
         };
     }
+
 
     @Override
     public Trigger getTrigger() {

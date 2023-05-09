@@ -11,9 +11,11 @@ import com.paymong.member.member.repository.MemberRepository;
 import com.paymong.member.paypoint.dto.request.AddMapReqDto;
 import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
 import com.paymong.member.paypoint.dto.request.FindMapByNameReqDto;
+import com.paymong.member.paypoint.dto.request.FindTotalPayReqDto;
 import com.paymong.member.paypoint.dto.response.AddPaypointResDto;
 import com.paymong.member.paypoint.dto.response.AddPointReqDto;
 import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
+import com.paymong.member.paypoint.dto.response.FindTotalPayResDto;
 import com.paymong.member.paypoint.entity.PointHistory;
 import com.paymong.member.paypoint.repository.PaypointRepository;
 import com.paymong.member.global.pay.Pay;
@@ -24,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -46,6 +49,7 @@ public class PaypointService {
                 .point(point)
                 .action(action)
                 .memberId(memberId)
+                .code("PY000")
                 .build();
 
         PointHistory ret =  paypointRepository.save(pointHistory);
@@ -93,7 +97,8 @@ public class PaypointService {
         Long memberId = Long.parseLong(memberIdStr);
         String action = addPointReqDto.getContent();
         Integer point = addPointReqDto.getPoint();
-        
+        String code = addPointReqDto.getCode();
+
         //point반영
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException());
@@ -105,6 +110,7 @@ public class PaypointService {
                 .point(point)
                 .action(action)
                 .memberId(memberId)
+                .code(code)
                 .build();
         PointHistory ret =  paypointRepository.save(pointHistory);
         return ret;
@@ -116,5 +122,19 @@ public class PaypointService {
         List<PointHistory> paypointList =  paypointRepository.findAllByMemberIdOrderByPointHistoryIdDesc(memberId);
         System.out.println(paypointList);
         return paypointList;
+    }
+
+    public FindTotalPayResDto findTotalPay(String memberIdStr, FindTotalPayReqDto findTotalPayReqDto){
+        Long memberId = Long.parseLong(memberIdStr);
+        LocalDateTime startTime = findTotalPayReqDto.getStartTime();
+        LocalDateTime endTime = findTotalPayReqDto.getEndTime();
+        String code = "PY000";
+        List<PointHistory> pointHistoryList = paypointRepository.findByMemberIdAndCodeAndRegDtBetween(memberId, code,startTime, endTime);
+
+        int totalPoint = pointHistoryList.stream()
+                .mapToInt(PointHistory::getPoint)
+                .sum();
+        FindTotalPayResDto ret = new FindTotalPayResDto(totalPoint);
+        return ret;
     }
 }

@@ -75,28 +75,6 @@ public class MemberController {
         }
     }
 
-    @PutMapping("/management/paypoint")
-    public ResponseEntity<Object> modifyPointAndToPaypoint(
-        @RequestBody ModifyPointReqDto modifyPointDto,
-        HttpServletRequest httpServletRequest) {
-        log.info("modifyPointAndToPaypoint - Call");
-
-        log.info("modifyPointDto content -{} ", modifyPointDto.getContent());
-        log.info("modifyPointDto point -{} ", modifyPointDto.getPoint());
-        try {
-            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
-            memberService.modifyPointAndToPaypoint(memberId, modifyPointDto.getPoint(),
-                modifyPointDto.getContent());
-            return ResponseEntity.ok().build();
-        } catch (NotFoundException e) {
-            log.error(PaypointStateCode.NOTEXIST.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.NOTEXIST));
-        } catch (Exception e) {
-            log.error(PaypointStateCode.UNKNOWN.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse(PaypointStateCode.UNKNOWN));
-        }
-
-    }
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginReqDto loginReqDto){

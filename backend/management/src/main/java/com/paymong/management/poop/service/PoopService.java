@@ -1,12 +1,14 @@
 package com.paymong.management.poop.service;
 
 import com.paymong.management.global.code.MongActiveCode;
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.poop.vo.PoopMongReqVo;
+import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ public class PoopService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PoopService.class);
     private final MongRepository mongRepository;
     private final ActiveHistoryRepository activeHistoryRepository;
+    private final StatusService statusService;
     int cnt = 0;
     @Transactional
     public void removePoop(PoopMongReqVo poopMongReqVo) throws Exception{
@@ -30,6 +33,10 @@ public class PoopService {
                 .orElseThrow(() -> new NotFoundMongException());
 
         mong.setPoopCount(0);
+
+        // 상태 체크
+        MongConditionCode conditionCode = statusService.checkCondition(mong);
+        mong.setStateCode(conditionCode.getCode());
 
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(MongActiveCode.CLEAN.getCode())

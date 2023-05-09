@@ -30,6 +30,7 @@ public class HealthTask {
             mong.setHealth(health);
         }
         if(health == 0){
+            mong.setStateCode(MongConditionCode.SICK.getCode());
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
             return false;
         }

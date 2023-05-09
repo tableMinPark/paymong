@@ -97,9 +97,9 @@ public class SleepTask {
 
         log.info("{}이 졸려 집니다.",mongId);
         Integer sleep = mong.getSleep();
-        mong.setSleep(sleep - 1);
+        mong.setSleep(sleep - 1 < 0 ? 0 : sleep - 1);
         if(sleep - 1 < 2){
-            mong.setStateCode(MongConditionCode.SLEEP.getCode());
+            mong.setStateCode(MongConditionCode.SOMNOLENCE.getCode());
         }
     }
 

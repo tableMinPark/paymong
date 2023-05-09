@@ -53,10 +53,11 @@ public class MongController {
 
             Long memberId = Long.parseLong(memberIdStr);
 
-            LOGGER.info("훈련을 시작합니다. id : {}", memberId);
+            LOGGER.info("새로운 몽을 추가합니다. id : {}", memberId);
             AddMongReqVo addMongReqVo = new AddMongReqVo(addMongReqDto);
             addMongReqVo.setMemberId(memberId);
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
+            mongService.startScheduler(addMongResVo.getMongId());
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);
         }catch (NullPointerException e){

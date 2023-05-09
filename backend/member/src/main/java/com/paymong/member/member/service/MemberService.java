@@ -69,20 +69,6 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyPointAndToPaypoint(Long memberId, Integer point, String content)
-        throws Exception {
-
-        Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new NotFoundException());
-
-        String memberIdStr = Long.toString(memberId);
-        paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
-
-        Integer prePoint = member.getPoint();
-        member.setPoint(prePoint + point);
-    }
-
-    @Transactional
     public LoginResDto login(LoginReqDto loginReqDto) {
         Member member = memberRepository.findByPlayerId(loginReqDto.getPlayerId())
             .orElseThrow(() -> new NotFoundException());

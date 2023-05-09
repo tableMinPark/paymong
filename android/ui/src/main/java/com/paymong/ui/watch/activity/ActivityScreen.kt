@@ -32,88 +32,20 @@ fun Activity(navController: NavHostController) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
+    var buttonHeight = 100
+    var buttonPadding = 0
+    var buttonFont = 24
+    if (screenWidthDp < 200) {
+        buttonHeight = 95
+        buttonPadding = 20
+        buttonFont = 20
+    }
+
+
     val img = painterResource(R.drawable.main_bg)
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
 
-    if (screenWidthDp < 200) {
-        SmallWatch( navController)
-    }
-    else {
-        BigWatch( navController)
-    }
-}
-
-@Composable
-fun SmallWatch(
-    navController: NavHostController
-) {
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxHeight()
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                onClick = { ButtonSoundPlay(); navController.navigate(WatchNavItem.Training.route) },
-                modifier = Modifier.size(width = 200.dp, height = 95.dp),
-                shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-            ) {
-                Text(
-                    text = "훈련",
-                    fontFamily = dalmoori,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-            }
-        }
-        // * Line *
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .height(5.dp)
-        )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp)
-        ) {
-            Button(
-                onClick = { ButtonSoundPlay(); navController.navigate(WatchNavItem.Walking.route) },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp),
-                shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-            ) {
-                Text(
-                    text = "산책",
-                    fontFamily = dalmoori,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(bottom = 20.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun BigWatch(
-    navController: NavHostController
-) {
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
         .build()
@@ -135,7 +67,7 @@ fun BigWatch(
             Button(
                 onClick = { ButtonSoundPlay(); navController.navigate(WatchNavItem.Training.route) },
                 modifier = Modifier
-                    .size(width = 200.dp, height = 100.dp)
+                    .size(width = 200.dp, height = buttonHeight.dp)
                     .weight(1f),
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -143,7 +75,8 @@ fun BigWatch(
                 Text(
                     text = "훈련",
                     fontFamily = dalmoori,
-                    fontSize = 24.sp
+                    fontSize = buttonFont.sp,
+                    modifier = Modifier.padding(top=buttonPadding.dp)
                 )
             }
         }
@@ -171,12 +104,16 @@ fun BigWatch(
                 Text(
                     text = "산책",
                     fontFamily = dalmoori,
-                    fontSize = 24.sp
+                    fontSize = buttonFont.sp,
+                    modifier = Modifier.padding(bottom=buttonPadding.dp)
                 )
             }
         }
     }
 }
+
+
+
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable

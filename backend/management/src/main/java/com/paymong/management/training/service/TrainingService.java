@@ -38,6 +38,11 @@ public class TrainingService {
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련", status.getCode()));
 
+        if(trainingReqVo.getWalkingCount() >= 50){
+            // 수치값 변경
+            statusService.modifyMongStatus(trainingReqVo.getMongId(), status);
+        }
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(status.getCode())
                 .activeTime(LocalDateTime.now())
@@ -45,11 +50,6 @@ public class TrainingService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
-        if(trainingReqVo.getWalkingCount() >= 50){
-            // 수치값 변경
-            statusService.modifyMongStatus(trainingReqVo.getMongId(), status);
-        }
 
     }
 
@@ -75,6 +75,9 @@ public class TrainingService {
 
         status.setStrength(status.getStrength() * (status.getStrength()*cnt));
 
+        // 수치값 변경
+        statusService.modifyMongStatus(walkingReqVo.getMongId(), status);
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(status.getCode())
                 .activeTime(LocalDateTime.now())
@@ -82,9 +85,6 @@ public class TrainingService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
-        // 수치값 변경
-        statusService.modifyMongStatus(walkingReqVo.getMongId(), status);
     }
 
 }

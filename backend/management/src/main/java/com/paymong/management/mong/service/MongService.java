@@ -161,6 +161,9 @@ public class MongService {
             ok = true;
         }
         if(ok){
+            mong.setStateCode(MongConditionCode.GRADUATE.getCode());
+            mong.setActive(false);
+
             ActiveHistory activeHistory = ActiveHistory.builder()
                     .activeCode(MongActiveCode.GRADUATION.getCode())
                     .activeTime(LocalDateTime.now())
@@ -168,10 +171,10 @@ public class MongService {
                     .build();
 
             activeHistoryRepository.save(activeHistory);
-
-            mong.setStateCode(MongConditionCode.GRADUATE.getCode());
-            mong.setActive(false);
         }else{
+            MongConditionCode condition = statusService.checkCondition(mong);
+            mong.setStateCode(condition.getCode());
+
             ActiveHistory activeHistory = ActiveHistory.builder()
                     .activeCode(MongActiveCode.EVOLUTION.getCode())
                     .activeTime(LocalDateTime.now())
@@ -179,9 +182,6 @@ public class MongService {
                     .build();
 
             activeHistoryRepository.save(activeHistory);
-
-            MongConditionCode condition = statusService.checkCondition(mong);
-            mong.setStateCode(condition.getCode());
         }
     }
 

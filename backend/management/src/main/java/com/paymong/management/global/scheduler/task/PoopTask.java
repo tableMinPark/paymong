@@ -31,7 +31,19 @@ public class PoopTask {
         if(poop == 4){
             // 패널티 적립
             mong.setPenalty(penalty + 1);
+
+            ActiveHistory activeHistory = ActiveHistory.builder()
+                    .activeCode(MongActiveCode.PENALTY.getCode())
+                    .activeTime(LocalDateTime.now())
+                    .mongId(mongId)
+                    .build();
+
+            activeHistoryRepository.save(activeHistory);
         }else{
+
+            // 갯수 적립
+            mong.setPoopCount(poop + 1);
+
             ActiveHistory activeHistory = ActiveHistory.builder()
                     .activeCode(MongActiveCode.BOWEL.getCode())
                     .activeTime(LocalDateTime.now())
@@ -39,9 +51,6 @@ public class PoopTask {
                     .build();
 
             activeHistoryRepository.save(activeHistory);
-
-            // 갯수 적립
-            mong.setPoopCount(poop + 1);
         }
     }
 }

@@ -31,6 +31,8 @@ public class SleepTask {
 
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
 
+        mong.setStateCode(MongConditionCode.SLEEP.getCode());
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(MongActiveCode.SLEEP.getCode())
                 .activeTime(LocalDateTime.now())
@@ -38,8 +40,6 @@ public class SleepTask {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
-        mong.setStateCode(MongConditionCode.SLEEP.getCode());
     }
 
     @Transactional

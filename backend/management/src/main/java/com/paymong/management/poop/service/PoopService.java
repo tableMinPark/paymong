@@ -29,6 +29,8 @@ public class PoopService {
         Mong mong = mongRepository.findByMongId(poopMongReqVo.getMongId())
                 .orElseThrow(() -> new NotFoundMongException());
 
+        mong.setPoopCount(0);
+
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(MongActiveCode.CLEAN.getCode())
                 .activeTime(LocalDateTime.now())
@@ -36,8 +38,6 @@ public class PoopService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
-        mong.setPoopCount(0);
     }
 
 }

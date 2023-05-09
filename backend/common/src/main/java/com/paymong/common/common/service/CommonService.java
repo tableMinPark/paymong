@@ -1,16 +1,21 @@
 package com.paymong.common.common.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
+import com.paymong.common.common.dto.request.FindLastBuyReqDto;
 import com.paymong.common.common.dto.response.CommonCodeDto;
+import com.paymong.common.common.dto.response.FindLastBuyResDto;
 import com.paymong.common.common.dto.response.Food;
 import com.paymong.common.common.entity.CommonCode;
 import com.paymong.common.common.entity.GroupCode;
 import com.paymong.common.common.repository.CommonCodeRepository;
 import com.paymong.common.common.repository.GroupCodeRepository;
-import com.paymong.common.global.client.ManagementServiceClient;
+import com.paymong.common.global.client.InformationServiceClient;
+import com.paymong.common.global.exception.InformationException;
 import com.paymong.common.global.exception.NotFoundException;
-import com.paymong.common.global.vo.response.FindLastBuyResVo;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -30,7 +35,7 @@ public class CommonService {
 
     private final GroupCodeRepository groupCodeRepository;
 
-    private final ManagementServiceClient managementServiceClient;
+    private final InformationServiceClient informationServiceClient;
 
     @Transactional
     public List<CommonCodeDto> findAllCommonCode(
@@ -71,25 +76,20 @@ public class CommonService {
 
         List<Food> findAllFoodResDto =
             commonCodeList.stream().map(e -> {
-                FindLastBuyResVo findLastBuyResVo = new FindLastBuyResVo();
-
-//                try {
-//                    ObjectMapper om = new ObjectMapper();
-//                    findLastBuyResVo = om.convertValue(
-//                        managementServiceClient.findLastBuy(mongId,
-//                                new FindLastBuyReqVo(foodCategory))
-//                            .getBody(), FindLastBuyResVo.class);
-//                    return Food.of(e, findLastBuyResVo.getLastBuy());
-//                } catch (Exception ex) {
-//                    return Food.of(e, null);
-//                }
-                return Food.of(e, null);
+                FindLastBuyResDto findLastBuyResDto = new FindLastBuyResDto();
+                try {
+                    ObjectMapper om = new ObjectMapper();
+                    om.registerModule(new JavaTimeModule());
+                    om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                    findLastBuyResDto = om.convertValue(
+                        informationServiceClient.findLastBuy(mongId, new FindLastBuyReqDto(e.getCode()))
+                            .getBody(), FindLastBuyResDto.class);
+                    return Food.of(e,findLastBuyResDto.getLastBuy());
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
+                    throw new InformationException();
+                }
             }).collect(Collectors.toList());
-
-        LocalDateTime date = LocalDateTime.now();
-
-        findAllFoodResDto.get(0)
-            .setLastBuy(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         return findAllFoodResDto;
     }

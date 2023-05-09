@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.paymong.common.common.dto.request.FindAllCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindCommonCodeReqDto;
 import com.paymong.common.common.dto.request.FindLastBuyReqDto;
+import com.paymong.common.common.dto.request.FindRandomMongReqDto;
 import com.paymong.common.common.dto.response.CommonCodeDto;
 import com.paymong.common.common.dto.response.FindLastBuyResDto;
 import com.paymong.common.common.dto.response.Food;
@@ -109,14 +110,6 @@ public class CommonService {
     }
 
     @Transactional
-    public CommonCodeDto findRandomEgg() throws RuntimeException {
-        List<CommonCode> commonCodeList = commonCodeRepository.findByCodeStartsWith("CH0");
-        Random random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
-        random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
-        return CommonCodeDto.of(commonCodeList.get(random.nextInt(commonCodeList.size())));
-    }
-
-    @Transactional
     public CommonCodeDto findCodeByName(String name) throws RuntimeException {
         CommonCode commonCode = commonCodeRepository.findByName(name)
             .orElseThrow(() -> new NotFoundException());
@@ -124,11 +117,41 @@ public class CommonService {
     }
 
     @Transactional
-    public CommonCodeDto findRandomMong(){
-        List<CommonCode> commonCodeList = commonCodeRepository.findByCodeStartsWith("CH1");
-        Random random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
-        random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
-        return CommonCodeDto.of(commonCodeList.get(random.nextInt(commonCodeList.size())));
+    public CommonCodeDto findRandomMong(FindRandomMongReqDto findRandomMongReqDto) {
+        List<CommonCode> commonCodeList;
+        if (findRandomMongReqDto.getLevel() == 0) {
+
+            commonCodeList = commonCodeRepository.findByCodeStartsWith("CH0");
+            Random random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
+            random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
+
+            return CommonCodeDto.of(commonCodeList.get(random.nextInt(commonCodeList.size())));
+        } else if (findRandomMongReqDto.getLevel() == 1) {
+
+            commonCodeList = commonCodeRepository.findByCodeStartsWith("CH1");
+            Random random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
+            random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
+
+            return CommonCodeDto.of(commonCodeList.get(random.nextInt(commonCodeList.size())));
+        } else if (findRandomMongReqDto.getLevel() == 2) {
+            String code =
+                "CH2" + findRandomMongReqDto.getTier() + findRandomMongReqDto.getType().toString();
+
+            CommonCode commonCode = commonCodeRepository.findByCode(code)
+                .orElseThrow(() -> new NotFoundException());
+
+            return CommonCodeDto.of(commonCode);
+        } else {
+            String code = "CH3" + findRandomMongReqDto.getTier() + findRandomMongReqDto.getType();
+
+            CommonCode commonCode = commonCodeRepository.findByCode(code)
+                .orElseThrow(() -> new NotFoundException());
+
+            return CommonCodeDto.of(commonCode);
+
+        }
+
+
     }
 
 }

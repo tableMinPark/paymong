@@ -15,4 +15,6 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, String> 
     List<CommonCode> findByCodeStartsWith(String code);
 
     Optional<CommonCode> findByName(String name);
+
+    Optional<CommonCode> findByCode(String code);
 }

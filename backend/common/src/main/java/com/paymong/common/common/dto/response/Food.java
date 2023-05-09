@@ -52,14 +52,14 @@ public class Food {
                 .name(commonCode.getName())
                 .foodCode(commonCode.getCode())
                 .price(price)
-                .lastBuy(lastBuy.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .lastBuy(String.valueOf(lastBuy))
                 .build();
         } else {
             return Food.builder()
                 .name(commonCode.getName())
                 .foodCode(commonCode.getCode())
                 .price(price)
-                .lastBuy(null)
+                .lastBuy("")
                 .build();
         }
 

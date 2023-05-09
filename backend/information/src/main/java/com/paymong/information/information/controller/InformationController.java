@@ -100,4 +100,24 @@ public class InformationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NOT_FOUND));
         }
     }
+
+    @GetMapping("/lastbuy")
+    public ResponseEntity<Object> findLastBuy(HttpServletRequest httpServletRequest, FindLastBuyReqDto findLastBuyDto){
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        log.info("foodCode - {} " ,findLastBuyDto.getFoodCode());
+        try{
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
+            FindLastBuyResDto findLastBuyResDto  = mongService.findLastBuy(mongId, findLastBuyDto.getFoodCode());
+            log.info("code : {}, message : {}", InformationStateCode.SUCCESS.getCode(), InformationStateCode.SUCCESS.name());
+            return ResponseEntity.status(HttpStatus.OK).body(findLastBuyResDto);
+        } catch (NullPointerException e){
+            log.info("code : {}, message : {}", InformationStateCode.NULL_POINT.getCode(), InformationStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NULL_POINT));
+        } catch (NotFoundMongException e) {
+            log.info("code : {}, message : {}", InformationStateCode.NOT_FOUND.getCode(), InformationStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NOT_FOUND));
+        }
+
+    }
 }

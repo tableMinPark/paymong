@@ -12,14 +12,11 @@ import kotlinx.coroutines.launch
 
 class PayPointViewModel : ViewModel() {
 
-    private lateinit var load : Job
     var payList = mutableListOf<Point>()
     private val memberRepository: MemberRepository = MemberRepository()
 
     init {
-        if(::load.isInitialized) load.cancel()
-
-        load = viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             findPointList()
         }
     }
@@ -32,7 +29,7 @@ class PayPointViewModel : ViewModel() {
                 data ->
                 payList.clear()
                 for(i in data.indices){
-                    payList.add(Point(data[i].content, data[i].price))
+                    payList.add(Point(data[i].pointHistoryId, data[i].point, data[i].action, data[i].regDt, data[i].memberId))
                 }
             }
         }

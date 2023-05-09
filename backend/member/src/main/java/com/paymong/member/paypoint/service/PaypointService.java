@@ -119,8 +119,8 @@ public class PaypointService {
     @Transactional
     public List<PointHistory> findAllPaypoint(String memberKey){
         Long memberId = Long.parseLong(memberKey);
-        List<PointHistory> paypointList =  paypointRepository.findAllByMemberIdOrderByPointHistoryIdDesc(memberId);
-        System.out.println(paypointList);
+        List<PointHistory> paypointList =  paypointRepository.findFirst50ByMemberIdOrderByPointHistoryIdDesc(memberId);
+        System.out.println(paypointList.size());
         return paypointList;
     }
 

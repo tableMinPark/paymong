@@ -6,8 +6,10 @@ import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.global.response.ErrorResponse;
 import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
+import com.paymong.member.paypoint.dto.request.FindTotalPayReqDto;
 import com.paymong.member.paypoint.dto.response.AddPaypointResDto;
 import com.paymong.member.paypoint.dto.response.AddPointReqDto;
+import com.paymong.member.paypoint.dto.response.FindTotalPayResDto;
 import com.paymong.member.paypoint.entity.PointHistory;
 import com.paymong.member.paypoint.service.PaypointService;
 
@@ -76,4 +78,18 @@ public class PaypointController {
         }
     }
 
+    @GetMapping("/total")
+    public ResponseEntity<Object> findTotalPay(@RequestHeader(value = "MemberId") String memberIdStr,
+                                               FindTotalPayReqDto findTotalPayReqDto){
+        log.info("findTotalPay - Call");
+        try {
+            FindTotalPayResDto findTotalPayResDto = paypointService.findTotalPay(memberIdStr, findTotalPayReqDto);
+            return ResponseEntity.status(HttpStatus.OK).body(findTotalPayResDto);
+        }catch (Exception e){
+            System.out.println(e);
+            log.info("code : {}, message : {}", PaypointStateCode.UNKNOWN.getCode(), PaypointStateCode.UNKNOWN.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
+        }
+
+    }
 }

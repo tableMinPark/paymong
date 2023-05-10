@@ -1,7 +1,7 @@
 package com.paymong.data.api
 
-import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.request.AddPayReqDto
+import com.paymong.data.model.request.AddRoutineReqDto
 import com.paymong.data.model.request.AddThingsReqDto
 import com.paymong.data.model.response.*
 import retrofit2.Response
@@ -32,4 +32,7 @@ interface MemberApi {
 
     @GET("/member/things/addable")
     suspend fun addFindThings() : Response<List<AddThingsResDto>>
+
+    @POST("/member/things/alarm")
+    suspend fun addRoutine(@Body addRoutineReqDto: AddRoutineReqDto) : Response<Void>
 }

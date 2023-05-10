@@ -3,6 +3,7 @@ package com.paymong.data.repository
 import com.paymong.data.api.Api
 import com.paymong.data.api.MemberApi
 import com.paymong.data.model.request.AddPayReqDto
+import com.paymong.data.model.request.AddRoutineReqDto
 import com.paymong.data.model.request.AddThingsReqDto
 import com.paymong.data.model.response.*
 import kotlinx.coroutines.flow.Flow
@@ -67,6 +68,15 @@ class MemberRepository(
             response.body()?.let {
                 emit(response.body()!!)
             }
+        }
+    }
+
+    fun addRoutine(addRoutineReqDto: AddRoutineReqDto) : Flow<Boolean> = flow {
+        val response = api.addRoutine(addRoutineReqDto)
+        if(response.code() == 200){
+            emit(true)
+        } else {
+            emit(false)
         }
     }
 }

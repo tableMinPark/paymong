@@ -4,10 +4,9 @@ import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.PoopScheduler;
-import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.poop.service.PoopService;
 import com.paymong.management.poop.vo.PoopMongReqVo;
-import com.paymong.management.poop.vo.PoopMongResVo;
+import com.paymong.management.status.dto.MongStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +40,8 @@ public class PoopController {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
             PoopMongReqVo poopMongReqVo = new PoopMongReqVo(mongId);
-            PoopMongResVo poopMongResVo = poopService.removePoop(poopMongReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(poopMongResVo);
+            MongStatusDto mongStatusDto = poopService.removePoop(poopMongReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

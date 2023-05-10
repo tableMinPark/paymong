@@ -7,6 +7,7 @@ import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.status.service.StatusService;
 import com.paymong.management.training.vo.TrainingReqVo;
 import com.paymong.management.training.vo.WalkingReqVo;
@@ -26,7 +27,7 @@ public class TrainingService {
     private final StatusService statusService;
     private final ActiveHistoryRepository activeHistoryRepository;
     @Transactional
-    public void training(TrainingReqVo trainingReqVo) throws Exception{
+    public MongStatusDto training(TrainingReqVo trainingReqVo) throws Exception{
 
         // training action 찾기
         FindStatusReqDto findStatusReqDto = new FindStatusReqDto(MongActiveCode.TRAINING.getCode());
@@ -38,9 +39,11 @@ public class TrainingService {
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련", status.getCode()));
 
+        MongStatusDto mongStatusDto = new MongStatusDto();
+
         if(trainingReqVo.getWalkingCount() >= 50){
             // 수치값 변경
-            statusService.modifyMongStatus(trainingReqVo.getMongId(), status);
+            mongStatusDto = statusService.modifyMongStatus(trainingReqVo.getMongId(), status);
         }
 
         ActiveHistory activeHistory = ActiveHistory.builder()
@@ -50,15 +53,17 @@ public class TrainingService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
+        return mongStatusDto;
     }
 
     @Transactional
-    public void walking(WalkingReqVo walkingReqVo) throws Exception{
+    public MongStatusDto walking(WalkingReqVo walkingReqVo) throws Exception{
         // 500걸음 이상인지 체크
+        MongStatusDto mongStatusDto = new MongStatusDto();
+
         if(walkingReqVo.getWalkingCount() < 500){
             LOGGER.info("500걸음 이하 입니다.");
-            return;
+            return mongStatusDto;
         }
 
         // training action 찾기
@@ -76,7 +81,7 @@ public class TrainingService {
         status.setStrength(status.getStrength() * (status.getStrength()*cnt));
 
         // 수치값 변경
-        statusService.modifyMongStatus(walkingReqVo.getMongId(), status);
+        mongStatusDto = statusService.modifyMongStatus(walkingReqVo.getMongId(), status);
 
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(status.getCode())
@@ -85,6 +90,8 @@ public class TrainingService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
+
+        return mongStatusDto;
     }
 
 }

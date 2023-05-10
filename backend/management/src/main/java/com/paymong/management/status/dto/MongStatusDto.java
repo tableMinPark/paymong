@@ -1,4 +1,4 @@
-package com.paymong.management.global.socket.dto;
+package com.paymong.management.status.dto;
 
 import com.paymong.management.mong.entity.Mong;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class MongStatusDto {
+    private String code;
+    private String stateCode;
     private Integer weight;
     private Double health;
     private Double satiety;
@@ -16,7 +17,12 @@ public class MongStatusDto {
     private Double sleep;
     private Integer poopCount;
 
+    public MongStatusDto(){
+        this.code = "201";
+    }
     public MongStatusDto(Mong mong){
+        this.code = "200";
+        this.stateCode = mong.getStateCode();
         this.weight = mong.getWeight();
         this.poopCount = mong.getPoopCount();
 
@@ -48,6 +54,5 @@ public class MongStatusDto {
         this.satiety = Math.round(satiety * 100.0) / 100.0;
         this.strength = Math.round(strength * 100.0) / 100.0;
         this.sleep = Math.round(sleep * 100.0) / 100.0;
-
     }
 }

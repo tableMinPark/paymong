@@ -9,7 +9,7 @@ import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.poop.vo.PoopMongReqVo;
-import com.paymong.management.poop.vo.PoopMongResVo;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class PoopService {
     private final WebSocketService webSocketService;
     int cnt = 0;
     @Transactional
-    public PoopMongResVo removePoop(PoopMongReqVo poopMongReqVo) throws Exception{
+    public MongStatusDto removePoop(PoopMongReqVo poopMongReqVo) throws Exception{
         Mong mong = mongRepository.findByMongId(poopMongReqVo.getMongId())
                 .orElseThrow(() -> new NotFoundMongException());
 
@@ -39,8 +39,6 @@ public class PoopService {
         MongConditionCode conditionCode = statusService.checkCondition(mong);
         mong.setStateCode(conditionCode.getCode());
 
-        PoopMongResVo poopMongResVo = new PoopMongResVo(mong);
-
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(MongActiveCode.CLEAN.getCode())
                 .activeTime(LocalDateTime.now())
@@ -49,7 +47,8 @@ public class PoopService {
 
         activeHistoryRepository.save(activeHistory);
 
-        return poopMongResVo;
+        MongStatusDto mongStatusDto = new MongStatusDto(mong, true);
+        return mongStatusDto;
     }
 
 }

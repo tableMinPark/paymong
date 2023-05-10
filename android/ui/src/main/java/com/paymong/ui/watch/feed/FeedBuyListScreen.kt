@@ -1,7 +1,5 @@
 package com.paymong.ui.watch.feed
 
-import android.media.SoundPool
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -11,28 +9,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.common.R
 import com.paymong.common.code.FoodCode
-import com.paymong.domain.entity.Food
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.activity.LoadingGif
 import com.paymong.ui.watch.landing.MainBackgroundGif
@@ -46,7 +37,8 @@ fun FeedBuyList(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    feedViewModel: FeedViewModel = viewModel()
+    watchViewModel: WatchViewModel,
+    feedViewModel: FeedViewModel
 ) {
     feedViewModel.getFoodList()
     val configuration = LocalConfiguration.current
@@ -308,23 +300,5 @@ fun FeedBuyList(
                 }
             }
         }
-    }
-}
-
-
-
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun FeedBuyListPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val navController = rememberSwipeDismissableNavController()
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-    val feedViewModel: FeedViewModel = viewModel()
-
-    PaymongTheme {
-        FeedBuyList(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
 }

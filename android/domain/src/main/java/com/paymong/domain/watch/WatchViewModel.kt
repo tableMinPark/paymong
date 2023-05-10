@@ -25,6 +25,7 @@ import java.time.temporal.ChronoUnit
 class WatchViewModel (
     private val application: Application
 ): AndroidViewModel(application) {
+    var point by mutableStateOf(0)
 
     var mong by mutableStateOf(Mong())
 

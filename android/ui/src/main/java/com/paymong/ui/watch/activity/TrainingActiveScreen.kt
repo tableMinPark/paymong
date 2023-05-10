@@ -35,13 +35,13 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-
-
-
-
+import com.paymong.domain.watch.WatchViewModel
 
 @Composable
-fun TrainingTime(traingviewModel: TrainingViewModel){
+fun TrainingTime(
+    watchViewModel: WatchViewModel,
+    trainingViewModel: TrainingViewModel
+){
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -66,8 +66,8 @@ fun TrainingTime(traingviewModel: TrainingViewModel){
         Text(
             text = String.format(
                 "%02d:%02d",
-                traingviewModel.second,
-                traingviewModel.nanoSecond / 10000000
+                trainingViewModel.second,
+                trainingViewModel.nanoSecond / 10000000
             ),
             fontFamily = dalmoori,
             fontSize = timeFontSize.sp
@@ -83,7 +83,7 @@ fun TrainingTime(traingviewModel: TrainingViewModel){
             .wrapContentWidth(Alignment.CenterHorizontally)
     ) {
         Text(
-            text = String.format("%d", traingviewModel.count),
+            text = String.format("%d", trainingViewModel.count),
             fontFamily = dalmoori,
             fontSize = countFontSize.sp
         )

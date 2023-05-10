@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class Mong(
     val mongId : Long = 0L,
     val name : String = "",
-    val mongCode : CharacterCode = CharacterCode.CH444
+    var mongCode : CharacterCode = CharacterCode.CH444
 )
 
 data class MongInfo(

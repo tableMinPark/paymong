@@ -23,7 +23,7 @@ public class MymapService {
     	
     }
     
-    public void setMymap(Long memberId, String mapCode) {
+    public void setMymap(Long memberId, String mapCode) throws RuntimeException {
     	Mymap mymap = mymapRepository.getByMemberId(memberId).orElseThrow(() -> new NotFoundMymapException());
     	mymap.setMapCode(mapCode);
     	LocalDateTime now = LocalDateTime.now();

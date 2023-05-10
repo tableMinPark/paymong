@@ -1,14 +1,17 @@
 package com.paymong.management.status.dto;
 
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.mong.entity.Mong;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class MongStatusDto {
     private String code;
+    private String message;
     private String stateCode;
     private Integer weight;
     private Double health;
@@ -17,11 +20,13 @@ public class MongStatusDto {
     private Double sleep;
     private Integer poopCount;
 
-    public MongStatusDto(){
-        this.code = "201";
+    public MongStatusDto(WebSocketCode webSocketCode){
+        this.code = webSocketCode.getCode();
+        this.message = webSocketCode.getMessage();
     }
-    public MongStatusDto(Mong mong){
-        this.code = "200";
+    public MongStatusDto(Mong mong, WebSocketCode webSocketCode){
+        this.code = webSocketCode.getCode();
+        this.message = webSocketCode.getMessage();
         this.stateCode = mong.getStateCode();
         this.weight = mong.getWeight();
         this.poopCount = mong.getPoopCount();

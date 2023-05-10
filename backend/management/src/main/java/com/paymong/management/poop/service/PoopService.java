@@ -2,6 +2,7 @@ package com.paymong.management.poop.service;
 
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
@@ -26,7 +27,7 @@ public class PoopService {
     private final MongRepository mongRepository;
     private final ActiveHistoryRepository activeHistoryRepository;
     private final StatusService statusService;
-    private final WebSocketService webSocketService;
+
     int cnt = 0;
     @Transactional
     public MongStatusDto removePoop(PoopMongReqVo poopMongReqVo) throws Exception{
@@ -34,7 +35,7 @@ public class PoopService {
                 .orElseThrow(() -> new NotFoundMongException());
 
         mong.setPoopCount(0);
-        webSocketService.sendTest(mong);
+
         // 상태 체크
         MongConditionCode conditionCode = statusService.checkCondition(mong);
         mong.setStateCode(conditionCode.getCode());
@@ -47,7 +48,7 @@ public class PoopService {
 
         activeHistoryRepository.save(activeHistory);
 
-        MongStatusDto mongStatusDto = new MongStatusDto(mong, true);
+        MongStatusDto mongStatusDto = new MongStatusDto(mong, WebSocketCode.SUCCESS);
         return mongStatusDto;
     }
 

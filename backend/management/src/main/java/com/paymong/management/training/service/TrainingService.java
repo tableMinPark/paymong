@@ -2,6 +2,7 @@ package com.paymong.management.training.service;
 
 import com.paymong.management.global.client.ClientService;
 import com.paymong.management.global.code.MongActiveCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.dto.AddPointDto;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
@@ -39,7 +40,7 @@ public class TrainingService {
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(trainingReqVo.getMemberId()), new AddPointDto(status.getPoint(), "훈련", status.getCode()));
 
-        MongStatusDto mongStatusDto = new MongStatusDto();
+        MongStatusDto mongStatusDto = new MongStatusDto(WebSocketCode.FAIL);
 
         if(trainingReqVo.getWalkingCount() >= 50){
             // 수치값 변경
@@ -59,7 +60,7 @@ public class TrainingService {
     @Transactional
     public MongStatusDto walking(WalkingReqVo walkingReqVo) throws Exception{
         // 500걸음 이상인지 체크
-        MongStatusDto mongStatusDto = new MongStatusDto();
+        MongStatusDto mongStatusDto = new MongStatusDto(WebSocketCode.FAIL);
 
         if(walkingReqVo.getWalkingCount() < 500){
             LOGGER.info("500걸음 이하 입니다.");

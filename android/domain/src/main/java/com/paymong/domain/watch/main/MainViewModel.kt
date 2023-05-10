@@ -1,9 +1,14 @@
 package com.paymong.domain.watch.main
 
+import android.app.Application
+import android.content.Context
+import android.media.SoundPool
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.CharacterCode
@@ -11,6 +16,7 @@ import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.ManagementRepository
+import com.paymong.domain.R
 import com.paymong.domain.entity.Mong
 import com.paymong.domain.entity.MongInfo
 import com.paymong.domain.entity.MongStats
@@ -22,7 +28,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-class MainViewModel : ViewModel() {
+class MainViewModel (application: Application): AndroidViewModel(application) {
+
+    private var context : Context
+
     var mong by mutableStateOf(Mong())
 
     var mongStats by mutableStateOf(MongStats())
@@ -40,10 +49,18 @@ class MainViewModel : ViewModel() {
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
 
+    var buttonSound by mutableStateOf(0)
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+
     init {
+        context = application
+        buttonSound()
         findMong()
         findMongCondition()
         findMongInfo()
+
     }
 
     override fun onCleared() {
@@ -145,5 +162,9 @@ class MainViewModel : ViewModel() {
                 }
                 .collect{}
         }
+    }
+
+    private fun buttonSound() {
+        buttonSound = soundPool.load(context, com.paymong.common.R.raw.button_sound, 1)
     }
 }

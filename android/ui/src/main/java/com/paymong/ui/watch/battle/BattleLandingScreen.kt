@@ -22,6 +22,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.domain.watch.battle.BattleViewModel
+import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
@@ -49,19 +50,6 @@ fun BattleLanding(
     }
 
 
-
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
-
     Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
     MainBackgroundGif()
     Column(
@@ -70,7 +58,7 @@ fun BattleLanding(
         modifier = Modifier
             .fillMaxHeight()
             .clickable {
-                ButtonSoundPlay()
+                buttonSoundPlay(battleViewModel)
                 navController.navigate(WatchNavItem.BattleWait.route) {
                     popUpTo(0)
                     launchSingleTop = true
@@ -118,6 +106,10 @@ fun BattleLanding(
         }
     }
 
+}
+
+fun buttonSoundPlay ( battleviewModel : BattleViewModel) {
+    battleviewModel.soundPool.play(battleviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
 }
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)

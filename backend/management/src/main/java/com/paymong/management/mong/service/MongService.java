@@ -36,7 +36,7 @@ public class MongService {
     private final SchedulerService schedulerService;
     private final StatusService statusService;
     private final EvolutionScheduler evolutionScheduler;
-    private ActiveHistoryRepository activeHistoryRepository;
+    private final ActiveHistoryRepository activeHistoryRepository;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -106,6 +106,7 @@ public class MongService {
 
         boolean ok = false;
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+
         if(level == 0){
             FindMongLevelCodeDto findMongLevelCodeDto = new FindMongLevelCodeDto();
             findMongLevelCodeDto.setLevel(1);

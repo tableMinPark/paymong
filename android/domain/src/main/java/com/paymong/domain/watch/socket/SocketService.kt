@@ -32,21 +32,24 @@ class SocketService {
         webSocket = socket.newWebSocket(request, listener)
     }
 
-    fun connect(characterId: Long, latitude: Double, longitude: Double) {
-        val battleMessageResDto = BattleConnectReqDto(MessageType.CONNECT, characterId, latitude, longitude)
+    fun connect(mongId: Long, mongCode: String, latitude: Double, longitude: Double) {
+        Log.e("SocketService", "연결")
+        val battleMessageResDto = BattleConnectReqDto(MessageType.CONNECT, mongId, mongCode, latitude, longitude)
         val json = Gson().toJson(battleMessageResDto)
         Log.e("battle", webSocket.toString())
         webSocket.send(json)
     }
 
-    fun disConnect(characterId: Long) {
-        val battleMessageResDto = BattleConnectReqDto(MessageType.DISCONNECT, characterId, 0.0, 0.0)
+    fun disConnect(mongId: Long, mongCode: String) {
+        Log.e("SocketService", "연결 종료")
+        val battleMessageResDto = BattleConnectReqDto(MessageType.DISCONNECT, mongId, mongCode, 0.0, 0.0)
         val json = Gson().toJson(battleMessageResDto)
         webSocket.send(json)
         webSocket.close(1000, "연결 종료")
     }
 
     fun select(type: MessageType, characterId: Long, battleRoomId: String, order: String) {
+        Log.e("SocketService", "배틀 선택")
         val battleMessageReqDto =
             BattleMessageReqDto(type, characterId, battleRoomId, order)
         val json = Gson().toJson(battleMessageReqDto)

@@ -1,71 +1,58 @@
 package com.paymong.ui.watch.battle
 
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MatchingCode
-import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.BattleViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.ui.watch.common.Background
 
 @Composable
 fun BattleFind(
     navController: NavHostController,
+    watchViewModel: WatchViewModel,
+    soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
+    Background(true)
+
+    val playerResourceCodeA = painterResource(battleViewModel.playerCodeA.resourceCode)
+    val playerResourceCodeB = painterResource(battleViewModel.playerCodeB.resourceCode)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var characterSize = 0
+    val characterSize = if (screenWidthDp < 200) 80 else 100
 
-    if (screenWidthDp < 200) {
-        characterSize = 80
-    }
-    else {
-        characterSize = 100
-    }
-
-    if (battleViewModel.matchingState == MatchingCode.ACTIVE){
-        navController.navigate(WatchNavItem.BattleActive.route) {
-            popUpTo(0)
-            launchSingleTop =true
+    when(battleViewModel.matchingState) {
+        MatchingCode.ACTIVE -> {
+            navController.navigate(WatchNavItem.BattleActive.route) {
+                popUpTo(0)
+                launchSingleTop =true
+            }
+            battleViewModel.battleActive()
         }
-        battleViewModel.battleActive()
+        else -> {}
     }
 
-    val bg = painterResource(R.drawable.battle_bg)
-    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    BattleBackgroundGif()
     Button(
         onClick = { navController.navigate(WatchNavItem.BattleActive.route) },
-        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    ) {
-    }
+    ){}
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -77,23 +64,10 @@ fun BattleFind(
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
-            // player1 :: 위쪽
-
-            var findCode = ""
-            val chCode : CharacterCode
-            val player1: Painter
-
-            if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.characterCodeB
-                chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.resourceCode)
-
-            } else {
-                findCode = battleViewModel.characterCodeA
-                chCode = CharacterCode.valueOf(findCode)
-                player1 = painterResource(chCode.resourceCode)
-            }
-            Image(painter = player1, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+            // playerResourceCodeB :: 위쪽
+            Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
+                .width(characterSize.dp)
+                .height(characterSize.dp))
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -108,67 +82,13 @@ fun BattleFind(
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
-            // player2 :: 아래쪽
-
-            var findCode = ""
-            val chCode : CharacterCode
-            val player2: Painter
-
-            if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.characterCodeA
-                chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.resourceCode)
-
-            } else {
-                findCode = battleViewModel.characterCodeB
-                chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.resourceCode)
-            }
-            Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
+            // playerResourceCodeA :: 아래쪽
+            Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
+                .width(characterSize.dp)
+                .height(characterSize.dp))
 
 
             }
 
     }
 }
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun BattleFindPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    val viewModel : BattleViewModel = viewModel()
-
-    PaymongTheme {
-        BattleFind(navController, viewModel)
-    }
-}
-
-@ExperimentalCoilApi
-@Composable
-fun BattleBackgroundGif(
-
-) {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
-            if (Build.VERSION.SDK_INT >= 28) {
-                add(ImageDecoderDecoder(context))
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = R.drawable.battle_bg_gif,
-            builder = {
-                size(OriginalSize)
-            }
-        ),
-        contentDescription = null,
-        modifier = Modifier
-//            .padding(top = 10.dp)
-    )
-}
-

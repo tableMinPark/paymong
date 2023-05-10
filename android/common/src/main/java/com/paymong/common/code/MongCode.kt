@@ -2,7 +2,7 @@ package com.paymong.common.code
 
 import com.paymong.common.R
 
-enum class CharacterCode(
+enum class MongCode(
     val resourceCode: Int,
     val codeName: String,
     val code: String

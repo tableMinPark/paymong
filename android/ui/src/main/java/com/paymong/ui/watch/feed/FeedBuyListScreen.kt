@@ -1,7 +1,5 @@
 package com.paymong.ui.watch.feed
 
-import android.media.SoundPool
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -9,82 +7,64 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.feed.FeedViewModel
+import com.paymong.domain.watch.FeedViewModel
 import com.paymong.common.R
 import com.paymong.common.code.FoodCode
-import com.paymong.domain.entity.Food
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.common.code.SoundCode
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.SoundViewModel
 import com.paymong.ui.theme.dalmoori
-import com.paymong.ui.watch.activity.LoadingGif
-import com.paymong.ui.watch.landing.MainBackgroundGif
+import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun FeedBuyList(
     animationState: MutableState<AnimationCode>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    feedViewModel: FeedViewModel = viewModel()
+    watchViewModel: WatchViewModel,
+    soundViewModel: SoundViewModel,
+    feedViewModel: FeedViewModel
 ) {
-    feedViewModel.getFoodList()
+    LaunchedEffect(key1 = 0) {
+        feedViewModel.getFoodList()
+    }
+    Background(true)
+
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
+    val userPointBoxHeight = if (screenWidthDp < 200) 20 else 30
+    val pointLogoSize = if (screenWidthDp < 200) 10 else 15
+    val fontSize = if (screenWidthDp < 200) 20 else 15
+    val bntImageSize = if (screenWidthDp < 200) 20 else 30
+    val foodImageSize = if (screenWidthDp < 200) 75 else 85
+    val purchasePointLogoSize = if (screenWidthDp < 200) 13 else 18
+    val purchaseFontSize = if (screenWidthDp < 200) 12 else 15
+    val purchaseBox = if (screenWidthDp < 200) 50 else 60
+    val foodRowHeight = if (screenWidthDp < 200) 20 else 21
+    val foodFontSize = if (screenWidthDp < 200) 16 else 21
 
-
-    var userPointBoxHeight = 30
-    var pointLogoSize = 15
-    var fontSize = 15
-    var bntImageSize = 30
-    var foodImageSize = 85
-    var purchasePointLogoSize = 18
-    var purchaseFontSize = 15
-    var purchaseBox = 60
-    var foodRowHeight = 21
-    var foodFontSize = 21
-
-    if (screenWidthDp < 200) {
-        userPointBoxHeight = 20
-        pointLogoSize = 10
-        fontSize = 10
-        bntImageSize = 20
-        foodImageSize = 75
-        purchasePointLogoSize = 13
-        purchaseFontSize = 12
-        purchaseBox = 50
-        foodRowHeight = 20
-        foodFontSize = 16
-    }
-
-    val img = painterResource(R.drawable.main_bg)
-    Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-    MainBackgroundGif()
-
-    val payPointText = if (feedViewModel.payPoint.toString().length > 5) {
-        feedViewModel.payPoint.toString().substring(0, 5) + "+"
+    val payPointText = if (feedViewModel.point.toString().length > 5) {
+        feedViewModel.point.toString().substring(0, 5) + "+"
     } else {
-        feedViewModel.payPoint.toString()
+        feedViewModel.point.toString()
     }
 
     if(feedViewModel.isClick){
@@ -159,7 +139,10 @@ fun FeedBuyList(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {ButtonSoundPlay(feedViewModel); feedViewModel.prevButtonClick() },
+                    onClick = {
+                        soundViewModel.soundPlay(SoundCode.FEED_BUTTON)
+                        feedViewModel.prevButtonClick()
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -228,7 +211,10 @@ fun FeedBuyList(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {ButtonSoundPlay(feedViewModel); feedViewModel.nextButtonClick() },
+                    onClick = {
+                        soundViewModel.soundPlay(SoundCode.FEED_BUTTON)
+                        feedViewModel.nextButtonClick()
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -308,23 +294,5 @@ fun FeedBuyList(
                 }
             }
         }
-    }
-}
-
-
-
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun FeedBuyListPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val navController = rememberSwipeDismissableNavController()
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-    val feedViewModel: FeedViewModel = viewModel()
-
-    PaymongTheme {
-        FeedBuyList(animationState, pagerState, coroutineScope, navController, feedViewModel)
     }
 }

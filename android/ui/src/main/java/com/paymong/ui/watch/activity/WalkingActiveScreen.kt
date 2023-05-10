@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.activity
 
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,49 +7,243 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
 import com.paymong.common.R
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.activity.WalkingViewModel
-import com.paymong.domain.watch.main.MainViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.WalkingViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.LoadingGif
+import com.paymong.ui.watch.common.WalkingBackgroundGif
 
+
+@OptIn(ExperimentalCoilApi::class)
 @Composable
-fun WalkingTime (walkingViewModel:WalkingViewModel) {
+fun WalkingActive(
+    navController: NavHostController,
+    watchViewModel: WatchViewModel,
+    soundViewModel: SoundViewModel,
+    walkingViewModel: WalkingViewModel = viewModel()
+) {
+    Background(false)
+    WalkingBackgroundGif()
+
+//    viewModel.setSensor(LocalContext.current)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
+    val rowHeight = if (screenWidthDp < 200) 85 else 100
+    val rowPadding = if (screenWidthDp < 200) 25 else 40
+    val questionFontSize = if (screenWidthDp < 200) 15 else 18
+    val characterSize = if (screenWidthDp < 200) 80 else 100
+    val quitBntHeight = if (screenWidthDp < 200) 20 else 30
+    val quitBntFontSize = if (screenWidthDp < 200) 10 else 11
+    val yesNoBntPadding = if (screenWidthDp < 200) 40 else 60
+    val yesNoFontSize = if (screenWidthDp < 200) 12 else 14
+    val yesNoBntWidth = if (screenWidthDp < 200) 60 else 50
+    val yesNoBntHeight = if (screenWidthDp < 200) 20 else 40
 
-    var timeFontSize = 20
-    var walkingCountFontSize = 25
-    var walkingCountInfoFontSize = 17
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxHeight()
+    ) {
+        Box(modifier = Modifier.height(10.dp))
 
-    if (screenWidthDp < 200) {
-        timeFontSize = 16
-        walkingCountFontSize = 20
-        walkingCountInfoFontSize = 12
+        WalkingTime(walkingViewModel)
 
+        if (walkingViewModel.isWalkingEnd) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(rowHeight.dp)
+                    .padding(top = rowPadding.dp)
+            ) {
+                Text(
+                    text = "?산책 종료?",
+                    modifier = Modifier,
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = questionFontSize.sp,
+                    color = Color(0xFFffffff)
+                )
+            }
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp)
+            ) {
+                val mongCode = watchViewModel.mong.mongCode
+                val mongResourceCode = painterResource(mongCode.resourceCode)
+                if ( mongCode.code == "CH444") {
+                    Box(
+                        modifier = Modifier
+                            .width(characterSize.dp)
+                            .height(characterSize.dp)
+                    ){
+                        LoadingGif()
+                    }
+                } else {
+                    Image(
+                        painter = mongResourceCode, contentDescription = null, modifier = Modifier
+                            .width(characterSize.dp)
+                            .height(characterSize.dp)
+                    )
+                }
+            }
+        }
+
+        if (walkingViewModel.isWalkingEnd) {
+            if (walkingViewModel.realWalkingEnd) {
+                walkingViewModel.isWalkingEnd = false
+                walkingViewModel.realWalkingEnd = false
+                navController.navigate(WatchNavItem.Activity.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
+            }
+            Box(modifier = Modifier.padding(bottom =0.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = yesNoBntPadding.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(yesNoBntWidth.dp)
+                            .height(yesNoBntHeight.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
+                                    walkingViewModel.walkingEnd()
+                                    walkingViewModel.realWalkingEnd = true
+                                }
+                        )
+                        Text(
+                            text = "YES",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = yesNoFontSize.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = yesNoBntPadding.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(yesNoBntWidth.dp)
+                            .height(yesNoBntHeight.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_bnt),
+                            contentDescription = "blue_bnt",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .clickable {
+                                    soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
+                                    walkingViewModel.isWalkingEnd = false
+                                }
+                        )
+                        Text(
+                            text = "NO",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            fontFamily = dalmoori,
+                            textAlign = TextAlign.Center,
+                            fontSize = yesNoFontSize.sp,
+                            color = Color(0xFF0C4DA2)
+                        )
+                    }
+                }
+
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(quitBntHeight.dp)
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.blue_bnt),
+                    contentDescription = "blue_bnt",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clickable {
+                            soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
+                            walkingViewModel.isWalkingEnd = true
+                        }
+                )
+                Text(
+                    text = "종료",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    fontFamily = dalmoori,
+                    textAlign = TextAlign.Center,
+                    fontSize = quitBntFontSize.sp,
+                    color = Color(0xFF0C4DA2)
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun WalkingTime (
+    walkingViewModel: WalkingViewModel
+) {
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val timeFontSize = if (screenWidthDp < 200) 16 else 20
+    val walkingCountFontSize = if (screenWidthDp < 200) 20 else 25
+    val walkingCountInfoFontSize = if (screenWidthDp < 200) 12 else 17
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,259 +291,3 @@ fun WalkingTime (walkingViewModel:WalkingViewModel) {
     }
 }
 
-@Composable
-fun WalkingActive(
-    navController: NavHostController,
-    walkingViewModel: WalkingViewModel
-) {
-//    viewModel.setSensor(LocalContext.current)
-    walkingViewModel.walkingInit()
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    var rowHeight = 100
-    var rowPadding = 40
-    var questionFontSize = 18
-    var characterSize = 100
-    var quitBntHeight = 30
-    var quitBntFontSize = 11
-    var yesNoBntPadding = 60
-    var yesNoFontSize = 14
-    var yesNoBntWidth = 50
-    var yesNoBntHeight = 40
-
-    if (screenWidthDp < 200) {
-        rowHeight = 85
-        rowPadding = 25
-        questionFontSize = 15
-        characterSize  = 80
-        quitBntHeight = 20
-        quitBntFontSize = 10
-        yesNoBntPadding = 40
-        yesNoFontSize = 12
-        yesNoBntWidth = 60
-        yesNoBntHeight = 20
-    }
-
-    val img = painterResource(R.drawable.walking_bg)
-    Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-    WalkingBackgroundGif()
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxHeight()
-    ) {
-        Box(modifier = Modifier.height(10.dp))
-
-        WalkingTime(walkingViewModel)
-        if (walkingViewModel.isWalkingEnd) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(rowHeight.dp)
-                    .padding(top = rowPadding.dp)
-            ) {
-                Text(
-                    text = "?산책 종료?",
-                    modifier = Modifier,
-                    fontFamily = dalmoori,
-                    textAlign = TextAlign.Center,
-                    fontSize = questionFontSize.sp,
-                    color = Color(0xFFffffff)
-                )
-            }
-        } else {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 5.dp)
-            ) {
-                val mainviewModel: MainViewModel = viewModel()
-                val chCode = mainviewModel.mong.mongCode
-                val chA = painterResource(chCode.resourceCode)
-                if ( chCode.code == "CH444") {
-                    Box(
-                        modifier = Modifier
-                            .width(characterSize.dp)
-                            .height(characterSize.dp)
-                    ){
-                        LoadingGif()}
-                } else {
-                    Image(
-                        painter = chA, contentDescription = null, modifier = Modifier
-                            .width(characterSize.dp)
-                            .height(characterSize.dp)
-                    )
-                }
-            }
-        }
-
-        if (walkingViewModel.isWalkingEnd) {
-            if (walkingViewModel.realWalkingEnd) {
-                walkingViewModel.isWalkingEnd = false
-                walkingViewModel.realWalkingEnd = false
-                navController.navigate(WatchNavItem.Activity.route) {
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop = true
-                }
-            }
-            Box(modifier = Modifier.padding(bottom =0.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = yesNoBntPadding.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .width(yesNoBntWidth.dp)
-                            .height(yesNoBntHeight.dp)
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.blue_bnt),
-                            contentDescription = "blue_bnt",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .clickable {
-                                    ButtonSoundPlay(walkingViewModel)
-                                    walkingViewModel.walkingEnd()
-                                    walkingViewModel.realWalkingEnd = true
-                                }
-                        )
-                        Text(
-                            text = "YES",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .wrapContentHeight(Alignment.CenterVertically)
-                                .wrapContentWidth(Alignment.CenterHorizontally),
-                            fontFamily = dalmoori,
-                            textAlign = TextAlign.Center,
-                            fontSize = yesNoFontSize.sp,
-                            color = Color(0xFF0C4DA2)
-                        )
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = yesNoBntPadding.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .width(yesNoBntWidth.dp)
-                            .height(yesNoBntHeight.dp)
-                            .wrapContentHeight(Alignment.CenterVertically)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.blue_bnt),
-                            contentDescription = "blue_bnt",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .clickable {
-                                    ButtonSoundPlay(walkingViewModel)
-                                    walkingViewModel.isWalkingEnd = false
-                                }
-                        )
-                        Text(
-                            text = "NO",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .wrapContentHeight(Alignment.CenterVertically)
-                                .wrapContentWidth(Alignment.CenterHorizontally),
-                            fontFamily = dalmoori,
-                            textAlign = TextAlign.Center,
-                            fontSize = yesNoFontSize.sp,
-                            color = Color(0xFF0C4DA2)
-                        )
-                    }
-                }
-
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .width(60.dp)
-                    .height(quitBntHeight.dp)
-                    .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.blue_bnt),
-                    contentDescription = "blue_bnt",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .clickable {
-                            ButtonSoundPlay(walkingViewModel)
-                            walkingViewModel.isWalkingEnd = true
-                        }
-                )
-                Text(
-                    text = "종료",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally),
-                    fontFamily = dalmoori,
-                    textAlign = TextAlign.Center,
-                    fontSize = quitBntFontSize.sp,
-                    color = Color(0xFF0C4DA2)
-                )
-            }
-        }
-    }
-}
-fun ButtonSoundPlay ( walkingViewModel: WalkingViewModel) {
-    walkingViewModel.soundPool.play(walkingViewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-}
-@ExperimentalCoilApi
-@Composable
-fun WalkingBackgroundGif() {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
-            if (Build.VERSION.SDK_INT >= 28) {
-                add(ImageDecoderDecoder(context))
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = R.drawable.walking_bg_gif,
-            builder = {
-                size(OriginalSize)
-            }
-        ),
-        contentDescription = null,
-        modifier = Modifier
-    )
-}
-
-
-
-
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun WalkingPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    val walkingViewModel: WalkingViewModel = viewModel()
-    PaymongTheme {
-        WalkingActive(navController, walkingViewModel)
-    }
-}

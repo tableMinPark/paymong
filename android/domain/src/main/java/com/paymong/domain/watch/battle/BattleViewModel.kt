@@ -47,6 +47,10 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     private val informationRepository: InformationRepository = InformationRepository()
 
     var buttonSound by mutableStateOf(0)
+    var winSound by mutableStateOf(0)
+    var loseSound by mutableStateOf(0)
+    var attackSound by mutableStateOf(0)
+    var defenceSound by mutableStateOf(0)
     val soundPool = SoundPool.Builder()
         .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
         .build()
@@ -323,6 +327,10 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
 
     private fun buttonSound() {
         buttonSound = soundPool.load(context, com.paymong.common.R.raw.button_sound, 1)
+        winSound = soundPool.load(context, com.paymong.common.R.raw.win_sound, 1)
+        loseSound = soundPool.load(context, com.paymong.common.R.raw.lose_sound, 1)
+        attackSound = soundPool.load(context, com.paymong.common.R.raw.attack_sound, 1)
+        defenceSound = soundPool.load(context, com.paymong.common.R.raw.defence_sound, 1)
     }
 
 

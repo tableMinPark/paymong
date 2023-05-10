@@ -218,6 +218,7 @@ fun WalkingActive(
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
+                                    ButtonSoundPlay(walkingViewModel)
                                     walkingViewModel.walkingEnd()
                                     walkingViewModel.realWalkingEnd = true
                                 }
@@ -256,6 +257,7 @@ fun WalkingActive(
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
+                                    ButtonSoundPlay(walkingViewModel)
                                     walkingViewModel.isWalkingEnd = false
                                 }
                         )
@@ -290,6 +292,7 @@ fun WalkingActive(
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
+                            ButtonSoundPlay(walkingViewModel)
                             walkingViewModel.isWalkingEnd = true
                         }
                 )

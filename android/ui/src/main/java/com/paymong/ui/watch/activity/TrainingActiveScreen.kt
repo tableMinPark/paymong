@@ -182,7 +182,7 @@ fun TrainingActive(
                             .padding(bottom = successPadding.dp)
                     )
                 }
-                ButtonSoundPlay(traingviewModel, "Win")
+                SoundPlay(traingviewModel, "Win")
 
             } else {
                 Box(
@@ -202,7 +202,7 @@ fun TrainingActive(
 
                     )
                 }
-                ButtonSoundPlay(traingviewModel, "Lose")
+                SoundPlay(traingviewModel, "Lose")
             }
         } else {
             Box(
@@ -245,7 +245,7 @@ fun TrainingActive(
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
-                            ButtonSoundPlay(traingviewModel, "Bnt")
+                            SoundPlay(traingviewModel, "Bnt")
                             traingviewModel.screenClick() {
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)
@@ -346,7 +346,7 @@ fun TrainingBackgroundGif() {
 }
 
 
-fun ButtonSoundPlay ( trainingviewModel : TrainingViewModel, soundName : String) {
+fun SoundPlay ( trainingviewModel : TrainingViewModel, soundName : String) {
     if (soundName == "Bnt") {
         trainingviewModel.soundPool.play(trainingviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
     }

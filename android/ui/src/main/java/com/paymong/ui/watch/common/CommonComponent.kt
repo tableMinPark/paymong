@@ -1,6 +1,8 @@
 package com.paymong.ui.watch.common
 
+import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.code.MapCode
+import com.paymong.common.code.ToastMessage
 
 @Composable
 fun Background(
@@ -56,6 +59,90 @@ fun MainBackgroundGif() {
     )
 }
 
+@ExperimentalCoilApi
+@Composable
+fun LoadingGif() {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.loading,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun WalkingBackgroundGif() {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.walking_bg_gif,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+    )
+}
+
+
+@ExperimentalCoilApi
+@Composable
+fun BattleBackgroundGif(
+
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.battle_bg_gif,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
+
+
 @Composable
 fun Logo(){
     val logo = painterResource(R.drawable.watch_logo)
@@ -69,4 +156,12 @@ fun Logo(){
     else {
         Image(painter = logo, contentDescription = null, modifier = Modifier.size(150.dp))
     }
+}
+
+fun showToast(context : Context, toastMessage: ToastMessage) {
+    Toast.makeText(
+        context,
+        toastMessage.message,
+        Toast.LENGTH_SHORT
+    ).show()
 }

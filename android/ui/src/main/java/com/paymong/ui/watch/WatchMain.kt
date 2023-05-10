@@ -83,14 +83,12 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
         composable(route = WatchNavItem.Training.route){
             val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
-            TrainingActive(navController, watchViewModel, soundViewModel, trainingViewModel)
+            TrainingActive(navController, watchViewModel, soundViewModel)
         }
         composable(route = WatchNavItem.Walking.route){
             val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            val walkingViewModel = viewModel<WalkingViewModel>(viewModelStoreOwner)
-            WalkingActive(navController, watchViewModel, soundViewModel, walkingViewModel)
+            WalkingActive(navController, watchViewModel, soundViewModel)
         }
 
         // Battle

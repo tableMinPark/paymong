@@ -23,7 +23,9 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 
-class TrainingViewModel (application: Application): AndroidViewModel(application) {
+class TrainingViewModel (
+    private val application: Application
+): AndroidViewModel(application) {
 
     var isTrainingEnd by mutableStateOf(false)
     var second by mutableStateOf(0)

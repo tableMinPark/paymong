@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.battle
 
-import android.media.SoundPool
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -32,7 +31,6 @@ import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.ui.theme.*
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
@@ -41,7 +39,6 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-import com.paymong.domain.watch.activity.TrainingViewModel
 
 @Composable
 fun BattleActive(
@@ -150,12 +147,12 @@ fun BattleActive(
             val player1: Painter
 
             if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.characterCodeB
+                findCode = battleViewModel.mongCodeB
                 chCode = CharacterCode.valueOf(findCode)
                 player1 = painterResource(chCode.resourceCode)
 
             } else {
-                findCode = battleViewModel.characterCodeA
+                findCode = battleViewModel.mongCodeA
                 chCode = CharacterCode.valueOf(findCode)
                 player1 = painterResource(chCode.resourceCode)
             }
@@ -321,12 +318,12 @@ fun BattleActive(
             val player2: Painter
 
             if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.characterCodeA
+                findCode = battleViewModel.mongCodeA
                 chCode = CharacterCode.valueOf(findCode)
                 player2 = painterResource(chCode.resourceCode)
 
             } else {
-                findCode = battleViewModel.characterCodeB
+                findCode = battleViewModel.mongCodeB
                 chCode = CharacterCode.valueOf(findCode)
                 player2 = painterResource(chCode.resourceCode)
             }

@@ -2,8 +2,6 @@ package com.paymong.domain.watch.battle
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.media.SoundPool
 import android.os.Build
 import android.os.Looper
 import android.util.Log
@@ -29,82 +27,104 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 @SuppressLint("MissingPermission")
-class BattleViewModel (application: Application): AndroidViewModel(application)  {
+class BattleViewModel (
+    private val application: Application
+): AndroidViewModel(application)  {
+    companion object {
+        private const val FIND_DELAY = 2000L
+        private const val ACTIVE_DELAY = 2000L
+        private const val SELECT_BEFORE_DELAY = 2000L
+        private const val SELECT_DELAY = 100L
+        private const val SELECT_INTERVAL = 0.01
+        private const val END_DELAY = 10000L
+    }
 
-
-
-    private var context : Context
-
+    private var mongId by mutableStateOf(0L)
     var matchingState by mutableStateOf(MatchingCode.FINDING)
     var battleActive: BattleActive by mutableStateOf(BattleActive())
 
-    private var characterId = 0L
 
     var mongCode by mutableStateOf(CharacterCode.CH444)
     private val informationRepository: InformationRepository = InformationRepository()
 
-    var buttonSound by mutableStateOf(0)
-    var winSound by mutableStateOf(0)
-    var loseSound by mutableStateOf(0)
-    var attackSound by mutableStateOf(0)
-    var defenceSound by mutableStateOf(0)
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-
-    init {
-        context = application
-        buttonSound()
-        Log.d("battle", "init - Call")
-        findMong()
-
-        Log.d("viewmodel", "viewModel 생성")
-
-
-
-
-    }
-
-
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("battle", "onCleared - Call")
-        Log.d("battle", "자원 할당 해제")
-        try {
-            socketService.disConnect(characterId)
-            gpsJob.cancel()
-            socketJob.cancel()
-        } catch (e: Exception) {
-            Log.e("battle", "자원 할당 해제")
-        }
-    }
-
-    fun select(select : MessageType) {
-        Log.d("battle", "select - Call")
-        selectState = select
-        matchingState = MatchingCode.SELECT_AFTER
-    }
-
-    // -------------------------------------------------------------------------------------------------
-    private val WAIT_DELAY = 5000L
-    private val WAIT_MAX_TIME = 30L
     // socket
     private lateinit var socketJob : Job
     private lateinit var socketService: SocketService
+    // gps
+    private lateinit var gpsJob : Job
+    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var mLocationRequest: LocationRequest
+
+    // Battle - 찾기
+    var mongCodeA: String by mutableStateOf("")
+    var mongCodeB: String by mutableStateOf("")
+    
+    // Battle - 진행
+    var battleSelectTime by mutableStateOf(0.0)
+    var selectState by mutableStateOf(MessageType.LEFT)
+
+    // Battle - 끝
+    var win by mutableStateOf(false)
+
+    init {
+        findMong()
+    }
+    fun setMongId(mongId: Long) {
+        this.mongId = mongId
+    }
+    fun select(select : MessageType) {
+        selectState = select
+        matchingState = MatchingCode.SELECT_AFTER
+    }
+    private fun findMong() {
+        viewModelScope.launch(Dispatchers.IO) {
+            informationRepository.findMong()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect { data ->
+                    mongCode = CharacterCode.valueOf(data.mongCode)
+                }
+        }
+    }
+    private fun findCharacterId(battleRoomId: String) {
+        Log.d("battle", battleRoomId)
+
+        // api 호출
+
+        // characterCodeB에 소켓 에서 내려온 상대방 Code 넣기
+
+        if (battleActive.order == "A") {
+            mongCodeA = mongCode.code
+//            characterCodeA = viewModel.mong.mongCode.code
+
+            mongCodeB = "CH100"
+        }
+        else {
+            mongCodeA = "CH100"
+            mongCodeB = mongCode.code
+        }
+    }
+    override fun onCleared() {
+        super.onCleared()
+        try {
+            socketService.disConnect(mongId)
+            gpsJob.cancel()
+            socketJob.cancel()
+        } catch (e: Exception) {  }
+    }
+
+    // -------------------------------------------------------------------------------------------------
+    // socket
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
-                Log.e("battle", text)
-
                 val battleMessageResDto = Gson().fromJson(text, BattleMessageResDto::class.java)
 
                 if (battleMessageResDto.totalTurn == 0) {
                     val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
-                    Log.e("battle-matching", battleErrorResDto.toString())
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
-                    Log.e("battle-matching", battleActive.toString())
                     // 탈주
                     battleActive = BattleActive(
                         battleMessageResDto.battleRoomId,
@@ -117,29 +137,27 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
                         battleMessageResDto.healthA,
                         battleMessageResDto.healthB
                     )
-
-                    if (battleActive.nowTurn == 0) {
-                        // 시작
-                        findCharacterId(battleActive.battleRoomId)
-                        matchingState = MatchingCode.FOUND
-                    } else if (battleActive.nowTurn == -1) {
-                        // 게임 끝
-                        socketService.disConnect(characterId)
-                        matchingState = MatchingCode.END
-                    } else {
-                        // 다음 턴
-                        matchingState = MatchingCode.ACTIVE_RESULT
+                    when (battleActive.nowTurn) {
+                        0 -> {
+                            // 시작
+                            findCharacterId(battleActive.battleRoomId)
+                            matchingState = MatchingCode.FOUND
+                        }
+                        -1 -> {
+                            // 게임 끝
+                            socketService.disConnect(mongId)
+                            matchingState = MatchingCode.END
+                        }
+                        else -> {
+                            // 다음 턴
+                            matchingState = MatchingCode.ACTIVE_RESULT
+                        }
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) {  }
         }
     }
     // gps
-    private lateinit var gpsJob : Job
-    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var mLocationRequest: LocationRequest
     private val mLocationCallback: LocationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
@@ -151,16 +169,12 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 
-            Log.d("battle-matching", "소켓 연결 시작")
             socketService = SocketService()
             socketService.init(listener)
 
-            Log.d("battle-matching", "소켓 연결 성공")
             socketJob = viewModelScope.launch {
                 try {
-                    // 매칭
-                    Log.d("battle-matching", "매칭 - 위도 : $latitude / 경도 : $longitude")
-                    socketService.connect(characterId, latitude, longitude)
+                    socketService.connect(mongId, latitude, longitude)
 
                 } catch (e: NullPointerException) {
                     Log.e("battle-matching", "서버가 유효하지 않음")
@@ -170,14 +184,12 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
             }
         }
     }
-    fun battleWait() {
-        Log.d("battle", "battleWait - Call")
-        // 캐릭터 ID 리드
-        val range = (1..15)
-        characterId = range.random().toLong()
+    // -------------------------------------------------------------------------------------------------
 
-        gpsJob = viewModelScope.launch {
-            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    // 배틀 대기열 등록 함수
+    fun battleWait() {
+        viewModelScope.launch {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
             mLocationRequest = LocationRequest.create().apply { priority = LocationRequest.PRIORITY_HIGH_ACCURACY }
 
             if (::mFusedLocationProviderClient.isInitialized) {
@@ -190,61 +202,44 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
         }
     }
 
-    // -------------------------------------------------------------------------------------------------
-    private val FIND_DELAY = 2000L
-    var characterCodeA: String by mutableStateOf("")
-    var characterCodeB: String by mutableStateOf("")
+    // 배틀 찾았을 때 호출 할 함수
     fun battleFind() {
-        Log.d("battle", "battleFind - Call")
         viewModelScope.launch {
             delay(FIND_DELAY)
             matchingState = MatchingCode.ACTIVE
         }
     }
 
-    // -------------------------------------------------------------------------------------------------
+    // 배틀 찾기 실패했을 때 호출 할 함수
     fun battleFindFail() {
-        Log.d("battle", "battleFindFail - Call")
         viewModelScope.launch {
             matchingState = MatchingCode.FINDING
             try {
-                socketService.disConnect(characterId)
+                socketService.disConnect(mongId)
                 gpsJob.cancel()
                 socketJob.cancel()
-            } catch (e: Exception) {
-                Log.d("battle", "자원 할당 해제")
-            }
+            } catch (e: Exception) {  }
         }
     }
 
-    // -------------------------------------------------------------------------------------------------
-    private val ACTIVE_DELAY = 2000L
-    var TOTAL_TURN = 10
+    // 배틀 시작할 때 호출 할 함수
     fun battleActive() {
-        Log.d("battle", "battleActive - Call")
         viewModelScope.launch {
             delay(ACTIVE_DELAY)
             matchingState = MatchingCode.SELECT_BEFORE
         }
     }
 
-    // -------------------------------------------------------------------------------------------------
-    private val SELECT_BEFORE_DELAY = 2000L
+    // 배틀 선택 전 호출 할 함수 (선택으로 넘어가기 위한 함수)
     fun battleSelectBefore() {
-        Log.d("battle", "battleSelectBefore - Call")
         viewModelScope.launch {
             delay(SELECT_BEFORE_DELAY)
             matchingState = MatchingCode.SELECT
         }
     }
-
-    // -------------------------------------------------------------------------------------------------
-    private val SELECT_DELAY = 100L
-    private val SELECT_INTERVAL = 0.01
-    var battleSelectTime by mutableStateOf(0.0)
-    var selectState by mutableStateOf(MessageType.LEFT)
+    
+    // 배틀 선택 시 호출 할 함수
     fun battleSelect() {
-        Log.d("battle", "battleSelect - Call")
         viewModelScope.launch {
             selectState = MessageType.LEFT
             battleSelectTime = 0.0
@@ -252,86 +247,30 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
                 delay(SELECT_DELAY)
                 battleSelectTime += SELECT_INTERVAL
 
-                if (matchingState == MatchingCode.SELECT_AFTER) {
+                if (matchingState == MatchingCode.SELECT_AFTER)
                     break
-                }
-
             } while(battleSelectTime <= 1.0)
 
+            socketService.select(selectState, mongId, battleActive.battleRoomId, battleActive.order)
             matchingState = MatchingCode.SELECT_AFTER
-            socketService.select(selectState, characterId, battleActive.battleRoomId, battleActive.order)
         }
     }
 
-    // -------------------------------------------------------------------------------------------------
-    private val END_DELAY = 10000L
-    var win by mutableStateOf(false)
-    var characterCode by mutableStateOf("")
+    // 배틀 끝난 후 호출 할 함수
     fun battleEnd() {
-        Log.d("battle", "battleEnd - Call")
         viewModelScope.launch {
-            if (battleActive.order == "A") {
-                characterCode = characterCodeA
-                if (battleActive.damageA > battleActive.damageB) {
-                    win = true
-                }
-            } else {
-                characterCode = characterCodeB
-                if (battleActive.damageB > battleActive.damageA) {
-                    win = true
-                }
+            if (battleActive.order == "A" &&
+                battleActive.damageA > battleActive.damageB) {
+                win = true
+            }
+            else if(battleActive.order == "B" &&
+                    battleActive.damageB > battleActive.damageA){
+                win = true
             }
             delay(END_DELAY)
             matchingState = MatchingCode.FINDING
         }
     }
-
-
-
-    private fun findMong() {
-        viewModelScope.launch(Dispatchers.IO) {
-            informationRepository.findMong()
-                .catch {
-                    it.printStackTrace()
-                }
-                .collect { data ->
-                    mongCode = CharacterCode.valueOf(data.mongCode)
-
-                }
-        }
-    }
-
-
-
-    private fun findCharacterId(battleRoomId: String) {
-        Log.d("battle", battleRoomId)
-
-        // api 호출
-
-            // characterCodeB에 소켓 에서 내려온 상대방 Code 넣기
-
-        if (battleActive.order == "A") {
-            characterCodeA = mongCode.code
-//            characterCodeA = viewModel.mong.mongCode.code
-
-            characterCodeB = "CH100"
-        }
-        else {
-            characterCodeA = "CH100"
-            characterCodeB = mongCode.code
-        }
-    }
-
-    private fun buttonSound() {
-        buttonSound = soundPool.load(context, com.paymong.common.R.raw.button_sound, 1)
-        winSound = soundPool.load(context, com.paymong.common.R.raw.win_sound, 1)
-        loseSound = soundPool.load(context, com.paymong.common.R.raw.lose_sound, 1)
-        attackSound = soundPool.load(context, com.paymong.common.R.raw.attack_sound, 1)
-        defenceSound = soundPool.load(context, com.paymong.common.R.raw.defence_sound, 1)
-    }
-
-
-
 }
 
 

@@ -49,10 +49,6 @@ class WatchViewModel (
         findMongCondition()
         findMongInfo()
     }
-
-    fun getMapCode(): Int {
-        return mapCode.code
-    }
     
     private fun findMong() {
         viewModelScope.launch(Dispatchers.Main) {

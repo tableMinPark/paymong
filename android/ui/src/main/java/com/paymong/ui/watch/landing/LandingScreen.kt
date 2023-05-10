@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.landing
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.Logo
+import com.paymong.ui.watch.common.showToast
 import kotlinx.coroutines.delay
 
 @Composable
@@ -34,6 +34,7 @@ fun Landing(
     }
     Background(true)
 
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val fontSize = if (screenWidthDp < 200) 12 else 15
@@ -56,19 +57,11 @@ fun Landing(
     }
     // 연결과 설치는 되있지만 playerId가 없는 경우 (최초 인증하지 않은 경우)
     else if (watchLandingViewModel.landingCode == LandingCode.INSTALL){
-        Toast.makeText(
-            LocalContext.current,
-            ToastMessage.INSTALL.message,
-            Toast.LENGTH_SHORT
-        ).show()
+        showToast(context, ToastMessage.INSTALL)
     }
     // 연결만 되어있고 설치가 안되어있는 경우
     else if  (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL){
-        Toast.makeText(
-            LocalContext.current,
-            ToastMessage.NOT_INSTALL.message,
-            Toast.LENGTH_SHORT
-        ).show()
+        showToast(context, ToastMessage.NOT_INSTALL)
     }
 
     Column(

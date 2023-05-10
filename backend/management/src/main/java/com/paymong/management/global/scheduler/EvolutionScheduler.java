@@ -76,8 +76,10 @@ public class EvolutionScheduler implements ManagementScheduler {
 
     public void nextLevelScheduler(NextLevelDto levelDto){
         if(!schedulerMap.containsKey(levelDto.getMongId())){
-            log.info("{}는 없는 아이입니다.", levelDto.getMongId());
-            return;
+            log.info("{}는 없는 아이입니다. 새롭게 추가합니다.", levelDto.getMongId());
+            SchedulerDto scDto= new SchedulerDto();
+            scDto.setRunnable(getRunnable(levelDto.getMongId()));
+            schedulerMap.put(levelDto.getMongId(), scDto);
         }
 
         SchedulerDto schedulerDto = schedulerMap.get(levelDto.getMongId());

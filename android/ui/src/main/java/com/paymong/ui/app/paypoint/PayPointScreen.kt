@@ -106,7 +106,7 @@ fun PayCard(payPointViewModel: PayPointViewModel) {
                 .background(Color.White))
             Spacer(modifier = Modifier.height(40.dp))
             LazyColumn(){
-                if(payPointViewModel.payList.size!=0){
+                if(payPointViewModel.success.value){
                     items(payPointViewModel.payList.size){index ->
                         PointInfo(text = payPointViewModel.payList[index].action, point = payPointViewModel.payList[index].point)
                     }

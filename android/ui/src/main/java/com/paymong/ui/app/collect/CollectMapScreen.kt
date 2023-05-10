@@ -50,7 +50,7 @@ fun CollectMap(
                     if(collectMapViewModel.mapList.size%2 == 1){
                         cnt += 1
                     }
-                    if(collectMapViewModel.mapList.size!=0) {
+                    if(collectMapViewModel.success.value) {
                         items(cnt) { index ->
                             ComponentRow(index = index * 2, collectMapViewModel)
                         }

@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.feed
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -47,6 +48,14 @@ fun FeedBuyList(
         feedViewModel.getFoodList()
     }
     Background(true)
+
+    var foodCategory = ""
+    if(feedViewModel.success.value){
+        foodCategory = feedViewModel.foodCategory
+        feedViewModel.foodCategory = ""
+        feedViewModel.success.value = false
+    }
+
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -240,7 +249,7 @@ fun FeedBuyList(
                     if(feedViewModel.isCanBuy){
                         feedViewModel.isClick = true
                         animationState.value = AnimationCode.Feed
-                        feedViewModel.selectButtonClick()
+                        feedViewModel.selectButtonClick(foodCategory)
                     }
                 },
                 modifier = Modifier

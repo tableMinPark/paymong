@@ -21,10 +21,13 @@ import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Format;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -149,7 +152,14 @@ public class MongService {
         }else if(level == 2){
             FindTotalPayDto findTotalPayDto = new FindTotalPayDto();
             findTotalPayDto.setStartTime(mong.getRegDt());
-            findTotalPayDto.setEndTime(LocalDateTime.now());
+
+            LocalDateTime formattedDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.parse(formattedDateTime.format(formatter), formatter);
+
+            LOGGER.info("{}   {}",mong.getRegDt(), now);
+            findTotalPayDto.setEndTime(now);
+
             TotalPointDto totalPointDto = clientService.findTotalPay(String.valueOf(mong.getMemberId()), findTotalPayDto);
             // 다음 티어 결정 - level 2 -> 3
             FindMongLevelCodeDto findMongLevelCodeDto = checkTierByPoint(mong, totalPointDto.getTotalPoint());

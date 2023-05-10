@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun MainInfo(
     animationState: MutableState<AnimationCode>,
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
     MainInfoUI(animationState, mainviewModel)
 }
@@ -31,7 +31,7 @@ fun MainInfo(
 @Composable
 fun MainInfoUI(
     animationState: MutableState<AnimationCode>,
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
 
     val configuration = LocalConfiguration.current
@@ -138,7 +138,7 @@ fun Poops(start:Int, end:Int, top:Int, bottom:Int, poopSize:Int ){
 @Composable
 fun MainInfoPreview() {
     val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val mainviewModel : MainViewModel = viewModel()
+    val mainviewModel : WatchViewModel = viewModel()
     PaymongTheme {
         MainInfo(animationState, mainviewModel)
     }

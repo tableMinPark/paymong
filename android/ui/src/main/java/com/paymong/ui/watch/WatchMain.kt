@@ -18,7 +18,7 @@ import com.paymong.domain.watch.activity.TrainingViewModel
 import com.paymong.domain.watch.activity.WalkingViewModel
 import com.paymong.domain.watch.battle.BattleViewModel
 import com.paymong.domain.watch.feed.FeedViewModel
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
@@ -54,8 +54,8 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
 
         // Main
         composable( route = WatchNavItem.Main.route) {
-            val mainViewModel = viewModel<MainViewModel>(viewModelStoreOwner)
-            Main(animationState, pagerState, coroutineScope, navController, mainViewModel)
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
+            Main(animationState, pagerState, coroutineScope, navController, watchViewModel)
         }
 
         // Feed

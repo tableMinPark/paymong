@@ -31,7 +31,7 @@ import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.WalkingViewModel
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
@@ -49,7 +49,6 @@ fun WalkingTime (walkingViewModel:WalkingViewModel) {
         timeFontSize = 16
         walkingCountFontSize = 20
         walkingCountInfoFontSize = 12
-
     }
     Box(
         modifier = Modifier
@@ -168,7 +167,7 @@ fun WalkingActive(
                     .fillMaxWidth()
                     .padding(top = 5.dp)
             ) {
-                val mainviewModel: MainViewModel = viewModel()
+                val mainviewModel: WatchViewModel = viewModel()
                 val chCode = mainviewModel.mong.mongCode
                 val chA = painterResource(chCode.resourceCode)
                 if ( chCode.code == "CH444") {
@@ -309,7 +308,7 @@ fun WalkingActive(
         }
     }
 }
-fun ButtonSoundPlay ( walkingViewModel: WalkingViewModel) {
+fun buttonSoundPlay (walkingViewModel: WalkingViewModel) {
     walkingViewModel.soundPool.play(walkingViewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
 }
 @ExperimentalCoilApi

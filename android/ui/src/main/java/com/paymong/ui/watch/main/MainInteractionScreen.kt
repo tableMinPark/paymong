@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.main
 
-import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,7 +7,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +21,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,7 +33,7 @@ fun MainInteraction(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
     MainInteractionUI(animationState, pagerState, coroutineScope, navController, mainviewModel)
 }
@@ -48,7 +46,7 @@ fun MainInteractionUI(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
 
     val configuration = LocalConfiguration.current
@@ -264,7 +262,7 @@ fun MainInteractionUI(
 }
 
 
-fun ButtonSoundPlay ( mainviewModel : MainViewModel) {
+fun ButtonSoundPlay ( mainviewModel : WatchViewModel) {
     mainviewModel.soundPool.play(mainviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
 }
 
@@ -276,7 +274,7 @@ fun MainInteractionPreview() {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberSwipeDismissableNavController()
-    val mainviewModel:MainViewModel = viewModel()
+    val mainviewModel: WatchViewModel = viewModel()
     PaymongTheme {
         MainInteraction(animationState, pagerState, coroutineScope, navController, mainviewModel)
     }

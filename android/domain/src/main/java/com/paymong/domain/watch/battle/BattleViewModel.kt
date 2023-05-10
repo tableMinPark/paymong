@@ -19,13 +19,10 @@ import com.google.gson.Gson
 import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
-import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.response.BattleErrorResDto
 import com.paymong.data.model.response.BattleMessageResDto
 import com.paymong.data.repository.InformationRepository
 import com.paymong.domain.entity.BattleActive
-import com.paymong.domain.entity.Mong
-import com.paymong.domain.watch.main.MainViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import okhttp3.WebSocket
@@ -143,10 +140,10 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
             // 위치 한번 받고 업데이트 요청 종료
-//            val latitude = locationResult.lastLocation.latitude
-//            val longitude = locationResult.lastLocation.longitude
-            val latitude = 35.0963554
-            val longitude = 128.8539052
+            val latitude = locationResult.lastLocation.latitude
+            val longitude = locationResult.lastLocation.longitude
+//            val latitude = 35.0963554
+//            val longitude = 128.8539052
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 

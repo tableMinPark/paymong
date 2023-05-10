@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.battle
 
-import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -22,7 +20,6 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.domain.watch.main.MainViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori

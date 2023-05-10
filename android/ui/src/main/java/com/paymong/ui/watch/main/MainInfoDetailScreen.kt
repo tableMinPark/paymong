@@ -11,20 +11,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Text
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun MainInfoDetail(
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
     MainInfoDetailUI(mainviewModel)
 }
 
 @Composable
 fun MainInfoDetailUI(
-    mainviewModel: MainViewModel
+    mainviewModel: WatchViewModel
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -82,7 +82,7 @@ fun MainInfoDetailUI(
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun MainInfoDetailPreview() {
-    val mainviewModel: MainViewModel = viewModel()
+    val mainviewModel: WatchViewModel = viewModel()
     PaymongTheme {
         MainInfoDetail(mainviewModel)
     }

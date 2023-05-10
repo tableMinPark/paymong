@@ -14,13 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
-import com.paymong.domain.watch.main.MainViewModel
-import com.paymong.ui.theme.PayMongBlue
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.landing.MainBackgroundGif
@@ -33,7 +31,7 @@ fun Main(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
     val bgCode = mainviewModel.mapCode
     val bg = painterResource(bgCode.code)
@@ -82,7 +80,7 @@ fun MainPreview() {
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
-    val mainviewModel: MainViewModel = viewModel()
+    val mainviewModel: WatchViewModel = viewModel()
 
     PaymongTheme {
         Main(animationState, pagerState, coroutineScope, navController, mainviewModel)

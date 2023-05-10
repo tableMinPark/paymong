@@ -16,19 +16,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.paymong.common.R
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.*
 
 @Composable
 fun MainCondition(
-    mainviewModel : MainViewModel
+    mainviewModel : WatchViewModel
 ) {
     MainConditionUI(mainviewModel)
 }
 
 @Composable
 fun MainConditionUI(
-    mainviewModel: MainViewModel
+    mainviewModel: WatchViewModel
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -138,7 +138,7 @@ fun MainConditionUI(
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun MainConditionPreview() {
-    val mainviewModel : MainViewModel = viewModel()
+    val mainviewModel : WatchViewModel = viewModel()
     PaymongTheme {
         MainCondition(mainviewModel)
     }

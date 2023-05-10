@@ -2,6 +2,7 @@ package com.paymong.management.status.service;
 
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.HealthScheduler;
@@ -71,7 +72,7 @@ public class StatusService {
             mong.setTrainingCount(mong.getTrainingCount() + 1);
         }
 
-        return new MongStatusDto(mong);
+        return new MongStatusDto(mong, WebSocketCode.SUCCESS);
     }
 
     public MongConditionCode checkCondition(Mong mong) {

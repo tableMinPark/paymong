@@ -1,6 +1,7 @@
 package com.paymong.management.stroke.service;
 
 import com.paymong.management.global.code.MongActiveCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.StrokeScheduler;
 import com.paymong.management.history.entity.ActiveHistory;
@@ -23,8 +24,9 @@ public class StrokeService {
     private final ActiveHistoryRepository activeHistoryRepository;
     @Transactional
     public MongStatusDto strokeMong(StrokeMongReqVo strokeMongReqVo) throws Exception{
-        MongStatusDto mongStatusDto = new MongStatusDto();
+
         if(strokeScheduler.checkMong(strokeMongReqVo.getMongId())){
+            MongStatusDto mongStatusDto = new MongStatusDto(WebSocketCode.FAIL);
             return mongStatusDto;
         }
 
@@ -41,7 +43,8 @@ public class StrokeService {
         activeHistoryRepository.save(activeHistory);
 
         strokeScheduler.startScheduler(strokeMongReqVo.getMongId());
-        mongStatusDto.setCode("200");
+        MongStatusDto mongStatusDto = new MongStatusDto(WebSocketCode.SUCCESS);
+
         return mongStatusDto;
     }
 }

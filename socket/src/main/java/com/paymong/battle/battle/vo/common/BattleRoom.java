@@ -3,16 +3,12 @@ package com.paymong.battle.battle.vo.common;
 import com.paymong.battle.battle.dto.request.BattleMessageReqDto;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.service.BattleService;
-import com.paymong.battle.global.code.BattleStateCode;
 import com.paymong.battle.global.code.MessageType;
-import com.paymong.battle.global.response.ErrorResponse;
-import com.paymong.battle.information.dto.response.FindCharacterResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.*;
 
@@ -22,7 +18,7 @@ public class BattleRoom {
     private Integer totalTurn;
     private String battleRoomId;
     private Map<String, WebSocketSession> sessions;
-    private Map<String, CharacterStats> statsMap;
+    private Map<String, MongStats> statsMap;
     private BattleLog battleLog;
     private Integer nowTurn = 0;
 
@@ -31,8 +27,8 @@ public class BattleRoom {
                       String battleRoomId,
                       WebSocketSession sessionA,
                       WebSocketSession sessionB,
-                      CharacterStats statsA,
-                      CharacterStats statsB
+                      MongStats statsA,
+                      MongStats statsB
     ) {
         this.totalTurn = totalTurn;
         this.battleRoomId = battleRoomId;
@@ -69,8 +65,8 @@ public class BattleRoom {
         // 한턴이 끝남
         if (isOver) {
             log.info("모두 선택완료 결과 계산");
-            CharacterStats statsA = statsMap.get("A");
-            CharacterStats statsB = statsMap.get("B");
+            MongStats statsA = statsMap.get("A");
+            MongStats statsB = statsMap.get("B");
 
             BattleMessageResDto battleMessageResDto
                     = battleService.battleActive(nowTurn, statsA, statsB, battleLog);

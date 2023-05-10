@@ -7,6 +7,8 @@ import lombok.Data;
 @Builder
 public class BattleMessageResDto {
     private String battleRoomId;
+    private String mongCodeA;
+    private String mongCodeB;
     private Integer nowTurn;
     private Integer totalTurn;
     private String nextAttacker;

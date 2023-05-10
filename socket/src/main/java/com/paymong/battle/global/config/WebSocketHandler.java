@@ -5,11 +5,9 @@ import com.paymong.battle.battle.dto.request.BattleMessageReqDto;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.battle.service.BattleService;
-import com.paymong.battle.battle.vo.common.CharacterStats;
+import com.paymong.battle.battle.vo.common.MongStats;
 import com.paymong.battle.battle.vo.common.Matching;
 import com.paymong.battle.global.code.BattleStateCode;
-import com.paymong.battle.global.exception.NotFoundException;
-import com.paymong.battle.global.exception.NotFoundMachingException;
 import com.paymong.battle.global.redis.LocationRepository;
 import com.paymong.battle.global.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
-import javax.websocket.Session;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -60,11 +57,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             Matching matchingA = matchingQueue.poll();
 
-            Long characterId = matchingA.getCharacterId();
+            Long mongId = matchingA.getMongId();
             WebSocketSession session = matchingA.getSession();
 
             // 이미 다른사람과 매칭된 플레이어는 패스
-            if (matchingMap.get(characterId) == null) return;
+            if (matchingMap.get(mongId) == null) return;
 
             // 매칭 실패 (maxMatchingCount 만큼 매칭을 돌렸을 때)
             Long waitTime = Duration.between(matchingA.getMatchingStart(), LocalDateTime.now()).getSeconds();
@@ -73,31 +70,31 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 return;
             }
 
-            log.info(matchingA.getCharacterId() + " " + waitTime);
+            log.info(matchingA.getMongId() + " " + waitTime);
 
             // 자신 기준 가까운 10명 리스트
-            List<String> idList = locationRepository.findById(matchingA.getCharacterId());
+            List<String> idList = locationRepository.findById(matchingA.getMongId());
 
             Boolean isMatching = false;
             for (String id : idList) {
-                if (id.equals(characterId.toString())) continue;
+                if (id.equals(mongId.toString())) continue;
 
-                Long characterBId = Long.parseLong(id);
-                Matching matchingB = matchingMap.get(characterBId);
+                Long mongIdB = Long.parseLong(id);
+                Matching matchingB = matchingMap.get(mongIdB);
 
                 if (matchingB != null) {
                     // 현재 매칭된 플레이어 대기열에서 삭제
-                    matchingMap.remove(characterBId);
+                    matchingMap.remove(mongIdB);
                     // 위치정보 삭제
-                    locationRepository.remove(characterId);
-                    locationRepository.remove(characterBId);
+                    locationRepository.remove(mongId);
+                    locationRepository.remove(mongIdB);
 
                     // 방 ID 생성
                     String battleRoomId = UUID.randomUUID().toString();
 
                     // 기본 체력 설정
-                    CharacterStats statsA = battleService.findCharacterStats(characterId, defaultHealth);
-                    CharacterStats statsB = battleService.findCharacterStats(characterBId, defaultHealth);
+                    MongStats statsA = battleService.findCharacterStats(mongId, defaultHealth);
+                    MongStats statsB = battleService.findCharacterStats(mongIdB, defaultHealth);
 
                     // 배틀방 생성
                     BattleRoom battleRoom = BattleRoom.builder()
@@ -115,6 +112,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     // A 매칭 응답 전송
                     battleService.sendMessage(matchingA.getSession(), BattleMessageResDto.builder()
                             .battleRoomId(battleRoomId)
+                            .mongCodeA(matchingA.getMongCode())
+                            .mongCodeB(matchingB.getMongCode())
                             .nowTurn(0)
                             .totalTurn(totalTurn)
                             .nextAttacker("A")                  // 무조건 A 먼저 시작
@@ -128,6 +127,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     // B 매칭 응답 전송
                     battleService.sendMessage(matchingB.getSession(), BattleMessageResDto.builder()
                             .battleRoomId(battleRoomId)
+                            .mongCodeA(matchingA.getMongCode())
+                            .mongCodeB(matchingB.getMongCode())
                             .nowTurn(0)
                             .totalTurn(totalTurn)
                             .nextAttacker("A")                  // 무조건 A 먼저 시작
@@ -139,8 +140,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                             .build());
 
                     // 배틀 진행 맵에 저장
-                    battleCharacterIdMap.put(characterId, battleRoomId);
-                    battleCharacterIdMap.put(characterBId, battleRoomId);
+                    battleCharacterIdMap.put(mongId, battleRoomId);
+                    battleCharacterIdMap.put(mongIdB, battleRoomId);
                     battleRoomMap.put(matchingA.getSession().getId(), battleRoomId);
                     battleRoomMap.put(matchingB.getSession().getId(), battleRoomId);
                     isMatching = true;
@@ -150,7 +151,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 매칭되지 않으면 대기열로 다시 복귀
             if (!isMatching) {
                 matchingQueue.add(Matching.builder()
-                        .characterId(matchingA.getCharacterId())
+                        .mongId(matchingA.getMongId())
+                        .mongCode(matchingA.getMongCode())
                         .session(matchingA.getSession())
                         .matchingStart(matchingA.getMatchingStart())
                         .build());
@@ -177,7 +179,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             log.info(payload);
 
-            Long characterId = battleMessageReqDto.getCharacterId();
+            Long mongId = battleMessageReqDto.getMongId();
+            String mongCode = battleMessageReqDto.getMongCode();
             Double latitude = battleMessageReqDto.getLatitude();
             Double longitude = battleMessageReqDto.getLongitude();
 
@@ -188,18 +191,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                     // 세션 서버에 대기열 등록
                     Matching player = Matching.builder()
-                            .characterId(characterId)
+                            .mongId(mongId)
+                            .mongCode(mongCode)
                             .session(session)
                             .matchingStart(LocalDateTime.now())
                             .build();
 
-                    locationRepository.save(characterId, latitude, longitude);
+                    locationRepository.save(mongId, latitude, longitude);
                     matchingQueue.add(player);
-                    matchingMap.put(characterId, player);
+                    matchingMap.put(mongId, player);
 
                     System.out.println(matchingQueue);
                     System.out.println(matchingMap);
-
                     break;
 
                 case DISCONNECT:
@@ -207,14 +210,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     log.info("handleTextMessage - DISCONNECT");
                     Thread.sleep(1000);
                     // 세션 서버에 대기열 삭제
-                    locationRepository.remove(characterId);
-                    matchingMap.remove(characterId);
+                    locationRepository.remove(mongId);
+                    matchingMap.remove(mongId);
 
                     System.out.println(matchingQueue);
                     System.out.println(matchingMap);
 
                     // 배틀중에 탈주하는 경우
-                    String battleRoomId = battleCharacterIdMap.get(characterId);
+                    String battleRoomId = battleCharacterIdMap.get(mongId);
                     if (battleRoomId != null){
                         BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
                         // 정상 종료

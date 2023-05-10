@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class Matching {
-    private Long characterId;
+    private Long mongId;
+    private String mongCode;
     private WebSocketSession session;
     private LocalDateTime matchingStart;
 }

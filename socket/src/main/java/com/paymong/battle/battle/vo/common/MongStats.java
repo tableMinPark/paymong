@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CharacterStats {
-    private Long characterId;
+public class MongStats {
+    private Long mongId;
     private Double health;
     private Integer strength;
     private Integer weight;

@@ -17,8 +17,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class MatchingRepositoryTest {
 
@@ -28,7 +26,7 @@ class MatchingRepositoryTest {
     @Test
     void saveTest() {
         matchingRepository.save(1L, Matching.builder()
-                        .characterId(1L)
+                        .mongId(1L)
                         .session(new WebSocketSession() {
                             @Override
                             public String getId() {

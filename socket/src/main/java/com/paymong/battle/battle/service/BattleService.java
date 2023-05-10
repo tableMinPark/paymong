@@ -2,7 +2,7 @@ package com.paymong.battle.battle.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.battle.battle.vo.common.BattleLog;
-import com.paymong.battle.battle.vo.common.CharacterStats;
+import com.paymong.battle.battle.vo.common.MongStats;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.global.exception.NotFoundException;
@@ -43,7 +43,7 @@ public class BattleService {
         battleRoomMap.remove(battleRoomId);
     }
 
-    public BattleMessageResDto battleActive(Integer nowTurn, CharacterStats statsA, CharacterStats statsB, BattleLog battleLog){
+    public BattleMessageResDto battleActive(Integer nowTurn, MongStats statsA, MongStats statsB, BattleLog battleLog){
 
         /*
             - 몸무게 = 방어력  ///  근력 = 공격
@@ -104,14 +104,14 @@ public class BattleService {
             return false;
     }
 
-    public CharacterStats findCharacterStats(Long characterId, Double defaultHealth) {
+    public MongStats findCharacterStats(Long characterId, Double defaultHealth) {
         FindCharacterResponse findCharacterResponse = new FindCharacterResponse();
         findCharacterResponse.setCharacterId(characterId);
         findCharacterResponse.setStrength(1);
         findCharacterResponse.setWeight(2);
 
-        return CharacterStats.builder()
-                .characterId(findCharacterResponse.getCharacterId())
+        return MongStats.builder()
+                .mongId(findCharacterResponse.getCharacterId())
                 .health(defaultHealth)
                 .strength(findCharacterResponse.getStrength())
                 .weight(findCharacterResponse.getWeight())

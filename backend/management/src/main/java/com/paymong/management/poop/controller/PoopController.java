@@ -7,6 +7,7 @@ import com.paymong.management.global.scheduler.PoopScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.poop.service.PoopService;
 import com.paymong.management.poop.vo.PoopMongReqVo;
+import com.paymong.management.poop.vo.PoopMongResVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,8 @@ public class PoopController {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
             PoopMongReqVo poopMongReqVo = new PoopMongReqVo(mongId);
-            poopService.removePoop(poopMongReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            PoopMongResVo poopMongResVo = poopService.removePoop(poopMongReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(poopMongResVo);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

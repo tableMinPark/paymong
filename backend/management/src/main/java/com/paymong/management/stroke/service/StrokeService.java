@@ -7,6 +7,7 @@ import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.stroke.vo.StrokeMongReqVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,10 @@ public class StrokeService {
     private final StrokeScheduler strokeScheduler;
     private final ActiveHistoryRepository activeHistoryRepository;
     @Transactional
-    public Boolean strokeMong(StrokeMongReqVo strokeMongReqVo) throws Exception{
-
+    public MongStatusDto strokeMong(StrokeMongReqVo strokeMongReqVo) throws Exception{
+        MongStatusDto mongStatusDto = new MongStatusDto();
         if(strokeScheduler.checkMong(strokeMongReqVo.getMongId())){
-            return false;
+            return mongStatusDto;
         }
 
         Mong mong = mongRepository.findByMongId(strokeMongReqVo.getMongId())
@@ -40,6 +41,7 @@ public class StrokeService {
         activeHistoryRepository.save(activeHistory);
 
         strokeScheduler.startScheduler(strokeMongReqVo.getMongId());
-        return true;
+        mongStatusDto.setCode("200");
+        return mongStatusDto;
     }
 }

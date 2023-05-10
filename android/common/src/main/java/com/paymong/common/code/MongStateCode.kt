@@ -1,11 +1,14 @@
 package com.paymong.common.code
 
 enum class MongStateCode(
-    val code: String,
-    val codeName: String,
+    val state: String,
 ) {
-    CD000("CD000", "일반"),
-    CD001("CD001", "아픔"),
-    CD002("CD002","수면"),
-    CD004("CD004","배고픔")
+    CD000("정상"),
+    CD001("아픔"),
+    CD002("수면"),
+    CD003("졸림"),
+    CD004("배고픔"),
+    CD005("죽음"),
+    CD006("졸업"),
+    CD007("진화대기")
 }

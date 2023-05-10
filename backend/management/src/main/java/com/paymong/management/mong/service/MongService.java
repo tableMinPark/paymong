@@ -185,6 +185,7 @@ public class MongService {
             ok = true;
         }
         if(ok){
+            mong.setCode("CH444");
             mong.setStateCode(MongConditionCode.GRADUATE.getCode());
             mong.setActive(false);
 

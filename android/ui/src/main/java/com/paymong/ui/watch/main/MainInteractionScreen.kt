@@ -40,6 +40,7 @@ fun MainInteraction(
     MainInteractionUI(animationState, pagerState, coroutineScope, navController, mainviewModel)
 }
 
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainInteractionUI(
@@ -76,16 +77,6 @@ fun MainInteractionUI(
         thirdRowPadding = 15
     }
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
     if(mainviewModel.isClicked){
         mainviewModel.isClicked = false
         navController.navigate(WatchNavItem.Main.route) {
@@ -96,8 +87,9 @@ fun MainInteractionUI(
     }
 
     Column(
-        modifier = Modifier.padding(15.dp)//, bottom = 15.dp)
-                .fillMaxSize(1f)
+        modifier = Modifier
+            .padding(15.dp)//, bottom = 15.dp)
+            .fillMaxSize(1f)
     ) {
         Box () {
             //BATTLE
@@ -106,11 +98,13 @@ fun MainInteractionUI(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(
-                    modifier = Modifier.clickable {
-                        ButtonSoundPlay()
-                        navController.navigate(WatchNavItem.Battle.route)
-                    }
-                        .width(boxWidth.dp).height(boxHeight.dp),
+                    modifier = Modifier
+                        .clickable {
+                            ButtonSoundPlay(mainviewModel)
+                            navController.navigate(WatchNavItem.Battle.route)
+                        }
+                        .width(boxWidth.dp)
+                        .height(boxHeight.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -132,15 +126,20 @@ fun MainInteractionUI(
             //FEED ACTIVITY
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().padding(top=marginTop.dp, bottom= 5.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = marginTop.dp, bottom = 5.dp)
             ) {
                 //FEED
                 Box(
-                    modifier = Modifier.clickable {
-                        ButtonSoundPlay()
-                        navController.navigate(WatchNavItem.Feed.route)
-                    }
-                        .width(boxWidth.dp).height(boxHeight.dp).padding(start = 2.dp),
+                    modifier = Modifier
+                        .clickable {
+                            ButtonSoundPlay(mainviewModel)
+                            navController.navigate(WatchNavItem.Feed.route)
+                        }
+                        .width(boxWidth.dp)
+                        .height(boxHeight.dp)
+                        .padding(start = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -163,11 +162,14 @@ fun MainInteractionUI(
 
                 //ACTIVITY
                 Box(
-                    modifier = Modifier.clickable {
-                        ButtonSoundPlay()
-                        navController.navigate(WatchNavItem.Activity.route)
-                    }
-                        .width(boxWidth.dp).height(boxHeight.dp).padding(end = 2.dp),
+                    modifier = Modifier
+                        .clickable {
+                            ButtonSoundPlay(mainviewModel)
+                            navController.navigate(WatchNavItem.Activity.route)
+                        }
+                        .width(boxWidth.dp)
+                        .height(boxHeight.dp)
+                        .padding(end = 2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -192,16 +194,22 @@ fun MainInteractionUI(
         //SLEEP POOP
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp)
         ) {
             //SLEEP
             Box(
-                modifier = Modifier.clickable {
-                    ButtonSoundPlay()
-                    mainviewModel.isClicked = true
-                    animationState.value = AnimationCode.Sleep
-                    mainviewModel.sleep()
-                }.width(boxWidth.dp) .height(boxHeight.dp).padding(start = thirdRowPadding.dp),
+                modifier = Modifier
+                    .clickable {
+                        ButtonSoundPlay(mainviewModel)
+                        mainviewModel.isClicked = true
+                        animationState.value = AnimationCode.Sleep
+                        mainviewModel.sleep()
+                    }
+                    .width(boxWidth.dp)
+                    .height(boxHeight.dp)
+                    .padding(start = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             ){
                 Box (
@@ -223,12 +231,16 @@ fun MainInteractionUI(
 
             //POOP
             Box (
-                modifier = Modifier.clickable {
-                    ButtonSoundPlay()
-                    animationState.value = AnimationCode.Poop
-                    mainviewModel.poop()
-                    mainviewModel.isClicked = true
-                }.width(boxWidth.dp) .height(boxHeight.dp).padding(end = thirdRowPadding.dp),
+                modifier = Modifier
+                    .clickable {
+                        ButtonSoundPlay(mainviewModel)
+                        animationState.value = AnimationCode.Poop
+                        mainviewModel.poop()
+                        mainviewModel.isClicked = true
+                    }
+                    .width(boxWidth.dp)
+                    .height(boxHeight.dp)
+                    .padding(end = thirdRowPadding.dp),
                 contentAlignment = Alignment.Center
             ){
                 Box (
@@ -249,6 +261,11 @@ fun MainInteractionUI(
             }
         }
     }
+}
+
+
+fun ButtonSoundPlay ( mainviewModel : MainViewModel) {
+    mainviewModel.soundPool.play(mainviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
 }
 
 @OptIn(ExperimentalPagerApi::class)

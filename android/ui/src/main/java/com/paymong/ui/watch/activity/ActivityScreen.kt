@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
@@ -23,12 +24,13 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
+import com.paymong.domain.watch.activity.TrainingViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
 
 @Composable
-fun Activity(navController: NavHostController) {
+fun Activity(navController: NavHostController, trainingViewModel : TrainingViewModel) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
@@ -65,7 +67,7 @@ fun Activity(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { ButtonSoundPlay(); navController.navigate(WatchNavItem.Training.route) },
+                onClick = {  ButtonSoundPlay2(trainingViewModel, "Bnt"); navController.navigate(WatchNavItem.Training.route) },
                 modifier = Modifier
                     .size(width = 200.dp, height = buttonHeight.dp)
                     .weight(1f),
@@ -94,7 +96,7 @@ fun Activity(navController: NavHostController) {
                 .padding(top = 5.dp)
         ) {
             Button(
-                onClick = { ButtonSoundPlay(); navController.navigate(WatchNavItem.Walking.route) },
+                onClick = { ButtonSoundPlay2(trainingViewModel, "Bnt"); navController.navigate(WatchNavItem.Walking.route) },
                 modifier = Modifier
                     .size(width = 200.dp, height = 100.dp)
                     .weight(1f),
@@ -113,13 +115,20 @@ fun Activity(navController: NavHostController) {
 }
 
 
+fun ButtonSoundPlay2 ( trainingviewModel : TrainingViewModel, soundName : String) {
+    if (soundName == "Bnt") {
+        trainingviewModel.soundPool.play(trainingviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
 
+
+}
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun ActivityPreview() {
     val navController = rememberSwipeDismissableNavController()
+    val traingviewModel: TrainingViewModel = viewModel()
     PaymongTheme {
-        Activity(navController)
+        Activity(navController, traingviewModel)
     }
 }

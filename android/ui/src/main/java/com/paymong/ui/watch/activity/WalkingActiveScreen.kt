@@ -309,7 +309,9 @@ fun WalkingActive(
         }
     }
 }
-
+fun ButtonSoundPlay ( walkingViewModel: WalkingViewModel) {
+    walkingViewModel.soundPool.play(walkingViewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+}
 @ExperimentalCoilApi
 @Composable
 fun WalkingBackgroundGif() {

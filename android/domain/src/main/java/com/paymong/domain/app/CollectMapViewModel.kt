@@ -1,6 +1,7 @@
 package com.paymong.domain.app
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.CollectRepository
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class CollectMapViewModel : ViewModel() {
     var mapList = mutableListOf<Collect>()
+    var success = mutableStateOf(false)
     private var collectRepository: CollectRepository = CollectRepository()
 
     override fun onCleared() {
@@ -28,6 +30,7 @@ class CollectMapViewModel : ViewModel() {
                 for(i in 1..data.size){
                     mapList.add(Collect(data[i-1].isOpen, data[i-1].name, data[i-1].mapCode))
                 }
+                success.value = true
             }
         }
     }

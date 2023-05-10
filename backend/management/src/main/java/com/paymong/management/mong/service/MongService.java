@@ -210,6 +210,7 @@ public class MongService {
         }
 
         EvolutionMongResDto mongResDto = new EvolutionMongResDto();
+        mongResDto.setWeight(mong.getWeight());
         mongResDto.setMongCode(mong.getCode());
         mongResDto.setStateCode(mong.getStateCode());
 

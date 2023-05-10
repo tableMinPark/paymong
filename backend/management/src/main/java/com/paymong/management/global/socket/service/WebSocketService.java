@@ -1,6 +1,7 @@
 package com.paymong.management.global.socket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.global.socket.dto.MongSocketDto;
 import com.paymong.management.mong.entity.Mong;
@@ -46,10 +47,10 @@ public class WebSocketService {
         }
     }
 
-    public void sendTest(Mong mong) {
+    public void sendStatus(Mong mong, WebSocketCode webSocketCode) {
         try {
             WebSocketSession session = members.get(mong.getMemberId()).getSession();
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, true))));
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
         }catch (IOException e){
             log.info("응 못보내");
         }

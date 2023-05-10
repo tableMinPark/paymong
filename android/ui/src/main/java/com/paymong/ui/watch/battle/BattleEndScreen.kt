@@ -52,49 +52,6 @@ fun BattleEnd(
     BattleBackgroundGif()
 
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val winSound = soundPool.load(context, com.paymong.ui.R.raw.win_sound, 1)
-    val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun WinSoundPlay () {
-
-
-        val waitLimit = 1000
-        var waitCounter = 0
-        var throttle = 10
-        while ( soundPool.play(winSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
-            waitCounter++
-            SystemClock.sleep(throttle.toLong())
-        }
-    }
-    fun LoseSoundPlay () {
-
-
-        val waitLimit = 1000
-        var waitCounter = 0
-        var throttle = 10
-        while ( soundPool.play(loseSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
-            waitCounter++
-            SystemClock.sleep(throttle.toLong())
-        }
-    }
-
-    fun ButtonSoundPlay () {
-
-        val waitLimit = 1000
-        var waitCounter = 0
-        var throttle = 10
-        while ( soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1f) == 0 && waitCounter < waitLimit){
-            waitCounter++
-            SystemClock.sleep(throttle.toLong())
-        }
-    }
-
-
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -122,11 +79,11 @@ fun BattleEnd(
         ) {
             if (battleViewModel.win) {
                 val win = painterResource(R.drawable.win)
-                WinSoundPlay()
+                SoundPlay(battleViewModel, "Win")
                 Image(painter = win, contentDescription = null, modifier = Modifier.width(150.dp))
             } else {
                 val lose = painterResource(R.drawable.lose)
-                LoseSoundPlay()
+                SoundPlay(battleViewModel, "Lose")
                 Image(painter = lose, contentDescription = null, modifier = Modifier.width(150.dp))
             }
         }
@@ -151,7 +108,7 @@ fun BattleEnd(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .clickable {
-                        ButtonSoundPlay()
+                        SoundPlay(battleViewModel, "Bnt")
                         navController.navigate(WatchNavItem.BattleLanding.route) {
                             popUpTo(0)
                             launchSingleTop = true

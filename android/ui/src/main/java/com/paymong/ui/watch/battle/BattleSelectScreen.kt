@@ -46,25 +46,6 @@ fun BattleSelect(
 ) {
 
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-
-    fun ButtonSoundPlay () {
-        println("사운드 재생")
-        val waitLimit = 1000
-        var waitCounter = 0
-        var throttle = 10
-        while (soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f) == 0 && waitCounter < waitLimit){
-            waitCounter++
-            SystemClock.sleep(throttle.toLong())
-        }
-    }
-
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     var leftRightBtn = 0
@@ -113,7 +94,7 @@ fun BattleSelect(
             Button(
                 onClick = {
 
-                    ButtonSoundPlay()
+                    SoundPlay(battleViewModel, "Bnt")
                     battleViewModel.select(MessageType.LEFT)
 
 //                    selectState.value = "LEFT"
@@ -147,7 +128,7 @@ fun BattleSelect(
         ) {
             Button(
                 onClick = {
-                    ButtonSoundPlay()
+                    SoundPlay(battleViewModel, "Bnt")
                     battleViewModel.select(MessageType.RIGHT)
 //                    selectState.value = "RIGHT"
 //                    navController.navigate(WatchNavItem.BattleActive.route){

@@ -48,7 +48,7 @@ fun CollectPayMong(
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
-                if(collectPayMongViewModel.mongList.size!=0) {
+                if(collectPayMongViewModel.success.value) {
                     val grouped =
                         collectPayMongViewModel.mongList.groupBy { it.code!!.substring(2, 3) }
                     LazyColumn(

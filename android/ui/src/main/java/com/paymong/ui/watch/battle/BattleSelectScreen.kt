@@ -1,7 +1,5 @@
 package com.paymong.ui.watch.battle
 
-import android.media.SoundPool
-import android.os.SystemClock
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,66 +16,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.ProgressIndicatorDefaults
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.BattleViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.BattleBackgroundGif
 
 @Composable
 fun BattleSelect(
     navController: NavHostController,
+    soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-
+    Background(false)
+    BattleBackgroundGif()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var leftRightBtn = 0
+    var leftRightBtn = if (screenWidthDp < 200) 30 else 40
 
-
-    if (screenWidthDp < 200) {
-        leftRightBtn = 30
-    }
-    else {
-        leftRightBtn = 40
-    }
-
-
-    if (battleViewModel.matchingState == MatchingCode.SELECT_AFTER){
-        navController.navigate(WatchNavItem.BattleActive.route) {
-            popUpTo(0)
-            launchSingleTop =true
+    when(battleViewModel.matchingState) {
+        MatchingCode.SELECT_AFTER -> {
+            navController.navigate(WatchNavItem.BattleActive.route) {
+                popUpTo(0)
+                launchSingleTop =true
+            }
         }
-    } else if (battleViewModel.matchingState == MatchingCode.END){
-        navController.navigate(WatchNavItem.BattleEnd.route) {
-            popUpTo(0)
-            launchSingleTop =true
+        MatchingCode.END -> {
+            navController.navigate(WatchNavItem.BattleEnd.route) {
+                popUpTo(0)
+                launchSingleTop =true
+            }
+            battleViewModel.battleEnd()
         }
-        battleViewModel.battleEnd()
+        else -> {}
     }
-
-    val bg = painterResource(R.drawable.battle_bg)
-    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    BattleBackgroundGif()
-
-
-
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -93,8 +78,7 @@ fun BattleSelect(
         ) {
             Button(
                 onClick = {
-
-                    SoundPlay(battleViewModel, "Bnt")
+                    soundViewModel.soundPlay(SoundCode.BATTLE_BUTTON)
                     battleViewModel.select(MessageType.LEFT)
 
 //                    selectState.value = "LEFT"
@@ -128,7 +112,7 @@ fun BattleSelect(
         ) {
             Button(
                 onClick = {
-                    SoundPlay(battleViewModel, "Bnt")
+                    soundViewModel.soundPlay(SoundCode.BATTLE_BUTTON)
                     battleViewModel.select(MessageType.RIGHT)
 //                    selectState.value = "RIGHT"
 //                    navController.navigate(WatchNavItem.BattleActive.route){
@@ -163,15 +147,4 @@ fun BattleSelect(
         endAngle = 270f,
         strokeWidth = 4.dp
     )
-}
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun BattleSelectPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    val viewModel : BattleViewModel = viewModel()
-
-    PaymongTheme {
-        BattleSelect(navController, viewModel)
-    }
 }

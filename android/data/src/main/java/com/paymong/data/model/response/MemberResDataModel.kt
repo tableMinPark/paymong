@@ -1,6 +1,5 @@
 package com.paymong.data.model.response
 
-import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.ThingsCode
 import java.time.LocalDateTime
 

@@ -31,7 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.navigation.AppNavItem
@@ -67,7 +67,7 @@ fun Main(
                 .fillMaxHeight())
     }
     // state 는 모두 공통 코드화 시켜야 함
-    val characterState = remember { mutableStateOf(CharacterCode.CH444) }
+    val characterState = remember { mutableStateOf(MongCode.CH444) }
 
     Top(navController, appViewModel)
     MakeEgg(navController, appViewModel)

@@ -1,9 +1,5 @@
 package com.paymong.ui.watch.activity
 
-import android.media.SoundPool
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
-import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,135 +7,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.activity.TrainingViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.TrainingViewModel
 import com.paymong.ui.theme.dalmoori
 
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
-import com.paymong.domain.watch.main.MainViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.LoadingGif
 
 
-
-
-
-@Composable
-fun TrainingTime(traingviewModel: TrainingViewModel){
-
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-
-    var timeFontSize = 20
-    var countFontSize = 25
-
-
-    if (screenWidthDp < 200) {
-        timeFontSize = 16
-        countFontSize = 20
-
-    }
-
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-    ) {
-        Text(
-            text = String.format(
-                "%02d:%02d",
-                traingviewModel.second,
-                traingviewModel.nanoSecond / 10000000
-            ),
-            fontFamily = dalmoori,
-            fontSize = timeFontSize.sp
-        )
-    }
-
-    Spacer(modifier = Modifier.height(5.dp))
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(Alignment.CenterVertically)
-            .wrapContentWidth(Alignment.CenterHorizontally)
-    ) {
-        Text(
-            text = String.format("%d", traingviewModel.count),
-            fontFamily = dalmoori,
-            fontSize = countFontSize.sp
-        )
-    }
-}
-
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun TrainingActive(
     navController: NavHostController,
-    traingviewModel: TrainingViewModel
+    watchViewModel: WatchViewModel,
+    soundViewModel: SoundViewModel,
+    trainingViewModel: TrainingViewModel = viewModel()
 ) {
-    traingviewModel.trainingInit()
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
+    val boxHeight = if (screenWidthDp < 200) 60 else 90
+    val successPadding = if (screenWidthDp < 200) 7 else 12
+    val successWidth = if (screenWidthDp < 200) 160 else 180
+    val successHeight = if (screenWidthDp < 200) 80 else 100
+    val failPadding = if (screenWidthDp < 200) 5 else 10
+    val failWidth = if (screenWidthDp < 200) 100 else 120
+    val failHeight = if (screenWidthDp < 200) 180 else 100
+    val characterSize = if (screenWidthDp < 200) 80 else 100
+    val exitFontSize = if (screenWidthDp < 200) 11 else 13
+    val infoFontSize = if (screenWidthDp < 200) 9 else 11
 
-
-    var boxHeight = 90
-    var successPadding = 12
-    var successWidth = 180
-    var successHeight = 100
-
-    var failPadding = 10
-    var failWidth = 120
-    var failHeight = 100
-    var characterSize = 100
-    var exitFontSize = 13
-    var infoFontSize = 11
-
-
-    if (screenWidthDp < 200) {
-
-        boxHeight = 60
-        successPadding = 7
-        successWidth = 160
-        successHeight = 80
-
-
-        failPadding = 5
-        failWidth = 100
-        failHeight = 180
-
-        characterSize = 80
-
-        exitFontSize = 11
-        infoFontSize = 9
-
-    }
-
-
-    // Background
-    val img = painterResource(R.drawable.training_bg)
-    Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
-    TrainingBackgroundGif()
+    Background(true)
+    if (!trainingViewModel.isTrainingEnd) LoadingGif()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -147,7 +59,7 @@ fun TrainingActive(
         modifier = Modifier
             .fillMaxHeight()
             .clickable {
-                traingviewModel.screenClick() {
+                trainingViewModel.screenClick() {
                     navController.navigate(WatchNavItem.Activity.route) {
                         popUpTo(navController.graph.findStartDestination().id)
                         launchSingleTop = true
@@ -155,17 +67,16 @@ fun TrainingActive(
                 }
             }
     ) {
-        TrainingTime(traingviewModel)
+        TrainingTime(trainingViewModel)
         Spacer(modifier = Modifier.height(3.dp))
 
         // Character
+        val mongCode = watchViewModel.mong.mongCode
+        val mongResourceCode = painterResource(mongCode.resourceCode)
 
-        val mainviewModel: MainViewModel = viewModel()
-        val chCode = mainviewModel.mong.mongCode
-        val chA = painterResource(chCode.resourceCode)
-
-        if (traingviewModel.isTrainingEnd) {
-            if (traingviewModel.count >= 50) {
+        // 훈련 끝
+        if (trainingViewModel.isTrainingEnd) {
+            if (trainingViewModel.count >= 50) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -182,8 +93,7 @@ fun TrainingActive(
                             .padding(bottom = successPadding.dp)
                     )
                 }
-                SoundPlay(traingviewModel, "Win")
-
+                soundViewModel.soundPlay(SoundCode.TRAINING_WIN)
             } else {
                 Box(
                     modifier = Modifier
@@ -202,16 +112,18 @@ fun TrainingActive(
 
                     )
                 }
-                SoundPlay(traingviewModel, "Lose")
+                soundViewModel.soundPlay(SoundCode.TRAINING_LOSE)
             }
-        } else {
+        } 
+        // 훈련 진행 중
+        else {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(Alignment.CenterVertically)
                     .wrapContentWidth(Alignment.CenterHorizontally)
             ) {
-                if ( chCode.code == "CH444") {
+                if ( mongCode.code == "CH444") {
                     Box(
                         modifier = Modifier
                             .width(characterSize.dp)
@@ -221,7 +133,7 @@ fun TrainingActive(
                     }
                 } else {
                     Image(
-                        painter = chA,
+                        painter = mongResourceCode,
                         contentDescription = null,
                         modifier = Modifier
                             .width(characterSize.dp)
@@ -230,7 +142,9 @@ fun TrainingActive(
                 }
             }
         }
-        if (traingviewModel.isTrainingEnd) {
+        
+        // 훈련 끝 (버튼)
+        if (trainingViewModel.isTrainingEnd) {
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -245,8 +159,8 @@ fun TrainingActive(
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
-                            SoundPlay(traingviewModel, "Bnt")
-                            traingviewModel.screenClick() {
+                            soundViewModel.soundPlay(SoundCode.TRAINING_BUTTON)
+                            trainingViewModel.screenClick() {
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)
                                     launchSingleTop = true
@@ -266,7 +180,9 @@ fun TrainingActive(
                     fontSize = exitFontSize.sp,
                     color = Color(0xFF0C4DA2)
                 ) }
-        } else {
+        }
+        // 훈련 진행중 (버튼)
+        else {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -282,91 +198,73 @@ fun TrainingActive(
             }
         }
     }
-
-    // GIF
-    if (traingviewModel.isTrainingEnd) {
-        null
-    } else {
-        LoadingGif()
-    }
 }
 
-
-
-@ExperimentalCoilApi
 @Composable
-fun LoadingGif() {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
-            if (SDK_INT >= 28) {
-                add(ImageDecoderDecoder(context))
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = R.drawable.loading,
-            builder = {
-                size(OriginalSize)
-            }
-        ),
-        contentDescription = null,
+// 타이머
+fun TrainingTime(
+    trainingViewModel: TrainingViewModel
+){
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val timeFontSize = if (screenWidthDp < 200) 16 else 20
+    val countFontSize = if (screenWidthDp < 200) 20 else 25
+
+    Box(
         modifier = Modifier
-    )
-}
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ) {
+        Text(
+            text = String.format(
+                "%02d:%02d",
+                trainingViewModel.second,
+                trainingViewModel.nanoSecond / 10000000
+            ),
+            fontFamily = dalmoori,
+            fontSize = timeFontSize.sp
+        )
+    }
 
-@ExperimentalCoilApi
-@Composable
-fun TrainingBackgroundGif() {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
-            if (Build.VERSION.SDK_INT >= 28) {
-                add(ImageDecoderDecoder(context))
-            } else {
-                add(GifDecoder())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = R.drawable.training_bg_gif,
-            builder = {
-                size(OriginalSize)
-            }
-        ),
-        contentDescription = null,
+    Spacer(modifier = Modifier.height(5.dp))
+
+    Box(
         modifier = Modifier
-    )
-}
-
-
-fun SoundPlay ( trainingviewModel : TrainingViewModel, soundName : String) {
-    if (soundName == "Bnt") {
-        trainingviewModel.soundPool.play(trainingviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-    else if (soundName == "Win") {
-        trainingviewModel.soundPool.play(trainingviewModel.winSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-    else if (soundName == "Lose") {
-        trainingviewModel.soundPool.play(trainingviewModel.loseSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
-}
-
-
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun TrainingPreview() {
-    val navController = rememberSwipeDismissableNavController()
-    val traingviewModel: TrainingViewModel = viewModel()
-    PaymongTheme {
-        TrainingActive(navController, traingviewModel)
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ) {
+        Text(
+            text = String.format("%d", trainingViewModel.count),
+            fontFamily = dalmoori,
+            fontSize = countFontSize.sp
+        )
     }
 }
+
+//@ExperimentalCoilApi
+//@Composable
+//fun TrainingBackgroundGif() {
+//    val context = LocalContext.current
+//    val imageLoader = ImageLoader.Builder(context)
+//        .componentRegistry {
+//            if (Build.VERSION.SDK_INT >= 28) {
+//                add(ImageDecoderDecoder(context))
+//            } else {
+//                add(GifDecoder())
+//            }
+//        }
+//        .build()
+//    Image(
+//        painter = rememberImagePainter(
+//            imageLoader = imageLoader,
+//            data = R.drawable.training_bg_gif,
+//            builder = {
+//                size(OriginalSize)
+//            }
+//        ),
+//        contentDescription = null,
+//        modifier = Modifier
+//    )
+//}

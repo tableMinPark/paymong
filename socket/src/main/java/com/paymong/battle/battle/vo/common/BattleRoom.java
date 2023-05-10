@@ -76,6 +76,8 @@ public class BattleRoom {
 
             // 응답 갱신
             battleMessageResDto.setBattleRoomId(battleMessageReqDto.getBattleRoomId());
+            battleMessageResDto.setMongCodeA("");
+            battleMessageResDto.setMongCodeB("");
             battleMessageResDto.setNowTurn(nowTurn);
             battleMessageResDto.setTotalTurn(totalTurn);
             battleMessageResDto.setHealthA(healthA);
@@ -104,6 +106,8 @@ public class BattleRoom {
     private BattleMessageResDto endMessage() {
         return BattleMessageResDto.builder()
                 .battleRoomId(battleRoomId)
+                .mongCodeA("")
+                .mongCodeB("")
                 .nowTurn(-1)
                 .totalTurn(totalTurn)
                 .nextAttacker("-")

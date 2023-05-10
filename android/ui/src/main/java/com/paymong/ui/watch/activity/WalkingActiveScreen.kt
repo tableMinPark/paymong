@@ -31,7 +31,7 @@ import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.activity.WalkingViewModel
-import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.refac.WatchViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 

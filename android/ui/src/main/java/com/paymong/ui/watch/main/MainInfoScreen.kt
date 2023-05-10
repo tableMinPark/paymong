@@ -11,47 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
-import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.refac.WatchViewModel
 
 @Composable
 fun MainInfo(
     animationState: MutableState<AnimationCode>,
-    mainviewModel : WatchViewModel
+    mainViewModel : WatchViewModel
 ) {
-    MainInfoUI(animationState, mainviewModel)
-}
-
-@Composable
-fun MainInfoUI(
-    animationState: MutableState<AnimationCode>,
-    mainviewModel : WatchViewModel
-) {
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var characterSize = 0
-    var poopSize = 0
 
+    val characterSize = if (screenWidthDp == 200) 100 else 120
+    val poopSize = if (screenWidthDp == 200) 120 else 35
+    val mongResourceCode = mainViewModel.mong.mongCode.resourceCode
 
-
-    if (screenWidthDp < 200) {
-        characterSize = 100
-        poopSize = 25
-
-    }
-    else {
-        characterSize = 120
-        poopSize = 35
-    }
-
-    if(mainviewModel.isHappy) {
+    if(mainViewModel.isHappy) {
         Box(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier.fillMaxWidth()
@@ -59,7 +36,6 @@ fun MainInfoUI(
             Image(painterResource(R.drawable.heart), contentDescription = null)
         }
     }
-
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -74,9 +50,8 @@ fun MainInfoUI(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val character = painterResource(mainviewModel.mong.mongCode.resourceCode)
                 Image(
-                    painter = character,
+                    painter = painterResource(mongResourceCode),
                     contentDescription = null,
                     modifier = Modifier
                         .width(characterSize.dp)
@@ -84,42 +59,40 @@ fun MainInfoUI(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                         ){
-                            mainviewModel.stroke()
+                            mainViewModel.stroke()
                             Handler(Looper.getMainLooper()).postDelayed({
-                                mainviewModel.isHappy = false
+                                mainViewModel.isHappy = false
                             }, 2000)
                         }
                 )
             }
 
-            val poopCount = mainviewModel.poopCount
-
-            if (poopCount == 1) {
-                Poops(0, 100, 75, 0, poopSize)
-            }
-            else if (poopCount == 2) {
-                Poops(0, 100, 75, 0, poopSize)
-                Poops(90, 0, 80, 0, poopSize)
-            }
-            else if (poopCount == 3) {
-                Poops(0, 100, 75, 0, poopSize)
-                Poops(90, 0, 80, 0, poopSize)
-                Poops(30, 0, 92, 0, poopSize)
-            }
-            else if (poopCount == 4 ) {
-                Poops(0, 100, 75, 0, poopSize)
-                Poops(90, 0, 80, 0, poopSize)
-                Poops(30, 0, 92, 0, poopSize)
-                Poops(0, 60, 95, 0, poopSize)
+            // 똥
+            when(mainViewModel.poopCount) {
+                1 -> Poops(0, 100, 75, 0, poopSize)
+                2 -> {
+                    Poops(0, 100, 75, 0, poopSize)
+                    Poops(90, 0, 80, 0, poopSize)
+                }
+                3 -> {
+                    Poops(0, 100, 75, 0, poopSize)
+                    Poops(90, 0, 80, 0, poopSize)
+                    Poops(30, 0, 92, 0, poopSize)
+                }
+                4 -> {
+                    Poops(0, 100, 75, 0, poopSize)
+                    Poops(90, 0, 80, 0, poopSize)
+                    Poops(30, 0, 92, 0, poopSize)
+                    Poops(0, 60, 95, 0, poopSize)
+                }
             }
         }
     }
 }
 
 @Composable
-fun Poops(start:Int, end:Int, top:Int, bottom:Int, poopSize:Int ){
+fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
     val poops = painterResource(R.drawable.poops)
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -131,15 +104,5 @@ fun Poops(start:Int, end:Int, top:Int, bottom:Int, poopSize:Int ){
             contentDescription = null,
             modifier = Modifier.size(poopSize.dp)
         )
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun MainInfoPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val mainviewModel : WatchViewModel = viewModel()
-    PaymongTheme {
-        MainInfo(animationState, mainviewModel)
     }
 }

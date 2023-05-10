@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -16,8 +15,8 @@ import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
 import com.paymong.data.repository.DataApplicationRepository
-import com.paymong.domain.watch.WatchLandingViewModel
-import com.paymong.domain.watch.WatchLandingViewModelFactory
+import com.paymong.domain.watch.refac.WatchLandingViewModel
+import com.paymong.domain.watch.refac.WatchLandingViewModelFactory
 import com.paymong.ui.watch.WatchMain
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {

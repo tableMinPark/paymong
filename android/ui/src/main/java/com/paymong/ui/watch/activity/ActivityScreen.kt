@@ -23,7 +23,7 @@ import androidx.wear.compose.material.Text
 import com.paymong.common.R
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.refac.WatchViewModel
 import com.paymong.domain.watch.refac.ActivityViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif

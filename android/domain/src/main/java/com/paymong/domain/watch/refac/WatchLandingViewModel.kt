@@ -1,4 +1,4 @@
-package com.paymong.domain.watch
+package com.paymong.domain.watch.refac
 
 import android.app.Application
 import android.content.Intent
@@ -10,13 +10,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
 import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.LandingCode
 import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
-import com.paymong.domain.app.AppLandinglViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.guava.await

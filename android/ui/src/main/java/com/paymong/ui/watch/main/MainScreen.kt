@@ -1,27 +1,21 @@
 package com.paymong.ui.watch.main
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
-import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.refac.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PaymongTheme
-import com.paymong.ui.watch.landing.MainBackgroundGif
+import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class)
@@ -31,19 +25,17 @@ fun Main(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    mainviewModel : WatchViewModel
+    watchViewModel : WatchViewModel,
+    soundViewModel: SoundViewModel
 ) {
-    val bgCode = mainviewModel.mapCode
-    val bg = painterResource(bgCode.code)
-    Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop)
-    if(bgCode==MapCode.MP000){
+    // 배경
+    Background(false)
+    if(watchViewModel.mapCode == MapCode.MP000){
         MainBackgroundGif()
-    } else{
-        if(pagerState.currentPage!=1) {
-            Box(
-                modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(alpha = 0.4f))
-            )
-        }
+    } else if (pagerState.currentPage != 1){
+        Box( modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black.copy(alpha = 0.4f)) )
     }
 
     Column {
@@ -54,10 +46,10 @@ fun Main(
         ) {
                 page: Int ->
             when (page) {
-                0 -> MainCondition(mainviewModel)
-                1 -> MainInfo(animationState, mainviewModel)
-                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController, mainviewModel)
-                3 -> MainInfoDetail(mainviewModel)
+                0 -> MainCondition(watchViewModel)
+                1 -> MainInfo(animationState, watchViewModel)
+                2 -> MainInteraction(animationState, pagerState, coroutineScope, navController, watchViewModel, soundViewModel)
+                3 -> MainInfoDetail(watchViewModel)
             }
         }
         HorizontalPagerIndicator(
@@ -69,21 +61,6 @@ fun Main(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 7.dp)
         )
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun MainPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val navController = rememberSwipeDismissableNavController()
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-    val mainviewModel: WatchViewModel = viewModel()
-
-    PaymongTheme {
-        Main(animationState, pagerState, coroutineScope, navController, mainviewModel)
     }
 }
 

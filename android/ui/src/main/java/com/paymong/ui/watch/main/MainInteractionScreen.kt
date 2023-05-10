@@ -8,20 +8,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.domain.watch.WatchViewModel
+import com.paymong.common.code.SoundCode
+import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.refac.SoundViewModel
 import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -33,50 +30,20 @@ fun MainInteraction(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    mainviewModel : WatchViewModel
+    watchViewModel : WatchViewModel,
+    soundViewModel : SoundViewModel
 ) {
-    MainInteractionUI(animationState, pagerState, coroutineScope, navController, mainviewModel)
-}
-
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun MainInteractionUI(
-    animationState: MutableState<AnimationCode>,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
-    navController: NavHostController,
-    mainviewModel : WatchViewModel
-) {
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var buttonSize = 0
-    var buttonIconSize = 0
-    var boxHeight = 0
-    var boxWidth = 0
-    var marginTop = 0
-    var thirdRowPadding = 0
+    val buttonSize = if(screenWidthDp < 200) 45 else 57
+    val buttonIconSize = if(screenWidthDp < 200) 25 else 35
+    val boxHeight = if(screenWidthDp < 200) 50 else 60
+    val boxWidth = if(screenWidthDp < 200) 60 else 80
+    val marginTop = if(screenWidthDp < 200) 40 else 50
+    val thirdRowPadding = if(screenWidthDp < 200) 12 else 15
 
-    if (screenWidthDp < 200) {
-        buttonSize = 45
-        buttonIconSize = 25
-        boxHeight = 50
-        boxWidth = 60
-        marginTop = 40
-        thirdRowPadding = 12
-    }
-    else {
-        buttonSize = 57
-        buttonIconSize = 35
-        boxHeight = 60
-        boxWidth = 80
-        marginTop = 50
-        thirdRowPadding = 15
-    }
-
-    if(mainviewModel.isClicked){
-        mainviewModel.isClicked = false
+    if(watchViewModel.isClicked){
+        watchViewModel.isClicked = false
         navController.navigate(WatchNavItem.Main.route) {
             coroutineScope.launch { pagerState.scrollToPage(1) }
             popUpTo(navController.graph.findStartDestination().id)
@@ -98,7 +65,7 @@ fun MainInteractionUI(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            ButtonSoundPlay(mainviewModel)
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Battle.route)
                         }
                         .width(boxWidth.dp)
@@ -132,7 +99,7 @@ fun MainInteractionUI(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            ButtonSoundPlay(mainviewModel)
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Feed.route)
                         }
                         .width(boxWidth.dp)
@@ -162,7 +129,7 @@ fun MainInteractionUI(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            ButtonSoundPlay(mainviewModel)
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Activity.route)
                         }
                         .width(boxWidth.dp)
@@ -200,10 +167,10 @@ fun MainInteractionUI(
             Box(
                 modifier = Modifier
                     .clickable {
-                        ButtonSoundPlay(mainviewModel)
-                        mainviewModel.isClicked = true
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                        watchViewModel.isClicked = true
                         animationState.value = AnimationCode.Sleep
-                        mainviewModel.sleep()
+                        watchViewModel.sleep()
                     }
                     .width(boxWidth.dp)
                     .height(boxHeight.dp)
@@ -231,10 +198,10 @@ fun MainInteractionUI(
             Box (
                 modifier = Modifier
                     .clickable {
-                        ButtonSoundPlay(mainviewModel)
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         animationState.value = AnimationCode.Poop
-                        mainviewModel.poop()
-                        mainviewModel.isClicked = true
+                        watchViewModel.poop()
+                        watchViewModel.isClicked = true
                     }
                     .width(boxWidth.dp)
                     .height(boxHeight.dp)
@@ -258,24 +225,5 @@ fun MainInteractionUI(
                 }
             }
         }
-    }
-}
-
-
-fun ButtonSoundPlay ( mainviewModel : WatchViewModel) {
-    mainviewModel.soundPool.play(mainviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun MainInteractionPreview() {
-    val animationState = remember { mutableStateOf(AnimationCode.Normal) }
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-    val navController = rememberSwipeDismissableNavController()
-    val mainviewModel: WatchViewModel = viewModel()
-    PaymongTheme {
-        MainInteraction(animationState, pagerState, coroutineScope, navController, mainviewModel)
     }
 }

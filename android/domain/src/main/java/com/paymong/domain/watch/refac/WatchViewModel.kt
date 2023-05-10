@@ -1,7 +1,6 @@
-package com.paymong.domain.watch
+package com.paymong.domain.watch.refac
 
 import android.app.Application
-import android.media.SoundPool
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,36 +23,35 @@ import java.time.temporal.ChronoUnit
 
 class WatchViewModel (
     private val application: Application
-): AndroidViewModel(application) {
+): AndroidViewModel(application) {    
+    // 포인트 정보
     var point by mutableStateOf(0)
-
+    // 몽 기본정보 (이름, 아이디, 몽 코드)
     var mong by mutableStateOf(Mong())
-
+    // 몽 지수
     var mongStats by mutableStateOf(MongStats())
-
+    // 몽 정보 (몸무게, 태어난 일자)
     var mongInfo by mutableStateOf(MongInfo())
     var age by mutableStateOf("")
-
+    // 몽 상태, 똥 갯수, 맵 코드
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
     var mapCode by mutableStateOf(MapCode.MP000)
 
-    private val informationRepository: InformationRepository = InformationRepository()
-    private val managementRepository: ManagementRepository = ManagementRepository()
-
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
 
-    var buttonSound by mutableStateOf(0)
-    val soundPool: SoundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
+    private var informationRepository: InformationRepository = InformationRepository()
+    private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        buttonSound()
         findMong()
         findMongCondition()
         findMongInfo()
+    }
+
+    fun getMapCode(): Int {
+        return mapCode.code
     }
     
     private fun findMong() {
@@ -151,9 +149,5 @@ class WatchViewModel (
                 }
                 .collect{}
         }
-    }
-
-    private fun buttonSound() {
-        buttonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
     }
 }

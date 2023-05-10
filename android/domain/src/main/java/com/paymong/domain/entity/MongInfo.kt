@@ -12,5 +12,4 @@ data class Mong(
 data class MongInfo(
     val weight: Int = 0,
     val born: LocalDateTime = LocalDateTime.now()
-
 )

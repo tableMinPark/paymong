@@ -35,7 +35,7 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.refac.WatchViewModel
 
 @Composable
 fun TrainingTime(

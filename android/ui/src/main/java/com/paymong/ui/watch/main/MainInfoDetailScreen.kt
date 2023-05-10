@@ -5,42 +5,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Text
-import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.theme.PaymongTheme
+import com.paymong.domain.watch.refac.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 
 @Composable
 fun MainInfoDetail(
-    mainviewModel : WatchViewModel
-) {
-    MainInfoDetailUI(mainviewModel)
-}
-
-@Composable
-fun MainInfoDetailUI(
-    mainviewModel: WatchViewModel
+    watchViewModel: WatchViewModel
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var nameFontSize = 0
-    var ageFontSize = 0
-    var weightFontSize = 0
-
-    if (screenWidthDp < 200) {
-        nameFontSize = 20
-        ageFontSize=15
-        weightFontSize=15
-    } else {
-        nameFontSize = 24
-        ageFontSize = 20
-        weightFontSize= 20
-    }
+    val nameFontSize = if(screenWidthDp < 200) 20 else 24
+    val ageFontSize = if(screenWidthDp < 200) 15 else 20
+    val weightFontSize = if(screenWidthDp < 200) 15 else 20
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -52,7 +31,7 @@ fun MainInfoDetailUI(
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         ) {
-            Text(text = mainviewModel.mong.name,
+            Text(text = watchViewModel.mong.name,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = nameFontSize.sp)
@@ -61,7 +40,7 @@ fun MainInfoDetailUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = mainviewModel.age,
+            Text(text = watchViewModel.age,
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = ageFontSize.sp,
@@ -71,19 +50,10 @@ fun MainInfoDetailUI(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = String.format("%dg", mainviewModel.mongInfo.weight),
+            Text(text = String.format("%dg", watchViewModel.mongInfo.weight),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori,
                 fontSize = weightFontSize.sp)
         }
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun MainInfoDetailPreview() {
-    val mainviewModel: WatchViewModel = viewModel()
-    PaymongTheme {
-        MainInfoDetail(mainviewModel)
     }
 }

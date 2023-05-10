@@ -45,3 +45,8 @@ data class ManagementResDto(
     val code: String,
     val message: String
 )
+
+data class EvolutionResDto(
+    val mongCode: String,
+    val stateCode: String
+)

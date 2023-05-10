@@ -1,16 +1,11 @@
 package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
-import com.paymong.management.global.exception.AlreadyExistMongException;
-import com.paymong.management.global.exception.GatewayException;
-import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.*;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
-import com.paymong.management.mong.dto.AddMongReqDto;
-import com.paymong.management.mong.dto.AddMongResDto;
-import com.paymong.management.mong.dto.FindMongReqDto;
-import com.paymong.management.mong.dto.FindMongResDto;
+import com.paymong.management.mong.dto.*;
 import com.paymong.management.mong.service.MongService;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
@@ -131,8 +126,8 @@ public class MongController {
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            mongService.evolutionMong(mongId);
-            return  ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            EvolutionMongResDto evolutionMongResDto = mongService.evolutionMong(mongId);
+            return  ResponseEntity.ok().body(evolutionMongResDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
@@ -142,6 +137,9 @@ public class MongController {
         }catch (GatewayException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
+        }catch (UnsuitableException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
         }
     }
 }

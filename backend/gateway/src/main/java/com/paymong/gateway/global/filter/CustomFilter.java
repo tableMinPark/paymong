@@ -5,6 +5,7 @@ import com.paymong.gateway.global.redis.RefreshToken;
 import com.paymong.gateway.global.redis.RefreshTokenRedisRepository;
 import com.paymong.gateway.global.repository.MongRepository;
 import com.paymong.gateway.global.security.TokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -52,6 +53,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             ServerHttpResponse response = exchange.getResponse();
             log.info("Custom PRE FILTER: request id = {}", request.getId());
 
+
             // 토큰 없을 때
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
@@ -66,22 +68,34 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             // 토큰이 유효하지 않을 때
             // redis 에서 확인
 
-            String userName = tokenProvider.getUsername(token);
+            Optional<RefreshToken> refreshToken;
+            try{
+                String userName = tokenProvider.getUsername(token);
+                refreshToken = refreshTokenRedisRepository.findById(userName);
+            }catch(ExpiredJwtException e){
+                log.info("Custom POST FILTER: response code = {} message = {}",
+                    HttpStatus.FORBIDDEN.value(), "토큰 만료");
+                return onError(exchange, "토큰 만료", HttpStatus.FORBIDDEN);
+            }
 
-            Optional<RefreshToken> refreshToken = refreshTokenRedisRepository.findById(userName);
 
             // userName으로 된 토큰이 없을 때 -> 만료돼서 redis에서 사라짐
             if (refreshToken.isEmpty()) {
-                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+                log.info("Custom POST FILTER: response code = {} message = {}",
+                    HttpStatus.FORBIDDEN.value(), "토큰 만료");
+                return onError(exchange, "토큰 만료", HttpStatus.FORBIDDEN);
             }
 
             // 토큰이 일치하지 않으면
-            if(!refreshToken.get().getAccessToken().equals(token)){
-                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+            if (!refreshToken.get().getAccessToken().equals(token)) {
+                log.info("Custom POST FILTER: response code = {} message = {}",
+                    HttpStatus.UNAUTHORIZED.value(), "토큰 불일치");
+                return onError(exchange, "토큰 불일치", HttpStatus.UNAUTHORIZED);
             }
 
-            // Header 에 memberId 추가
+//             Header 에 memberId 추가
             String memberId = refreshToken.get().getMemberKey();
+//            String memberId = "23";
             Mong mong = mongRepository.findByMemberIdAndActive(Long.parseLong(memberId), 1).orElse(
                 Mong.builder().build());
 
@@ -96,6 +110,8 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
 
             exchange.getRequest().mutate().header("MemberId", memberId).build();
             exchange.getRequest().mutate().header("MongId", mongId).build();
+            log.info("request path - {}", request.getPath());
+            log.info("request uri - {}", request.getURI());
 
             // custom post filter
             // 응답의 처리상태코드를 로그로 출력

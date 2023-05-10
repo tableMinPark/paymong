@@ -1,6 +1,8 @@
 package com.paymong.member.member.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.member.background.entity.Mymap;
+import com.paymong.member.background.repository.MymapRepository;
 import com.paymong.member.global.client.ManagementServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.member.dto.request.LoginReqDto;
@@ -24,11 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
     private final ManagementServiceClient managementServiceClient;
-
-
     private final PaypointService paypointService;
+    private final MymapRepository mymapRepository;
 
 
     @Transactional
@@ -69,34 +69,28 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyPointAndToPaypoint(Long memberId, Integer point, String content)
-        throws Exception {
-
-        Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new NotFoundException());
-
-        String memberIdStr = Long.toString(memberId);
-        paypointService.addPoint(memberIdStr, new AddPointReqDto(content, point));
-
-        Integer prePoint = member.getPoint();
-        member.setPoint(prePoint + point);
-    }
-
-    @Transactional
     public LoginResDto login(LoginReqDto loginReqDto) {
         Member member = memberRepository.findByPlayerId(loginReqDto.getPlayerId())
             .orElseThrow(() -> new NotFoundException());
-        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
+        return LoginResDto.builder().point(member.getPoint())
             .memberId(member.getMemberId()).build();
     }
 
     @Transactional
     public LoginResDto register(LoginReqDto loginReqDto) {
         Member member = Member.builder().password(loginReqDto.getPassword())
-            .playerId(loginReqDto.getPlayerId()).point(0).mapCode("MP000").build();
+            .playerId(loginReqDto.getPlayerId()).point(0).build();
         memberRepository.save(member);
-        return LoginResDto.builder().mapCode(member.getMapCode()).point(member.getMapCode())
-            .memberId(member.getMemberId()).build();
+        Long memberId = member.getMemberId();
+
+        //mymap init
+        Mymap mymap = Mymap.builder()
+                .mapCode("MP000")
+                .memberId(memberId)
+                .build();
+        mymapRepository.save(mymap);
+
+        return LoginResDto.builder().point(member.getPoint()).memberId(member.getMemberId()).build();
     }
 
     @Transactional

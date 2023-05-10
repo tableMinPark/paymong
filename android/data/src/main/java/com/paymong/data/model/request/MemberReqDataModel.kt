@@ -12,3 +12,7 @@ data class AddThingsReqDto(
     val thingsCode : ThingsCode,
     val routine : String
 )
+
+data class AddRoutineReqDto(
+    val routine : String
+)

@@ -7,28 +7,20 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.games.PlayersClient
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
-import com.google.android.gms.wearable.PutDataMapRequest
-import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.app.AppLandingViewModelFactory
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.AppMain
@@ -71,6 +63,14 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
 
 //        val dataApplicationRepository = DataApplicationRepository()
 //        dataApplicationRepository.setValue("watchId", "abcde")
+
+        val serviceIntent = Intent(this, ForegroundService::class.java)
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.startForegroundService(serviceIntent)
+        } else {
+            this.startService(serviceIntent)
+        }
 
         // 권한 확인 #######################################################
         if (!isNotificationPermissionGranted()){

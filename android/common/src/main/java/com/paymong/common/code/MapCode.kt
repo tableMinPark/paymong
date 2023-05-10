@@ -44,4 +44,5 @@ enum class MapCode(
     MP035(R.drawable.mp035, R.drawable.mp035_p),
     MP036(R.drawable.mp036, R.drawable.mp036_p),
     MP037(R.drawable.mp037, R.drawable.mp037_p),
+    MP038(R.drawable.mp038, R.drawable.mp038_p)
 }

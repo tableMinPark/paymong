@@ -17,8 +17,8 @@ import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.activity.TrainingViewModel
 import com.paymong.domain.watch.activity.WalkingViewModel
 import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
@@ -60,37 +60,42 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
 
         // Feed
         composable( route = WatchNavItem.Feed.route){
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val feedViewModel = viewModel<FeedViewModel>(viewModelStoreOwner)
-            Feed(navController, feedViewModel)
+            Feed(navController, watchViewModel, feedViewModel)
         }
         composable( route = WatchNavItem.FeedBuyList.route){
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val feedViewModel = viewModel<FeedViewModel>(viewModelStoreOwner)
-            FeedBuyList(animationState, pagerState, coroutineScope, navController, feedViewModel)
+            FeedBuyList(animationState, pagerState, coroutineScope, navController, watchViewModel, feedViewModel)
         }
 
         // Activity
         composable(route = WatchNavItem.Activity.route){
-            val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
-            Activity(navController, trainingViewModel)
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
+            Activity(navController, watchViewModel)
         }
         composable(route = WatchNavItem.Training.route){
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
-            TrainingActive(navController, trainingViewModel)
+            TrainingActive(navController, watchViewModel, trainingViewModel)
         }
         composable(route = WatchNavItem.Walking.route){
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val walkingViewModel = viewModel<WalkingViewModel>(viewModelStoreOwner)
-            WalkingActive(navController, walkingViewModel)
+            WalkingActive(navController, watchViewModel, walkingViewModel)
         }
 
         // Battle
         composable(route = WatchNavItem.Battle.route){
-            BattleGraphUI()
+            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
+            BattleGraphUI(watchViewModel)
         }
     }
 }
 
 @Composable
-fun BattleGraphUI (){
+fun BattleGraphUI (watchViewModel : WatchViewModel){
     val navController = rememberSwipeDismissableNavController()
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
 
@@ -101,31 +106,31 @@ fun BattleGraphUI (){
         // Battle
         composable(route = WatchNavItem.BattleLanding.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleLanding(navController, battleViewModel)
+            BattleLanding(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleWait.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleWait(navController, battleViewModel)
+            BattleWait(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleFind.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleFind(navController, battleViewModel)
+            BattleFind(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleActive.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleActive(navController, battleViewModel)
+            BattleActive(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleSelectBefore.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleSelectBefore(navController, battleViewModel)
+            BattleSelectBefore(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleSelect.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleSelect(navController, battleViewModel)
+            BattleSelect(navController, watchViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleEnd.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleEnd(navController, battleViewModel)
+            BattleEnd(navController, watchViewModel, battleViewModel)
         }
     }
 }

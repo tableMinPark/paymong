@@ -1,9 +1,7 @@
 package com.paymong.ui.watch.activity
 
-import android.media.SoundPool
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
-import android.os.SystemClock
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -37,7 +35,6 @@ import coil.compose.rememberImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
-import com.paymong.domain.watch.main.MainViewModel
 
 
 

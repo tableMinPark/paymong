@@ -29,6 +29,7 @@ class FeedViewModel (
     var currentFoodPosition by mutableStateOf(0)
 
     var foodCategory by mutableStateOf("")
+    var success = mutableStateOf(false)
     var isClick by mutableStateOf(false)
     var buttonSound by mutableStateOf(0)
 
@@ -64,7 +65,7 @@ class FeedViewModel (
                             foodList.add(Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy))
                         }
                     changeCurrentFoodPosition()
-                    foodCategory = ""
+                    success.value = true
                 }
         }
     }
@@ -83,9 +84,9 @@ class FeedViewModel (
         changeCurrentFoodPosition()
     }
 
-    fun selectButtonClick() {
+    fun selectButtonClick(fc: String) {
         // food
-        if(foodCategory == "FD"){
+        if(fc == "FD"){
             viewModelScope.launch(Dispatchers.IO) {
                 managementRepository.eatFood(foodList[currentFoodPosition].foodCode)
                     .catch {

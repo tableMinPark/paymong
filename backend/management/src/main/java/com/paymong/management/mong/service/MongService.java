@@ -4,14 +4,13 @@ import com.paymong.management.global.client.ClientService;
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.dto.*;
-import com.paymong.management.global.exception.AlreadyExistMongException;
-import com.paymong.management.global.exception.GatewayException;
-import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.*;
 import com.paymong.management.global.scheduler.EvolutionScheduler;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
+import com.paymong.management.mong.dto.EvolutionMongResDto;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -75,8 +74,6 @@ public class MongService {
         addMongResVo.setWeight(5);
         addMongResVo.setBorn(LocalDateTime.now());
 
-        // 스케줄러 활성화... 굳이 알에서 ?
-        // 빨리 진화를 짜야겠구만유
         return addMongResVo;
     }
 
@@ -99,9 +96,13 @@ public class MongService {
     }
 
     @Transactional
-    public void evolutionMong(Long mongId) throws NotFoundMongException, GatewayException {
+    public EvolutionMongResDto evolutionMong(Long mongId) throws NotFoundMongException, GatewayException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(()-> new NotFoundMongException());
+
+        if(!mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            throw new UnsuitableException();
+        }
 
         boolean ok = false;
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
@@ -126,15 +127,21 @@ public class MongService {
         }else if(level == 1){
             // 다음 티어 결정 - level 1 -> 2
             FindMongLevelCodeDto findMongLevelCodeDto = checkTierByMong(mong);
-
+            if(findMongLevelCodeDto.getType() == 3){
+                // 타입 3이면 졸업
+                ok = true;
+            }
             CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
-
-            mong.setCode(commonCodeDto.getCode());
-            mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
 
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),
                     new FindCommonCodeDto(commonCodeDto.getCode()));
+
+
+            mong.setCode(commonCodeDto.getCode());
+            mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+
 
             NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
             evolutionScheduler.nextLevelScheduler(levelDto);
@@ -145,6 +152,11 @@ public class MongService {
             TotalPointDto totalPointDto = clientService.findTotalPay(String.valueOf(mong.getMemberId()), findTotalPayDto);
             // 다음 티어 결정 - level 2 -> 3
             FindMongLevelCodeDto findMongLevelCodeDto = checkTierByPoint(mong, totalPointDto.getTotalPoint());
+
+            if(findMongLevelCodeDto.getType() == 3){
+                // 타입 3이면 졸업
+                ok = true;
+            }
 
             CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
 
@@ -184,6 +196,12 @@ public class MongService {
 
             activeHistoryRepository.save(activeHistory);
         }
+
+        EvolutionMongResDto mongResDto = new EvolutionMongResDto();
+        mongResDto.setMongCode(mong.getCode());
+        mongResDto.setStateCode(mong.getStateCode());
+
+        return mongResDto;
     }
 
     private FindMongLevelCodeDto checkTierByMong(Mong mong){

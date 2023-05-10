@@ -159,7 +159,7 @@ fun FeedBuyList(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { feedViewModel.prevButtonClick() },
+                    onClick = {ButtonSoundPlay(feedViewModel); feedViewModel.prevButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {
@@ -228,7 +228,7 @@ fun FeedBuyList(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { feedViewModel.nextButtonClick() },
+                    onClick = {ButtonSoundPlay(feedViewModel); feedViewModel.nextButtonClick() },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
                 ) {

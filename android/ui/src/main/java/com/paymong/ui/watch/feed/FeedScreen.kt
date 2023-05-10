@@ -23,6 +23,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.feed.FeedViewModel
 import com.paymong.common.R
+import com.paymong.domain.watch.activity.WalkingViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.landing.MainBackgroundGif
@@ -62,16 +63,6 @@ fun FeedUI(
         navController.navigate(WatchNavItem.FeedBuyList.route)
     }
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxHeight()
@@ -82,7 +73,7 @@ fun FeedUI(
         ) {
             Button(
                 onClick = {
-                    ButtonSoundPlay()
+                    ButtonSoundPlay(feedViewModel)
                     feedViewModel.foodCategory = "FD"
                 },
                 modifier = Modifier
@@ -112,7 +103,7 @@ fun FeedUI(
         ) {
             Button(
                 onClick = {
-                    ButtonSoundPlay()
+                    ButtonSoundPlay(feedViewModel)
                     feedViewModel.foodCategory = "SN"
                 },
                 modifier = Modifier
@@ -131,7 +122,9 @@ fun FeedUI(
 }
 
 
-
+fun ButtonSoundPlay ( feedViewModel: FeedViewModel) {
+    feedViewModel.soundPool.play(feedViewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+}
 
 
 

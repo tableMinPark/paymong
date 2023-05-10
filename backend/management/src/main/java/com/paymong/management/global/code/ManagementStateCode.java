@@ -11,7 +11,8 @@ public enum ManagementStateCode implements BasicCode{
     NOT_ACTION("502", "해당 액션을 찾을 수 없습니다."),
     UNKNOWN("503", "알 수 없음"),
     GATEWAY_ERROR("504", "게이트웨이 통신 에러 입니다."),
-    ALREADY_EXIST("505", "이미 몽이 존재합니다.");
+    ALREADY_EXIST("505", "이미 몽이 존재합니다."),
+    UNSUITABLE("506", "적절하지 않은 몽입니다.");
 
     private final String code;
     private final String message;

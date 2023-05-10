@@ -1,20 +1,16 @@
 package com.paymong.domain.app
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.common.code.CharacterCode
-import com.paymong.common.code.LandingCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.request.AddMongReqDto
-import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.ManagementRepository
-import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
@@ -35,7 +31,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // 몽 정보
     var mong by mutableStateOf(Mong())
-    var undomong by mutableStateOf(CharacterCode.CH000)
+    var undomong by mutableStateOf(MongCode.CH000)
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
 
@@ -61,7 +57,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     mong = Mong(
                         0L,
                         data.name,
-                        CharacterCode.valueOf(data.mongCode)
+                        MongCode.valueOf(data.mongCode)
                     )
                 }
         }
@@ -77,7 +73,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     mong = Mong(
                         data.mongId,
                         data.name,
-                        CharacterCode.valueOf(data.mongCode)
+                        MongCode.valueOf(data.mongCode)
                     )
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
@@ -110,7 +106,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     data->
                     undomong = mong.mongCode
                     stateCode = MongStateCode.valueOf(data.stateCode)
-                    mong.mongCode = CharacterCode.valueOf(data.mongCode)
+                    mong.mongCode = MongCode.valueOf(data.mongCode)
                 }
         }
     }

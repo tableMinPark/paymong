@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.CollectPayMongViewModel
 import com.paymong.domain.entity.Collect
@@ -128,7 +128,7 @@ fun ImageList(list : List<Collect>, index:Int){
             var mongImg = R.drawable.none
             var text = ""
             if((index + i - 1)<list.size) {
-                mongImg = CharacterCode.valueOf(list[index + i - 1].code!!).resourceCode
+                mongImg = MongCode.valueOf(list[index + i - 1].code!!).resourceCode
                 text = list[index + i - 1].name.toString()
                 if(!list[index+i-1].isOpen){
                     mongImg = R.drawable.none_ch

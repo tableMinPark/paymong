@@ -15,23 +15,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
+import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.refac.FeedViewModel
+import com.paymong.domain.watch.FeedViewModel
 import com.paymong.common.R
 import com.paymong.common.code.FoodCode
 import com.paymong.common.code.SoundCode
-import com.paymong.domain.watch.refac.WatchViewModel
-import com.paymong.domain.watch.refac.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.SoundViewModel
 import com.paymong.ui.theme.dalmoori
-import com.paymong.ui.watch.activity.LoadingGif
 import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun FeedBuyList(
     animationState: MutableState<AnimationCode>,

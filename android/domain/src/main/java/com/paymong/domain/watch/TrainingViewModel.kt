@@ -1,24 +1,15 @@
-package com.paymong.domain.watch.activity
+package com.paymong.domain.watch
 
 import android.app.Application
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.media.SoundPool
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.ManagementRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
@@ -26,6 +17,9 @@ import java.time.ZoneId
 class TrainingViewModel (
     private val application: Application
 ): AndroidViewModel(application) {
+    companion object {
+        private const val MAX_TIME : Long = 5000
+    }
 
     var isTrainingEnd by mutableStateOf(false)
     var second by mutableStateOf(0)
@@ -35,7 +29,6 @@ class TrainingViewModel (
     private lateinit var timer : Job
     private var nowTime : Long = 0
     private var interval : Long = 10
-    private val maxTime : Long = 5000  // 10000
 
     private var managementRepository: ManagementRepository = ManagementRepository()
 
@@ -48,7 +41,7 @@ class TrainingViewModel (
         if(::timer.isInitialized) timer.cancel()
 
         timer = viewModelScope.launch {
-            while(nowTime < maxTime) {
+            while(nowTime < MAX_TIME) {
                 delay(interval)
                 nowTime += interval
 

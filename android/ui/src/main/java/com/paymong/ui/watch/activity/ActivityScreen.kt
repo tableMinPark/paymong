@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.activity
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,8 +21,8 @@ import com.paymong.common.R
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.WatchNavItem
-import com.paymong.domain.watch.refac.WatchViewModel
-import com.paymong.domain.watch.refac.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.SoundViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.showToast

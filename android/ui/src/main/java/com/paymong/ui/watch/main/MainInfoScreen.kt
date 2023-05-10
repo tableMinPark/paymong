@@ -14,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
-import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.WatchViewModel
 
 @Composable
 fun MainInfo(

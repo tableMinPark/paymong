@@ -1,4 +1,4 @@
-package com.paymong.domain.watch.battle
+package com.paymong.domain.watch
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -14,7 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.paymong.domain.watch.socket.SocketService
 import com.google.android.gms.location.*
 import com.google.gson.Gson
-import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
 import com.paymong.data.model.response.BattleErrorResDto
@@ -39,27 +39,28 @@ class BattleViewModel (
         private const val END_DELAY = 10000L
     }
 
-    private var mongId by mutableStateOf(0L)
+    var mongId by mutableStateOf(0L)
     var matchingState by mutableStateOf(MatchingCode.FINDING)
     var battleActive: BattleActive by mutableStateOf(BattleActive())
 
-
-    var mongCode by mutableStateOf(CharacterCode.CH444)
+    var mongCode by mutableStateOf(MongCode.CH444)
     private val informationRepository: InformationRepository = InformationRepository()
 
-    // socket
-    private lateinit var socketJob : Job
-    private lateinit var socketService: SocketService
     // gps
     private lateinit var gpsJob : Job
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
+    // socket
+    private lateinit var socketJob : Job
+    private lateinit var socketService: SocketService
 
     // Battle - 찾기
-    var mongCodeA: String by mutableStateOf("")
-    var mongCodeB: String by mutableStateOf("")
+    var playerCodeA by mutableStateOf(MongCode.CH444)
+    var playerCodeB by mutableStateOf(MongCode.CH444)
     
     // Battle - 진행
+    var totalTurn = 10
+    var nextAttacker by mutableStateOf("A")
     var battleSelectTime by mutableStateOf(0.0)
     var selectState by mutableStateOf(MessageType.LEFT)
 
@@ -68,9 +69,6 @@ class BattleViewModel (
 
     init {
         findMong()
-    }
-    fun setMongId(mongId: Long) {
-        this.mongId = mongId
     }
     fun select(select : MessageType) {
         selectState = select
@@ -83,38 +81,61 @@ class BattleViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    mongCode = CharacterCode.valueOf(data.mongCode)
+                    mongCode = MongCode.valueOf(data.mongCode)
                 }
         }
     }
-    private fun findCharacterId(battleRoomId: String) {
-        Log.d("battle", battleRoomId)
-
-        // api 호출
-
-        // characterCodeB에 소켓 에서 내려온 상대방 Code 넣기
-
+    private fun findCharacterId(mongCodeA: String, mongCodeB: String) {
+        // playerCodeA :: 아래쪽
+        // playerCodeB :: 위쪽
         if (battleActive.order == "A") {
-            mongCodeA = mongCode.code
-//            characterCodeA = viewModel.mong.mongCode.code
-
-            mongCodeB = "CH100"
+            playerCodeA = MongCode.valueOf(mongCodeB)
+            playerCodeB = MongCode.valueOf(mongCodeA)
         }
         else {
-            mongCodeA = "CH100"
-            mongCodeB = mongCode.code
+            playerCodeA = MongCode.valueOf(mongCodeA)
+            playerCodeB = MongCode.valueOf(mongCodeB)
         }
     }
     override fun onCleared() {
         super.onCleared()
         try {
-            socketService.disConnect(mongId)
+            socketService.disConnect(mongId, mongCode.code)
             gpsJob.cancel()
             socketJob.cancel()
         } catch (e: Exception) {  }
     }
 
     // -------------------------------------------------------------------------------------------------
+    // gps
+    private val mLocationCallback: LocationCallback = object : LocationCallback() {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onLocationResult(locationResult: LocationResult) {
+            // 위치 한번 받고 업데이트 요청 종료
+//            val latitude = locationResult.lastLocation.latitude
+//            val longitude = locationResult.lastLocation.longitude
+
+            Log.e("test", String.format("%f : %f", locationResult.lastLocation.latitude, locationResult.lastLocation.longitude))
+
+            val latitude = 35.0963554
+            val longitude = 128.8539052
+
+            mFusedLocationProviderClient.removeLocationUpdates(this)
+
+            socketService = SocketService()
+            socketService.init(listener)
+
+            socketJob = viewModelScope.launch {
+                try {
+                    socketService.connect(mongId, mongCode.code, latitude, longitude)
+                } catch (e: NullPointerException) {
+                    Log.e("battle-matching", "서버가 유효하지 않음")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
     // socket
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -122,12 +143,15 @@ class BattleViewModel (
                 val battleMessageResDto = Gson().fromJson(text, BattleMessageResDto::class.java)
 
                 if (battleMessageResDto.totalTurn == 0) {
+                    // 탈주
                     val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
-                    // 탈주
+                    Log.e("battleViewModel", battleMessageResDto.toString())
                     battleActive = BattleActive(
                         battleMessageResDto.battleRoomId,
+                        battleMessageResDto.mongCodeA,
+                        battleMessageResDto.mongCodeB,
                         battleMessageResDto.nowTurn,
                         battleMessageResDto.totalTurn,
                         battleMessageResDto.nextAttacker,
@@ -140,12 +164,12 @@ class BattleViewModel (
                     when (battleActive.nowTurn) {
                         0 -> {
                             // 시작
-                            findCharacterId(battleActive.battleRoomId)
+                            findCharacterId(battleMessageResDto.mongCodeA, battleMessageResDto.mongCodeB)
                             matchingState = MatchingCode.FOUND
                         }
                         -1 -> {
                             // 게임 끝
-                            socketService.disConnect(mongId)
+                            socketService.disConnect(mongId, mongCode.code)
                             matchingState = MatchingCode.END
                         }
                         else -> {
@@ -154,40 +178,15 @@ class BattleViewModel (
                         }
                     }
                 }
-            } catch (e: Exception) {  }
-        }
-    }
-    // gps
-    private val mLocationCallback: LocationCallback = object : LocationCallback() {
-        @RequiresApi(Build.VERSION_CODES.O)
-        override fun onLocationResult(locationResult: LocationResult) {
-            // 위치 한번 받고 업데이트 요청 종료
-            val latitude = locationResult.lastLocation.latitude
-            val longitude = locationResult.lastLocation.longitude
-//            val latitude = 35.0963554
-//            val longitude = 128.8539052
-
-            mFusedLocationProviderClient.removeLocationUpdates(this)
-
-            socketService = SocketService()
-            socketService.init(listener)
-
-            socketJob = viewModelScope.launch {
-                try {
-                    socketService.connect(mongId, latitude, longitude)
-
-                } catch (e: NullPointerException) {
-                    Log.e("battle-matching", "서버가 유효하지 않음")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
     // -------------------------------------------------------------------------------------------------
-
     // 배틀 대기열 등록 함수
     fun battleWait() {
+        Log.e("battleViewModel", "battleWait()")
         viewModelScope.launch {
             mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
             mLocationRequest = LocationRequest.create().apply { priority = LocationRequest.PRIORITY_HIGH_ACCURACY }
@@ -204,6 +203,7 @@ class BattleViewModel (
 
     // 배틀 찾았을 때 호출 할 함수
     fun battleFind() {
+        Log.e("battleViewModel", "battleFind()")
         viewModelScope.launch {
             delay(FIND_DELAY)
             matchingState = MatchingCode.ACTIVE
@@ -212,10 +212,11 @@ class BattleViewModel (
 
     // 배틀 찾기 실패했을 때 호출 할 함수
     fun battleFindFail() {
+        Log.e("battleViewModel", "battleFindFail()")
         viewModelScope.launch {
             matchingState = MatchingCode.FINDING
             try {
-                socketService.disConnect(mongId)
+                socketService.disConnect(mongId, mongCode.code)
                 gpsJob.cancel()
                 socketJob.cancel()
             } catch (e: Exception) {  }
@@ -224,6 +225,7 @@ class BattleViewModel (
 
     // 배틀 시작할 때 호출 할 함수
     fun battleActive() {
+        Log.e("battleViewModel", "battleActive()")
         viewModelScope.launch {
             delay(ACTIVE_DELAY)
             matchingState = MatchingCode.SELECT_BEFORE
@@ -232,6 +234,7 @@ class BattleViewModel (
 
     // 배틀 선택 전 호출 할 함수 (선택으로 넘어가기 위한 함수)
     fun battleSelectBefore() {
+        Log.e("battleViewModel", "battleSelectBefore()")
         viewModelScope.launch {
             delay(SELECT_BEFORE_DELAY)
             matchingState = MatchingCode.SELECT
@@ -240,6 +243,7 @@ class BattleViewModel (
     
     // 배틀 선택 시 호출 할 함수
     fun battleSelect() {
+        Log.e("battleViewModel", "battleSelect()")
         viewModelScope.launch {
             selectState = MessageType.LEFT
             battleSelectTime = 0.0
@@ -258,6 +262,7 @@ class BattleViewModel (
 
     // 배틀 끝난 후 호출 할 함수
     fun battleEnd() {
+        Log.e("battleViewModel", "battleEnd()")
         viewModelScope.launch {
             if (battleActive.order == "A" &&
                 battleActive.damageA > battleActive.damageB) {

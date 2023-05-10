@@ -16,9 +16,9 @@ import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
-import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.domain.watch.refac.SoundViewModel
-import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.BattleViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
@@ -30,8 +30,10 @@ fun BattleLanding(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
+    Background(true)
+
     LaunchedEffect(key1 = 0) {
-        battleViewModel.setMongId(watchViewModel.mong.mongId)
+        battleViewModel.mongId = watchViewModel.mong.mongId
     }
 
     val configuration = LocalConfiguration.current
@@ -39,7 +41,6 @@ fun BattleLanding(
     var fontSize = if (screenWidthDp < 200) 12 else 15
     var battleImgSize = if (screenWidthDp < 200) 150 else 180
 
-    Background(true)
 
     Column(
         verticalArrangement = Arrangement.Center,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -14,11 +13,10 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.common.code.CharacterCode
 import com.paymong.common.code.MatchingCode
-import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.domain.watch.refac.SoundViewModel
-import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.BattleViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 
 @Composable
@@ -28,25 +26,14 @@ fun BattleFind(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-    var mongCode : CharacterCode
-    LaunchedEffect(key1 = 0) {
-        // player1 :: 위쪽
-        if (battleViewModel.battleActive.order == "A") {
-            mongCode = CharacterCode.valueOf(battleViewModel.mongCodeB)
-
-        } else {
-            findCode = battleViewModel.mongCodeA
-            chCode = CharacterCode.valueOf(findCode)
-        }
-    }
     Background(true)
 
-    var findCode = ""
-    var mongResourceCode = painterResource(mongCode.resourceCode)
+    val playerResourceCodeA = painterResource(battleViewModel.playerCodeA.resourceCode)
+    val playerResourceCodeB = painterResource(battleViewModel.playerCodeB.resourceCode)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var characterSize = if (screenWidthDp < 200) 80 else 100
+    val characterSize = if (screenWidthDp < 200) 80 else 100
 
     when(battleViewModel.matchingState) {
         MatchingCode.ACTIVE -> {
@@ -77,7 +64,8 @@ fun BattleFind(
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
-            Image(painter = mongResourceCode, contentDescription = null, modifier = Modifier
+            // playerResourceCodeB :: 위쪽
+            Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
                 .width(characterSize.dp)
                 .height(characterSize.dp))
         }
@@ -94,23 +82,8 @@ fun BattleFind(
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
-            // player2 :: 아래쪽
-
-            var findCode = ""
-            val chCode : CharacterCode
-            val player2: Painter
-
-            if (battleViewModel.battleActive.order == "A") {
-                findCode = battleViewModel.mongCodeA
-                chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.resourceCode)
-
-            } else {
-                findCode = battleViewModel.mongCodeB
-                chCode = CharacterCode.valueOf(findCode)
-                player2 = painterResource(chCode.resourceCode)
-            }
-            Image(painter = player2, contentDescription = null, modifier = Modifier
+            // playerResourceCodeA :: 아래쪽
+            Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
                 .width(characterSize.dp)
                 .height(characterSize.dp))
 

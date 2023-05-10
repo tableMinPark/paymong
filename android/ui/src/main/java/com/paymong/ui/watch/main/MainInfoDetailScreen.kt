@@ -8,7 +8,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
-import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 
 @Composable

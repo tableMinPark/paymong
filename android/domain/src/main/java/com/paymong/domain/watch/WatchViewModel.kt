@@ -1,4 +1,4 @@
-package com.paymong.domain.watch.refac
+package com.paymong.domain.watch
 
 import android.app.Application
 import androidx.compose.runtime.getValue
@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.repository.InformationRepository
@@ -60,7 +60,7 @@ class WatchViewModel (
                     mong = Mong(
                         data.mongId,
                         data.name,
-                        CharacterCode.valueOf(data.mongCode)
+                        MongCode.valueOf(data.mongCode)
                     )
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount

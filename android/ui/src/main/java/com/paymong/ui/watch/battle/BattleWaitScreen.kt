@@ -12,9 +12,9 @@ import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.ToastMessage
-import com.paymong.domain.watch.battle.BattleViewModel
-import com.paymong.domain.watch.refac.SoundViewModel
-import com.paymong.domain.watch.refac.WatchViewModel
+import com.paymong.domain.watch.BattleViewModel
+import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif

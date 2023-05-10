@@ -1,12 +1,12 @@
 package com.paymong.domain.entity
 
-import com.paymong.common.code.CharacterCode
+import com.paymong.common.code.MongCode
 import java.time.LocalDateTime
 
 data class Mong(
     val mongId : Long = 0L,
     val name : String = "",
-    var mongCode : CharacterCode = CharacterCode.CH444
+    var mongCode : MongCode = MongCode.CH444
 )
 
 data class MongInfo(

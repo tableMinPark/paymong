@@ -141,6 +141,61 @@ fun BattleBackgroundGif(
     )
 }
 
+@ExperimentalCoilApi
+@Composable
+fun AttackGif() {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.attack_motion,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun DefenceGif() {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.defence_motion,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
+
 
 
 @Composable

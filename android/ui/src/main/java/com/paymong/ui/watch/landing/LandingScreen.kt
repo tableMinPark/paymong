@@ -15,7 +15,7 @@ import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
-import com.paymong.domain.watch.refac.WatchLandingViewModel
+import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background

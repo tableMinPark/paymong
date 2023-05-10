@@ -1,4 +1,4 @@
-package com.paymong.domain.watch.activity
+package com.paymong.domain.watch
 
 import android.app.Application
 import android.content.Context

@@ -55,8 +55,8 @@ fun Main(
     }
 
     // 배경
-    val findBgCode = appViewModel.mapCode
-    val bg = painterResource(findBgCode.code)
+    var findBgCode = appViewModel.mapCode
+    val bg = painterResource(findBgCode.phoneCode)
 
     if(findBgCode == MapCode.MP000){
         BgGif()

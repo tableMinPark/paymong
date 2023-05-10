@@ -36,4 +36,7 @@ interface ManagementApi {
 
     @PUT("/management/training/walking")
     suspend fun walking(@Body walkingCount: Int): Response<Boolean>
+
+    @PUT("/management/evolution")
+    suspend fun evolution(): Response<EvolutionResDto>
 }

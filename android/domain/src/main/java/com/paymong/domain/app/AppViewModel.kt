@@ -29,12 +29,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var mongsleepEnd by mutableStateOf("")
 
     // 메인화면
-    var eggTouchCount by mutableStateOf(0)
     var point by mutableStateOf(0L)
     var mapCode by mutableStateOf(MapCode.MP000)
+    var isClick by mutableStateOf(false)
 
     // 몽 정보
     var mong by mutableStateOf(Mong())
+    var undomong by mutableStateOf(CharacterCode.CH000)
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
 
@@ -84,6 +85,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
         }
     }
+
     // 포인트
     private fun findPoint() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -93,6 +95,22 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 .collect { data ->
                     point = data.point
+                }
+        }
+    }
+
+    //진화
+    fun evolution(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.evolution()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                    data->
+                    undomong = mong.mongCode
+                    stateCode = MongStateCode.valueOf(data.stateCode)
+                    mong.mongCode = CharacterCode.valueOf(data.mongCode)
                 }
         }
     }

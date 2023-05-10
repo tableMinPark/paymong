@@ -3,6 +3,7 @@ package com.paymong.domain.watch.battle
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.media.SoundPool
 import android.os.Build
 import android.os.Looper
 import android.util.Log
@@ -45,12 +46,17 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
     var mongCode by mutableStateOf(CharacterCode.CH444)
     private val informationRepository: InformationRepository = InformationRepository()
 
+    var buttonSound by mutableStateOf(0)
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
 
     init {
-
+        context = application
+        buttonSound()
         Log.d("battle", "init - Call")
         findMong()
-        context = application
+
         Log.d("viewmodel", "viewModel 생성")
 
 
@@ -315,7 +321,9 @@ class BattleViewModel (application: Application): AndroidViewModel(application) 
         }
     }
 
-
+    private fun buttonSound() {
+        buttonSound = soundPool.load(context, com.paymong.common.R.raw.button_sound, 1)
+    }
 
 
 

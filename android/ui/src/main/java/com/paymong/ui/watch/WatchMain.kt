@@ -70,7 +70,8 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
 
         // Activity
         composable(route = WatchNavItem.Activity.route){
-            Activity(navController)
+            val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)
+            Activity(navController, trainingViewModel)
         }
         composable(route = WatchNavItem.Training.route){
             val trainingViewModel = viewModel<TrainingViewModel>(viewModelStoreOwner)

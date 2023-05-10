@@ -141,42 +141,6 @@ fun TrainingActive(
     Image(painter = img, contentDescription = null, contentScale = ContentScale.Crop)
     TrainingBackgroundGif()
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val winSound = soundPool.load(context, com.paymong.ui.R.raw.win_sound, 1)
-    val loseSound = soundPool.load(context, com.paymong.ui.R.raw.lose_sound, 1)
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-//    fun WinSoundPlay () {
-//        val waitLimit = 1000
-//        var waitCounter = 0
-//        var throttle = 10
-//        while ( soundPool.play(winSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
-//            waitCounter++
-//            SystemClock.sleep(throttle.toLong())
-//        }
-//    }
-//    fun LoseSoundPlay () {
-//        val waitLimit = 1000
-//        var waitCounter = 0
-//        var throttle = 10
-//        while ( soundPool.play(loseSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
-//            waitCounter++
-//            SystemClock.sleep(throttle.toLong())
-//        }
-//    }
-//    fun ButtonSoundPlay () {
-//        val waitLimit = 1000
-//        var waitCounter = 0
-//        var throttle = 10
-//        while ( soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 0.5f) == 0 && waitCounter < waitLimit){
-//            waitCounter++
-//            SystemClock.sleep(throttle.toLong())
-//        }
-//    }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -218,6 +182,7 @@ fun TrainingActive(
                             .padding(bottom = successPadding.dp)
                     )
                 }
+                ButtonSoundPlay(traingviewModel, "Win")
 
             } else {
                 Box(
@@ -237,7 +202,7 @@ fun TrainingActive(
 
                     )
                 }
-
+                ButtonSoundPlay(traingviewModel, "Lose")
             }
         } else {
             Box(
@@ -280,7 +245,7 @@ fun TrainingActive(
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clickable {
-
+                            ButtonSoundPlay(traingviewModel, "Bnt")
                             traingviewModel.screenClick() {
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)
@@ -381,7 +346,18 @@ fun TrainingBackgroundGif() {
 }
 
 
+fun ButtonSoundPlay ( trainingviewModel : TrainingViewModel, soundName : String) {
+    if (soundName == "Bnt") {
+        trainingviewModel.soundPool.play(trainingviewModel.buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+    else if (soundName == "Win") {
+        trainingviewModel.soundPool.play(trainingviewModel.winSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+    else if (soundName == "Lose") {
+        trainingviewModel.soundPool.play(trainingviewModel.loseSound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
 
+}
 
 
 

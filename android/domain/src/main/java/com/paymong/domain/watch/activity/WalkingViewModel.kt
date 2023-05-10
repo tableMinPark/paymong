@@ -1,13 +1,16 @@
 package com.paymong.domain.watch.activity
 
+import android.app.Application
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.SoundPool
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.ManagementRepository
@@ -20,10 +23,10 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 
-class WalkingViewModel : ViewModel() {
+class WalkingViewModel (application: Application): AndroidViewModel(application) {
     private lateinit var timer : Job
     private var interval : Long = 10
-
+    private var context : Context
     var isWalkingEnd by mutableStateOf(false)
     var realWalkingEnd by mutableStateOf(false)
     var walkMinute by mutableStateOf(0)
@@ -39,6 +42,15 @@ class WalkingViewModel : ViewModel() {
     private lateinit var stepSensorEventListener: SensorEventListener
 
     private var managementRepository: ManagementRepository = ManagementRepository()
+
+    var buttonSound by mutableStateOf(0)
+    val soundPool = SoundPool.Builder()
+        .setMaxStreams(1) // 동시에 재생 가능한 스트림의 최대 수
+        .build()
+    init {
+        context = application
+        buttonSound()
+    }
 
     fun walkingInit(){
         if(!isWalkingEnd) {
@@ -65,6 +77,10 @@ class WalkingViewModel : ViewModel() {
             // 시간 초과 종료
             isWalkingEnd = true
         }
+    }
+
+    fun buttonSound() {
+        buttonSound = soundPool.load(context, com.paymong.common.R.raw.button_sound, 1)
     }
 
     fun walkingEnd() {

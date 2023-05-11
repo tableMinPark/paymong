@@ -236,34 +236,7 @@ class AppLandinglViewModel(
     }
 
 
-    private fun thingsAlarm(thingsCode: String) {
-        viewModelScope.launch {
-            try {
-                val nodes = capabilityClient
-                    .getCapability(CAPABILITY_WEAR_APP, CapabilityClient.FILTER_REACHABLE)
-                    .await()
-                    .nodes
-
-                // Send a message to all nodes in parallel
-                nodes.map { node ->
-                    async {
-                        if (node.id != "") {
-                            dataApplicationRepository.setValue("watchId", node.id)
-                            messageClient.sendMessage(
-                                node.id,
-                                "thingsAlarm",
-                                thingsCode.toByteArray()
-                            )
-                                .await()
-                        }
-                    }
-                }.awaitAll()
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-            }
-        }
+    
     }
 }
 

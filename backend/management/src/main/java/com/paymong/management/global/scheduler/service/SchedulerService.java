@@ -23,7 +23,6 @@ public class SchedulerService {
     private final SatietyScheduler satietyScheduler;
     private final EvolutionScheduler evolutionScheduler;
 
-    private final MongRepository mongRepository;
     /*
     0 : poop
     1 : health
@@ -43,12 +42,5 @@ public class SchedulerService {
         evolutionScheduler.startScheduler(mong.getMongId());
         sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
     }
-
-    public void init(){
-        log.info("나머지 스케줄러를 가동합니다.");
-        List<Mong> mongs = mongRepository.findByActive(true);
-        mongs.stream().forEach(this::startScheduler);
-    }
-
 
 }

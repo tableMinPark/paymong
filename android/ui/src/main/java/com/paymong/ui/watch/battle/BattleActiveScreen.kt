@@ -47,8 +47,8 @@ fun BattleActive(
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val characterSize = if (screenWidthDp < 200) 80 else 100
-    val fontSize = if (screenWidthDp < 200) 30 else 40
-    val barWidth = if (screenWidthDp < 200) 15 else 20
+    val fontSize = if (screenWidthDp < 200) 20 else 25
+    val barWidth = if (screenWidthDp < 200) 60 else 70
     val barHeight = if (screenWidthDp < 200) 20 else 24
     val attackDefenceSize = if (screenWidthDp < 200) 35 else 40
     val attackDefenceSizeSmall = if (screenWidthDp < 200) 25 else 30

@@ -40,8 +40,6 @@ fun WalkingActive(
     Background(false)
     WalkingBackgroundGif()
 
-//    viewModel.setSensor(LocalContext.current)
-
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val rowHeight = if (screenWidthDp < 200) 85 else 100

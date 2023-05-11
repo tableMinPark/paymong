@@ -11,6 +11,7 @@ import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.dto.EvolutionMongResDto;
+import com.paymong.management.mong.dto.GraduationMongResDto;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -131,24 +132,24 @@ public class MongService {
         }else if(level == 1){
             // 다음 티어 결정 - level 1 -> 2
             FindMongLevelCodeDto findMongLevelCodeDto = checkTierByMong(mong);
-            if(findMongLevelCodeDto.getType() == 3){
-                // 타입 3이면 졸업
-                ok = true;
-            }
+
             CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
 
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),
                     new FindCommonCodeDto(commonCodeDto.getCode()));
 
-
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
 
+            if(findMongLevelCodeDto.getType() == 3){
+                // 타입 3이면 졸업
+                mong.setStateCode(MongConditionCode.GRADUATE.getCode());
+            }else{
+                NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
+                evolutionScheduler.nextLevelScheduler(levelDto);
+            }
 
-
-            NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
-            evolutionScheduler.nextLevelScheduler(levelDto);
         }else if(level == 2){
             FindTotalPayDto findTotalPayDto = new FindTotalPayDto();
             findTotalPayDto.setStartTime(mong.getRegDt());
@@ -164,11 +165,6 @@ public class MongService {
             // 다음 티어 결정 - level 2 -> 3
             FindMongLevelCodeDto findMongLevelCodeDto = checkTierByPoint(mong, totalPointDto.getTotalPoint());
 
-            if(findMongLevelCodeDto.getType() == 3){
-                // 타입 3이면 졸업
-                ok = true;
-            }
-
             CommonCodeDto commonCodeDto = clientService.findMongLevelCode(findMongLevelCodeDto);
 
             mong.setCode(commonCodeDto.getCode());
@@ -178,27 +174,25 @@ public class MongService {
             clientService.addMong(String.valueOf(mong.getMemberId()),
                     new FindCommonCodeDto(commonCodeDto.getCode()));
 
-            NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
-            evolutionScheduler.nextLevelScheduler(levelDto);
+            if(findMongLevelCodeDto.getType() == 3){
+                // 타입 3이면 졸업
+                mong.setStateCode(MongConditionCode.GRADUATE.getCode());
+            }else{
+                NextLevelDto levelDto = new NextLevelDto(mongId, findMongLevelCodeDto.getLevel(), findMongLevelCodeDto.getType());
+                evolutionScheduler.nextLevelScheduler(levelDto);
+            }
+
         }else{
             // 해당 몽 졸업
             ok = true;
-        }
-        if(ok){
-            mong.setCode("CH444");
             mong.setStateCode(MongConditionCode.GRADUATE.getCode());
-            mong.setActive(false);
+        }
 
-            ActiveHistory activeHistory = ActiveHistory.builder()
-                    .activeCode(MongActiveCode.GRADUATION.getCode())
-                    .activeTime(LocalDateTime.now())
-                    .mongId(mongId)
-                    .build();
-
-            activeHistoryRepository.save(activeHistory);
-        }else{
-            MongConditionCode condition = statusService.checkCondition(mong);
-            mong.setStateCode(condition.getCode());
+        if(!ok){
+            if(!mong.getCode().substring(4,5).equals("3")){
+                MongConditionCode condition = statusService.checkCondition(mong);
+                mong.setStateCode(condition.getCode());
+            }
 
             ActiveHistory activeHistory = ActiveHistory.builder()
                     .activeCode(MongActiveCode.EVOLUTION.getCode())
@@ -215,6 +209,29 @@ public class MongService {
         mongResDto.setStateCode(mong.getStateCode());
 
         return mongResDto;
+    }
+
+    @Transactional
+    public GraduationMongResDto graduationMong(Long mongId) throws NotFoundMongException, UnsuitableException {
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
+                .orElseThrow(()-> new NotFoundMongException());
+
+        if(!mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
+
+        mong.setCode("CH444");
+        mong.setActive(false);
+
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(MongActiveCode.GRADUATION.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(mongId)
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
+
+        return new GraduationMongResDto(mong.getCode());
     }
 
     private FindMongLevelCodeDto checkTierByMong(Mong mong){

@@ -3,6 +3,7 @@ package com.paymong.management.stroke.controller;
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.stroke.service.StrokeService;
 import com.paymong.management.stroke.vo.StrokeMongReqVo;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +38,8 @@ public class StrokeController {
             }
             Long mongId = Long.parseLong(mongIdStr);
             StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(mongId);
-            if(strokeService.strokeMong(strokeMongReqVo)){
-                return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-            }else{
-                LOGGER.info("{}는 쓰다듬을 수 없음", mongId);
-                return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.CANT_STROKE));
-            }
+            MongStatusDto mongStatusDto = strokeService.strokeMong(strokeMongReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
 
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());

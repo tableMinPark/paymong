@@ -11,6 +11,7 @@ import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,9 @@ public class FeedController {
             feedFoodReqVo.setMongId(mongId);
             feedFoodReqVo.setMemberId(memberId);
 
-            feedService.feedFood(feedFoodReqVo);
+            MongStatusDto mongStatusDto = feedService.feedFood(feedFoodReqVo);
 
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
@@ -100,9 +101,9 @@ public class FeedController {
             feedSnackReqVo.setMongId(mongId);
             feedSnackReqVo.setMemberId(memberId);
 
-            feedService.feedSnack(feedSnackReqVo);
+            MongStatusDto mongStatusDto = feedService.feedSnack(feedSnackReqVo);
 
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

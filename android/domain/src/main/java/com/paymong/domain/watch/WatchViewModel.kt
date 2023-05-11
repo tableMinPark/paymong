@@ -11,6 +11,7 @@ import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.ManagementRepository
+import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
 import com.paymong.domain.entity.MongInfo
 import com.paymong.domain.entity.MongStats
@@ -22,7 +23,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class WatchViewModel (
-    private val application: Application
+    application: Application
 ): AndroidViewModel(application) {    
     // 포인트 정보
     var point by mutableStateOf(0)
@@ -41,6 +42,7 @@ class WatchViewModel (
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
 
+    private val memberRepository: MemberRepository = MemberRepository()
     private var informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
@@ -48,6 +50,19 @@ class WatchViewModel (
         findMong()
         findMongCondition()
         findMongInfo()
+        findPoint()
+    }
+
+    private fun findPoint(){
+        viewModelScope.launch(Dispatchers.IO) {
+            memberRepository.findMember()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{ data ->
+                    point = data.point.toInt()
+                }
+        }
     }
     
     private fun findMong() {

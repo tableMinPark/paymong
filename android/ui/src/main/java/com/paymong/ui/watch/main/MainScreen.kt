@@ -30,6 +30,7 @@ fun Main(
 ) {
     // 배경
     Background(false)
+
     if(watchViewModel.mapCode == MapCode.MP000){
         MainBackgroundGif()
     } else if (pagerState.currentPage != 1){

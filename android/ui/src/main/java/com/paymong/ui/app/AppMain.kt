@@ -80,7 +80,7 @@ fun AppMainNav(appLandinglViewModel : AppLandinglViewModel){
         }
         composable(route = AppNavItem.Help.route){
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            Help(soundViewModel)
+            Help(navController, soundViewModel)
         }
         composable(route = AppNavItem.Collect.route) {
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)

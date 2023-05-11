@@ -25,10 +25,11 @@ class FeedViewModel (
     var foodCode by mutableStateOf("")
     var price by mutableStateOf(0)
     var isCanBuy by mutableStateOf(true)
-    var foodList = mutableListOf<Food>()
+    private var foodList = mutableListOf<Food>()
     var currentFoodPosition by mutableStateOf(0)
 
     var foodCategory by mutableStateOf("")
+    var currentCategory by mutableStateOf("")
     var success = mutableStateOf(false)
     var isClick by mutableStateOf(false)
     var buttonSound by mutableStateOf(0)
@@ -65,6 +66,8 @@ class FeedViewModel (
                             foodList.add(Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy))
                         }
                     changeCurrentFoodPosition()
+                    currentCategory = foodCategory
+                    foodCategory = ""
                     success.value = true
                 }
         }
@@ -94,6 +97,7 @@ class FeedViewModel (
                     }
                     .collect{
                         Log.d("buy food", foodList[currentFoodPosition].toString())
+                        success.value = false
                     }
             }
         }

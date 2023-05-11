@@ -22,19 +22,33 @@ public class RedisService {
     public void addRedis(Map<Long, SchedulerDto> schedulerMap, String type){
         SetOperations<String, RedisMong> values = redisTemplate.opsForSet();
 
-        schedulerMap.entrySet().stream()
-                .forEach(s -> {
-                    Long key = s.getKey();
-                    SchedulerDto scheduler = s.getValue();
+        Set<Long> set = schedulerMap.keySet();
 
-                    Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
-                    Long expire = scheduler.getExpire() - diff.toSeconds();
-                    RedisMong redisMong = RedisMong.builder()
-                            .mongId(key)
-                            .expire(expire)
-                            .build();
-                    values.add(type, redisMong);
-                });
+        for (Long key:
+             set) {
+            SchedulerDto schedulerDto = schedulerMap.get(key);
+            Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
+            Long expire = schedulerDto.getExpire() - diff.toSeconds();
+            RedisMong redisMong = RedisMong.builder()
+                    .mongId(key)
+                    .expire(expire)
+                    .build();
+            values.add(type, redisMong);
+        }
+
+//        schedulerMap.entrySet().stream()
+//                .forEach(s -> {
+//                    Long key = s.getKey();
+//                    SchedulerDto scheduler = s.getValue();
+//
+//                    Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
+//                    Long expire = scheduler.getExpire() - diff.toSeconds();
+//                    RedisMong redisMong = RedisMong.builder()
+//                            .mongId(key)
+//                            .expire(expire)
+//                            .build();
+//                    values.add(type, redisMong);
+//                });
     }
 
     public Set<RedisMong> getRedisMong(String key){

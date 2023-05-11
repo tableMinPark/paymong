@@ -38,7 +38,7 @@ public class RedisService {
     }
 
     public Set<RedisMong> getRedisMong(String key){
-        SetOperations<String, RedisMong> values = redisTemplate.opsForSet();
+        SetOperations values = redisTemplate.opsForSet();
         Set<RedisMong> set = values.members(key);
 
         Long cnt = values.size(key);

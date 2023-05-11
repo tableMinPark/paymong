@@ -43,12 +43,9 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
 
-        // 수빈이
-        // 주석풀어서 쓰면됨
         // 와치만 쓸때 쓰는거
 //        val dataApplicationRepository = DataApplicationRepository()
-//        dataApplicationRepository.setValue("playerId", "a_704551220282600864")
-//        dataApplicationRepository.setValue("playerId", "a_6641482048740515693")
+//        dataApplicationRepository.setValue("playerId", "a_6413840864035103640")
 
         // 필수 권한 확인
         checkPermission()

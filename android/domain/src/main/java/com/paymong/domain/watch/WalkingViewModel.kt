@@ -14,7 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paymong.common.code.WalkingCode
 import com.paymong.data.repository.ManagementRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,11 +29,11 @@ import java.time.ZoneId
 class WalkingViewModel (
     private val application: Application
 ): AndroidViewModel(application) {
+    companion object {
+        private var interval : Long = 10
+    }
 
-    private var interval : Long = 10
-
-    var isWalkingEnd by mutableStateOf(false)
-    var realWalkingEnd by mutableStateOf(false)
+    var walkingState by mutableStateOf(WalkingCode.READY)
     var walkMinute by mutableStateOf(0)
     var walkSecond by mutableStateOf(0)
     var walkCount by mutableStateOf(0)
@@ -47,11 +49,10 @@ class WalkingViewModel (
     private var managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        walkMinute = 0
-        walkSecond = 0
-        walkCount = 0
-        walkNowTime = 0
-        setSensor()
+        viewModelScope.launch(Dispatchers.Main) {
+            walkingState = WalkingCode.WALKING
+            setSensor()
+        }
     }
 
     private fun setSensor() {
@@ -59,7 +60,7 @@ class WalkingViewModel (
         viewModelScope.launch {
             sensorManager = application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-//        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+//            stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
             stepSensorEventListener = object : SensorEventListener {
                 override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
                 override fun onSensorChanged(event: SensorEvent) {
@@ -80,8 +81,12 @@ class WalkingViewModel (
         }
     }
     private fun walkTimerStart(){
+        walkingState = WalkingCode.WALKING
         viewModelScope.launch {
-            while(walkNowTime < walkMaxTime && !isWalkingEnd) {
+            while(walkNowTime < walkMaxTime && walkingState != WalkingCode.WALKING_END) {
+                // 일시중지면 시간 추가 안함
+                if (walkingState == WalkingCode.PAUSE) continue
+
                 delay(interval)
                 walkNowTime += interval
 
@@ -89,18 +94,18 @@ class WalkingViewModel (
                 walkMinute = now.minute
                 walkSecond = now.second
             }
-            // 시간 초과 종료
-            isWalkingEnd = true
+            walkingEnd()
         }
     }
     fun walkingEnd() {
         // 산책 종료 후 결과 저장
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch (Dispatchers.IO) {
             managementRepository.walking(walkCount)
                 .catch {
                     it.printStackTrace()
                 }
                 .collect{
+                    walkingState = WalkingCode.WALKING_END
                 }
         }
     }

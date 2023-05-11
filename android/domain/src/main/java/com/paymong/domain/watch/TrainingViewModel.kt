@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.ManagementRepository
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -26,21 +26,24 @@ class TrainingViewModel (
     var nanoSecond by mutableStateOf(0)
     var count by mutableStateOf(0)
 
-    private lateinit var timer : Job
     private var nowTime : Long = 0
     private var interval : Long = 10
 
     private var managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        timerStart()
+        viewModelScope.launch(Dispatchers.Main) {
+            timerStart()
+        }
+    }
+
+    fun addCount() {
+        count++
     }
 
     // 훈련 시작
     private fun timerStart(){
-        if(::timer.isInitialized) timer.cancel()
-
-        timer = viewModelScope.launch {
+        viewModelScope.launch {
             while(nowTime < MAX_TIME) {
                 delay(interval)
                 nowTime += interval
@@ -57,7 +60,7 @@ class TrainingViewModel (
 
     // 훈련 종료
     private fun trainingEnd() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.training(count)
                 .catch {
                     it.printStackTrace()

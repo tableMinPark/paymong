@@ -40,9 +40,9 @@ fun Login(
     soundViewModel: SoundViewModel
 ) {
     LaunchedEffect(key1 = true) {
-        // 웨어러블 최초 등록 여부 확인
         appLandinglViewModel.registCheck()
     }
+    Log.d("landing", appLandinglViewModel.landingCode.toString())
     if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
         appLandinglViewModel.landingCode = LandingCode.DONE
         navController.navigate(AppNavItem.Main.route) {

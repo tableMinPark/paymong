@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class AddPointDto {
     private Integer point;
     private String content;
+    private String code;
 }

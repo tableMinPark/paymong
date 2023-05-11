@@ -170,4 +170,25 @@ public class MongController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
         }
     }
+
+    @PutMapping("/graduation")
+    public ResponseEntity<Object> graduationMong(HttpServletRequest httpServletRequest){
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("졸업을 시작합니다. id : {}", mongIdStr);
+        try {
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
+            GraduationMongResDto graduationMong = mongService.graduationMong(mongId);
+            return  ResponseEntity.ok().body(graduationMong);
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (UnsuitableException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
+        }
+    }
 }

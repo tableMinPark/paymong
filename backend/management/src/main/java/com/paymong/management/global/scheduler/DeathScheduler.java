@@ -1,6 +1,8 @@
 package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.redis.RedisMong;
+import com.paymong.management.global.redis.RedisService;
 import com.paymong.management.global.scheduler.dto.SchedulerDto;
 import com.paymong.management.global.scheduler.task.DeathTask;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ import java.util.Map;
 public class DeathScheduler implements ManagementScheduler{
     private static final Map<Long, SchedulerDto> schedulerMap = new HashMap<>();
     private final DeathTask deathTask;
+    private final RedisService redisService;
     @Override
     public void stopScheduler(Long mongId) {
         if(schedulerMap.containsKey(mongId)){
@@ -63,7 +67,7 @@ public class DeathScheduler implements ManagementScheduler{
         SchedulerDto schedulerDto = new SchedulerDto();
         schedulerDto.setStartTime(LocalDateTime.now());
         schedulerDto.setExpire(60L * 60L * 3L);
-        schedulerDto.setMessage("health-Death-");
+        schedulerDto.setMessage("death-");
         schedulerDto.setRunnable(getRunnable(mongId));
         schedulerDto.initScheduler();
 
@@ -82,6 +86,27 @@ public class DeathScheduler implements ManagementScheduler{
         }else{
             log.info("{}의 {} death scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
+    }
+
+    public void restartScheduler(RedisMong redisMong){
+        if(schedulerMap.containsKey(redisMong.getMongId())){
+            log.info("{}의 {} death scheduler가 이미 돌아가고 있습니다.", this.getClass().getSimpleName(), redisMong.getMongId());
+
+        }else {
+            SchedulerDto schedulerDto = new SchedulerDto();
+            schedulerDto.setStartTime(LocalDateTime.now());
+            schedulerDto.setExpire(redisMong.getExpire());
+            schedulerDto.setMessage("death-");
+            schedulerDto.setRunnable(getRunnable(redisMong.getMongId()));
+            schedulerDto.initScheduler();
+            log.info("건강악화로 {}의 죽음 스케쥴러를 재시작합니다. 남은 기간 : {}", this.getClass().getSimpleName(), schedulerDto.getExpire());
+
+            schedulerMap.put(redisMong.getMongId(), schedulerDto);
+        }
+    }
+
+    public void addRedis(){
+        redisService.addRedis(schedulerMap, "death");
     }
 
     @Override

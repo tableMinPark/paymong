@@ -57,15 +57,20 @@ public class StatusService {
         MongConditionCode conditionCode = checkCondition(mong);
         mong.setStateCode(conditionCode.getCode());
 
-        if(satiety == 0 || health == 0) {
+        if(health == 0) {
             // 스케줄러
             deathScheduler.startScheduler(mongId);
+            healthScheduler.stopScheduler(mongId);
         }
-
+        if(satiety == 0) {
+            // 스케줄러
+            deathScheduler.startScheduler(mongId);
+            satietyScheduler.stopScheduler(mongId);
+        }
         if(satiety > 0 && health > 0){
             deathScheduler.stopScheduler(mongId);
             healthScheduler.startScheduler(mongId);
-            satietyScheduler.stopScheduler(mongId);
+            satietyScheduler.startScheduler(mongId);
         }
 
         if(statusResDto.getCode().equals(MongActiveCode.TRAINING.getCode()) || statusResDto.getCode().equals(MongActiveCode.WALKING.getCode())){

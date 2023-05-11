@@ -32,6 +32,7 @@ class WatchViewModel (
     // 몽 지수
     var mongStats by mutableStateOf(MongStats())
     // 몽 정보 (몸무게, 태어난 일자)
+    var undomong by mutableStateOf(MongCode.CH000)
     var mongInfo by mutableStateOf(MongInfo())
     var age by mutableStateOf("")
     // 몽 상태, 똥 갯수, 맵 코드
@@ -41,6 +42,9 @@ class WatchViewModel (
 
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
+
+    // 몽 진화
+    var evolutionisClick by mutableStateOf(false)
 
     private val memberRepository: MemberRepository = MemberRepository()
     private var informationRepository: InformationRepository = InformationRepository()
@@ -163,6 +167,21 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{}
+        }
+    }
+
+    fun evolution(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.evolution()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                        data->
+                    undomong = mong.mongCode
+                    stateCode = MongStateCode.valueOf(data.stateCode)
+                    mong.mongCode = MongCode.valueOf(data.mongCode)
+                }
         }
     }
 }

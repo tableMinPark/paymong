@@ -3,6 +3,7 @@ package com.paymong
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.Wearable
@@ -26,7 +27,7 @@ class NotificationListener : NotificationListenerService() {
     private var capabilityClient: CapabilityClient = Wearable.getCapabilityClient(this)
     private var messageClient: MessageClient = Wearable.getMessageClient(this)
 
-    private fun thingsAlaram(thingsCode: String) {
+    private fun thingsAlarm(thingsCode: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val nodes = capabilityClient
@@ -100,7 +101,7 @@ class NotificationListener : NotificationListenerService() {
                             .collect{
                                 data ->
                                 Log.d("thing 수신 테스트", data.thingsCode)
-                                //appLandinglViewModel.thingsAlarm(data.thingsCode)
+                                thingsAlarm(data.thingsCode)
                             }
                     }
                 }

@@ -33,7 +33,11 @@ public class HealthTask {
             mong.setHealth(health);
         }
         if(health == 0){
-            mong.setStateCode(MongConditionCode.SICK.getCode());
+            if(mong.getStateCode().equals(MongConditionCode.NORMAL.getCode())
+                    || mong.getStateCode().equals(MongConditionCode.SOMNOLENCE.getCode())
+                    || mong.getStateCode().equals(MongConditionCode.HUNGRY.getCode())) {
+                mong.setStateCode(MongConditionCode.SICK.getCode());
+            }
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
 
             webSocketService.sendStatus(mong, WebSocketCode.DEATH);

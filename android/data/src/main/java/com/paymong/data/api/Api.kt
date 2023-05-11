@@ -22,6 +22,7 @@ interface Api {
         private const val BASE_URL = "http://dev.paymong.com:8080"
         private const val LOGIN_URL = "http://dev.paymong.com:8080/auth/login"
         private const val REISSUE_URL = "http://dev.paymong.com:8080/auth/reissue"
+        private const val WATCH_LOGIN_URL = "http://dev.paymong.com:8080/auth/login/watch"
         private const val TIMEOUT_LIMIT = 180L
 
 
@@ -75,8 +76,12 @@ interface Api {
                         chain.proceed(chain.request())
                     }
                 } 
-                // 로그인 경우
+                // 앱 로그인 경우
                 else if(LOGIN_URL == url) {
+                    return chain.proceed(chain.request())
+                }
+                // 와치 로그인 경우
+                else if (WATCH_LOGIN_URL == url) {
                     return chain.proceed(chain.request())
                 }
                 // 일반 요청 경우

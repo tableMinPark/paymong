@@ -66,14 +66,4 @@ class TrainingViewModel (
                 }
         }
     }
-
-    fun screenClick(navigate : () ->Unit) {
-        // 훈련 중일 떄
-        if (isTrainingEnd) {
-            isTrainingEnd = false
-            navigate()
-        } else {
-            count++
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.paymong.management.status.service;
 
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.HealthScheduler;
@@ -10,6 +11,7 @@ import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusResDto;
+import com.paymong.management.status.dto.MongStatusDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,8 @@ public class StatusService {
     private final SatietyScheduler satietyScheduler;
 
     @Transactional
-    public void modifyMongStatus(Long mongId, FindStatusResDto statusResDto) throws NotFoundMongException {
+    public MongStatusDto modifyMongStatus(Long mongId, FindStatusResDto statusResDto) throws NotFoundMongException {
+
         Mong mong = mongRepository.findByMongId(mongId)
                 .orElseThrow(() -> new NotFoundMongException());
 
@@ -68,6 +71,8 @@ public class StatusService {
         if(statusResDto.getCode().equals(MongActiveCode.TRAINING.getCode()) || statusResDto.getCode().equals(MongActiveCode.WALKING.getCode())){
             mong.setTrainingCount(mong.getTrainingCount() + 1);
         }
+
+        return new MongStatusDto(mong, WebSocketCode.SUCCESS);
     }
 
     public MongConditionCode checkCondition(Mong mong) {

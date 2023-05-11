@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EvolutionMongResDto {
 
+    private Integer weight;
+
     private String mongCode;
     private String stateCode;
 }

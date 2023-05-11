@@ -5,6 +5,7 @@ import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.training.dto.TrainingReqDto;
 import com.paymong.management.training.dto.WalkingReqDto;
 import com.paymong.management.training.service.TrainingService;
@@ -48,8 +49,8 @@ public class TrainingController {
             trainingReqVo.setMongId(mongId);
             trainingReqVo.setMemberId(memberId);
 
-            trainingService.training(trainingReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            MongStatusDto mongStatusDto = trainingService.training(trainingReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
@@ -75,7 +76,6 @@ public class TrainingController {
             if(walkingReqDto.getWalkingCount() == null ){
                 LOGGER.info("count가 비었음");
                 throw new NullPointerException();
-
             }
             if(mongIdStr == null || mongIdStr.equals("")) {
                 LOGGER.info("mongId가 비었음");
@@ -93,8 +93,9 @@ public class TrainingController {
             walkingReqVo.setWalkingCount(walkingReqDto.getWalkingCount());
             walkingReqVo.setMongId(mongId);
             walkingReqVo.setMemberId(memberId);
-            trainingService.walking(walkingReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            MongStatusDto mongStatusDto = trainingService.walking(walkingReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
+
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

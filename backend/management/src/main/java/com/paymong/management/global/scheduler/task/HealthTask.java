@@ -1,7 +1,9 @@
 package com.paymong.management.global.scheduler.task;
 
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import javax.transaction.Transactional;
 @Slf4j
 public class HealthTask {
     private final MongRepository mongRepository;
+    private final WebSocketService webSocketService;
     @Transactional
     public Boolean reduceHealth(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
@@ -32,9 +35,12 @@ public class HealthTask {
         if(health == 0){
             mong.setStateCode(MongConditionCode.SICK.getCode());
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
+
+            webSocketService.sendStatus(mong, WebSocketCode.DEATH);
             return false;
         }
         log.info("{}의 체력이 감소하였습니다.", mongId);
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
         return true;
     }
 }

@@ -29,11 +29,13 @@ public class SchedulerService {
 
     public void startScheduler(Mong mong){
 
-        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
+
         healthScheduler.startScheduler(mong.getMongId());
         poopScheduler.startScheduler(mong.getMongId());
         satietyScheduler.startScheduler(mong.getMongId());
+
         evolutionScheduler.startScheduler(mong.getMongId());
+        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
     }
 
 

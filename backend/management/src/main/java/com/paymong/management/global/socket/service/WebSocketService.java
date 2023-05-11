@@ -49,8 +49,12 @@ public class WebSocketService {
 
     public void sendStatus(Mong mong, WebSocketCode webSocketCode) {
         try {
-            WebSocketSession session = members.get(mong.getMemberId()).getSession();
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
+            if(!members.containsKey(mong.getMemberId())){
+                log.info("{}와 연결된 소켓이 없습니다.", mong.getMemberId());
+            }else{
+                WebSocketSession session = members.get(mong.getMemberId()).getSession();
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
+            }
         }catch (IOException e){
             log.info("응 못보내");
         }

@@ -2,6 +2,7 @@ package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.*;
+import com.paymong.management.global.redis.RedisService;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -29,6 +30,7 @@ public class MongController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongController.class);
     private final MongService mongService;
     private final DeathScheduler deathScheduler;
+    private final RedisService redisService;
 
     @Value("${header.member}")
     String headerMember;
@@ -98,6 +100,18 @@ public class MongController {
         }
     }
 
+    @GetMapping("/death/start")
+    public ResponseEntity<Object> startDeath(@RequestParam("mongId") Long mongId){
+        deathScheduler.startScheduler(mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/stop")
+    public ResponseEntity<Object> stopDeath(@RequestParam("mongId") Long mongId){
+        deathScheduler.stopScheduler(mongId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
     @GetMapping("/death")
     public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
         Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
@@ -116,6 +130,20 @@ public class MongController {
     public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
         Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
         deathScheduler.restartScheduler(mongId);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/redis/add")
+    public ResponseEntity<Object> redisTestAdd(){
+
+        deathScheduler.addRedis();
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/redis/out")
+    public ResponseEntity<Object> redisTestOut(){
+
+        redisService.getRedisMong("death").stream().forEach(deathScheduler::restartScheduler);
         return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 

@@ -37,28 +37,28 @@ public class RedisService {
 //            Long add = values.add(type, redisMong);
 //        }
 
-//        schedulerMap.entrySet().stream()
-//                .forEach(s -> {
-//                    Long key = s.getKey();
-//                    SchedulerDto scheduler = s.getValue();
-//
-//                    Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
-//                    Long expire = scheduler.getExpire() - diff.toSeconds();
-//                    RedisMong redisMong = RedisMong.builder()
-//                            .mongId(key)
-//                            .expire(expire)
-//                            .build();
-//                    values.add(type, redisMong);
-//                });
+        schedulerMap.entrySet().stream()
+                .forEach(s -> {
+                    Long key = s.getKey();
+                    SchedulerDto scheduler = s.getValue();
+
+                    Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
+                    Long expire = scheduler.getExpire() - diff.toSeconds();
+                    RedisMong redisMong = RedisMong.builder()
+                            .mongId(key)
+                            .expire(expire)
+                            .build();
+                    values.add(type, redisMong);
+                });
     }
 
-    public Set<RedisMong> getRedisMong(String key){
+    public List<RedisMong> getRedisMong(String key){
         SetOperations values = redisTemplate.opsForSet();
-        Set<RedisMong> set = values.members(key);
+//        Set<RedisMong> set = values.members(key);
 //
-//        Long cnt = values.size(key);
-//        List<RedisMong> pop = values.pop(key, cnt);
+        Long cnt = values.size(key);
+        List<RedisMong> pop = values.pop(key, cnt);
 
-        return set;
+        return pop;
     }
 }

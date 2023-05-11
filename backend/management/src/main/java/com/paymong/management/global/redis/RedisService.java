@@ -25,17 +25,17 @@ public class RedisService {
 
         Set<Long> set = schedulerMap.keySet();
 
-        for (Long key:
-             set) {
-            SchedulerDto schedulerDto = schedulerMap.get(key);
-            Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
-            Long expire = schedulerDto.getExpire() - diff.toSeconds();
-            RedisMong redisMong = RedisMong.builder()
-                    .mongId(key)
-                    .expire(expire)
-                    .build();
-            Long add = values.add(type, redisMong);
-        }
+//        for (Long key:
+//             set) {
+//            SchedulerDto schedulerDto = schedulerMap.get(key);
+//            Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
+//            Long expire = schedulerDto.getExpire() - diff.toSeconds();
+//            RedisMong redisMong = RedisMong.builder()
+//                    .mongId(key)
+//                    .expire(expire)
+//                    .build();
+//            Long add = values.add(type, redisMong);
+//        }
 
 //        schedulerMap.entrySet().stream()
 //                .forEach(s -> {

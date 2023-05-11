@@ -14,6 +14,7 @@ import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusReqDto;
 import com.paymong.management.status.dto.FindStatusResDto;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class FeedService {
     private final ActiveHistoryRepository activeHistoryRepository;
 
     @Transactional
-    public void feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
+    public MongStatusDto feedFood(FeedFoodReqVo feedFoodReqVo) throws Exception{
         // foodCode에 따라 해당 액션 찾기
         String foodCode = feedFoodReqVo.getFoodCode().substring(0,2);
         if(!foodCode.equals("FD")) throw new NotFoundActionException();
@@ -62,7 +63,7 @@ public class FeedService {
 
         clientService.addPoint(String.valueOf(feedFoodReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
 
-        statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
+        MongStatusDto mongStatusDto = statusService.modifyMongStatus(feedFoodReqVo.getMongId(), status);
 
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(food.getCode())
@@ -72,10 +73,11 @@ public class FeedService {
 
         activeHistoryRepository.save(activeHistory);
 
+        return mongStatusDto;
     }
 
     @Transactional
-    public void feedSnack(FeedSnackReqVo feedSnackReqVo) throws Exception{
+    public MongStatusDto feedSnack(FeedSnackReqVo feedSnackReqVo) throws Exception{
         // mongId로 해당 mong 찾기
         Mong mong = mongRepository.findByMongId(feedSnackReqVo.getMongId())
                 .orElseThrow(() -> new NotFoundMongException());
@@ -102,9 +104,13 @@ public class FeedService {
 
         LOGGER.info("활동 코드 : {} , 간식 코드 : {}, 간식 이름 : {}, 간식 가격 : {}",findStatusReqDto.getCode(), food.getCode(), food.getName(), status.getPoint());
 
-        clientService.addPoint(String.valueOf(feedSnackReqVo.getMemberId()), new AddPointDto(status.getPoint(), food.getName() + " 구매", food.getCode()));
+        clientService.addPoint(
+                String.valueOf(feedSnackReqVo.getMemberId()),
+                new AddPointDto(status.getPoint(),
+         food.getName() + " 구매",
+                food.getCode()));
 
-        statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
+        MongStatusDto mongStatusDto = statusService.modifyMongStatus(feedSnackReqVo.getMongId(), status);
 
         ActiveHistory activeHistory = ActiveHistory.builder()
                 .activeCode(food.getCode())
@@ -113,5 +119,7 @@ public class FeedService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
+
+        return mongStatusDto;
     }
 }

@@ -2,7 +2,9 @@ package com.paymong.management.global.scheduler.task;
 
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
@@ -23,6 +25,7 @@ public class SleepTask {
     private final MongRepository mongRepository;
     private final StatusService statusService;
     private final ActiveHistoryRepository activeHistoryRepository;
+    private final WebSocketService webSocketService;
 
     @Transactional
     public void sleepMong(Long mongId) throws NotFoundMongException {
@@ -40,6 +43,8 @@ public class SleepTask {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
+
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
     }
 
     @Transactional
@@ -88,6 +93,8 @@ public class SleepTask {
         MongConditionCode condition = statusService.checkCondition(mong);
         log.info("{}의 잠을 깨웁니다. 상태 : {}",mongId, condition.getMessage());
         mong.setStateCode(condition.getCode());
+
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
     }
 
     @Transactional
@@ -100,7 +107,11 @@ public class SleepTask {
         mong.setSleep(sleep - 1 < 0 ? 0 : sleep - 1);
         if(sleep - 1 < 2){
             mong.setStateCode(MongConditionCode.SOMNOLENCE.getCode());
+            webSocketService.sendStatus(mong, WebSocketCode.SOMNOLENCE);
+        }else{
+            webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
         }
+
     }
 
 }

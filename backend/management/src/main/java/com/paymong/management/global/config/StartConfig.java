@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -33,8 +34,13 @@ public class StartConfig implements CommandLineRunner {
         log.info("evolution 스케줄러를 넣습니다.");
         redisService.getRedisMong("evolution").stream().forEach(evolutionScheduler::restartScheduler);
 
-//        log.info("나머지 스케줄러를 가동합니다.");
+        log.info("나머지 스케줄러를 가동합니다.");
+
 //        List<Mong> mongs = mongRepository.findByActive(true);
-//        mongs.stream().forEach(schedulerService::startScheduler);
+
+        List<Mong> mongs = new ArrayList<>();
+        mongs.add(mongRepository.findByMongId(66L).get());
+        mongs.add(mongRepository.findByMongId(67L).get());
+        mongs.stream().forEach(schedulerService::startScheduler);
     }
 }

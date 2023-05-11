@@ -58,6 +58,11 @@ dependencies {
     implementation "androidx.activity:activity-compose:$compose_ui_version"
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
+
+    implementation "androidx.wear:wear-phone-interactions:1.1.0-alpha03"
+    implementation "androidx.wear:wear-remote-interactions:1.0.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
+
 //    //firebase
 //    implementation platform('com.google.firebase:firebase-bom:31.5.0')
 //    implementation 'com.google.firebase:firebase-analytics-ktx'

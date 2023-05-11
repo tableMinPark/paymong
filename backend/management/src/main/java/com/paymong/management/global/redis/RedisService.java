@@ -56,8 +56,8 @@ public class RedisService {
         SetOperations values = redisTemplate.opsForSet();
         Set<RedisMong> set = values.members(key);
 //
-        Long cnt = values.size(key);
-        List<RedisMong> pop = values.pop(key, cnt);
+//        Long cnt = values.size(key);
+//        List<RedisMong> pop = values.pop(key, cnt);
 
         return set;
     }

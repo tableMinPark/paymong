@@ -20,21 +20,21 @@ public class RedisService {
 
     //키 - 죽음 - 벨류
     public void addRedis(Map<Long, SchedulerDto> schedulerMap, String type){
-        SetOperations<String, RedisMong> values = redisTemplate.opsForSet();
-
-        Set<Long> set = schedulerMap.keySet();
-
-        for (Long key:
-             set) {
-            SchedulerDto schedulerDto = schedulerMap.get(key);
-            Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
-            Long expire = schedulerDto.getExpire() - diff.toSeconds();
-            RedisMong redisMong = RedisMong.builder()
-                    .mongId(key)
-                    .expire(expire)
-                    .build();
-            Long add = values.add(type, redisMong);
-        }
+//        SetOperations<String, RedisMong> values = redisTemplate.opsForSet();
+//
+//        Set<Long> set = schedulerMap.keySet();
+//
+//        for (Long key:
+//             set) {
+//            SchedulerDto schedulerDto = schedulerMap.get(key);
+//            Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
+//            Long expire = schedulerDto.getExpire() - diff.toSeconds();
+//            RedisMong redisMong = RedisMong.builder()
+//                    .mongId(key)
+//                    .expire(expire)
+//                    .build();
+//            Long add = values.add(type, redisMong);
+//        }
 
 //        schedulerMap.entrySet().stream()
 //                .forEach(s -> {
@@ -52,12 +52,13 @@ public class RedisService {
     }
 
     public Set<RedisMong> getRedisMong(String key){
-        SetOperations values = redisTemplate.opsForSet();
-        Set<RedisMong> set = values.members(key);
+//        SetOperations values = redisTemplate.opsForSet();
+//        Set<RedisMong> set = values.members(key);
+//
+//        Long cnt = values.size(key);
+//        values.pop(key, cnt);
 
-        Long cnt = values.size(key);
-        values.pop(key, cnt);
-
-        return set;
+//        return set;
+        return null;
     }
 }

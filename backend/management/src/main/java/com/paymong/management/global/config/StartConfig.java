@@ -36,11 +36,11 @@ public class StartConfig implements CommandLineRunner {
 
         log.info("나머지 스케줄러를 가동합니다.dkdkk");
 
-//        List<Mong> mongs = mongRepository.findByActive(true);
+        List<Mong> mongs = mongRepository.findByActive(true);
 
-        List<Mong> mongs = new ArrayList<>();
-        mongs.add(mongRepository.findByMongId(66L).get());
-        mongs.add(mongRepository.findByMongId(67L).get());
+//        List<Mong> mongs = new ArrayList<>();
+//        mongs.add(mongRepository.findByMongId(66L).get());
+//        mongs.add(mongRepository.findByMongId(67L).get());
         mongs.stream().forEach(schedulerService::startScheduler);
     }
 }

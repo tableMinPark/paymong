@@ -68,7 +68,9 @@ class BattleViewModel (
     var win by mutableStateOf(false)
 
     init {
-        findMong()
+        viewModelScope.launch(Dispatchers.Main) {
+            findMong()
+        }
     }
     fun select(select : MessageType) {
         selectState = select

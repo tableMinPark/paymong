@@ -47,10 +47,13 @@ class WatchViewModel (
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        findMong()
-        findMongCondition()
-        findMongInfo()
-        findPayPoint()
+        viewModelScope.launch(Dispatchers.Main) {
+            findMong()
+            findMongCondition()
+            findMongInfo()
+            findPayPoint()
+
+        }
     }
 
     private fun findPayPoint(){
@@ -60,13 +63,14 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{ data ->
+                    delay(1000)
                     point = data.point.toInt()
                 }
         }
     }
     
     private fun findMong() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMong()
                 .catch {
                     it.printStackTrace()
@@ -85,7 +89,7 @@ class WatchViewModel (
     }
 
     private fun findMongCondition() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongStats()
                 .catch {
                     it.printStackTrace()
@@ -104,7 +108,7 @@ class WatchViewModel (
     }
 
     private fun findMongInfo() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongInfo()
                 .catch {
                     it.printStackTrace()
@@ -130,7 +134,7 @@ class WatchViewModel (
     }
 
     fun stroke(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.stroke()
                 .catch {
                     it.printStackTrace()
@@ -143,7 +147,7 @@ class WatchViewModel (
     }
 
     fun sleep(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.sleep()
                 .catch {
                     it.printStackTrace()
@@ -153,7 +157,7 @@ class WatchViewModel (
     }
 
     fun poop(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.poop()
                 .catch {
                     it.printStackTrace()

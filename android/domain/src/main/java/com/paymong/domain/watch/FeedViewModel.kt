@@ -38,7 +38,9 @@ class FeedViewModel (
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        findPayPoint()
+        viewModelScope.launch(Dispatchers.Main) {
+            findPayPoint()
+        }
     }
 
     private fun findPayPoint() {

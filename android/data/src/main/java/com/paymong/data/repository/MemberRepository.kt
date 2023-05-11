@@ -1,5 +1,6 @@
 package com.paymong.data.repository
 
+import android.util.Log
 import com.paymong.data.api.Api
 import com.paymong.data.api.MemberApi
 import com.paymong.data.model.request.AddPayReqDto
@@ -71,12 +72,14 @@ class MemberRepository(
         }
     }
 
-    fun addRoutine(addRoutineReqDto: AddRoutineReqDto) : Flow<Boolean> = flow {
+    fun addRoutine(addRoutineReqDto: AddRoutineReqDto) : Flow<AddRoutineResDto> = flow {
         val response = api.addRoutine(addRoutineReqDto)
         if(response.code() == 200){
-            emit(true)
+            response.body()?.let {
+                emit(response.body()!!)
+            }
         } else {
-            emit(false)
+            Log.e("thing 루틴 response", "등록안된 루틴명")
         }
     }
 }

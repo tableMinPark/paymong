@@ -62,7 +62,11 @@ class NotificationListener : NotificationListenerService() {
                             .catch {
                                 it.printStackTrace()
                             }
-                            .collect{}
+                            .collect{
+                                data ->
+                                Log.d("thing 수신 테스트", data.thingsCode)
+                                //appLandinglViewModel.thingsAlarm(data.thingsCode)
+                            }
                     }
                 }
             }

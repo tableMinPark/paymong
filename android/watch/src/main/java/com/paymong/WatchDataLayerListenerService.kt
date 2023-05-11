@@ -28,6 +28,10 @@ class WatchDataLayerListenerService : WearableListenerService() {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             }
+            "thingsAlarm" ->{
+                val thingsCode = messageEvent.data.decodeToString()
+                Log.d("thingsCode 수신", thingsCode)
+            }
         }
     }
 

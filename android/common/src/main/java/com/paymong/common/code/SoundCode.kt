@@ -11,5 +11,8 @@ enum class SoundCode {
     BATTLE_WIN,
     BATTLE_LOSE,
     BATTLE_ATTACK,
-    BATTLE_DEFENCE
+    BATTLE_DEFENCE,
+    BATTLE_FIND_SOUND,
+    COIN_SOUND,
+
 }

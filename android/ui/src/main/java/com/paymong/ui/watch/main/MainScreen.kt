@@ -12,7 +12,7 @@ import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.MainBackgroundGif

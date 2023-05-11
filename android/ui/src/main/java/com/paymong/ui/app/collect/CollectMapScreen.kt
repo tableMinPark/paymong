@@ -23,6 +23,7 @@ import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.common.code.MapCode
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
@@ -31,7 +32,9 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun CollectMap(
     navController: NavController,
-    collectMapViewModel : CollectMapViewModel = viewModel()
+
+    collectMapViewModel : CollectMapViewModel = viewModel(),
+            soundViewModel: SoundViewModel,
 ) {
     collectMapViewModel.map()
     Column(
@@ -39,7 +42,7 @@ fun CollectMap(
         verticalArrangement = Arrangement.Center
     ) {
         Scaffold(
-            topBar = {TopBar("Map", navController, AppNavItem.Collect.route)},
+            topBar = {TopBar("Map", navController, AppNavItem.Collect.route, soundViewModel)},
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {

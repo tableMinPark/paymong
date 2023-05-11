@@ -15,22 +15,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun Collect(navController: NavController) {
+fun Collect(navController: NavController,     soundViewModel: SoundViewModel
+) {
 
 
 
 
     Scaffold(
-        topBar = {TopBar("몽집", navController, AppNavItem.Main.route)},
+        topBar = {TopBar("몽집", navController, AppNavItem.Main.route, soundViewModel)},
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){
@@ -39,29 +43,20 @@ fun Collect(navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Btn(navController, btnText = "PayMong", AppNavItem.CollectPayMong.route)
-                Btn(navController, btnText = "Map", AppNavItem.CollectMap.route)
+                Btn(navController, btnText = "PayMong", AppNavItem.CollectPayMong.route, soundViewModel)
+                Btn(navController, btnText = "Map", AppNavItem.CollectMap.route, soundViewModel)
             }
         }
     }
 }
 
 @Composable
-fun Btn(navController: NavController, btnText: String, route: String){
+fun Btn(navController: NavController, btnText: String, route: String, soundViewModel:SoundViewModel){
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
 
     Button(
         onClick = {
-            ButtonSoundPlay()
+            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
             navController.navigate(route){
             popUpTo("collect")
             navController.graph.setStartDestination(AppNavItem.Main.route)
@@ -83,8 +78,9 @@ fun Btn(navController: NavController, btnText: String, route: String){
 @Composable
 fun CollectPreview() {
     val navController = rememberNavController()
+    val soundViewModel:SoundViewModel = viewModel()
     PaymongTheme {
 //        Collect(navController)
-        Btn(navController, "PayMong", AppNavItem.CollectPayMong.route)
+        Btn(navController, "PayMong", AppNavItem.CollectPayMong.route, soundViewModel)
     }
 }

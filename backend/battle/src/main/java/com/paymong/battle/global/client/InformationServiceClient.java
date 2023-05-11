@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(name = "information")
 public interface InformationServiceClient {
-    @GetMapping("/mong/status_battle")
+    @GetMapping("/information/mong/status_battle")
     ResponseEntity<Object> findMongBattle(FindMongBattleReqDto findMongBattleReqDto);
 }

@@ -7,11 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.HelpViewModel
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun Help(
+    soundViewModel: SoundViewModel,
     helpViewModel : HelpViewModel = viewModel()
 ) {
     Column(

@@ -34,6 +34,8 @@ import com.paymong.domain.app.SmartThingsViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.common.R
+import com.paymong.common.code.SoundCode
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongBlue
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
@@ -41,10 +43,12 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun SmartThings(
     navController: NavController,
-    smartThingsViewModel: SmartThingsViewModel = viewModel()
+    soundViewModel: SoundViewModel,
+    smartThingsViewModel: SmartThingsViewModel = viewModel(),
+
 ) {
     Scaffold(
-        topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route) },
+        topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route, soundViewModel) },
         backgroundColor = PayMongNavy
     ) {
         if(smartThingsViewModel.isDelete){
@@ -63,7 +67,7 @@ fun SmartThings(
             ) {
                 Desc()
                 Spacer(modifier = Modifier.height(20.dp))
-                AddThings(navController)
+                AddThings(navController, soundViewModel)
                 Spacer(modifier = Modifier.height(20.dp))
                 ThingsList(smartThingsViewModel)
             }
@@ -121,7 +125,7 @@ private fun Desc(){
 }
 
 @Composable
-private fun AddThings(navController:NavController){
+private fun AddThings(navController:NavController, soundViewModel: SoundViewModel){
     Box(modifier = Modifier
         .clip(RoundedCornerShape(30.dp))
         .background(color = Color.White.copy(alpha = 0.5f)),
@@ -143,7 +147,9 @@ private fun AddThings(navController:NavController){
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { navController.navigate(AppNavItem.AddSmartThings.route) }
+                            onClick = {
+                                soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                                navController.navigate(AppNavItem.AddSmartThings.route) }
                         )
                         .width(110.dp)
                         .height(50.dp)

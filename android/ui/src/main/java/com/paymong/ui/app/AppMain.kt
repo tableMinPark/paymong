@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.domain.app.AppLandinglViewModel
@@ -50,40 +51,49 @@ fun AppMainNav(appLandinglViewModel : AppLandinglViewModel){
             Landing(navController, appLandinglViewModel)
         }
         composable(route = AppNavItem.Login.route){
-            Login(navController, appLandinglViewModel)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            Login(navController, appLandinglViewModel, soundViewModel)
         }
         composable(route = AppNavItem.Main.route){
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
-            Main(navController, appViewModel)
+            Main(navController, appViewModel, soundViewModel)
         }
         composable(route = AppNavItem.InfoDetail.route) {
             val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
             InfoDetail(navController, appViewModel)
         }
         composable(route = AppNavItem.SmartThings.route){
-            SmartThings(navController)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            SmartThings(navController, soundViewModel)
         }
         composable(route = AppNavItem.AddSmartThings.route){
-            AddSmartThings(navController)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            AddSmartThings(navController, soundViewModel)
         }
         composable(route = AppNavItem.Condition.route) {
-            Condition(navController)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            Condition(navController, soundViewModel)
         }
         composable(route = AppNavItem.PayPoint.route) {
             PayPoint(navController)
         }
         composable(route = AppNavItem.Help.route){
-            Help()
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            Help(soundViewModel)
         }
         composable(route = AppNavItem.Collect.route) {
-            Collect(navController)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            Collect(navController, soundViewModel)
         }
         composable(route = AppNavItem.CollectPayMong.route) {
-            CollectPayMong(navController)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            CollectPayMong(navController, soundViewModel)
         }
         composable(route = AppNavItem.CollectMap.route) {
             val mapViewModel = viewModel<CollectMapViewModel>(viewModelStoreOwner)
-            CollectMap(navController, mapViewModel)
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            CollectMap(navController, mapViewModel, soundViewModel)
         }
     }
 }

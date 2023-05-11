@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.feed
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -26,7 +25,7 @@ import com.paymong.common.R
 import com.paymong.common.code.FoodCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
@@ -59,9 +58,9 @@ fun FeedBuyList(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val userPointBoxHeight = if (screenWidthDp < 200) 20 else 30
-    val pointLogoSize = if (screenWidthDp < 200) 10 else 15
-    val fontSize = if (screenWidthDp < 200) 20 else 15
+    val userPointBoxHeight = if (screenWidthDp < 200) 25 else 30
+    val pointLogoSize = if (screenWidthDp < 200) 12 else 15
+    val fontSize = if (screenWidthDp < 200) 12 else 15
     val bntImageSize = if (screenWidthDp < 200) 20 else 30
     val foodImageSize = if (screenWidthDp < 200) 75 else 85
     val purchasePointLogoSize = if (screenWidthDp < 200) 13 else 18
@@ -137,7 +136,7 @@ fun FeedBuyList(
 
         Box(
             modifier = Modifier
-                .height(90.dp)
+                .height(80.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.CenterHorizontally)
@@ -247,9 +246,12 @@ fun FeedBuyList(
             Button(
                 onClick = {
                     if(feedViewModel.isCanBuy){
+                        soundViewModel.soundPlay(SoundCode.COIN_SOUND)
                         feedViewModel.isClick = true
                         animationState.value = AnimationCode.Feed
                         feedViewModel.selectButtonClick(foodCategory)
+                    } else {
+                        soundViewModel.soundPlay(SoundCode.COIN_SOUND)
                     }
                 },
                 modifier = Modifier

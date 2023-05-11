@@ -6,7 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.paymong.common.code.SoundCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SoundViewModel (
     application: Application
@@ -37,26 +40,26 @@ class SoundViewModel (
 
 
     init {
-        mainButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+        viewModelScope.launch(Dispatchers.Main) {
+            mainButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
 
-        feedButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+            feedButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
 
-        trainingButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
-        trainingWinSound = soundPool.load(application, com.paymong.common.R.raw.win_sound, 1)
-        trainingLoseSound = soundPool.load(application, com.paymong.common.R.raw.lose_sound, 1)
+            trainingButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+            trainingWinSound = soundPool.load(application, com.paymong.common.R.raw.win_sound, 1)
+            trainingLoseSound = soundPool.load(application, com.paymong.common.R.raw.lose_sound, 1)
 
-        walkingButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+            walkingButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
 
-        battleButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
-        battleFindSound = soundPool.load(application, com.paymong.common.R.raw.battle_find_sound, 1)
-        battleWinSound = soundPool.load(application, com.paymong.common.R.raw.win_sound, 1)
-        battleLoseSound = soundPool.load(application, com.paymong.common.R.raw.lose_sound, 1)
-        battleAttackSound = soundPool.load(application, com.paymong.common.R.raw.attack_sound, 1)
-        battleDefenceSound = soundPool.load(application, com.paymong.common.R.raw.defence_sound, 1)
+            battleButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+            battleFindSound = soundPool.load(application, com.paymong.common.R.raw.battle_find_sound, 1)
+            battleWinSound = soundPool.load(application, com.paymong.common.R.raw.win_sound, 1)
+            battleLoseSound = soundPool.load(application, com.paymong.common.R.raw.lose_sound, 1)
+            battleAttackSound = soundPool.load(application, com.paymong.common.R.raw.attack_sound, 1)
+            battleDefenceSound = soundPool.load(application, com.paymong.common.R.raw.defence_sound, 1)
 
-        coinSound = soundPool.load(application, com.paymong.common.R.raw.coin_sound, 1)
-
-
+            coinSound = soundPool.load(application, com.paymong.common.R.raw.coin_sound, 1)
+        }
     }
 
     fun soundPlay (soundCode: SoundCode): Int {

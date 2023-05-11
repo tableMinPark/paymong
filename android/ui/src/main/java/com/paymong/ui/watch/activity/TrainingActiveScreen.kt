@@ -62,7 +62,7 @@ fun TrainingActive(
             .fillMaxHeight()
             .clickable {
                 if(!trainingViewModel.isTrainingEnd) {
-                    trainingViewModel.count++
+                    trainingViewModel.addCount()
                 }
             }
     ) {

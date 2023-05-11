@@ -68,24 +68,24 @@ fun MainInfo(
             }
 
             // 똥
-            when(mainViewModel.poopCount) {
-                1 -> Poops(0, 100, 75, 0, poopSize)
-                2 -> {
-                    Poops(0, 100, 75, 0, poopSize)
-                    Poops(90, 0, 80, 0, poopSize)
-                }
-                3 -> {
-                    Poops(0, 100, 75, 0, poopSize)
-                    Poops(90, 0, 80, 0, poopSize)
-                    Poops(30, 0, 92, 0, poopSize)
-                }
-                4 -> {
-                    Poops(0, 100, 75, 0, poopSize)
-                    Poops(90, 0, 80, 0, poopSize)
-                    Poops(30, 0, 92, 0, poopSize)
-                    Poops(0, 60, 95, 0, poopSize)
-                }
-            }
+//            when(mainViewModel.poopCount) {
+//                1 -> Poops(0, 100, 75, 0, poopSize)
+//                2 -> {
+//                    Poops(0, 100, 75, 0, poopSize)
+//                    Poops(90, 0, 80, 0, poopSize)
+//                }
+//                3 -> {
+//                    Poops(0, 100, 75, 0, poopSize)
+//                    Poops(90, 0, 80, 0, poopSize)
+//                    Poops(30, 0, 92, 0, poopSize)
+//                }
+//                4 -> {
+//                    Poops(0, 100, 75, 0, poopSize)
+//                    Poops(90, 0, 80, 0, poopSize)
+//                    Poops(30, 0, 92, 0, poopSize)
+//                    Poops(0, 60, 95, 0, poopSize)
+//                }
+//            }
         }
     }
 }

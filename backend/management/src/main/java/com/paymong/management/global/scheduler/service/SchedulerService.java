@@ -1,23 +1,22 @@
 package com.paymong.management.global.scheduler.service;
 
-import com.paymong.management.mong.scheduler.DeathScheduler;
-import com.paymong.management.mong.scheduler.HealthScheduler;
-import com.paymong.management.poop.scheduler.PoopScheduler;
+import com.paymong.management.global.scheduler.*;
+import com.paymong.management.global.scheduler.task.SleepTask;
+import com.paymong.management.mong.entity.Mong;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Component
 @RequiredArgsConstructor
 public class SchedulerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerService.class);
-    private final PoopScheduler poopScheduler;
+    private final SleepScheduler sleepScheduler;
     private final HealthScheduler healthScheduler;
-    private final DeathScheduler deathScheduler;
-
+    private final PoopScheduler poopScheduler;
+    private final SatietyScheduler satietyScheduler;
+    private final EvolutionScheduler evolutionScheduler;
     /*
     0 : poop
     1 : health
@@ -28,33 +27,14 @@ public class SchedulerService {
     6 : all
      */
 
-    public void startOf(Integer sc, Long mongId){
+    public void startScheduler(Mong mong){
 
-        if(sc == 0){
-            LOGGER.info("start poop scheduler filter");
-            poopScheduler.startScheduler(mongId);
-        }else if(sc == 1){
-            LOGGER.info("start health scheduler filter");
-            healthScheduler.startScheduler(mongId);
-        }else if(sc == 3){
-            LOGGER.info("start death scheduler filter");
-            deathScheduler.startScheduler(mongId);
-        }
+        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
+        healthScheduler.startScheduler(mong.getMongId());
+        poopScheduler.startScheduler(mong.getMongId());
+        satietyScheduler.startScheduler(mong.getMongId());
+        evolutionScheduler.startScheduler(mong.getMongId());
     }
 
-    public void stopOf(Integer sc, Long mongId){
-        LOGGER.info("stop {} scheduler filter", sc);
-        if(sc == 0){
-            poopScheduler.stopScheduler(mongId);
-        }else if(sc == 1){
-            healthScheduler.stopScheduler(mongId);
-        }else if(sc == 3){
-            deathScheduler.stopScheduler(mongId);
-        }else if(sc == 6){
-            poopScheduler.stopScheduler(mongId);
-            healthScheduler.stopScheduler(mongId);
-            deathScheduler.stopScheduler(mongId);
-        }
-    }
 
 }

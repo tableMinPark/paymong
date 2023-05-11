@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPayDto {
-    String content;
-    Integer price;
+@EqualsAndHashCode
+public class FindMongLevelCodeDto {
+    private Integer tier;
+    private Integer level;
+    private Integer type;
 }

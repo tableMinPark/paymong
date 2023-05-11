@@ -1,13 +1,11 @@
 package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
-import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.*;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
-import com.paymong.management.mong.dto.AddMongReqDto;
-import com.paymong.management.mong.dto.AddMongResDto;
-import com.paymong.management.mong.dto.FindMongReqDto;
-import com.paymong.management.mong.dto.FindMongResDto;
+import com.paymong.management.mong.dto.*;
 import com.paymong.management.mong.service.MongService;
 import com.paymong.management.mong.vo.AddMongReqVo;
 import com.paymong.management.mong.vo.AddMongResVo;
@@ -30,24 +28,31 @@ public class MongController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongController.class);
     private final MongService mongService;
-    private final SchedulerService schedulerService;
+    private final DeathScheduler deathScheduler;
 
     @Value("${header.member}")
     String headerMember;
+
+    @Value("${header.mong}")
+    String headerMong;
     /* 몽 생성 */
     @PostMapping
     public ResponseEntity<Object> addMong(@RequestBody AddMongReqDto addMongReqDto, HttpServletRequest httpServletRequest) throws Exception{
         try{
-            LOGGER.info("name : {}", addMongReqDto.getName());
             if(addMongReqDto.getName() == null){
                 throw new NullPointerException();
             }
-            Long memberId = Long.parseLong(httpServletRequest.getHeader(headerMember));
-            if(memberId == null) throw new NullPointerException();
+            String memberIdStr = httpServletRequest.getHeader(headerMember);
 
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+
+            Long memberId = Long.parseLong(memberIdStr);
+
+            LOGGER.info("새로운 몽을 추가합니다. id : {}", memberId);
             AddMongReqVo addMongReqVo = new AddMongReqVo(addMongReqDto);
             addMongReqVo.setMemberId(memberId);
             AddMongResVo addMongResVo = mongService.addMong(addMongReqVo);
+            mongService.startScheduler(addMongResVo.getMongId());
             AddMongResDto addMongResDto = new AddMongResDto(addMongResVo);
             return ResponseEntity.status(HttpStatus.OK).body(addMongResDto);
         }catch (NullPointerException e){
@@ -56,6 +61,9 @@ public class MongController {
         }catch(NotFoundMongException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (AlreadyExistMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.ALREADY_EXIST.getCode(), ManagementStateCode.ALREADY_EXIST.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.ALREADY_EXIST));
         }
 
     }
@@ -81,19 +89,57 @@ public class MongController {
 
     @GetMapping("/start")
     public ResponseEntity<Object> startReduceHealth(@RequestParam("mongId") Long mongId){
-        schedulerService.startOf(1, mongId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        try {
+            mongService.startScheduler(mongId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }
     }
 
-    @GetMapping("/stop")
-    public ResponseEntity<Object> stopReduceHealth(@RequestParam("mongId") Long mongId){
-        schedulerService.stopOf(1, mongId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    @GetMapping("/death")
+    public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
+        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+        deathScheduler.startScheduler(mongId);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
     }
 
-    @GetMapping("/death/stop")
-    public ResponseEntity<Object> deathMong(@RequestParam("mongId") Long mongId){
-        schedulerService.stopOf(3, mongId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    @GetMapping("/pause")
+    public ResponseEntity<Object> deathPauseMong(HttpServletRequest httpServletRequest){
+        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+        deathScheduler.pauseScheduler(mongId);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/restart")
+    public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
+        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+        deathScheduler.restartScheduler(mongId);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @PutMapping("/evolution")
+    public ResponseEntity<Object> evolutionMong(HttpServletRequest httpServletRequest){
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("진화를 시작합니다. id : {}", mongIdStr);
+        try {
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
+            EvolutionMongResDto evolutionMongResDto = mongService.evolutionMong(mongId);
+            return  ResponseEntity.ok().body(evolutionMongResDto);
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (GatewayException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.GATEWAY_ERROR.getCode(), ManagementStateCode.GATEWAY_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.GATEWAY_ERROR));
+        }catch (UnsuitableException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
+        }
     }
 }

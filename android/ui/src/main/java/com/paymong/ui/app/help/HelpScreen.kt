@@ -1,28 +1,36 @@
 package com.paymong.ui.app.help
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.HelpViewModel
+import com.paymong.ui.app.collect.Btn
+import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 
 @Composable
 fun Help(
-    helpViewModel : HelpViewModel = viewModel()
+    navController: NavController,
+    soundViewModel: SoundViewModel
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+    Scaffold(
+        topBar = { TopBar("도움말", navController, AppNavItem.Main.route, soundViewModel) },
+        backgroundColor = PayMongNavy
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(text = helpViewModel.content, textAlign = TextAlign.Center)
+        Box(Modifier.padding(it)){
+            BgGif()
         }
     }
 }
@@ -30,7 +38,9 @@ fun Help(
 @Preview(showBackground = true)
 @Composable
 fun HelpPreview() {
+    val navController = rememberNavController()
+    val soundViewModel:SoundViewModel = viewModel()
     PaymongTheme {
-        Help(viewModel())
+        Help(navController, soundViewModel)
     }
 }

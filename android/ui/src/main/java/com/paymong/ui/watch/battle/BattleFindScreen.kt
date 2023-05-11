@@ -14,8 +14,9 @@ import androidx.wear.compose.material.ButtonDefaults
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
+import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.BattleViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 
@@ -28,6 +29,7 @@ fun BattleFind(
 ) {
     Background(true)
 
+    soundViewModel.soundPlay(SoundCode.BATTLE_FIND_SOUND)
     val playerResourceCodeA = painterResource(battleViewModel.playerCodeA.resourceCode)
     val playerResourceCodeB = painterResource(battleViewModel.playerCodeB.resourceCode)
 

@@ -18,7 +18,7 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

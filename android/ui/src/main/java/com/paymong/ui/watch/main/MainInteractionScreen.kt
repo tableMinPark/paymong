@@ -51,6 +51,8 @@ fun MainInteraction(
         }
     }
 
+    val interactionBnt = painterResource(R.drawable.interaction_bnt)
+
     Column(
         modifier = Modifier
             .padding(15.dp)//, bottom = 15.dp)
@@ -79,7 +81,7 @@ fun MainInteraction(
                     )
                     {
                         val battle = painterResource(R.drawable.battle)
-                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
                         Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                         Image(painter = interactionBntBorder, contentDescription = null,)
@@ -113,7 +115,7 @@ fun MainInteraction(
                         contentAlignment = Alignment.Center
                     ){
                         val feed = painterResource(R.drawable.feed)
-                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_orange)
                         Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                         Image(painter = interactionBntBorder, contentDescription = null,)
@@ -142,7 +144,7 @@ fun MainInteraction(
                         contentAlignment = Alignment.Center
                     ){
                         val activity = painterResource(R.drawable.activity)
-                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
+//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_green)
                         Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                         Image(painter = interactionBntBorder, contentDescription = null,)
@@ -182,7 +184,7 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ) {
                     val sleep = painterResource(R.drawable.sleep)
-                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
+//                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
                     val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
                     Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                     Image(painter = interactionBntBorder, contentDescription = null,)
@@ -213,7 +215,7 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ){
                     val poop = painterResource(R.drawable.poop)
-                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
+//                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
                     val interactionBntBorder = painterResource(R.drawable.interaction_bnt_purple)
                     Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
                     Image(painter = interactionBntBorder, contentDescription = null,)

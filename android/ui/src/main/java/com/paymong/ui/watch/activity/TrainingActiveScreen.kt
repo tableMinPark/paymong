@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.TrainingViewModel
@@ -59,11 +61,8 @@ fun TrainingActive(
         modifier = Modifier
             .fillMaxHeight()
             .clickable {
-                trainingViewModel.screenClick() {
-                    navController.navigate(WatchNavItem.Activity.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-                    }
+                if(!trainingViewModel.isTrainingEnd) {
+                    trainingViewModel.count++
                 }
             }
     ) {
@@ -76,75 +75,7 @@ fun TrainingActive(
 
         // 훈련 끝
         if (trainingViewModel.isTrainingEnd) {
-            if (trainingViewModel.count >= 50) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(boxHeight.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.success),
-                        contentDescription = "success",
-                        modifier = Modifier
-                            .width(successWidth.dp)
-                            .height(successHeight.dp)
-                            .padding(bottom = successPadding.dp)
-                    )
-                }
-                soundViewModel.soundPlay(SoundCode.TRAINING_WIN)
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(boxHeight.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.fail),
-                        contentDescription = "fail",
-                        modifier = Modifier
-                            .width(failWidth.dp)
-                            .height(failHeight.dp)
-                            .padding(bottom = failPadding.dp)
-
-                    )
-                }
-                soundViewModel.soundPlay(SoundCode.TRAINING_LOSE)
-            }
-        } 
-        // 훈련 진행 중
-        else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            ) {
-                if ( mongCode.code == "CH444") {
-                    Box(
-                        modifier = Modifier
-                            .width(characterSize.dp)
-                            .height(characterSize.dp)
-                    ) {
-                        LoadingGif()
-                    }
-                } else {
-                    Image(
-                        painter = mongResourceCode,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(characterSize.dp)
-                            .height(characterSize.dp)
-                    )
-                }
-            }
-        }
-        
-        // 훈련 끝 (버튼)
-        if (trainingViewModel.isTrainingEnd) {
+            TrainingEnd(successHeight, successWidth, successHeight, successPadding, soundViewModel, failHeight, failWidth, failPadding, trainingViewModel)
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -160,7 +91,10 @@ fun TrainingActive(
                         .fillMaxHeight()
                         .clickable {
                             soundViewModel.soundPlay(SoundCode.TRAINING_BUTTON)
-                            trainingViewModel.screenClick() {
+
+                            if(trainingViewModel.isTrainingEnd) {
+                                trainingViewModel.isTrainingEnd = false
+                                watchViewModel.point -= 50
                                 navController.navigate(WatchNavItem.Activity.route) {
                                     popUpTo(navController.graph.findStartDestination().id)
                                     launchSingleTop = true
@@ -179,24 +113,112 @@ fun TrainingActive(
                     textAlign = TextAlign.Center,
                     fontSize = exitFontSize.sp,
                     color = Color(0xFF0C4DA2)
-                ) }
-        }
-        // 훈련 진행중 (버튼)
-        else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(20.dp)
-                    .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            ) {
-                Text(
-                    text = "터치해서 훈련하기",
-                    fontFamily = dalmoori,
-                    fontSize = infoFontSize.sp
                 )
             }
         }
+        // 훈련 진행 중
+        else
+            Training(mongCode, mongResourceCode, characterSize, infoFontSize)
+    }
+}
+
+
+@Composable
+fun TrainingEnd(
+    boxHeight: Int,
+    successWidth: Int,
+    successHeight: Int,
+    successPadding: Int,
+    soundViewModel : SoundViewModel,
+    failHeight: Int,
+    failWidth: Int,
+    failPadding: Int,
+    trainingViewModel : TrainingViewModel,
+) {
+    if (trainingViewModel.count >= 50) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(boxHeight.dp)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.success),
+                contentDescription = "success",
+                modifier = Modifier
+                    .width(successWidth.dp)
+                    .height(successHeight.dp)
+                    .padding(bottom = successPadding.dp)
+            )
+        }
+        soundViewModel.soundPlay(SoundCode.TRAINING_WIN)
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(boxHeight.dp)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.fail),
+                contentDescription = "fail",
+                modifier = Modifier
+                    .width(failWidth.dp)
+                    .height(failHeight.dp)
+                    .padding(bottom = failPadding.dp)
+
+            )
+        }
+        soundViewModel.soundPlay(SoundCode.TRAINING_LOSE)
+    }
+}
+
+@Composable
+fun Training(
+    mongCode: MongCode,
+    mongResourceCode: Painter,
+    characterSize: Int,
+    infoFontSize: Int
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ) {
+        if ( mongCode.code == "CH444") {
+            Box(
+                modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp)
+            ) {
+                LoadingGif()
+            }
+        } else {
+            Image(
+                painter = mongResourceCode,
+                contentDescription = null,
+                modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp)
+            )
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .height(20.dp)
+            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ) {
+        Text(
+            text = "터치해서 훈련하기",
+            fontFamily = dalmoori,
+            fontSize = infoFontSize.sp
+        )
     }
 }
 

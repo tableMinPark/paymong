@@ -26,6 +26,21 @@ class AuthRepository (
         }
     }
 
+    fun watchLogin(loginReqDto: LoginReqDto): Flow<Boolean> = flow {
+        val response = api.watchLogin(loginReqDto)
+        if (response.code() == 200) {
+            response.body()?.let {
+                DataApplication.prefs.setString("accessToken", response.body()!!.accessToken)
+                DataApplication.prefs.setString("refreshToken", response.body()!!.refreshToken)
+                Log.d("login - Call - accessToken", response.body()!!.accessToken)
+                Log.d("login - Call - refreshToken", response.body()!!.refreshToken)
+                emit(true)
+            }
+        } else {
+            emit(false)
+        }
+    }
+
     fun reissue(): Flow<Boolean> = flow {
         val response = api.reissue()
 

@@ -23,7 +23,10 @@ enum class ToastMessage(
     BATTLE_NOT_MATCHING("근처에 매칭 상대가 없습니다."),
 
     // 훈련
-    TRAINING_NOT_POINT("포인트가 부족합니다.")
+    TRAINING_NOT_POINT("포인트가 부족합니다."),
+
+    // 버튼 막기
+    BUTTON_NOT_ACTIVE("알 상태에는 불가능합니다.")
 
 }
 

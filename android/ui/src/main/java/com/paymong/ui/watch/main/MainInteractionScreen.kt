@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.main
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,8 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -17,9 +20,11 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
+import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.*
+import com.paymong.ui.watch.common.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -33,6 +38,7 @@ fun MainInteraction(
     watchViewModel : WatchViewModel,
     soundViewModel : SoundViewModel
 ) {
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val buttonSize = if(screenWidthDp < 200) 45 else 57
@@ -41,6 +47,8 @@ fun MainInteraction(
     val boxWidth = if(screenWidthDp < 200) 60 else 80
     val marginTop = if(screenWidthDp < 200) 40 else 50
     val thirdRowPadding = if(screenWidthDp < 200) 12 else 15
+    val eggState = watchViewModel.mong.mongCode.code
+    var isBtnActive = true
 
     if(watchViewModel.isClicked){
         watchViewModel.isClicked = false
@@ -52,6 +60,11 @@ fun MainInteraction(
     }
 
     val interactionBnt = painterResource(R.drawable.interaction_bnt)
+
+    if (eggState.slice(0..3) == "CH00") {
+        isBtnActive = false
+    }
+
 
     Column(
         modifier = Modifier
@@ -67,8 +80,13 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
+                            if (isBtnActive == true) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Battle.route)
+                            }
+                            else {
+                                showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)
+                            }
                         }
                         .width(boxWidth.dp)
                         .height(boxHeight.dp),
@@ -101,8 +119,13 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
+                            if (isBtnActive == true) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Feed.route)
+                            }
+                            else {
+                                showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)
+                            }
                         }
                         .width(boxWidth.dp)
                         .height(boxHeight.dp)
@@ -131,8 +154,13 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
-                            navController.navigate(WatchNavItem.Activity.route)
+                            if (isBtnActive == true) {
+                                soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                                navController.navigate(WatchNavItem.Activity.route)
+                            }
+                            else {
+                                showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)
+                            }
                         }
                         .width(boxWidth.dp)
                         .height(boxHeight.dp)
@@ -169,10 +197,15 @@ fun MainInteraction(
             Box(
                 modifier = Modifier
                     .clickable {
-                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
-                        watchViewModel.isClicked = true
-                        animationState.value = AnimationCode.Sleep
-                        watchViewModel.sleep()
+                        if (isBtnActive == true) {
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                            watchViewModel.isClicked = true
+                            animationState.value = AnimationCode.Sleep
+                            watchViewModel.sleep()
+                        }
+                        else {
+                            showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)
+                        }
                     }
                     .width(boxWidth.dp)
                     .height(boxHeight.dp)
@@ -200,10 +233,15 @@ fun MainInteraction(
             Box (
                 modifier = Modifier
                     .clickable {
-                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
-                        animationState.value = AnimationCode.Poop
-                        watchViewModel.poop()
-                        watchViewModel.isClicked = true
+                        if (isBtnActive == true) {
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                            animationState.value = AnimationCode.Poop
+                            watchViewModel.poop()
+                            watchViewModel.isClicked = true
+                        }
+                        else {
+                            showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)
+                        }
                     }
                     .width(boxWidth.dp)
                     .height(boxHeight.dp)

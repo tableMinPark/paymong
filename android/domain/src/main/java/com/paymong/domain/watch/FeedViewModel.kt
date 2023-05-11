@@ -43,30 +43,36 @@ class FeedViewModel (
         }
     }
 
-    private fun findPayPoint(){
+    private fun findPayPoint() {
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findMember()
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{ data ->
+                .collect { data ->
                     point = data.point.toInt()
                 }
         }
     }
 
-    fun getFoodList(){
+    fun getFoodList() {
         viewModelScope.launch(Dispatchers.IO) {
             managementRepository.getFoodList(foodCategory)
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{
-                        data ->
-                        foodList.clear()
-                        for(i in data.indices){
-                            foodList.add(Food(data[i].name, data[i].foodCode, data[i].price, data[i].lastBuy))
-                        }
+                .collect { data ->
+                    foodList.clear()
+                    for (i in data.indices) {
+                        foodList.add(
+                            Food(
+                                data[i].name,
+                                data[i].foodCode,
+                                data[i].price,
+                                data[i].lastBuy
+                            )
+                        )
+                    }
                     changeCurrentFoodPosition()
                     currentCategory = foodCategory
                     foodCategory = ""
@@ -91,26 +97,26 @@ class FeedViewModel (
 
     fun selectButtonClick(fc: String) {
         // food
-        if(fc == "FD"){
+        if (fc == "FD") {
             viewModelScope.launch(Dispatchers.IO) {
                 managementRepository.eatFood(foodList[currentFoodPosition].foodCode)
                     .catch {
                         it.printStackTrace()
                     }
-                    .collect{
+                    .collect {
                         Log.d("buy food", foodList[currentFoodPosition].toString())
                         success.value = false
                     }
             }
         }
         // snack
-        else{
+        else {
             viewModelScope.launch(Dispatchers.IO) {
                 managementRepository.eatSnack(foodList[currentFoodPosition].foodCode)
                     .catch {
                         it.printStackTrace()
                     }
-                    .collect{
+                    .collect {
                         Log.d("buy snack", foodList[currentFoodPosition].toString())
                     }
             }
@@ -122,11 +128,13 @@ class FeedViewModel (
         name = nowFood.name
         foodCode = nowFood.foodCode
         price = nowFood.price
-        if(nowFood.lastBuy != null) {
+
+        if (nowFood.lastBuy != null) {
             isCanBuy = Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
-        }
-        if(nowFood.price > point) {
+        } else if (nowFood.price > point) {
             isCanBuy = false
+        } else {
+            isCanBuy = true
         }
     }
 }

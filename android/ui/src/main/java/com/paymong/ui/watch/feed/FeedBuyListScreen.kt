@@ -192,6 +192,8 @@ fun FeedBuyList(
                                 modifier = Modifier
                                     .width(foodImageSize.dp)
                                     .height(foodImageSize.dp)
+                                    .wrapContentHeight(Alignment.CenterVertically)
+                                    .wrapContentWidth(Alignment.CenterHorizontally)
                             ) {
                                 LoadingGif()
                             }
@@ -260,10 +262,9 @@ fun FeedBuyList(
                 ) {
                     if(!feedViewModel.isCanBuy){
                         Image(
-                            painter = painterResource(id = R.drawable.blue_bnt),
-                            contentDescription = "blue_bnt",
-                            modifier = Modifier.fillMaxWidth(),
-                            colorFilter = ColorFilter.tint(Color.Black)
+                            painter = painterResource(id = R.drawable.gray_btn),
+                            contentDescription = "gray_btn",
+                            modifier = Modifier.fillMaxWidth()
                         )
                     } else {
                         Image(
@@ -279,20 +280,40 @@ fun FeedBuyList(
                             .fillMaxWidth()
                             .fillMaxHeight()
                     ) {
+
+                        if(!feedViewModel.isCanBuy){
                         Image(
-                            painter = painterResource(id = R.drawable.pointlogo),
-                            contentDescription = "pointlogo",
+                            painter = painterResource(id = R.drawable.point_logo_gray),
+                            contentDescription = "point_logo_gray",
                             modifier = Modifier
                                 .size(purchasePointLogoSize.dp)
                                 .padding(bottom = 2.dp)
-                        )
+                        ) } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.pointlogo),
+                                contentDescription = "pointlogo",
+                                modifier = Modifier
+                                    .size(purchasePointLogoSize.dp)
+                                    .padding(bottom = 2.dp)
+                            )
+
+                        }
+                        if(!feedViewModel.isCanBuy){
                         Text(
                             text = String.format(" %d", feedViewModel.price),
                             textAlign = TextAlign.Center,
                             fontFamily = dalmoori,
-                            color = Color(0xFF0C4DA2),
+                            color = Color.DarkGray,
                             fontSize = purchaseFontSize.sp
-                        )
+                        ) } else {
+                            Text(
+                                text = String.format(" %d", feedViewModel.price),
+                                textAlign = TextAlign.Center,
+                                fontFamily = dalmoori,
+                                color = Color(0xFF0C4DA2),
+                                fontSize = purchaseFontSize.sp
+                            )
+                        }
                     }
                 }
             }

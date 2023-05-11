@@ -23,7 +23,7 @@ public class StartConfig implements CommandLineRunner {
     private final DeathScheduler deathScheduler;
     private final EvolutionScheduler evolutionScheduler;
     private final SchedulerService schedulerService;
-    private final MongRepository mongRepository;
+//    private final MongRepository mongRepository;
     @Override
     public void run(String... args) throws Exception {
         log.info("시자~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~악 하겠습니다.");
@@ -33,7 +33,7 @@ public class StartConfig implements CommandLineRunner {
         redisService.getRedisMong("death").stream().forEach(evolutionScheduler::restartScheduler);
 
         log.info("나머지 스케줄러를 가동합니다.");
-        List<Mong> mongs = mongRepository.findByActive(true);
-        mongs.stream().forEach(schedulerService::startScheduler);
+//        List<Mong> mongs = mongRepository.findByActive(true);
+//        mongs.stream().forEach(schedulerService::startScheduler);
     }
 }

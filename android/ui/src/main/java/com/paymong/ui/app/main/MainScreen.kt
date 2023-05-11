@@ -34,7 +34,9 @@ import com.paymong.common.R
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
@@ -49,6 +51,7 @@ import java.util.*
 fun Main(
     navController: NavController,
     appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ) {
     LaunchedEffect(key1 = true) {
         appViewModel.mainInit()
@@ -69,25 +72,15 @@ fun Main(
     // state 는 모두 공통 코드화 시켜야 함
     val characterState = remember { mutableStateOf(MongCode.CH444) }
 
-    Top(navController, appViewModel)
-    MakeEgg(navController, appViewModel)
-    Btn(navController, appViewModel)
+    Top(navController, appViewModel, soundViewModel)
+    MakeEgg(navController, appViewModel,soundViewModel)
+    Btn(navController, appViewModel, soundViewModel)
 }
 
 @Composable
-fun Help(navController: NavController){
-
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
-
-
+fun Help(navController: NavController,
+         soundViewModel: SoundViewModel)
+{
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -98,7 +91,7 @@ fun Help(navController: NavController){
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        ButtonSoundPlay();
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         navController.navigate(AppNavItem.Help.route)
                     }
                 )
@@ -113,17 +106,10 @@ fun Help(navController: NavController){
 @Composable
 fun Info(
     appViewModel: AppViewModel,
-    navController: NavController
+    navController: NavController,
+    soundViewModel: SoundViewModel
 ){
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
 
     Box(
         contentAlignment = Alignment.Center
@@ -135,7 +121,7 @@ fun Info(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        ButtonSoundPlay();
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         navController.navigate(AppNavItem.InfoDetail.route)
                     }
                 )
@@ -149,18 +135,11 @@ fun Info(
 @Composable
 fun Things(
     appViewModel: AppViewModel,
-    navController: NavController
+    navController: NavController,
+    soundViewModel: SoundViewModel
 ){
 
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
 
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -171,7 +150,7 @@ fun Things(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        ButtonSoundPlay();
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         navController.navigate(AppNavItem.Help.route)
                     }
                 )
@@ -183,7 +162,8 @@ fun Things(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {ButtonSoundPlay();
+                    onClick = {
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         navController.navigate(AppNavItem.SmartThings.route)
                     }
                 )
@@ -194,18 +174,9 @@ fun Things(
 @Composable
 fun Point(
     navController: NavController,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
-
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
 
     Box(
         contentAlignment = Alignment.Center
@@ -217,7 +188,10 @@ fun Point(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { ButtonSoundPlay(); navController.navigate(AppNavItem.PayPoint.route) }
+                    onClick = {
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
+                        navController.navigate(AppNavItem.PayPoint.route)
+                    }
                 )
                 .padding(horizontal = 20.dp)
         )
@@ -235,7 +209,7 @@ fun Point(
                 text = NumberFormat.getNumberInstance(Locale.getDefault()).format(appViewModel.point),
                 textAlign = TextAlign.Center,
                 fontFamily = dalmoori, fontSize = 18.sp,
-                color = Color.Black, overflow = TextOverflow.Ellipsis, maxLines = 1
+                color =  Color(0xFF0C4DA2), overflow = TextOverflow.Ellipsis, maxLines = 1
             )
         }
     }
@@ -244,7 +218,9 @@ fun Point(
 @Composable
 fun Top(
     navController: NavController,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
+
 ){
     Row(
         modifier = Modifier
@@ -255,11 +231,11 @@ fun Top(
         verticalAlignment = Alignment.Top
     ) {
         Row (    horizontalArrangement = Arrangement.SpaceBetween){
-            Help(navController)
-            Info(appViewModel, navController)
-            Things(appViewModel, navController)
+            Help(navController, soundViewModel)
+            Info(appViewModel, navController, soundViewModel)
+            Things(appViewModel, navController, soundViewModel)
         }
-        Point(navController, appViewModel)
+        Point(navController, appViewModel, soundViewModel)
     }
 }
 
@@ -269,7 +245,8 @@ fun NicknameDialog(
     setShowDialog: (Boolean) -> Unit,
     setShowSleepDialog: (Boolean) -> Unit,
     setValue: (String) -> Unit,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
     val noNickname = remember { mutableStateOf("") }
     val name = remember { mutableStateOf(value) }
@@ -307,6 +284,7 @@ fun NicknameDialog(
 
                 Button(
                     onClick = {
+                        soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         if (name.value.isEmpty()) {
                             noNickname.value = "닉네임 입력은 필수에요🥺"
                             Log.d("error",noNickname.value)
@@ -331,7 +309,8 @@ fun NicknameDialog(
 @Composable
 fun TimePicker(
     time: LocalTime,
-    onTimeSelected: (LocalTime) -> Unit
+    onTimeSelected: (LocalTime) -> Unit,
+    soundViewModel: SoundViewModel
 ) {
     val hour by remember { mutableStateOf(time.hour) }
     val minute by remember { mutableStateOf(time.minute/10*10) }
@@ -377,6 +356,7 @@ fun TimePicker(
     }
     Button(
         onClick = {
+            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
             val selectedTime = LocalTime.of(hourScrollState.firstVisibleItemIndex, minuteScrollState.firstVisibleItemIndex * 10)
             onTimeSelected(selectedTime)
         },
@@ -393,7 +373,8 @@ fun SleepDialog(
     setShowSleepDialog: (Boolean) -> Unit,
     setShowWakeDialog: (Boolean) -> Unit,
     name: String,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
     Dialog(onDismissRequest = { setShowSleepDialog(false) }) {
         Surface(
@@ -421,7 +402,9 @@ fun SleepDialog(
                         setShowSleepDialog(false)
                         setShowWakeDialog(true)
                         appViewModel.mongsleepStart = newTime.toString()
-                    }
+                    },
+                    soundViewModel = soundViewModel
+
                 )
             }
         }
@@ -432,7 +415,8 @@ fun WakeDialog(
     setWakeValue: (LocalTime) -> Unit,
     setShowWakeDialog: (Boolean) -> Unit,
     name: String,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
     Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
         Surface(
@@ -460,7 +444,8 @@ fun WakeDialog(
                         setShowWakeDialog(false)
                         appViewModel.mongsleepEnd = newTime.toString()
                         appViewModel.addMong()
-                    }
+                    },
+                    soundViewModel = soundViewModel
                 )
             }
         }
@@ -470,7 +455,8 @@ fun WakeDialog(
 @Composable
 fun MakeEgg(
     navController: NavController,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
     val dialogOpen = remember {mutableStateOf(false)}
     val sleepDialogOpen = remember {mutableStateOf(false)}
@@ -484,7 +470,8 @@ fun MakeEgg(
             setShowDialog = { dialogOpen.value = it },
             setShowSleepDialog = { sleepDialogOpen.value = it },
             setValue = { name.value = it },
-            appViewModel
+            appViewModel,
+            soundViewModel
         )
     }
 
@@ -494,7 +481,8 @@ fun MakeEgg(
             setShowSleepDialog = { sleepDialogOpen.value = it },
             setShowWakeDialog = { wakeDialogOpen.value = it },
             name.value,
-            appViewModel
+            appViewModel,
+            soundViewModel
         )
     }
     if(wakeDialogOpen.value){
@@ -502,7 +490,8 @@ fun MakeEgg(
             setWakeValue = { selectedTime.value },
             setShowWakeDialog = { wakeDialogOpen.value = it },
             name.value,
-            appViewModel
+            appViewModel,
+            soundViewModel
         )
     }
 
@@ -604,17 +593,9 @@ fun MakeEgg(
 @Composable
 fun Btn(
     navController: NavController,
-        appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    soundViewModel: SoundViewModel
 ){
-    val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
-        .build()
-    val context = LocalContext.current
-    val buttonSound = soundPool.load(context, com.paymong.ui.R.raw.button_sound, 1)
-
-    fun ButtonSoundPlay () {
-        soundPool.play(buttonSound, 0.5f, 0.5f, 1, 0, 1.0f)
-    }
 
     Row(
         modifier = Modifier
@@ -636,7 +617,7 @@ fun Btn(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-                            ButtonSoundPlay();
+                            soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(AppNavItem.Collect.route)
                         }
                     )
@@ -660,7 +641,7 @@ fun Btn(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                ButtonSoundPlay();
+                                soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                                 navController.navigate(AppNavItem.Condition.route)
                             }
                         )
@@ -708,7 +689,8 @@ fun CreateImageList() {
 fun InfoPreview() {
     val navController = rememberNavController()
     val appViewModel:AppViewModel = viewModel()
+    val soundViewModel:SoundViewModel = viewModel()
     PaymongTheme {
-        MakeEgg(navController, appViewModel)
+        MakeEgg(navController, appViewModel, soundViewModel)
     }
 }

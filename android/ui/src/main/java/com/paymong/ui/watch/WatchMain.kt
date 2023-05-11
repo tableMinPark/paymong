@@ -14,7 +14,7 @@ import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.BattleViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.watch.FeedViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*

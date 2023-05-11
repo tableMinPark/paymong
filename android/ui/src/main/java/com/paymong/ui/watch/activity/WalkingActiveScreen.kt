@@ -21,7 +21,7 @@ import com.paymong.common.R
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.WalkingViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background

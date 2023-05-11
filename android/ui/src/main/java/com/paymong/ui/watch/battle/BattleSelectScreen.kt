@@ -30,7 +30,7 @@ import com.paymong.common.code.MessageType
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.BattleViewModel
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 

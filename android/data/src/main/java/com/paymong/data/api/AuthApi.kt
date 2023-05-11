@@ -16,7 +16,7 @@ interface AuthApi {
     @POST("/auth/login")
     suspend fun login(@Body loginReqDto: LoginReqDto) : Response<LoginResDto>
 
-    @POST("/auth/login")
+    @POST("/auth/login/watch")
     suspend fun watchLogin(@Body loginReqDto: LoginReqDto) : Response<LoginResDto>
 
     @POST("/auth/reissue")

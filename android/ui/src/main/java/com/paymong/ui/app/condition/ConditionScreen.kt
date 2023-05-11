@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.ConditionViewModel
 import com.paymong.ui.theme.*
@@ -30,10 +31,11 @@ import com.paymong.ui.app.component.TopBar
 @Composable
 fun Condition(
     navController: NavController,
-    conditionViewModel : ConditionViewModel = viewModel()
+    soundViewModel:SoundViewModel,
+    conditionViewModel : ConditionViewModel = viewModel(),
 ) {
     Scaffold(
-        topBar = { TopBar("${conditionViewModel.mongStats.name}는(은)?", navController, AppNavItem.Main.route) },
+        topBar = { TopBar("${conditionViewModel.mongStats.name}는(은)?", navController, AppNavItem.Main.route, soundViewModel) },
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){

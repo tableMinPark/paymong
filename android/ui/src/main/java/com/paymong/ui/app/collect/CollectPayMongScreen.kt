@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.code.MongCode
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.CollectPayMongViewModel
 import com.paymong.domain.entity.Collect
 import com.paymong.ui.app.component.TopBar
@@ -36,6 +37,7 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun CollectPayMong(
     navController: NavController,
+    soundViewModel: SoundViewModel,
     collectPayMongViewModel: CollectPayMongViewModel = viewModel()
 ) {
     collectPayMongViewModel.mong()
@@ -44,7 +46,7 @@ fun CollectPayMong(
         verticalArrangement = Arrangement.Center
     ) {
         Scaffold(
-            topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route)},
+            topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route, soundViewModel)},
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
@@ -175,7 +177,8 @@ fun ImageList(list : List<Collect>, index:Int){
 @Composable
 fun CollectPayMongPreview() {
     val navController = rememberNavController()
+    val soundViewModel: SoundViewModel = viewModel()
     PaymongTheme {
-        CollectPayMong(navController)
+        CollectPayMong(navController, soundViewModel)
     }
 }

@@ -26,6 +26,7 @@ import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PayMongRed200
@@ -35,7 +36,8 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun Login(
     navController: NavController,
-    appLandinglViewModel : AppLandinglViewModel
+    appLandinglViewModel : AppLandinglViewModel,
+    soundViewModel: SoundViewModel
 ) {
     LaunchedEffect(key1 = true) {
         // 웨어러블 최초 등록 여부 확인
@@ -172,8 +174,7 @@ fun Login(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                val google = painterResource(R.drawable.google_login)
-
+                val google = painterResource(R.drawable.wearable_connect)
                 Image(painter = google, contentDescription = null,
                     modifier = Modifier.clickable(
                         interactionSource = remember { MutableInteractionSource() },

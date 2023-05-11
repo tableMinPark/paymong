@@ -25,7 +25,7 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.TrainingViewModel
 import com.paymong.ui.theme.dalmoori
 
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif

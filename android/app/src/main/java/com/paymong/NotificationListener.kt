@@ -28,7 +28,6 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var messageClient: MessageClient
 
-
     private fun thingsAlarm(thingsCode: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -126,34 +125,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         } catch (e: Exception) { e.printStackTrace() }
     }
 
-    private fun thingsAlaram(thingsCode: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val nodes = capabilityClient
-                    .getCapability(CAPABILITY_WEAR_APP, CapabilityClient.FILTER_REACHABLE)
-                    .await()
-                    .nodes
 
-                // Send a message to all nodes in parallel
-                nodes.map { node ->
-                    async {
-                        if (node.id != "") {
-                            messageClient.sendMessage(
-                                node.id,
-                                START_WEAR_ACTIVITY_PATH,
-                                thingsCode.toByteArray()
-                            )
-                                .await()
-                        }
-                    }
-                }.awaitAll()
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-            }
-        }
-    }
 
     override fun onCapabilityChanged(p0: CapabilityInfo) {
         TODO("Not yet implemented")

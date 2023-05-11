@@ -17,7 +17,7 @@ class WatchDataLayerListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
-
+        Log.d("수신테스트",messageEvent.path )
         when (messageEvent.path) {
             START_WEAR_ACTIVITY_PATH -> {
                 val playerId = messageEvent.data.decodeToString()

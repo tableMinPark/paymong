@@ -27,7 +27,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.R
+import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.SmartThingsViewModel
 import com.paymong.ui.app.component.TopBar
 import com.paymong.ui.theme.*
@@ -35,10 +37,11 @@ import com.paymong.ui.theme.*
 @Composable
 fun AddSmartThings(
     navController: NavController,
+    soundViewModel: SoundViewModel,
     smartThingsViewModel: SmartThingsViewModel = viewModel()
 ) {
     Scaffold(
-        topBar = { TopBar("스마트싱스", navController, AppNavItem.SmartThings.route) },
+        topBar = { TopBar("스마트싱스", navController, AppNavItem.SmartThings.route, soundViewModel) },
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)) {
@@ -85,6 +88,7 @@ fun AddSmartThings(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = {
+                                    soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                                     if (smartThingsViewModel.routine == "") {
                                         msg.value = "루틴 이름을 입력해주세요."
                                         dialogOpen.value = true
@@ -94,6 +98,7 @@ fun AddSmartThings(
                                     }
 
                                     if(smartThingsViewModel.routine != "" && smartThingsViewModel.isSelect != -1){
+
                                         smartThingsViewModel.addThings()
                                         smartThingsViewModel.isAdd = true
                                     }

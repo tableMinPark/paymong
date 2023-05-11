@@ -47,8 +47,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 주석풀어서 쓰면됨
         // 와치만 쓸때 쓰는거
         val dataApplicationRepository = DataApplicationRepository()
-        dataApplicationRepository.setValue("playerId", "a_704551220282600864")
-//        dataApplicationRepository.setValue("playerId", "a_6641482048740515693")
+//        dataApplicationRepository.setValue("playerId", "a_704551220282600864")
+        dataApplicationRepository.setValue("playerId", "a_6641482048740515693")
 
         // 필수 권한 확인
         checkPermission()

@@ -26,7 +26,7 @@ import android.os.Handler
 import android.os.Looper
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.code.SoundCode
-import com.paymong.domain.watch.SoundViewModel
+import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.AttackGif
 import com.paymong.ui.watch.common.Background
@@ -47,7 +47,7 @@ fun BattleActive(
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val characterSize = if (screenWidthDp < 200) 80 else 100
-    val fontSize = if (screenWidthDp < 200) 60 else 70
+    val fontSize = if (screenWidthDp < 200) 30 else 40
     val barWidth = if (screenWidthDp < 200) 15 else 20
     val barHeight = if (screenWidthDp < 200) 20 else 24
     val attackDefenceSize = if (screenWidthDp < 200) 35 else 40

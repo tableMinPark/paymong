@@ -1,4 +1,4 @@
-package com.paymong.domain.watch
+package com.paymong.domain
 
 import android.app.Application
 import android.media.SoundPool
@@ -17,6 +17,7 @@ class SoundViewModel (
     private var mainButtonSound by mutableStateOf(0)
     // feed
     private var feedButtonSound by mutableStateOf(0)
+    private var coinSound by mutableStateOf(0)
 
     // training
     private var trainingButtonSound by mutableStateOf(0)
@@ -28,6 +29,7 @@ class SoundViewModel (
 
     // battle
     private var battleButtonSound by mutableStateOf(0)
+    private var battleFindSound by mutableStateOf(0)
     private var battleWinSound by mutableStateOf(0)
     private var battleLoseSound by mutableStateOf(0)
     private var battleAttackSound by mutableStateOf(0)
@@ -46,10 +48,15 @@ class SoundViewModel (
         walkingButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
 
         battleButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
+        battleFindSound = soundPool.load(application, com.paymong.common.R.raw.battle_find_sound, 1)
         battleWinSound = soundPool.load(application, com.paymong.common.R.raw.win_sound, 1)
         battleLoseSound = soundPool.load(application, com.paymong.common.R.raw.lose_sound, 1)
         battleAttackSound = soundPool.load(application, com.paymong.common.R.raw.attack_sound, 1)
         battleDefenceSound = soundPool.load(application, com.paymong.common.R.raw.defence_sound, 1)
+
+        coinSound = soundPool.load(application, com.paymong.common.R.raw.coin_sound, 1)
+
+
     }
 
     fun soundPlay (soundCode: SoundCode): Int {
@@ -61,10 +68,12 @@ class SoundViewModel (
             SoundCode.TRAINING_LOSE -> getSound(trainingLoseSound)
             SoundCode.WALKING_BUTTON -> getSound(walkingButtonSound)
             SoundCode.BATTLE_BUTTON -> getSound(battleButtonSound)
+            SoundCode.BATTLE_FIND_SOUND -> getSound(battleFindSound)
             SoundCode.BATTLE_WIN -> getSound(battleWinSound)
             SoundCode.BATTLE_LOSE -> getSound(battleLoseSound)
             SoundCode.BATTLE_ATTACK -> getSound(battleAttackSound)
             SoundCode.BATTLE_DEFENCE -> getSound(battleDefenceSound)
+            SoundCode.COIN_SOUND -> getSound(coinSound)
 
             else -> 0
         }

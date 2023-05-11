@@ -38,10 +38,10 @@ class FeedViewModel (
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        getPoint()
+        findPayPoint()
     }
 
-    private fun getPoint(){
+    private fun findPayPoint(){
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findMember()
                 .catch {

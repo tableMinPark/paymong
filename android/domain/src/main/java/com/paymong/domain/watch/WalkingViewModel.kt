@@ -82,7 +82,7 @@ class WalkingViewModel (
     }
     private fun walkTimerStart(){
         walkingState = WalkingCode.WALKING
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             while(walkNowTime < walkMaxTime && walkingState != WalkingCode.WALKING_END) {
                 // 일시중지면 시간 추가 안함
                 if (walkingState == WalkingCode.PAUSE) continue
@@ -103,6 +103,8 @@ class WalkingViewModel (
             managementRepository.walking(walkCount)
                 .catch {
                     it.printStackTrace()
+                    Log.e("walkingActive", it.message ?: "")
+                    walkingState = WalkingCode.WALKING_END
                 }
                 .collect{
                     walkingState = WalkingCode.WALKING_END

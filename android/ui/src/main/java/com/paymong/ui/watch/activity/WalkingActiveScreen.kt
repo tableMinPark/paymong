@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.activity
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -61,6 +62,7 @@ fun WalkingActive(
             launchSingleTop = true
         }
     }
+    Log.e("walkingActive", walkingViewModel.walkingState.toString())
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -142,6 +144,7 @@ fun WalkingActive(
                                 .fillMaxHeight()
                                 .clickable {
                                     // 산책 끝
+                                    Log.e("walkingActive", walkingViewModel.walkingState.toString())
                                     soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
                                     walkingViewModel.walkingEnd()
                                 }
@@ -199,7 +202,9 @@ fun WalkingActive(
                     }
                 }
             }
-        } else {
+        }
+
+        else {
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -216,6 +221,7 @@ fun WalkingActive(
                         .clickable {
                             soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
                             walkingViewModel.walkingState = WalkingCode.PAUSE
+                            Log.d("walkingActive", walkingViewModel.walkingState.toString())
                         }
                 )
                 Text(

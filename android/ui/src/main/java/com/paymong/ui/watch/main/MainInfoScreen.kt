@@ -81,6 +81,20 @@ fun MainInfo(
 //                )
                 if (mainViewModel.mong.mongCode.code == "CH444") {
                     LoadingGif()
+                } else if (mainViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
+                    Box(contentAlignment = Alignment.Center,) {
+                        Image(painter = painterResource(R.drawable.rip),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(characterSize.dp))
+                    }
+                } else if (mainViewModel.stateCode == MongStateCode.CD006) { // 졸업
+                    Box(contentAlignment = Alignment.Center,) {
+                        Image(painter = painterResource(R.drawable.rip), // 졸업 이미지 넣기
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(characterSize.dp))
+                    }
                 } else {
                     Box(contentAlignment = Alignment.Center,) {
                         if (mainViewModel.stateCode == MongStateCode.CD007) { //진화대기

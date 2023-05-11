@@ -50,10 +50,10 @@ class WatchViewModel (
         findMong()
         findMongCondition()
         findMongInfo()
-        findPoint()
+        findPayPoint()
     }
 
-    private fun findPoint(){
+    private fun findPayPoint(){
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findMember()
                 .catch {

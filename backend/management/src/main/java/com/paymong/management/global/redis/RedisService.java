@@ -33,7 +33,7 @@ public class RedisService {
                     .mongId(key)
                     .expire(expire)
                     .build();
-            values.add(type, redisMong);
+            Long add = values.add(type, redisMong);
         }
 
 //        schedulerMap.entrySet().stream()

@@ -3,6 +3,7 @@ package com.paymong
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.MessageClient
@@ -27,11 +28,42 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var messageClient: MessageClient
 
+
+    private fun thingsAlarm(thingsCode: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val nodes = capabilityClient
+                    .getCapability(CAPABILITY_WEAR_APP, CapabilityClient.FILTER_REACHABLE)
+                    .await()
+                    .nodes
+
+                // Send a message to all nodes in parallel
+                nodes.map { node ->
+                    async {
+                        if (node.id != "") {
+                            messageClient.sendMessage(
+                                node.id,
+                                START_WEAR_ACTIVITY_PATH,
+                                thingsCode.toByteArray()
+                            )
+                                .await()
+                        }
+                    }
+                }.awaitAll()
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         capabilityClient = Wearable.getCapabilityClient(this)
         messageClient = Wearable.getMessageClient(this)
         capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
+
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -81,7 +113,11 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
                             .catch {
                                 it.printStackTrace()
                             }
-                            .collect{}
+                            .collect{
+                                data ->
+                                Log.d("thing 수신 테스트", data.thingsCode)
+                                thingsAlarm(data.thingsCode)
+                            }
                     }
                 }
             }

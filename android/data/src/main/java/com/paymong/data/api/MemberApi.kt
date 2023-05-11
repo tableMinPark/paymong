@@ -34,5 +34,5 @@ interface MemberApi {
     suspend fun addFindThings() : Response<List<AddThingsResDto>>
 
     @POST("/member/things/alarm")
-    suspend fun addRoutine(@Body addRoutineReqDto: AddRoutineReqDto) : Response<Void>
+    suspend fun addRoutine(@Body addRoutineReqDto: AddRoutineReqDto) : Response<AddRoutineResDto>
 }

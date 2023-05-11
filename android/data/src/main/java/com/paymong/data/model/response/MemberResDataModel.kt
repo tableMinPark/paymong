@@ -33,3 +33,7 @@ data class AddThingsResDto(
     val thingsCode : ThingsCode,
     val thingsName : String
 )
+
+data class AddRoutineResDto(
+    val thingsCode: String
+)

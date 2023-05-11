@@ -1,13 +1,15 @@
 package com.paymong.battle.battle.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.battle.battle.dto.request.FindMongBattleReqDto;
+import com.paymong.battle.battle.dto.response.FindMongBattleResDto;
 import com.paymong.battle.battle.vo.common.BattleLog;
 import com.paymong.battle.battle.vo.common.MongStats;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.vo.common.BattleRoom;
+import com.paymong.battle.global.client.InformationServiceClient;
 import com.paymong.battle.global.exception.NotFoundException;
 import com.paymong.battle.global.redis.LocationRepository;
-import com.paymong.battle.information.dto.response.FindCharacterResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class BattleService {
+    private final InformationServiceClient informationServiceClient;
     private final LocationRepository locationRepository;
     private final ObjectMapper objectMapper;
     private Map<String, BattleRoom> battleRoomMap;
@@ -104,17 +107,19 @@ public class BattleService {
             return false;
     }
 
-    public MongStats findCharacterStats(Long characterId, Double defaultHealth) {
-        FindCharacterResponse findCharacterResponse = new FindCharacterResponse();
-        findCharacterResponse.setCharacterId(characterId);
-        findCharacterResponse.setStrength(1);
-        findCharacterResponse.setWeight(2);
+    public MongStats findCharacterStats(Long mongId, Double defaultHealth) {
+        ObjectMapper om = new ObjectMapper();
+        FindMongBattleResDto findMongBattleResDto = om.convertValue(
+                informationServiceClient.findMongBattle(FindMongBattleReqDto
+                        .builder()
+                        .mongId(mongId)
+                        .build()).getBody(), FindMongBattleResDto.class);
 
         return MongStats.builder()
-                .mongId(findCharacterResponse.getCharacterId())
+                .mongId(findMongBattleResDto.getMongId())
                 .health(defaultHealth)
-                .strength(findCharacterResponse.getStrength())
-                .weight(findCharacterResponse.getWeight())
+                .strength(findMongBattleResDto.getStrength())
+                .weight(findMongBattleResDto.getWeight())
                 .build();
     }
 

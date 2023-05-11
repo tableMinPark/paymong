@@ -34,7 +34,7 @@ public class StartConfig implements CommandLineRunner {
         log.info("evolution 스케줄러를 넣습니다.");
         redisService.getRedisMong("evolution").stream().forEach(evolutionScheduler::restartScheduler);
 
-        log.info("나머지 스케줄러를 가동합니다.");
+        log.info("나머지 스케줄러를 가동합니다.dkdkk");
 
 //        List<Mong> mongs = mongRepository.findByActive(true);
 

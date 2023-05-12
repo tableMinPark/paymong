@@ -1,5 +1,6 @@
 package com.paymong.management.mong.entity;
 
+import com.paymong.management.global.code.MongConditionCode;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -69,6 +70,7 @@ public class Mong {
         this.sleep = this.sleep == null ? 10 : this.sleep;
         this.poopCount = this.poopCount == null ? 0 : this.poopCount;
         this.regDt = this.regDt == null ? LocalDateTime.now() : this.regDt;
+        this.stateCode = this.stateCode == null ? MongConditionCode.NORMAL.getCode() : this.stateCode;
 
     }
 }

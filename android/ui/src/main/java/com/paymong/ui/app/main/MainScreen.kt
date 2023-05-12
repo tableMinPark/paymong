@@ -31,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
@@ -41,6 +42,8 @@ import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.app.component.CharacterGif
+import com.paymong.ui.app.component.EmotionGif
 import com.paymong.ui.watch.main.Poops
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
@@ -450,6 +453,7 @@ fun WakeDialog(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MakeEgg(
     navController: NavController,
@@ -584,17 +588,35 @@ fun MakeEgg(
                                 appViewModel.isClick = false
                             }, 1800)
                         } else{
-                            Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .height(250.dp)
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null,
-                                        onClick = {
-                                        }
-                                    )
-                            )
+                            val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
+
+                            if(code / 100 == 1){
+                                CharacterGif(appViewModel, 200)
+                                EmotionGif(appViewModel, 0, 0, 20, 60)
+                            } else if(code / 100 == 2){
+                                CharacterGif(appViewModel, 250)
+                                val end = code % 10
+                                if(end == 1){ //2_1
+                                    EmotionGif(appViewModel, 0, 45, 90, 70)
+                                } else { //2_0, 2_2
+                                    EmotionGif(appViewModel, 0, 0, 90, 70)
+                                }
+                            } else if(code / 100 == 3){
+                                CharacterGif(appViewModel, 300)
+                                val end = code % 10
+                                if(end == 1){ //3_1
+                                    EmotionGif(appViewModel, 0, 110, 100, 80)
+                                } else{ //3_0, 3_2
+                                    EmotionGif(appViewModel, 0, 0, 80  , 80)
+                                }
+                            } else{
+                                CharacterGif(appViewModel, 200)
+                            }
+
+                            if(appViewModel.stateCode == MongStateCode.CD002){
+                                Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
+                                }
+                            }
                         }
 
                         val poopCount = appViewModel.poopCount

@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
+import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
@@ -62,6 +63,13 @@ fun Main(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 7.dp)
         )
+
+    }
+    Box() {
+        if (watchViewModel.stateCode == MongStateCode.CD002) {
+            Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
+            }
+        }
     }
 }
 

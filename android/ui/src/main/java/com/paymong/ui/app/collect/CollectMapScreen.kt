@@ -32,9 +32,8 @@ import com.paymong.ui.theme.dalmoori
 @Composable
 fun CollectMap(
     navController: NavController,
-
     collectMapViewModel : CollectMapViewModel = viewModel(),
-            soundViewModel: SoundViewModel,
+    soundViewModel: SoundViewModel,
 ) {
     collectMapViewModel.map()
     Column(

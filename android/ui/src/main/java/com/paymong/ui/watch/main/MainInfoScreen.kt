@@ -2,7 +2,9 @@ package com.paymong.ui.watch.main
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,14 +20,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.app.main.CreateImageList
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.common.CharacterGif
+import com.paymong.ui.watch.common.EmotionGif
 import com.paymong.ui.watch.common.LoadingGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MainInfo(
     animationState: MutableState<AnimationCode>,
@@ -64,23 +70,16 @@ fun MainInfo(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-//                Image(
-//                    painter = painterResource(mongResourceCode),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .width(characterSize.dp)
-//                        .clickable(
-//                            interactionSource = remember { MutableInteractionSource() },
-//                            indication = null,
-//                        ){
-//                            mainViewModel.stroke()
-//                            Handler(Looper.getMainLooper()).postDelayed({
-//                                mainViewModel.isHappy = false
-//                            }, 2000)
-//                        }
-//                )
                 if (mainViewModel.mong.mongCode.code == "CH444") {
-                    LoadingGif()
+                    Text(
+                        text = "스마트폰에서\n알을 생성해주세요.",
+                        textAlign = TextAlign.Center,
+                        lineHeight = 50.sp,
+                        fontFamily = dalmoori,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 } else if (mainViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
                     Box(contentAlignment = Alignment.Center,) {
                         Image(painter = painterResource(R.drawable.rip),
@@ -116,18 +115,8 @@ fun MainInfo(
                                 Image(painter = painterResource(mainViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(characterSize.dp)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null,
-                                        )
-                                        {
-                                            mainViewModel.stroke()
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                mainViewModel.isHappy = false
-                                            }, 2000)
-                                        }
-                                )
+                                        .size(characterSize.dp))
+
                                 Box(modifier = Modifier.scale(2f)) {
                                     CreateImageList()
                                 }
@@ -135,22 +124,26 @@ fun MainInfo(
                                     mainViewModel.evolutionisClick = false
                                 }, 1800)
                             } else {
-                                Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(characterSize.dp)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null,
-
-                                            )
-                                        {
-                                            mainViewModel.stroke()
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                mainViewModel.isHappy = false
-                                            }, 2000)
-                                        }
-                                )
+                                CharacterGif(mainViewModel)
+                                val code = mainViewModel.mong.mongCode.code.split("CH")[1].toInt()
+                                if(code / 100 == 1){
+                                    EmotionGif(mainViewModel, 0, 0, 0, 40, mainViewModel.stateCode)
+                                } else if(code / 100 == 2){
+                                    val end = code % 10
+                                    Log.d("end",end.toString())
+                                    if(end == 1){ //2_1
+                                        EmotionGif(mainViewModel, 0, 25, 40, 40, mainViewModel.stateCode)
+                                    } else { //2_0, 2_2
+                                        EmotionGif(mainViewModel, 0, 0, 50, 40, mainViewModel.stateCode)
+                                    }
+                                } else if(code / 100 == 3){
+                                    val end = code % 10
+                                    if(end == 1){ //3_1
+                                        EmotionGif(mainViewModel, 0, 50, 40, 40, mainViewModel.stateCode)
+                                    } else{ //3_0, 3_2
+                                        EmotionGif(mainViewModel, 0, 0, 35  , 40, mainViewModel.stateCode)
+                                    }
+                                }
                             }
                         }
                     }

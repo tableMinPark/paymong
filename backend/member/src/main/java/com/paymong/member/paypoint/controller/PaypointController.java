@@ -1,9 +1,11 @@
 package com.paymong.member.paypoint.controller;
 
+import com.paymong.member.global.code.MymapStateCode;
 import com.paymong.member.global.code.PaypointStateCode;
 import com.paymong.member.global.exception.NotFoundAuthException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
+import com.paymong.member.global.exception.NotFoundMymapException;
 import com.paymong.member.global.response.ErrorResponse;
 import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
 import com.paymong.member.paypoint.dto.request.FindTotalPayReqDto;
@@ -45,7 +47,11 @@ public class PaypointController {
         }catch (NotFoundMapCodeException e){
             log.info("code : {}, message : {}", PaypointStateCode.FAIL_COLLECT.getCode(), PaypointStateCode.FAIL_COLLECT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.FAIL_COLLECT));
-        }catch (Exception e){
+        }catch (NotFoundMymapException e){
+            log.info("code : {}, message : {}", MymapStateCode.MYMAP_ERROR.getCode(), MymapStateCode.MYMAP_ERROR.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(MymapStateCode.MYMAP_ERROR));
+        }
+        catch (Exception e){
             log.info("code : {}, message : {}", PaypointStateCode.UNKNOWN.getCode(), PaypointStateCode.UNKNOWN.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(PaypointStateCode.UNKNOWN));
         }

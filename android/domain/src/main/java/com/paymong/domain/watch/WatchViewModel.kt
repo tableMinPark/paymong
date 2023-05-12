@@ -235,7 +235,7 @@ class WatchViewModel (
                 }
                 .collect{
                     data ->
-                    isHappy = data.code=="200"
+                    isHappy = data.code == "200"
                 }
         }
     }
@@ -244,8 +244,7 @@ class WatchViewModel (
             managementRepository.sleep()
                 .catch {
                     it.printStackTrace()
-                }
-                .collect{}
+                }.collect{}
         }
     }
     fun poop(){
@@ -253,8 +252,7 @@ class WatchViewModel (
             managementRepository.poop()
                 .catch {
                     it.printStackTrace()
-                }
-                .collect{}
+                }.collect{}
         }
     }
     fun evolution(){

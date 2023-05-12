@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
 import com.paymong.data.repository.DataApplicationRepository
+import com.paymong.data.repository.ThingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,6 +18,7 @@ class WatchDataLayerListenerService : WearableListenerService() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val dataApplicationRepository: DataApplicationRepository = DataApplicationRepository()
+    private val thingsRepository: ThingsRepository = ThingsRepository()
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
@@ -34,7 +36,9 @@ class WatchDataLayerListenerService : WearableListenerService() {
             THINGS_ALARM ->{
                 val thingsCode = messageEvent.data.decodeToString()
                 Log.d("thingsCode 수신", thingsCode)
-                Toast.makeText(this, "싱스알람!!." + thingsCode, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "싱스알람!!.$thingsCode", Toast.LENGTH_SHORT).show()
+                thingsRepository.changeThingsCode(thingsCode)
+
                 /*val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
                     // 특정 동작 수행

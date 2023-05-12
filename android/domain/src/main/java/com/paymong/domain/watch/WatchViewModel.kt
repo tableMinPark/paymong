@@ -271,4 +271,17 @@ class WatchViewModel (
                 }
         }
     }
+
+    fun graduation(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.graduation()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                        data->
+                    mong.mongCode = MongCode.valueOf(data.mongCode)
+                }
+        }
+    }
 }

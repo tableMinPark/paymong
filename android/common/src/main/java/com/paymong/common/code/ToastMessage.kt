@@ -26,7 +26,7 @@ enum class ToastMessage(
     TRAINING_NOT_POINT("포인트가 부족합니다."),
 
     // 버튼 막기
-    BUTTON_NOT_ACTIVE("알 상태에는 불가능합니다.")
+    BUTTON_NOT_ACTIVE("사용할 수 없는 상태입니다.")
 
 }
 

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +27,7 @@ import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.watch.WatchViewModel
+import com.paymong.ui.app.component.showToast
 import com.paymong.ui.app.main.CreateImageList
 import com.paymong.ui.app.main.GraduationEffect
 import com.paymong.ui.theme.dalmoori
@@ -129,6 +131,11 @@ fun MainInfo(
                                     mainViewModel.evolutionisClick = false
                                 }, 1800)
                             } else {
+                                val context = LocalContext.current
+                                if(mainViewModel.showtoast){
+                                    showToast(context, mainViewModel.msg)
+                                }
+
                                 CharacterGif(mainViewModel)
                                 val code = mainViewModel.mong.mongCode.code.split("CH")[1].toInt()
                                 if(code / 100 == 1){

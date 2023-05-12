@@ -70,8 +70,6 @@ fun Main(
                 .fillMaxWidth()
                 .fillMaxHeight())
     }
-    // state 는 모두 공통 코드화 시켜야 함
-    val characterState = remember { mutableStateOf(MongCode.CH444) }
 
     Top(navController, appViewModel, soundViewModel)
     MakeEgg(navController, appViewModel,soundViewModel)
@@ -494,6 +492,17 @@ fun MakeEgg(
             appViewModel,
             soundViewModel
         )
+    }
+
+    if(appViewModel.isHappy) {
+        Box(
+            contentAlignment = Alignment.TopCenter,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 200.dp)
+        ) {
+            Image(painterResource(R.drawable.heart), contentDescription = null, modifier = Modifier.size(30.dp))
+        }
     }
 
     Row(

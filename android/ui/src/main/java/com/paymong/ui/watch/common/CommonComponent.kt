@@ -218,7 +218,6 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
         painter = rememberImagePainter(
             imageLoader = imageLoader,
             data = mainViewModel.mong.mongCode.gifCode,
-//            data = R.drawable.ch302g,
             builder = {
                 size(OriginalSize)
             }
@@ -247,13 +246,17 @@ fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, p
         }
         .build()
 
-    val imgData = when(mainViewModel.stateCode){
+    var imgData = when(mainViewModel.stateCode){
         MongStateCode.CD001 -> R.drawable.sad
         MongStateCode.CD002 -> R.drawable.sleeping
         MongStateCode.CD003 -> R.drawable.depressed
         MongStateCode.CD004 -> R.drawable.sulky
 
         else -> R.drawable.smile
+    }
+
+    if(mainViewModel.isHappy){
+        imgData = R.drawable.happy
     }
 
     Image(

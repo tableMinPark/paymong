@@ -22,7 +22,6 @@ class WatchDataLayerListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
-        Log.d("수신테스트",messageEvent.path )
         when (messageEvent.path) {
             START_WEAR_ACTIVITY_PATH -> {
                 val playerId = messageEvent.data.decodeToString()
@@ -39,10 +38,6 @@ class WatchDataLayerListenerService : WearableListenerService() {
                 Toast.makeText(this, "싱스알람!!.$thingsCode", Toast.LENGTH_SHORT).show()
                 thingsRepository.changeThingsCode(thingsCode)
 
-                /*val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed({
-                    // 특정 동작 수행
-                }, 10000)*/
             }
         }
     }
@@ -51,6 +46,8 @@ class WatchDataLayerListenerService : WearableListenerService() {
         super.onDestroy()
         scope.cancel()
     }
+
+
 
     companion object {
         private const val START_WEAR_ACTIVITY_PATH = "/start-activity"

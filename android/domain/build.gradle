@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.paymong.domain'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.2.0'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    // multi-module
+    implementation project(path: ':common')
+    implementation project(path: ':data')
+    // games
+    implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
+    // gps
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    // socket
+    implementation 'com.squareup.okhttp3:okhttp:3.12.12'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    // android
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    // compose
+    implementation "androidx.activity:activity-compose:$compose_ui_version"
+    //wearable
+    implementation "androidx.wear:wear-phone-interactions:1.1.0-alpha03"
+    implementation "androidx.wear:wear-remote-interactions:1.0.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
+    implementation "androidx.wear:wear-remote-interactions:1.0.0"
+    implementation "com.google.android.gms:play-services-wearable:18.0.0"
+
+    // test
+    testImplementation 'junit:junit:4.12'
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+}

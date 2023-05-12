@@ -2,6 +2,7 @@ package com.paymong
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
 import com.paymong.data.repository.DataApplicationRepository
@@ -31,6 +32,12 @@ class WatchDataLayerListenerService : WearableListenerService() {
             "/thingsAlarm" ->{
                 val thingsCode = messageEvent.data.decodeToString()
                 Log.d("thingsCode 수신", thingsCode)
+                Toast.makeText(this, "싱스알람!!.", Toast.LENGTH_SHORT).show()
+
+
+
+
+
             }
         }
     }

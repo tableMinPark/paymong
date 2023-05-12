@@ -13,7 +13,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.util.concurrent.TimeUnit
 
-class SocketService {
+class BattleSocketService {
     object OkHttpClientSingleton {
         val instance: OkHttpClient = OkHttpClient.Builder()
             .pingInterval(10, TimeUnit.SECONDS)

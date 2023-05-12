@@ -44,7 +44,7 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
 
         // 와치만 쓸때 쓰는거
-        val dataApplicationRepository = DataApplicationRepository()
+//        val dataApplicationRepository = DataApplicationRepository()
 //        dataApplicationRepository.setValue("playerId", "a_6413840864035103640")
 //        dataApplicationRepository.setValue("playerId", "a_704551220282600864")
 //        dataApplicationRepository.setValue("refreshToken", "")

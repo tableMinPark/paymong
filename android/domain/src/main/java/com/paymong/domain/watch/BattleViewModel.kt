@@ -114,13 +114,13 @@ class BattleViewModel (
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
             // 위치 한번 받고 업데이트 요청 종료
-            val latitude = locationResult.lastLocation.latitude
-            val longitude = locationResult.lastLocation.longitude
+//            val latitude = locationResult.lastLocation.latitude
+//            val longitude = locationResult.lastLocation.longitude
 
             Log.e("test", String.format("%f : %f", locationResult.lastLocation.latitude, locationResult.lastLocation.longitude))
 
-//            val latitude = 35.0963554
-//            val longitude = 128.8539052
+            val latitude = 35.0963554
+            val longitude = 128.8539052
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 

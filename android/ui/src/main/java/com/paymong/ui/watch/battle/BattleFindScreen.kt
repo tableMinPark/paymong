@@ -19,6 +19,7 @@ import com.paymong.domain.watch.BattleViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.BattleBackgroundGif
 
 @Composable
 fun BattleFind(
@@ -27,7 +28,7 @@ fun BattleFind(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-    Background(true)
+    BattleBackgroundGif()
 
     soundViewModel.soundPlay(SoundCode.BATTLE_FIND_SOUND)
     val playerResourceCodeA = painterResource(battleViewModel.playerCodeA.resourceCode)
@@ -66,10 +67,16 @@ fun BattleFind(
         ) {
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
+            if (battleViewModel.battleActive.order == "B"){
+                Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp))
+            } else {
             // playerResourceCodeB :: 위쪽
-            Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
+            Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
                 .width(characterSize.dp)
                 .height(characterSize.dp))
+            }
         }
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -85,9 +92,18 @@ fun BattleFind(
 //            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
 
             // playerResourceCodeA :: 아래쪽
-            Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
-                .width(characterSize.dp)
-                .height(characterSize.dp))
+            if (battleViewModel.battleActive.order == "B") {
+                Image(
+                    painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
+                        .width(characterSize.dp)
+                        .height(characterSize.dp)
+                )
+            }else {
+                // playerResourceCodeB :: 위쪽
+                Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp))
+            }
 
 
             }

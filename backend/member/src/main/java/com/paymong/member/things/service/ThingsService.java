@@ -70,15 +70,15 @@ public class ThingsService {
         Map<String,Integer> check = new HashMap<>();
         List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
         for(Things things : myThings) {
-            System.out.print(things.getThingsCode() + " // ");
             check.put(things.getThingsCode(),1);
-        } System.out.println();
+        }
 
         List<FindAddableThingsResDto> ret = new ArrayList<>();
         //나한테 없는 코드 찾기
         for( ThingsCommonCode thingsCode : thingsCommonCodeList.getCommonCodeDtoList()){
             if(!check.containsKey(thingsCode.getCode()))
                 ret.add(new FindAddableThingsResDto(thingsCode.getCode(), thingsCode.getName()));
+
         }
         return ret;
     }

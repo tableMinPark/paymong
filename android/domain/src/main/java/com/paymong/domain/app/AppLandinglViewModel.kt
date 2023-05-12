@@ -56,6 +56,7 @@ class AppLandinglViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.reissue()
                 .catch {
+                    it.printStackTrace()
                     landingCode = LandingCode.LOGIN_FAIL
                 }
                 .collect {values ->
@@ -68,6 +69,7 @@ class AppLandinglViewModel(
     }
     // 웨어러블 최초 등록 여부 확인
     fun registCheck() {
+        Log.d("landing", landingCode.toString())
         viewModelScope.launch {
             val watchId = dataApplicationRepository.getValue("watchId")
 
@@ -76,6 +78,7 @@ class AppLandinglViewModel(
             } else {
                 installCheck()
             }
+            Log.d("landing", landingCode.toString())
         }
     }
     fun googlePlayLogin() {
@@ -121,7 +124,9 @@ class AppLandinglViewModel(
     private fun login(playerId : String) {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.login(LoginReqDto(playerId))
-                .catch { landingCode = LandingCode.LOGIN_FAIL }
+                .catch {
+                    landingCode = LandingCode.LOGIN_FAIL
+                }
                 .collect { values ->
                     landingCode = if (values)
                         LandingCode.LOGIN_SUCCESS

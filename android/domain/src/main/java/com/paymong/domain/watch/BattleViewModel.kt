@@ -68,7 +68,9 @@ class BattleViewModel (
     var win by mutableStateOf(false)
 
     init {
-        findMong()
+        viewModelScope.launch(Dispatchers.Main) {
+            findMong()
+        }
     }
     fun select(select : MessageType) {
         selectState = select
@@ -147,7 +149,7 @@ class BattleViewModel (
                     val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
-                    Log.e("battleViewModel", battleMessageResDto.toString())
+                    println(battleMessageResDto.toString())
                     battleActive = BattleActive(
                         battleMessageResDto.battleRoomId,
                         battleMessageResDto.mongCodeA,
@@ -265,11 +267,11 @@ class BattleViewModel (
         Log.e("battleViewModel", "battleEnd()")
         viewModelScope.launch {
             if (battleActive.order == "A" &&
-                battleActive.damageA > battleActive.damageB) {
+                battleActive.healthA > battleActive.healthB) {
                 win = true
             }
             else if(battleActive.order == "B" &&
-                    battleActive.damageB > battleActive.damageA){
+                    battleActive.healthB > battleActive.healthA){
                 win = true
             }
             delay(END_DELAY)

@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.activity
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,7 @@ import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
+import com.paymong.common.code.WalkingCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.WalkingViewModel
 import com.paymong.domain.SoundViewModel
@@ -53,6 +55,15 @@ fun WalkingActive(
     val yesNoBntWidth = if (screenWidthDp < 200) 60 else 50
     val yesNoBntHeight = if (screenWidthDp < 200) 20 else 40
 
+    // 끝남
+    if (walkingViewModel.walkingState == WalkingCode.WALKING_END) {
+        navController.navigate(WatchNavItem.Activity.route) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
+    }
+    Log.e("walkingActive", walkingViewModel.walkingState.toString())
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -63,7 +74,8 @@ fun WalkingActive(
 
         WalkingTime(walkingViewModel)
 
-        if (walkingViewModel.isWalkingEnd) {
+        // 산책 중
+        if (walkingViewModel.walkingState == WalkingCode.PAUSE) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -80,7 +92,9 @@ fun WalkingActive(
                     color = Color(0xFFffffff)
                 )
             }
-        } else {
+        }
+        // 산책 중 아닐 때
+        else {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -107,15 +121,7 @@ fun WalkingActive(
             }
         }
 
-        if (walkingViewModel.isWalkingEnd) {
-            if (walkingViewModel.realWalkingEnd) {
-                walkingViewModel.isWalkingEnd = false
-                walkingViewModel.realWalkingEnd = false
-                navController.navigate(WatchNavItem.Activity.route) {
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop = true
-                }
-            }
+        if (walkingViewModel.walkingState == WalkingCode.PAUSE) {
             Box(modifier = Modifier.padding(bottom =0.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.Start,
@@ -137,9 +143,10 @@ fun WalkingActive(
                                 .fillMaxWidth()
                                 .fillMaxHeight()
                                 .clickable {
+                                    // 산책 끝
+                                    Log.e("walkingActive", walkingViewModel.walkingState.toString())
                                     soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
                                     walkingViewModel.walkingEnd()
-                                    walkingViewModel.realWalkingEnd = true
                                 }
                         )
                         Text(
@@ -177,7 +184,7 @@ fun WalkingActive(
                                 .fillMaxHeight()
                                 .clickable {
                                     soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
-                                    walkingViewModel.isWalkingEnd = false
+                                    walkingViewModel.walkingState = WalkingCode.WALKING
                                 }
                         )
                         Text(
@@ -194,9 +201,10 @@ fun WalkingActive(
                         )
                     }
                 }
-
             }
-        } else {
+        }
+
+        else {
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -212,7 +220,8 @@ fun WalkingActive(
                         .fillMaxHeight()
                         .clickable {
                             soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
-                            walkingViewModel.isWalkingEnd = true
+                            walkingViewModel.walkingState = WalkingCode.PAUSE
+                            Log.d("walkingActive", walkingViewModel.walkingState.toString())
                         }
                 )
                 Text(

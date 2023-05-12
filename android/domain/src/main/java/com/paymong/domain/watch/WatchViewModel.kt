@@ -32,6 +32,7 @@ class WatchViewModel (
     // 몽 지수
     var mongStats by mutableStateOf(MongStats())
     // 몽 정보 (몸무게, 태어난 일자)
+    var undomong by mutableStateOf(MongCode.CH000)
     var mongInfo by mutableStateOf(MongInfo())
     var age by mutableStateOf("")
     // 몽 상태, 똥 갯수, 맵 코드
@@ -42,15 +43,21 @@ class WatchViewModel (
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
 
+    // 몽 진화
+    var evolutionisClick by mutableStateOf(false)
+
     private val memberRepository: MemberRepository = MemberRepository()
     private var informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
-        findMong()
-        findMongCondition()
-        findMongInfo()
-        findPayPoint()
+        viewModelScope.launch(Dispatchers.Main) {
+            findMong()
+            findMongCondition()
+            findMongInfo()
+            findPayPoint()
+
+        }
     }
 
     private fun findPayPoint(){
@@ -60,13 +67,14 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{ data ->
+                    delay(1000)
                     point = data.point.toInt()
                 }
         }
     }
     
     private fun findMong() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMong()
                 .catch {
                     it.printStackTrace()
@@ -85,7 +93,7 @@ class WatchViewModel (
     }
 
     private fun findMongCondition() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongStats()
                 .catch {
                     it.printStackTrace()
@@ -104,7 +112,7 @@ class WatchViewModel (
     }
 
     private fun findMongInfo() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongInfo()
                 .catch {
                     it.printStackTrace()
@@ -130,7 +138,7 @@ class WatchViewModel (
     }
 
     fun stroke(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.stroke()
                 .catch {
                     it.printStackTrace()
@@ -143,7 +151,7 @@ class WatchViewModel (
     }
 
     fun sleep(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.sleep()
                 .catch {
                     it.printStackTrace()
@@ -153,12 +161,27 @@ class WatchViewModel (
     }
 
     fun poop(){
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             managementRepository.poop()
                 .catch {
                     it.printStackTrace()
                 }
                 .collect{}
+        }
+    }
+
+    fun evolution(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.evolution()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                        data->
+                    undomong = mong.mongCode
+                    stateCode = MongStateCode.valueOf(data.stateCode)
+                    mong.mongCode = MongCode.valueOf(data.mongCode)
+                }
         }
     }
 }

@@ -24,10 +24,11 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         private const val SAMSUNG_THINGS_PACKAGE_NAME = "com.samsung.android.oneconnect"
     }
 
-    private var memberRepository:MemberRepository = MemberRepository()
-    private lateinit var capabilityClient: CapabilityClient
-    private lateinit var messageClient: MessageClient
+//    private var memberRepository:MemberRepository = MemberRepository()
+//    private lateinit var capabilityClient: CapabilityClient
+//    private lateinit var messageClient: MessageClient
 
+<<<<<<< HEAD
     private fun thingsAlarm(thingsCode: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -59,14 +60,14 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
 
     override fun onCreate() {
         super.onCreate()
-        capabilityClient = Wearable.getCapabilityClient(this)
-        messageClient = Wearable.getMessageClient(this)
-        capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
+//        capabilityClient = Wearable.getCapabilityClient(this)
+//        messageClient = Wearable.getMessageClient(this)
+//        capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
 
     }
     override fun onDestroy() {
         super.onDestroy()
-        capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
+//        capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
     }
 
 
@@ -74,61 +75,9 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         super.onNotificationPosted(sbn)
 
 
-        // Things
-//        val packageName: String = sbn.packageName ?: ""
-//        val extras = sbn.notification.extras
-//        val extraTitle: String = extras?.get(Notification.EXTRA_TITLE).toString()
-//        val extraText: String = extras?.get(Notification.EXTRA_TEXT).toString()
-//        val extraBigText: String = extras?.get(Notification.EXTRA_BIG_TEXT).toString()
-//        val extraInfoText: String = extras?.get(Notification.EXTRA_INFO_TEXT).toString()
-//        val extraSubText: String = extras?.get(Notification.EXTRA_SUB_TEXT).toString()
-//        val extraSummaryText: String = extras?.get(Notification.EXTRA_SUMMARY_TEXT).toString()
-
-        try {
-            val packageName: String = sbn.packageName ?: ""
-            val extras = sbn.notification.extras
-            val title = extras.get(Notification.EXTRA_TITLE).toString()
-
-            if (title == "null" || title == null) return
-
-            when(packageName){
-                SAMSUNG_PAY_PACKAGE_NAME -> {
-                    val message: List<String> = title.trim().split("￦")
-                    val content : String = message[0].trim()
-                    val price : Int = message[1].trim().replace(",", "").toInt()
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        memberRepository.addPay(AddPayReqDto(content, price))
-                            .catch {
-                                it.printStackTrace()
-                            }
-                            .collect{}
-                    }
-                }
-                SAMSUNG_THINGS_PACKAGE_NAME-> {
-                    val routine = title.trim().split("-")[0].trim()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        memberRepository.addRoutine(AddRoutineReqDto(routine))
-                            .catch {
-                                it.printStackTrace()
-                            }
-                            .collect{
-                                data ->
-                                Log.d("thing 수신 테스트", data.thingsCode)
-                                thingsAlarm(data.thingsCode)
-                            }
-                    }
-                }
-            }
-
-
-        } catch (e: Exception) { e.printStackTrace() }
     }
 
-
-
     override fun onCapabilityChanged(p0: CapabilityInfo) {
-        TODO("Not yet implemented")
     }
 }
 

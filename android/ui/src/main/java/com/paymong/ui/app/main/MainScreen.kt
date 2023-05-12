@@ -51,13 +51,9 @@ import java.util.*
 @Composable
 fun Main(
     navController: NavController,
-    appViewModel: AppViewModel,
+    appViewModel: AppViewModel = viewModel(),
     soundViewModel: SoundViewModel
 ) {
-    LaunchedEffect(key1 = true) {
-        appViewModel.mainInit()
-    }
-
     // 배경
     var findBgCode = appViewModel.mapCode
     val bg = painterResource(findBgCode.phoneCode)

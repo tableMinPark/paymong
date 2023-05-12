@@ -1,22 +1,31 @@
 package com.paymong.domain.app
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.request.AddMongReqDto
+import com.paymong.data.model.response.ManagementRealTimeResDto
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
+import com.paymong.domain.entity.MongInfo
+import com.paymong.domain.entity.MongStats
+import com.paymong.domain.watch.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     // 몽 생성
@@ -37,17 +46,43 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     var retry by mutableStateOf(false)
 
+    // socket
+    private lateinit var socketJob : Job
+    private lateinit var managementSocketService: ManagementSocketService
+
     private val memberRepository: MemberRepository = MemberRepository()
     private val informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     // 메인화면 진입시 초기화
-    fun mainInit() {
-        viewModelScope.launch(Dispatchers.IO) {
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
             findMong()
             findPoint()
+            managementSocketService = ManagementSocketService()
+            managementSocketService.init(listener)
         }
     }
+    private val listener: WebSocketListener = object : WebSocketListener() {
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            try {
+                val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
+
+                Log.e("WatchViewModel", "response : $managementRealTimeResDto")
+
+                if (managementRealTimeResDto.code != "201") {
+                    stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
+                    poopCount = managementRealTimeResDto.poopCount
+                }
+                else if (managementRealTimeResDto.code == "209"){
+                    mapCode = MapCode.valueOf(managementRealTimeResDto.mapCode)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     // 몽 생성
     fun addMong(){
         viewModelScope.launch(Dispatchers.IO) {

@@ -50,3 +50,7 @@ data class EvolutionResDto(
     val mongCode: String,
     val stateCode: String
 )
+
+data class GraduationResDto(
+    val mongCode: String,
+)

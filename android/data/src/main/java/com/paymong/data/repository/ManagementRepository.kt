@@ -7,6 +7,7 @@ import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.AddMongResDto
 import com.paymong.data.model.response.EvolutionResDto
 import com.paymong.data.model.response.FoodResDto
+import com.paymong.data.model.response.GraduationResDto
 import com.paymong.data.model.response.ManagementResDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -96,6 +97,15 @@ class ManagementRepository(
 
     fun evolution(): Flow<EvolutionResDto> = flow {
         val response = api.evolution()
+        if(response.code() == 200){
+            response.body()?.let {
+                emit(response.body()!!)
+            }
+        }
+    }
+
+    fun graduation(): Flow<GraduationResDto> = flow {
+        val response = api.graduation()
         if(response.code() == 200){
             response.body()?.let {
                 emit(response.body()!!)

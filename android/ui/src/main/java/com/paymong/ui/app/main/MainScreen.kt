@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -444,6 +445,7 @@ fun WakeDialog(
                         setShowWakeDialog(false)
                         appViewModel.mongsleepEnd = newTime.toString()
                         appViewModel.addMong()
+                        appViewModel.retry = false
                     },
                     soundViewModel = soundViewModel
                 )
@@ -504,7 +506,7 @@ fun MakeEgg(
     ) {
         val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
 
-        if (code >= 400) { // 알 생성
+        if (appViewModel.retry || code >= 400) { // 알 생성
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
                 fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White,
                 modifier = Modifier.clickable(
@@ -534,6 +536,40 @@ fun MakeEgg(
                                 appViewModel.isClick = true
                             }
                         )
+                    } else if(appViewModel.stateCode == MongStateCode.CD005) { // 죽음
+                        Image(
+                            painter = painterResource(R.drawable.rip),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(300.dp)
+                        )
+                        Text(
+                            text = "다시 시작",
+                            textAlign = TextAlign.Center,
+                            lineHeight = 50.sp,
+                            fontFamily = dalmoori,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier
+                                .background(color = Color.Black.copy(alpha = 0.4f))
+                                .fillMaxWidth()
+                                .padding(vertical = 30.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = {
+                                        appViewModel.retry = true
+                                    }
+                                )
+                        )
+                    } else if(appViewModel.stateCode == MongStateCode.CD006) { // 졸업
+                        Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(250.dp)
+                        )
+                        GraduationEffect(appViewModel)
                     } else {
                         if(appViewModel.isClick){
                             Image(painter = painterResource(appViewModel.undomong.resourceCode),
@@ -613,7 +649,6 @@ fun Btn(
             Image(painter = btn2Bg, contentDescription = null,
                 modifier = Modifier
                     .clickable(
-
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
@@ -628,7 +663,8 @@ fun Btn(
                 fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
             )
         }
-        if (appViewModel.mong.mongCode.code != "CH444"){ // chcode>=ch100일때만 나오도록 변경
+        val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
+        if (code >= 200){
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(horizontal = 10.dp)
@@ -637,7 +673,6 @@ fun Btn(
                 Image(painter = btn2Bg, contentDescription = null,
                     modifier = Modifier
                         .clickable(
-
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
@@ -658,13 +693,12 @@ fun Btn(
 
 @Composable
 fun CreateImageList() {
-    val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3,)
+    val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3)
 
     Box() {
         var currentIndex by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
-
             delay(100L)
             currentIndex = 0
             delay(500L)
@@ -672,8 +706,6 @@ fun CreateImageList() {
             delay(500L)
             currentIndex = 2
             delay(500L)
-
-
         }
 
         Image(
@@ -681,6 +713,60 @@ fun CreateImageList() {
             contentDescription = null,
             modifier = Modifier.size(500.dp)
         )
+    }
+}
+
+@Composable
+fun GraduationEffect(
+    appViewModel: AppViewModel
+) {
+    val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
+
+    Box() {
+        var currentIndex by remember { mutableStateOf(0) }
+
+        LaunchedEffect(Unit) {
+            delay(100L)
+            currentIndex = 0
+            delay(500L)
+            currentIndex = 1
+            delay(500L)
+            currentIndex = 2
+            delay(500L)
+            currentIndex = 3
+            delay(500L)
+            currentIndex = 4
+            delay(400L)
+        }
+
+        if(currentIndex == 4){
+            Text(
+                text = "축하합니다!\n졸업을 위해\n화면을 터치해주세요.",
+                textAlign = TextAlign.Center,
+                lineHeight = 50.sp,
+                fontFamily = dalmoori,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .background(color = Color.Black.copy(alpha = 0.4f))
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            appViewModel.graduation()
+                        }
+                    )
+            )
+        } else{
+            Image(
+                painter = painterResource(id = imageList[currentIndex]),
+                contentDescription = null,
+                modifier = Modifier.size(500.dp)
+            )
+        }
     }
 }
 

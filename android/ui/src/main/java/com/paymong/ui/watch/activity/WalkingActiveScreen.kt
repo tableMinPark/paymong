@@ -52,7 +52,7 @@ fun WalkingActive(
     val quitBntFontSize = if (screenWidthDp < 200) 10 else 11
     val yesNoBntPadding = if (screenWidthDp < 200) 40 else 60
     val yesNoFontSize = if (screenWidthDp < 200) 12 else 14
-    val yesNoBntWidth = if (screenWidthDp < 200) 60 else 50
+    val yesNoBntWidth = if (screenWidthDp < 200) 55 else 45
     val yesNoBntHeight = if (screenWidthDp < 200) 20 else 40
 
     // 끝남

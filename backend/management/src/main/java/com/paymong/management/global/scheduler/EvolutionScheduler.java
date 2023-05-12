@@ -87,6 +87,9 @@ public class EvolutionScheduler implements ManagementScheduler {
             SchedulerDto scDto= new SchedulerDto();
             scDto.setRunnable(getRunnable(levelDto.getMongId()));
             schedulerMap.put(levelDto.getMongId(), scDto);
+        }else{
+            log.info("{}의 존재중인 스케줄러를 중지합니다.", levelDto.getMongId());
+            schedulerMap.get(levelDto.getMongId()).getScheduler().shutdown();
         }
 
         SchedulerDto schedulerDto = schedulerMap.get(levelDto.getMongId());

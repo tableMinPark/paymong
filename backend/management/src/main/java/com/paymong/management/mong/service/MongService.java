@@ -48,7 +48,7 @@ public class MongService {
         Optional<Mong> chkMong = mongRepository.findByMemberIdAndActive(addMongReqVo.getMemberId(), true);
         if(chkMong.isPresent()){
             // 이미 있는데 그친구가 DIE가 아닌 경우 에러 처리
-            if(!chkMong.get().getStateCode().equals(MongConditionCode.DIE)){
+            if(!chkMong.get().getStateCode().equals(MongConditionCode.DIE.getCode())){
                 throw new AlreadyExistMongException();
             }else{
                 // 이미 있지만 DIE인 경우 비활성화 하고 새로 생성

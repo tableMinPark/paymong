@@ -259,6 +259,10 @@ fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, p
         imgData = R.drawable.happy
     }
 
+    if(mainViewModel.eating){
+        imgData = R.drawable.eating
+    }
+
     Image(
         painter = rememberImagePainter(
             imageLoader = imageLoader,

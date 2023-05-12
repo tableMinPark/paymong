@@ -58,6 +58,7 @@ class WatchViewModel (
 
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
+    var eating by mutableStateOf(false)
     var showtoast by mutableStateOf(false)
     var msg by mutableStateOf("")
 

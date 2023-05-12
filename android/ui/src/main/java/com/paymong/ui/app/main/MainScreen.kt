@@ -45,7 +45,6 @@ import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.CharacterGif
 import com.paymong.ui.app.component.EmotionGif
 import com.paymong.ui.app.component.showToast
-import com.paymong.ui.watch.main.Poops
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -718,6 +717,23 @@ fun Btn(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
+    val poops = painterResource(R.drawable.poops)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = start.dp, end = end.dp, top = top.dp, bottom = bottom.dp)
+    ) {
+        Image(
+            painter = poops,
+            contentDescription = null,
+            modifier = Modifier.size(poopSize.dp)
+        )
     }
 }
 

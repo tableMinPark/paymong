@@ -7,9 +7,11 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -218,18 +220,23 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
         painter = rememberImagePainter(
             imageLoader = imageLoader,
             data = mainViewModel.mong.mongCode.gifCode,
-//            data = R.drawable.ch302g,
             builder = {
                 size(OriginalSize)
             }
         ),
         contentDescription = null,
-        modifier = Modifier.clickable {
-            mainViewModel.stroke()
-            Handler(Looper.getMainLooper()).postDelayed({
-                mainViewModel.isHappy = false
-            }, 2000)
-        }
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = {
+                if(mainViewModel.stateCode!=MongStateCode.CD002) {
+                    mainViewModel.stroke()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        mainViewModel.isHappy = false
+                    }, 2000)
+                }
+            }
+        )
     )
 }
 
@@ -247,13 +254,21 @@ fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, p
         }
         .build()
 
-    val imgData = when(mainViewModel.stateCode){
+    var imgData = when(mainViewModel.stateCode){
         MongStateCode.CD001 -> R.drawable.sad
         MongStateCode.CD002 -> R.drawable.sleeping
         MongStateCode.CD003 -> R.drawable.depressed
         MongStateCode.CD004 -> R.drawable.sulky
 
         else -> R.drawable.smile
+    }
+
+    if(mainViewModel.isHappy){
+        imgData = R.drawable.happy
+    }
+
+    if(mainViewModel.eating){
+        imgData = R.drawable.eating
     }
 
     Image(
@@ -265,7 +280,9 @@ fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, p
             }
         ),
         contentDescription = null,
-        modifier = Modifier.padding(top = paddingTop.dp, end = paddingRight.dp, bottom= paddingBottom.dp).size(size.dp)
+        modifier = Modifier
+            .padding(top = paddingTop.dp, end = paddingRight.dp, bottom = paddingBottom.dp)
+            .size(size.dp)
     )
 }
 

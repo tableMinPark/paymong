@@ -19,6 +19,7 @@ import com.google.accompanist.pager.PagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
+import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchViewModel
@@ -49,6 +50,7 @@ fun MainInteraction(
     val thirdRowPadding = if(screenWidthDp < 200) 12 else 15
     val eggState = watchViewModel.mong.mongCode.code
     var isBtnActive = true
+    var sleepActive = true
 
     if(watchViewModel.isClicked){
         watchViewModel.isClicked = false
@@ -63,6 +65,11 @@ fun MainInteraction(
 
     if (eggState.slice(0..3) == "CH00") {
         isBtnActive = false
+        sleepActive = false
+    }
+    else if(watchViewModel.stateCode == MongStateCode.CD002){
+        isBtnActive = false
+        sleepActive = true
     }
 
 
@@ -197,7 +204,7 @@ fun MainInteraction(
             Box(
                 modifier = Modifier
                     .clickable {
-                        if (isBtnActive == true) {
+                        if (isBtnActive == true || sleepActive == true) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             watchViewModel.isClicked = true
                             animationState.value = AnimationCode.Sleep

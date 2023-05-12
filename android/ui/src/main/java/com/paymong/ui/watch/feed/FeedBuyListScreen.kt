@@ -1,5 +1,7 @@
 package com.paymong.ui.watch.feed
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -69,6 +71,9 @@ fun FeedBuyList(
 
     if(feedViewModel.isClick){
         feedViewModel.isClick = false
+        Handler(Looper.getMainLooper()).postDelayed({
+            watchViewModel.eating = false
+        }, 3000)
         navController.navigate(WatchNavItem.Main.route) {
             coroutineScope.launch { pagerState.scrollToPage(1) }
             popUpTo(navController.graph.findStartDestination().id)

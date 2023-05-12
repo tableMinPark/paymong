@@ -310,7 +310,8 @@ public class MongService {
 
     @Transactional
     public void changeMap(MapCodeWsDto mapCodeWsDto){
+        LOGGER.info("새로운 map이 왔습니다. memberId : {}, mapCode : {}",mapCodeWsDto.getMemberId(), mapCodeWsDto.getMapCode());
         webSocketService.sendMap(mapCodeWsDto, WebSocketCode.MAP);
-        mapScheduler.stopScheduler(mapCodeWsDto.getMemberId());
+        mapScheduler.startScheduler(mapCodeWsDto.getMemberId());
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.ToastMessage
+import com.paymong.domain.watch.WatchViewModel
 
 @Composable
 fun Background(
@@ -192,6 +194,61 @@ fun DefenceGif() {
         contentDescription = null,
         modifier = Modifier
 //            .padding(top = 10.dp)
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun CharacterGif(mainViewModel:WatchViewModel) {
+
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+//            data = mainViewModel.mong.mongCode.gifCode,
+            data = R.drawable.ch101g,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+//            .padding(top = 10.dp)
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingBottom: Int, size:Int) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.smile,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier.padding(top = paddingTop.dp, bottom= paddingBottom.dp).size(size.dp)
     )
 }
 

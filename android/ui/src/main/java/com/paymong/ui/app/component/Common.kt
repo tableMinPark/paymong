@@ -45,12 +45,16 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
             }
         ),
         contentDescription = null,
-        modifier = Modifier.clickable {
-            appViewModel.stroke()
-            Handler(Looper.getMainLooper()).postDelayed({
-                appViewModel.isHappy = false
-            }, 2000)
-        }.size(size.dp)
+        modifier = Modifier
+            .clickable {
+                if (appViewModel.stateCode != MongStateCode.CD002) {
+                    appViewModel.stroke()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        appViewModel.isHappy = false
+                    }, 2000)
+                }
+            }
+            .size(size.dp)
     )
 }
 
@@ -90,7 +94,9 @@ fun EmotionGif(appViewModel: AppViewModel, paddingTop:Int, paddingRight:Int, pad
             }
         ),
         contentDescription = null,
-        modifier = Modifier.padding(top = paddingTop.dp, end = paddingRight.dp, bottom= paddingBottom.dp).size(size.dp)
+        modifier = Modifier
+            .padding(top = paddingTop.dp, end = paddingRight.dp, bottom = paddingBottom.dp)
+            .size(size.dp)
     )
 }
 

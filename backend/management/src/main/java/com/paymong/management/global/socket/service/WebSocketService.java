@@ -90,6 +90,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", mapCodeWsDto.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mapCodeWsDto, webSocketCode)));
+                log.info("연결된 세션수 : {}",members.get(mapCodeWsDto.getMemberId()).size());
                 members.get(mapCodeWsDto.getMemberId()).stream()
                         .forEach(s ->
                         {

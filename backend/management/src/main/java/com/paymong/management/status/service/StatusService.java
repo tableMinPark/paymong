@@ -8,6 +8,7 @@ import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.HealthScheduler;
 import com.paymong.management.global.scheduler.SatietyScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
+import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.FindStatusResDto;
@@ -26,6 +27,7 @@ public class StatusService {
     private final DeathScheduler deathScheduler;
     private final HealthScheduler healthScheduler;
     private final SatietyScheduler satietyScheduler;
+    private final WebSocketService webSocketService;
 
     @Transactional
     public MongStatusDto modifyMongStatus(Long mongId, FindStatusResDto statusResDto) throws NotFoundMongException {
@@ -61,11 +63,13 @@ public class StatusService {
             // 스케줄러
             deathScheduler.startScheduler(mongId);
             healthScheduler.stopScheduler(mongId);
+            webSocketService.sendStatus(mong, WebSocketCode.DEATH_READY);
         }
         if(satiety == 0) {
             // 스케줄러
             deathScheduler.startScheduler(mongId);
             satietyScheduler.stopScheduler(mongId);
+            webSocketService.sendStatus(mong, WebSocketCode.DEATH_READY);
         }
         if(satiety > 0 && health > 0){
             deathScheduler.stopScheduler(mongId);

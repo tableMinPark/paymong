@@ -1,8 +1,10 @@
 package com.paymong.ui.app.component
 
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -44,10 +46,10 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
         ),
         contentDescription = null,
         modifier = Modifier.clickable {
-//            appViewModel.stroke()
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                appViewModel.isHappy = false
-//            }, 2000)
+            appViewModel.stroke()
+            Handler(Looper.getMainLooper()).postDelayed({
+                appViewModel.isHappy = false
+            }, 2000)
         }.size(size.dp)
     )
 }
@@ -66,13 +68,17 @@ fun EmotionGif(appViewModel: AppViewModel, paddingTop:Int, paddingRight:Int, pad
         }
         .build()
 
-    val imgData = when(appViewModel.stateCode){
+    var imgData = when(appViewModel.stateCode){
         MongStateCode.CD001 -> R.drawable.sad
         MongStateCode.CD002 -> R.drawable.sleeping
         MongStateCode.CD003 -> R.drawable.depressed
         MongStateCode.CD004 -> R.drawable.sulky
 
         else -> R.drawable.smile
+    }
+
+    if(appViewModel.isHappy){
+        imgData = R.drawable.happy
     }
 
     Image(
@@ -86,4 +92,12 @@ fun EmotionGif(appViewModel: AppViewModel, paddingTop:Int, paddingRight:Int, pad
         contentDescription = null,
         modifier = Modifier.padding(top = paddingTop.dp, end = paddingRight.dp, bottom= paddingBottom.dp).size(size.dp)
     )
+}
+
+fun showToast(context: Context, toastMessage: String) {
+    Toast.makeText(
+        context,
+        toastMessage,
+        Toast.LENGTH_SHORT
+    ).show()
 }

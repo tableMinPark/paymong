@@ -66,12 +66,17 @@ public class WebSocketService {
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode)));
                 log.info("연결된 세션수 : {}",members.get(mong.getMemberId()).size());
+
                 members.get(mong.getMemberId()).stream()
                         .forEach(s ->
                         {
                             try {
-                                log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
-                                s.getSession().sendMessage(message);
+                                if(s.getSession().isOpen()){
+                                    log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
+                                    s.getSession().sendMessage(message);
+                                }else{
+                                    log.info("응 닫혔어");
+                                }
                             } catch (IOException e) {
                                 log.info("응 못보내");
                             }
@@ -96,8 +101,13 @@ public class WebSocketService {
                         .forEach(s ->
                         {
                             try {
-                                log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
-                                s.getSession().sendMessage(message);
+                                if(s.getSession().isOpen()){
+                                    log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
+                                    s.getSession().sendMessage(message);
+                                }else{
+                                    log.info("응 닫혔어");
+                                }
+
                             } catch (IOException e) {
                                 log.info("응 못보내");
                             }

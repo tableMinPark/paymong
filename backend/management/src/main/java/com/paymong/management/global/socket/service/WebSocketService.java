@@ -65,6 +65,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", mong.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode)));
+                log.info("연결된 세션수 : {}",members.get(mong.getMemberId()).size());
                 members.get(mong.getMemberId()).stream()
                         .forEach(s ->
                         {

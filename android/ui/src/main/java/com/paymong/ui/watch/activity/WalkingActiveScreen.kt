@@ -143,7 +143,6 @@ fun WalkingActive(
                                 .fillMaxHeight()
                                 .clickable {
                                     // 산책 끝
-                                    Log.e("walkingActive", walkingViewModel.walkingState.toString())
                                     soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
                                     walkingViewModel.walkingEnd(watchViewModel)
                                 }
@@ -202,7 +201,6 @@ fun WalkingActive(
                 }
             }
         }
-
         else {
             Box(
                 modifier = Modifier

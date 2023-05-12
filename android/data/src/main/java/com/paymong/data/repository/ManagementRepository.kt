@@ -41,7 +41,6 @@ class ManagementRepository(
             }
         }
     }
-
     fun sleep() : Flow<ManagementResDto> = flow {
         val response = api.sleep()
         if(response.code() == 200){

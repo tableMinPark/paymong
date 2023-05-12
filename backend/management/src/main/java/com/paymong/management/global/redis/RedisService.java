@@ -43,7 +43,9 @@ public class RedisService {
                     SchedulerDto scheduler = s.getValue();
 
                     Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
-                    Long expire = scheduler.getExpire() - diff.toSeconds();
+                    Long expire =
+                            scheduler.getExpire() - diff.toSeconds() < 0 ? 0 : scheduler.getExpire() - diff.toSeconds();
+
                     RedisMong redisMong = RedisMong.builder()
                             .mongId(key)
                             .expire(expire)

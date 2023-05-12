@@ -45,7 +45,11 @@ public class EvolutionScheduler implements ManagementScheduler {
             Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
             Long expire = schedulerDto.getExpire();
             if(expire - diff.toSeconds() < 0){
-
+                try {
+                    evolutionTask.evolutionMong(mongId);
+                }catch (NotFoundMongException e){
+                    stopScheduler(mongId);
+                }
             }else{
                 // 남은 기간 계산
                 log.info("남은 기간 : {}", expire - diff.toSeconds());

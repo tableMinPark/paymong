@@ -40,7 +40,7 @@ public class HealthTask {
             }
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
 
-            webSocketService.sendStatus(mong, WebSocketCode.DEATH);
+            webSocketService.sendStatus(mong, WebSocketCode.DEATH_READY);
             return false;
         }
         log.info("{}의 체력이 감소하였습니다.", mongId);

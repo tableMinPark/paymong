@@ -38,6 +38,10 @@
                     android:host="*"
                     android:pathPrefix="/start-activity"
                     android:scheme="wear" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/thingsAlarm"
+                    android:scheme="wear" />
             </intent-filter>
         </service>
 

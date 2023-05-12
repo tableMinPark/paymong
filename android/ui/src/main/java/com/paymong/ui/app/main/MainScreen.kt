@@ -44,6 +44,7 @@ import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.CharacterGif
 import com.paymong.ui.app.component.EmotionGif
+import com.paymong.ui.app.component.showToast
 import com.paymong.ui.watch.main.Poops
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
@@ -109,8 +110,6 @@ fun Info(
     navController: NavController,
     soundViewModel: SoundViewModel
 ){
-
-
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -588,6 +587,10 @@ fun MakeEgg(
                                 appViewModel.isClick = false
                             }, 1800)
                         } else{
+                            val context = LocalContext.current
+                            if(appViewModel.showtoast){
+                                showToast(context, appViewModel.msg)
+                            }
                             val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
 
                             if(code / 100 == 1){

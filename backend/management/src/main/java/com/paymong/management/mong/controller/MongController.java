@@ -100,52 +100,52 @@ public class MongController {
         }
     }
 
-    @GetMapping("/death/start")
-    public ResponseEntity<Object> startDeath(@RequestParam("mongId") Long mongId){
-        deathScheduler.startScheduler(mongId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/stop")
-    public ResponseEntity<Object> stopDeath(@RequestParam("mongId") Long mongId){
-        deathScheduler.stopScheduler(mongId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/death")
-    public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.startScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/pause")
-    public ResponseEntity<Object> deathPauseMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.pauseScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/restart")
-    public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.restartScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/redis/add")
-    public ResponseEntity<Object> redisTestAdd(){
-
-        deathScheduler.addRedis();
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/redis/out")
-    public ResponseEntity<Object> redisTestOut(){
-
-        redisService.getRedisMong("death").stream().forEach(deathScheduler::restartScheduler);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
+//    @GetMapping("/death/start")
+//    public ResponseEntity<Object> startDeath(@RequestParam("mongId") Long mongId){
+//        deathScheduler.startScheduler(mongId);
+//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/stop")
+//    public ResponseEntity<Object> stopDeath(@RequestParam("mongId") Long mongId){
+//        deathScheduler.stopScheduler(mongId);
+//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/death")
+//    public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.startScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/pause")
+//    public ResponseEntity<Object> deathPauseMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.pauseScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/restart")
+//    public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.restartScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/redis/add")
+//    public ResponseEntity<Object> redisTestAdd(){
+//
+//        deathScheduler.addRedis();
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/redis/out")
+//    public ResponseEntity<Object> redisTestOut(){
+//
+//        redisService.getRedisMong("death").stream().forEach(deathScheduler::restartScheduler);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
 
     @PutMapping("/evolution")
     public ResponseEntity<Object> evolutionMong(HttpServletRequest httpServletRequest){
@@ -190,5 +190,28 @@ public class MongController {
             LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
         }
+    }
+
+    @PostMapping("/map")
+    public ResponseEntity<Object> changeMap(@RequestBody MapCodeDto mapCodeDto, HttpServletRequest httpServletRequest){
+
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("맵이 바뀝니도. memberId = {}", memberIdStr);
+        try {
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+            if(mapCodeDto.getMapCode() == null || mapCodeDto.getMapCode().equals("")) throw new NullPointerException();
+            Long memberId = Long.parseLong(memberIdStr);
+            MapCodeWsDto mapCodeWsDto = MapCodeWsDto.builder()
+                    .memberId(memberId)
+                    .mapCode(mapCodeDto.getMapCode())
+                    .build();
+            mongService.changeMap(mapCodeWsDto);
+            return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }
+
+
     }
 }

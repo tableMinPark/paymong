@@ -58,4 +58,17 @@ public class Mong {
     private LocalTime sleepEnd;
     @Column(name = "active")
     private Boolean active;
+
+    @PrePersist
+    public void prePersist() {
+
+        this.weight = this.weight == null ? 5 : this.weight;
+        this.satiety = this.satiety == null ? 10 : this.satiety;
+        this.health = this.health == null ? 10 : this.health;
+        this.strength = this.strength == null ? 10 : this.strength;
+        this.sleep = this.sleep == null ? 10 : this.sleep;
+        this.poopCount = this.poopCount == null ? 0 : this.poopCount;
+        this.regDt = this.regDt == null ? LocalDateTime.now() : this.regDt;
+
+    }
 }

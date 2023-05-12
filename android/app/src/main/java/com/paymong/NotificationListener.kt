@@ -71,13 +71,8 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
     }
 
-
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
-
-
-        // Things
-        val extras = sbn.notification.extras
 
         try {
             val packageName: String = sbn.packageName ?: ""

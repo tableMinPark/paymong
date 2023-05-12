@@ -5,7 +5,13 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode
@@ -15,6 +21,7 @@ import com.paymong.data.model.response.ManagementRealTimeResDto
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.MemberRepository
+import com.paymong.data.repository.ThingsRepository
 import com.paymong.domain.entity.Mong
 import com.paymong.domain.entity.MongInfo
 import com.paymong.domain.entity.MongStats
@@ -28,6 +35,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+
 
 class WatchViewModel (
     application: Application

@@ -87,6 +87,7 @@ interface Api {
                 // 일반 요청 경우
                 else {
                     val accessToken = DataApplication.prefs.getString("accessToken", "")
+                    Log.d("intercept - accessToken", accessToken)
                     return if ("" != accessToken) {
                         val token = "Bearer $accessToken"
                         val newRequest = chain.request().newBuilder()

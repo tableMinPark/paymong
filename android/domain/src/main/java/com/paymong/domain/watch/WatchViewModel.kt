@@ -18,6 +18,7 @@ import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.response.ManagementRealTimeResDto
+import com.paymong.data.model.response.ManagementResDto
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.MemberRepository
@@ -89,33 +90,64 @@ class WatchViewModel (
                 Log.e("WatchViewModel", "response : $managementRealTimeResDto")
 
                 if (managementRealTimeResDto.code != "201") {
-                    stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
-                    poopCount = managementRealTimeResDto.poopCount
+                    if (managementRealTimeResDto.code != "209") {
+                        stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
+                        poopCount = managementRealTimeResDto.poopCount
 
-                    val weight = managementRealTimeResDto.weight
-                    val health = managementRealTimeResDto.health
-                    val satiety = managementRealTimeResDto.satiety
-                    val strength = managementRealTimeResDto.strength
-                    val sleep = managementRealTimeResDto.sleep
+                        val weight = managementRealTimeResDto.weight
+                        val health = managementRealTimeResDto.health
+                        val satiety = managementRealTimeResDto.satiety
+                        val strength = managementRealTimeResDto.strength
+                        val sleep = managementRealTimeResDto.sleep
 
-                    mongInfo = MongInfo(
-                        weight,
-                        mongInfo.born
-                    )
-                    mongStats = MongStats(
-                        mongStats.mongId,
-                        mongStats.name,
-                        health.toFloat(),
-                        satiety.toFloat(),
-                        strength.toFloat(),
-                        sleep.toFloat()
-                    )
+                        mongInfo = MongInfo(
+                            weight,
+                            mongInfo.born
+                        )
+                        mongStats = MongStats(
+                            mongStats.mongId,
+                            mongStats.name,
+                            health.toFloat(),
+                            satiety.toFloat(),
+                            strength.toFloat(),
+                            sleep.toFloat()
+                        )
+                    } else {
+                        mapCode = MapCode.valueOf(managementRealTimeResDto.mapCode)
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
+
+
+    fun updateStates(managementResDto: ManagementResDto) {
+        stateCode = MongStateCode.valueOf(managementResDto.stateCode)
+        poopCount = managementResDto.poopCount
+
+        val weight = managementResDto.weight
+        val health = managementResDto.health
+        val satiety = managementResDto.satiety
+        val strength = managementResDto.strength
+        val sleep = managementResDto.sleep
+
+        mongInfo = MongInfo(
+            weight,
+            mongInfo.born
+        )
+        mongStats = MongStats(
+            mongStats.mongId,
+            mongStats.name,
+            health.toFloat(),
+            satiety.toFloat(),
+            strength.toFloat(),
+            sleep.toFloat()
+        )
+    }
+
+
     override fun onCleared() {
         super.onCleared()
         try {

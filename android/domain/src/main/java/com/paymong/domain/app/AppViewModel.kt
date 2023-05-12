@@ -71,11 +71,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 Log.e("WatchViewModel", "response : $managementRealTimeResDto")
 
                 if (managementRealTimeResDto.code != "201") {
-                    stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
-                    poopCount = managementRealTimeResDto.poopCount
-                }
-                else if (managementRealTimeResDto.code == "209"){
-                    mapCode = MapCode.valueOf(managementRealTimeResDto.mapCode)
+                    if (managementRealTimeResDto.code != "209") {
+                        stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
+                        poopCount = managementRealTimeResDto.poopCount
+                    } else {
+                        mapCode = MapCode.valueOf(managementRealTimeResDto.mapCode)
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -92,10 +93,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 .collect { data ->
                     mong = Mong(
-                        0L,
+                        data.mongId,
                         data.name,
                         MongCode.valueOf(data.mongCode)
                     )
+                    stateCode = MongStateCode.CD000
                 }
         }
     }
@@ -164,5 +166,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
+        try {
+            managementSocketService.disConnect()
+            socketJob.cancel()
+        } catch (e: Exception) {  }
     }
 }

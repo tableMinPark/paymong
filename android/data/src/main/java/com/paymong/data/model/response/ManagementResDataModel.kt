@@ -43,7 +43,15 @@ data class FoodResDto(
 
 data class ManagementResDto(
     val code: String,
-    val message: String
+    val poopCount: Int,
+    val message: String,
+    val stateCode: String,
+    val weight: Int,
+    val health: Double,
+    val satiety: Double,
+    val strength: Double,
+    val sleep: Double,
+    val mapCode: String
 )
 
 data class EvolutionResDto(

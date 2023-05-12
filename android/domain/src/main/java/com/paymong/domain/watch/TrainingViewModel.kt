@@ -54,18 +54,18 @@ class TrainingViewModel (
             }
             // 시간 초과 종료
             isTrainingEnd = true
-            trainingEnd()
         }
     }
 
     // 훈련 종료
-    private fun trainingEnd() {
+    fun trainingEnd(watchViewModel: WatchViewModel) {
         viewModelScope.launch(Dispatchers.IO) {
             managementRepository.training(count)
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{
+                .collect{data ->
+                    if (data.code != "201") watchViewModel.updateStates(data)
                 }
         }
     }

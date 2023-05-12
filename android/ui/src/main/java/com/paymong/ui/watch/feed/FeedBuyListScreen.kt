@@ -1,13 +1,11 @@
 package com.paymong.ui.watch.feed
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +25,7 @@ import com.paymong.common.code.FoodCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
+import com.paymong.domain.entity.MongInfo
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
@@ -243,7 +242,7 @@ fun FeedBuyList(
                         soundViewModel.soundPlay(SoundCode.COIN_SOUND)
                         feedViewModel.isClick = true
                         animationState.value = AnimationCode.Feed
-                        feedViewModel.selectButtonClick(feedViewModel.currentCategory)
+                        feedViewModel.selectButtonClick(feedViewModel.currentCategory, watchViewModel)
                     } else {
                         soundViewModel.soundPlay(SoundCode.COIN_SOUND)
                     }

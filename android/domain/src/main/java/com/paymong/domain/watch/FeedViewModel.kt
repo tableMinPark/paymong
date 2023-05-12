@@ -7,9 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.paymong.common.code.MongStateCode
+import com.paymong.data.model.response.ManagementResDto
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Food
+import com.paymong.domain.entity.MongInfo
+import com.paymong.domain.entity.MongStats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -95,7 +99,7 @@ class FeedViewModel (
         changeCurrentFoodPosition()
     }
 
-    fun selectButtonClick(fc: String) {
+    fun selectButtonClick(fc: String, watchViewModel: WatchViewModel) {
         // food
         if (fc == "FD") {
             viewModelScope.launch(Dispatchers.IO) {
@@ -103,9 +107,10 @@ class FeedViewModel (
                     .catch {
                         it.printStackTrace()
                     }
-                    .collect {
+                    .collect {data ->
                         Log.d("buy food", foodList[currentFoodPosition].toString())
                         success.value = false
+                        if (data.code != "201") watchViewModel.updateStates(data)
                     }
             }
         }
@@ -116,8 +121,9 @@ class FeedViewModel (
                     .catch {
                         it.printStackTrace()
                     }
-                    .collect {
+                    .collect {data ->
                         Log.d("buy snack", foodList[currentFoodPosition].toString())
+                        if (data.code != "201") watchViewModel.updateStates(data)
                     }
             }
         }
@@ -131,10 +137,6 @@ class FeedViewModel (
 
         if (nowFood.lastBuy != null) {
             isCanBuy = Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
-        } else if (nowFood.price > point) {
-            isCanBuy = false
-        } else {
-            isCanBuy = true
-        }
+        } else isCanBuy = nowFood.price <= point
     }
 }

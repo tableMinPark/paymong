@@ -24,6 +24,8 @@ import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.app.main.CreateImageList
 import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.common.CharacterGif
+import com.paymong.ui.watch.common.EmotionGif
 import com.paymong.ui.watch.common.LoadingGif
 
 @Composable
@@ -128,6 +130,7 @@ fun MainInfo(
                                             }, 2000)
                                         }
                                 )
+
                                 Box(modifier = Modifier.scale(2f)) {
                                     CreateImageList()
                                 }
@@ -135,22 +138,24 @@ fun MainInfo(
                                     mainViewModel.evolutionisClick = false
                                 }, 1800)
                             } else {
-                                Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(characterSize.dp)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null,
-
-                                            )
-                                        {
-                                            mainViewModel.stroke()
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                mainViewModel.isHappy = false
-                                            }, 2000)
-                                        }
-                                )
+                                CharacterGif(mainViewModel)
+                                EmotionGif(mainViewModel, 10, 0, 20)
+//                                Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode),
+//                                    contentDescription = null,
+//                                    modifier = Modifier
+//                                        .size(characterSize.dp)
+//                                        .clickable(
+//                                            interactionSource = remember { MutableInteractionSource() },
+//                                            indication = null,
+//
+//                                            )
+//                                        {
+//                                            mainViewModel.stroke()
+//                                            Handler(Looper.getMainLooper()).postDelayed({
+//                                                mainViewModel.isHappy = false
+//                                            }, 2000)
+//                                        }
+//                                )
                             }
                         }
                     }

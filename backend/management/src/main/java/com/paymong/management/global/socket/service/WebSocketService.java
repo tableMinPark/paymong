@@ -68,21 +68,18 @@ public class WebSocketService {
                 log.info("연결된 세션수 : {}",members.get(mong.getMemberId()).size());
 
                 members.get(mong.getMemberId()).stream()
+                        .filter(s -> s.getSession().isOpen())
                         .forEach(s ->
                         {
                             try {
-                                if(s.getSession().isOpen()){
-                                    log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
-                                    s.getSession().sendMessage(message);
-                                }else{
-                                    log.info("응 닫혔어");
-                                }
+                                log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
+                                s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");
                             }
                         });
-//                WebSocketSession session = members.get(mong.getMemberId()).getSession();
-//                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
+                members.get(mong.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");
@@ -98,22 +95,17 @@ public class WebSocketService {
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mapCodeWsDto, webSocketCode)));
                 log.info("연결된 세션수 : {}",members.get(mapCodeWsDto.getMemberId()).size());
                 members.get(mapCodeWsDto.getMemberId()).stream()
+                        .filter(s -> s.getSession().isOpen())
                         .forEach(s ->
                         {
                             try {
-                                if(s.getSession().isOpen()){
-                                    log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
-                                    s.getSession().sendMessage(message);
-                                }else{
-                                    log.info("응 닫혔어");
-                                }
-
+                                log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
+                                s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");
                             }
                         });
-//                WebSocketSession session = members.get(mong.getMemberId()).getSession();
-//                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
+                members.get(mapCodeWsDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");

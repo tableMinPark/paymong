@@ -155,7 +155,7 @@ fun BattleActive(
 //                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
 //                )
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
-                if (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 != 0) {
+                if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 != 0) ) {
                     if (battleViewModel.battleActive.damageB > 0) {
                         Box() {
                             Row() {
@@ -205,7 +205,7 @@ fun BattleActive(
                             }
                         }
                     }
-                } else if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) {
+                } else if ((battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
                         Box() {
                             Row() {
@@ -372,7 +372,7 @@ fun BattleActive(
 
 
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
-                if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0) {
+                if ( (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0)  ) {
                     if (battleViewModel.battleActive.damageB > 0) {
 
                         Box() {
@@ -421,7 +421,7 @@ fun BattleActive(
                             }
                         }
                     }
-                } else if (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0) {
+                } else if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
                         Box() {
                             Row() {

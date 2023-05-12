@@ -42,8 +42,8 @@ fun MainInteraction(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val buttonSize = if(screenWidthDp < 200) 45 else 55
-    val buttonIconSize = if(screenWidthDp < 200) 25 else 35
+    val buttonSize = if(screenWidthDp < 200) 45 else 50
+    val buttonIconSize = if(screenWidthDp < 200) 25 else 30
     val boxHeight = if(screenWidthDp < 200) 50 else 60
     val boxWidth = if(screenWidthDp < 200) 60 else 80
     val marginTop = if(screenWidthDp < 200) 40 else 50

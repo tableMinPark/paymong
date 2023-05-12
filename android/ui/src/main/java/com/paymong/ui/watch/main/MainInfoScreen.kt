@@ -24,12 +24,15 @@ import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.app.main.CreateImageList
+import com.paymong.ui.app.main.GraduationEffect
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.CharacterGif
 import com.paymong.ui.watch.common.EmotionGif
 import com.paymong.ui.watch.common.LoadingGif
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -43,6 +46,7 @@ fun MainInfo(
     val characterSize = if (screenWidthDp < 200) 110 else 120
     val poopSize = if (screenWidthDp < 200) 25 else 35
     val boxTopPadding = if (screenWidthDp < 200) 65 else 75
+    val graduFontSize = if (screenWidthDp < 200 ) 10 else 12
     val mongResourceCode = mainViewModel.mong.mongCode.resourceCode
 
     if(mainViewModel.isHappy) {
@@ -89,10 +93,11 @@ fun MainInfo(
                     }
                 } else if (mainViewModel.stateCode == MongStateCode.CD006) { // 졸업
                     Box(contentAlignment = Alignment.Center,) {
-                        Image(painter = painterResource(R.drawable.rip), // 졸업 이미지 넣기
+                        Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode), // 졸업 이미지 넣기
                             contentDescription = null,
                             modifier = Modifier
                                 .size(characterSize.dp))
+                        GraduationEffect(mainViewModel, graduFontSize)
                     }
                 } else {
                     Box(contentAlignment = Alignment.Center,) {
@@ -187,5 +192,61 @@ fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
             contentDescription = null,
             modifier = Modifier.size(poopSize.dp)
         )
+    }
+}
+
+@Composable
+fun GraduationEffect(
+    mainViewModel: WatchViewModel,
+    graduFontSize : Int
+) {
+    val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
+
+    Box() {
+        var currentIndex by remember { mutableStateOf(0) }
+
+        LaunchedEffect(Unit) {
+            delay(100L)
+            currentIndex = 0
+            delay(500L)
+            currentIndex = 1
+            delay(500L)
+            currentIndex = 2
+            delay(500L)
+            currentIndex = 3
+            delay(500L)
+            currentIndex = 4
+            delay(400L)
+        }
+
+        if(currentIndex == 4){
+            Box( modifier = Modifier.fillMaxHeight(1f)) {
+            Text(
+                text = "축하합니다!\n졸업을 위해\n화면을 터치해주세요.",
+                textAlign = TextAlign.Center,
+                lineHeight = 25.sp,
+                fontFamily = dalmoori,
+                fontSize = graduFontSize.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .background(color = Color.Black.copy(alpha = 0.4f))
+                    .padding(vertical = 10.dp)
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            mainViewModel.graduation()
+                        }
+                    )
+            )}
+        } else{
+            Image(
+                painter = painterResource(id = imageList[currentIndex]),
+                contentDescription = null,
+                modifier = Modifier.size(500.dp)
+            )
+        }
     }
 }

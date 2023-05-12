@@ -8,12 +8,12 @@ enum class MongCode(
     val codeName: String,
     val code: String
 ) {
-    CH000(R.drawable.ch000, R.drawable.ch000, "화산알", "CH000"),
-    CH001(R.drawable.ch001, R.drawable.ch001, "석탄알", "CH001"),
-    CH002(R.drawable.ch002, R.drawable.ch002, "황금알", "CH002"),
-    CH003(R.drawable.ch003, R.drawable.ch003, "목성알", "CH003"),
-    CH004(R.drawable.ch004, R.drawable.ch004, "지구알", "CH004"),
-    CH005(R.drawable.ch005, R.drawable.ch005, "바람알", "CH005"),
+    CH000(R.drawable.ch000, R.drawable.ch000g, "화산알", "CH000"),
+    CH001(R.drawable.ch001, R.drawable.ch001g, "석탄알", "CH001"),
+    CH002(R.drawable.ch002, R.drawable.ch002g, "황금알", "CH002"),
+    CH003(R.drawable.ch003, R.drawable.ch003g, "목성알", "CH003"),
+    CH004(R.drawable.ch004, R.drawable.ch004g, "지구알", "CH004"),
+    CH005(R.drawable.ch005, R.drawable.ch005g, "바람알", "CH005"),
     CH100(R.drawable.ch100, R.drawable.ch100g, "별몽", "CH100"),
     CH101(R.drawable.ch101, R.drawable.ch101g, "동글몽", "CH101"),
     CH102(R.drawable.ch102, R.drawable.ch102g, "네몽", "CH102"),

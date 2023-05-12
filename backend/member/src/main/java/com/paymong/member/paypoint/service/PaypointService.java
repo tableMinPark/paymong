@@ -1,17 +1,16 @@
 package com.paymong.member.paypoint.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.member.background.service.MymapService;
 import com.paymong.member.global.client.CollectServiceClient;
 import com.paymong.member.global.client.CommonServiceClient;
+import com.paymong.member.global.client.ManagementServiceClient;
 import com.paymong.member.global.exception.NotFoundException;
 import com.paymong.member.global.exception.NotFoundMapCodeException;
 import com.paymong.member.global.exception.NotFoundMapException;
 import com.paymong.member.member.entity.Member;
 import com.paymong.member.member.repository.MemberRepository;
-import com.paymong.member.paypoint.dto.request.AddMapReqDto;
-import com.paymong.member.paypoint.dto.request.AddPaypointReqDto;
-import com.paymong.member.paypoint.dto.request.FindMapByNameReqDto;
-import com.paymong.member.paypoint.dto.request.FindTotalPayReqDto;
+import com.paymong.member.paypoint.dto.request.*;
 import com.paymong.member.paypoint.dto.response.AddPaypointResDto;
 import com.paymong.member.paypoint.dto.response.AddPointReqDto;
 import com.paymong.member.paypoint.dto.response.FindMapByNameResDto;
@@ -38,7 +37,9 @@ public class PaypointService {
     private final MemberRepository memberRepository;
     private final CommonServiceClient commonServiceClient;
     private final CollectServiceClient collectServiceClient;
-
+    private final ManagementServiceClient managementServiceClient;
+    private final MymapService mymapService;
+    
     @Transactional
     public AddPaypointResDto addPaypoint(String memberIdStr, AddPaypointReqDto addPaypointReqDto) throws Exception{
         Long memberId = Long.parseLong(memberIdStr);
@@ -86,7 +87,10 @@ public class PaypointService {
             addPayResDto.setMapCode(mapCode);
             
             //mymap에 반영
+            mymapService.setMymap(memberId, mapCode);
             
+            //맵 변경 소켓 통신요청
+            managementServiceClient.sendMap(memberIdStr, new SendMapReqDto(mapCode));
             
         }
 

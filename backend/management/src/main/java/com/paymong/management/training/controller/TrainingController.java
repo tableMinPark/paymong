@@ -5,8 +5,11 @@ import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
+import com.paymong.management.training.dto.TrainingReqDto;
 import com.paymong.management.training.dto.WalkingReqDto;
 import com.paymong.management.training.service.TrainingService;
+import com.paymong.management.training.vo.TrainingReqVo;
 import com.paymong.management.training.vo.WalkingReqVo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,14 +30,27 @@ public class TrainingController {
 
     @Value("${header.mong}")
     String headerMong;
+    @Value("${header.member}")
+    String headerMember;
     @PutMapping
-    public ResponseEntity<Object> training(HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> training(@RequestBody TrainingReqDto trainingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("훈련을 시작합니다. id : {}", mongIdStr);
         try {
+            if(trainingReqDto.getTrainingCount() == null)throw new NullPointerException();
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            trainingService.training(mongId);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            Long memberId = Long.parseLong(memberIdStr);
+
+            TrainingReqVo trainingReqVo = new TrainingReqVo();
+            trainingReqVo.setWalkingCount(trainingReqDto.getTrainingCount());
+            trainingReqVo.setMongId(mongId);
+            trainingReqVo.setMemberId(memberId);
+
+            MongStatusDto mongStatusDto = trainingService.training(trainingReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
@@ -51,19 +67,35 @@ public class TrainingController {
     }
 
     @PutMapping("/walking")
-    public ResponseEntity<Object> walking(WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
+    public ResponseEntity<Object> walking(@RequestBody WalkingReqDto walkingReqDto, HttpServletRequest httpServletRequest) throws Exception{
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("산책을 시작합니다. id : {}", mongIdStr);
+        LOGGER.info("count : {} , mongId : {}, memberId : {}", walkingReqDto.getWalkingCount(), mongIdStr, memberIdStr);
         try {
-            if(walkingReqDto.getWalkingCount() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(walkingReqDto.getWalkingCount() == null ){
+                LOGGER.info("count가 비었음");
                 throw new NullPointerException();
             }
+            if(mongIdStr == null || mongIdStr.equals("")) {
+                LOGGER.info("mongId가 비었음");
+                throw new NullPointerException();
+            }
+            if(memberIdStr == null || memberIdStr.equals("")) {
+                LOGGER.info("memberId가 비었음");
+                throw new NullPointerException();
+            }
+
             Long mongId = Long.parseLong(mongIdStr);
+            Long memberId = Long.parseLong(memberIdStr);
+
             WalkingReqVo walkingReqVo = new WalkingReqVo();
-            walkingReqVo.setWalkingCount(walkingReqVo.getWalkingCount());
+            walkingReqVo.setWalkingCount(walkingReqDto.getWalkingCount());
             walkingReqVo.setMongId(mongId);
-            trainingService.walking(walkingReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            walkingReqVo.setMemberId(memberId);
+            MongStatusDto mongStatusDto = trainingService.walking(walkingReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
+
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

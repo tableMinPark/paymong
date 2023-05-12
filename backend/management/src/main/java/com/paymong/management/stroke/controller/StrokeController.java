@@ -3,6 +3,7 @@ package com.paymong.management.stroke.controller;
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.stroke.service.StrokeService;
 import com.paymong.management.stroke.vo.StrokeMongReqVo;
 import lombok.RequiredArgsConstructor;
@@ -29,15 +30,17 @@ public class StrokeController {
     String headerMong;
     @PutMapping
     public ResponseEntity<Object> strokeMong(HttpServletRequest httpServletRequest) throws Exception{
-        Long mongId = Long.parseLong(httpServletRequest.getHeader(headerMong));
-
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("쓰다듬기를 시작합니다. id : {}", mongIdStr);
         try {
-            if(mongId == null) {
+            if(mongIdStr == null || mongIdStr.equals("")) {
                 throw new NullPointerException();
             }
+            Long mongId = Long.parseLong(mongIdStr);
             StrokeMongReqVo strokeMongReqVo = new StrokeMongReqVo(mongId);
-            strokeService.strokeMong(strokeMongReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            MongStatusDto mongStatusDto = strokeService.strokeMong(strokeMongReqVo);
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
+
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

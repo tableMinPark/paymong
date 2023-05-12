@@ -69,7 +69,10 @@ public class ThingsService {
         //나의 things code 리스트 가져오기
         Map<String,Integer> check = new HashMap<>();
         List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
-        for(Things things : myThings) check.put(things.getThingsCode(),1);
+        for(Things things : myThings) {
+            System.out.print(things.getThingsCode() + " // ");
+            check.put(things.getThingsCode(),1);
+        } System.out.println();
 
         List<FindAddableThingsResDto> ret = new ArrayList<>();
         //나한테 없는 코드 찾기

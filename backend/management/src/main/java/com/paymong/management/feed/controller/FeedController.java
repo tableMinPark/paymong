@@ -11,6 +11,7 @@ import com.paymong.management.global.exception.NotFoundActionException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.exception.UnknownException;
 import com.paymong.management.global.response.ErrorResponse;
+import com.paymong.management.status.dto.MongStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +31,35 @@ public class FeedController {
     private final FeedService feedService;
     @Value("${header.mong}")
     String headerMong;
+
+    @Value("${header.member}")
+    String headerMember;
     /* 음식 먹이기 */
     @PutMapping("/food")
     public ResponseEntity<Object> feedFood(@RequestBody FeedFoodReqDto feedFoodReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedFoodReqVo feedFoodReqVo = new FeedFoodReqVo(feedFoodReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-        LOGGER.info("{} 먹어", feedFoodReqVo.getFoodCode());
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("밥을 먹습니다. id : {}", mongIdStr);
         try {
-            if(feedFoodReqVo.getFoodCode() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(feedFoodReqVo.getFoodCode() == null){
+                throw new NullPointerException();
+            }
+            if(mongIdStr == null || mongIdStr.equals("")){
+                throw new NullPointerException();
+            }
+            if(memberIdStr == null || memberIdStr.equals("")){
                 throw new NullPointerException();
             }
             Long mongId = Long.parseLong(mongIdStr);
+            Long memberId = Long.parseLong(memberIdStr);
+
             feedFoodReqVo.setMongId(mongId);
-            feedService.feedFood(feedFoodReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            feedFoodReqVo.setMemberId(memberId);
+
+            MongStatusDto mongStatusDto = feedService.feedFood(feedFoodReqVo);
+
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
@@ -67,15 +83,27 @@ public class FeedController {
     public ResponseEntity<Object> feedSnack(@RequestBody FeedSnackReqDto feedSnackReqDto, HttpServletRequest httpServletRequest) throws Exception{
         FeedSnackReqVo feedSnackReqVo = new FeedSnackReqVo(feedSnackReqDto);
         String mongIdStr = httpServletRequest.getHeader(headerMong);
-
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("간식을 먹습니다. id : {}", mongIdStr);
         try {
-            if(feedSnackReqVo.getSnackCode() == null || mongIdStr == null || mongIdStr.equals("")){
+            if(feedSnackReqVo.getSnackCode() == null){
+                throw new NullPointerException();
+            }
+            if(mongIdStr == null || mongIdStr.equals("")){
+                throw new NullPointerException();
+            }
+            if(memberIdStr == null || memberIdStr.equals("")){
                 throw new NullPointerException();
             }
             Long mongId = Long.parseLong(mongIdStr);
+            Long memberId = Long.parseLong(memberIdStr);
+
             feedSnackReqVo.setMongId(mongId);
-            feedService.feedSnack(feedSnackReqVo);
-            return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            feedSnackReqVo.setMemberId(memberId);
+
+            MongStatusDto mongStatusDto = feedService.feedSnack(feedSnackReqVo);
+
+            return ResponseEntity.status(HttpStatus.OK).body(mongStatusDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

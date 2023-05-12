@@ -52,7 +52,9 @@ data class ManagementResDto(
     val strength: Double,
     val sleep: Double,
     val mapCode: String
-)
+) {
+    constructor() : this("", 0, "", "", 0, 0.0, 0.0, 0.0, 0.0, "")
+}
 
 data class EvolutionResDto(
     val mongCode: String,

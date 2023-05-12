@@ -21,7 +21,8 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         private const val START_WEAR_ACTIVITY_PATH = "/thingsAlarm"
         private const val THINGS_ALARM = "/thingsAlarm"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
-        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.samsung.android.spay"
+        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.kakao.talk"
+//        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.samsung.android.spay"
         private const val SAMSUNG_THINGS_PACKAGE_NAME = "com.samsung.android.oneconnect"
     }
 
@@ -77,13 +78,15 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         try {
             val packageName: String = sbn.packageName ?: ""
             val extras = sbn.notification.extras
-            val title = extras.get(Notification.EXTRA_TITLE).toString()
+            val title = extras.get(Notification.EXTRA_TEXT).toString()
 
             if (title == "null" || title == null) return
 
+            Log.d("onNotification", "$packageName $title")
+
             when(packageName){
                 SAMSUNG_PAY_PACKAGE_NAME -> {
-                    val message: List<String> = title.trim().split("￦")
+                    val message: List<String> = title.trim().split("₩")
                     val content : String = message[0].trim()
                     val price : Int = message[1].trim().replace(",", "").toInt()
 

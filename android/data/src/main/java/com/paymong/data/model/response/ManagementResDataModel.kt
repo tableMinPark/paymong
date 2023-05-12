@@ -54,3 +54,16 @@ data class EvolutionResDto(
 data class GraduationResDto(
     val mongCode: String,
 )
+
+
+data class ManagementRealTimeResDto(
+    val code: String,
+    val poopCount: Int,
+    val message: String,
+    val stateCode: String,
+    val weight: Int,
+    val health: Double,
+    val satiety: Double,
+    val strength: Double,
+    val sleep: Double
+)

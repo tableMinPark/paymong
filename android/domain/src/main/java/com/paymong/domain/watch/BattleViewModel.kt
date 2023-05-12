@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.domain.watch.socket.SocketService
+import com.paymong.domain.watch.socket.BattleSocketService
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode
@@ -52,7 +52,7 @@ class BattleViewModel (
     private lateinit var mLocationRequest: LocationRequest
     // socket
     private lateinit var socketJob : Job
-    private lateinit var socketService: SocketService
+    private lateinit var battleSocketService: BattleSocketService
 
     // Battle - 찾기
     var playerCodeA by mutableStateOf(MongCode.CH444)
@@ -102,7 +102,7 @@ class BattleViewModel (
     override fun onCleared() {
         super.onCleared()
         try {
-            socketService.disConnect(mongId, mongCode.code)
+            battleSocketService.disConnect(mongId, mongCode.code)
             gpsJob.cancel()
             socketJob.cancel()
         } catch (e: Exception) {  }
@@ -124,12 +124,12 @@ class BattleViewModel (
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 
-            socketService = SocketService()
-            socketService.init(listener)
+            battleSocketService = BattleSocketService()
+            battleSocketService.init(listener)
 
             socketJob = viewModelScope.launch {
                 try {
-                    socketService.connect(mongId, mongCode.code, latitude, longitude)
+                    battleSocketService.connect(mongId, mongCode.code, latitude, longitude)
                 } catch (e: NullPointerException) {
                     Log.e("battle-matching", "서버가 유효하지 않음")
                 } catch (e: Exception) {
@@ -171,7 +171,7 @@ class BattleViewModel (
                         }
                         -1 -> {
                             // 게임 끝
-                            socketService.disConnect(mongId, mongCode.code)
+                            battleSocketService.disConnect(mongId, mongCode.code)
                             matchingState = MatchingCode.END
                         }
                         else -> {
@@ -218,7 +218,7 @@ class BattleViewModel (
         viewModelScope.launch {
             matchingState = MatchingCode.FINDING
             try {
-                socketService.disConnect(mongId, mongCode.code)
+                battleSocketService.disConnect(mongId, mongCode.code)
                 gpsJob.cancel()
                 socketJob.cancel()
             } catch (e: Exception) {  }
@@ -257,7 +257,7 @@ class BattleViewModel (
                     break
             } while(battleSelectTime <= 1.0)
 
-            socketService.select(selectState, mongId, battleActive.battleRoomId, battleActive.order)
+            battleSocketService.select(selectState, mongId, battleActive.battleRoomId, battleActive.order)
             matchingState = MatchingCode.SELECT_AFTER
         }
     }

@@ -58,6 +58,9 @@ class WatchViewModel (
 
     var isHappy by mutableStateOf(false)
     var isClicked by mutableStateOf(false)
+    var eating by mutableStateOf(false)
+    var showtoast by mutableStateOf(false)
+    var msg by mutableStateOf("")
 
     // 몽 진화
     var evolutionisClick by mutableStateOf(false)
@@ -235,7 +238,13 @@ class WatchViewModel (
                 }
                 .collect{
                     data ->
-                    isHappy = data.code == "200"
+                    if(data.code == "200"){
+                        showtoast = false
+                        isHappy = true
+                    } else{
+                        showtoast = true
+                        msg = "쓰다듬기는 한 시간에 한 번만 가능합니다."
+                    }
                 }
         }
     }

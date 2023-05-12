@@ -110,6 +110,7 @@ class FeedViewModel (
                     .collect {data ->
                         Log.d("buy food", foodList[currentFoodPosition].toString())
                         success.value = false
+                        watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
                     }
             }
@@ -123,6 +124,7 @@ class FeedViewModel (
                     }
                     .collect {data ->
                         Log.d("buy snack", foodList[currentFoodPosition].toString())
+                        watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
                     }
             }

@@ -150,6 +150,7 @@ public class EvolutionScheduler implements ManagementScheduler {
         return () -> {
             try {
                 evolutionTask.evolutionMong(mongId);
+                stopScheduler(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
             }

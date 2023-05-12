@@ -3,15 +3,20 @@ package com.paymong.management.mong.service;
 import com.paymong.management.global.client.ClientService;
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
+import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.*;
 import com.paymong.management.global.scheduler.EvolutionScheduler;
+import com.paymong.management.global.scheduler.MapScheduler;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
+import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.dto.EvolutionMongResDto;
 import com.paymong.management.mong.dto.GraduationMongResDto;
+import com.paymong.management.mong.dto.MapCodeDto;
+import com.paymong.management.mong.dto.MapCodeWsDto;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -41,6 +46,8 @@ public class MongService {
     private final StatusService statusService;
     private final EvolutionScheduler evolutionScheduler;
     private final ActiveHistoryRepository activeHistoryRepository;
+    private final WebSocketService webSocketService;
+    private final MapScheduler mapScheduler;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -75,9 +82,10 @@ public class MongService {
 
         AddMongResVo addMongResVo = new AddMongResVo(newMong);
         // 무슨 이유인진 몰라도 null로 처리됨..
-        addMongResVo.setWeight(5);
-        addMongResVo.setBorn(LocalDateTime.now());
+//        addMongResVo.setWeight(5);
+//        addMongResVo.setBorn(LocalDateTime.now());
 
+        webSocketService.sendStatus(newMong, WebSocketCode.SUCCESS);
         return addMongResVo;
     }
 
@@ -207,7 +215,7 @@ public class MongService {
         mongResDto.setWeight(mong.getWeight());
         mongResDto.setMongCode(mong.getCode());
         mongResDto.setStateCode(mong.getStateCode());
-
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
         return mongResDto;
     }
 
@@ -230,7 +238,7 @@ public class MongService {
                 .build();
 
         activeHistoryRepository.save(activeHistory);
-
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
         return new GraduationMongResDto(mong.getCode());
     }
 
@@ -298,5 +306,11 @@ public class MongService {
 
         return findMongLevelCodeDto;
 
+    }
+
+    @Transactional
+    public void changeMap(MapCodeWsDto mapCodeWsDto){
+        webSocketService.sendMap(mapCodeWsDto, WebSocketCode.MAP);
+        mapScheduler.stopScheduler(mapCodeWsDto.getMemberId());
     }
 }

@@ -14,7 +14,8 @@ public enum WebSocketCode implements BasicCode{
     POOP("205","똥이 많아요"),
     EVOLUTION_READY("206","진화대기"),
     DEATH_READY("207","죽을 수도 있습니다."),
-    DEATH("208","죽었습니다.")
+    DEATH("208","죽었습니다."),
+    MAP("209", "맵이 바뀝니다.")
     ;
     private final String code;
     private final String message;

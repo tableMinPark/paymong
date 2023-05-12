@@ -47,7 +47,6 @@ public class MapService {
         }
 
         List<FindAllMapCollectResDto> findAllMapCollectResDtoList = commonCodeDtoList.stream()
-            .filter(FindAllMapCollectResDto::isVaildMapCode)
             .map(FindAllMapCollectResDto::of)
             .collect(Collectors.toList());
 

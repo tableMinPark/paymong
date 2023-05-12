@@ -15,25 +15,17 @@ public class FindAllMapCollectResDto {
     private String name;
     private String mapCode;
 
-    public static boolean isVaildMapCode(CommonCodeDto commonCodeDto) {
-        if (!commonCodeDto.getCode().equals("MP000")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static FindAllMapCollectResDto of(CommonCodeDto commonCodeDto) {
-        return FindAllMapCollectResDto.builder()
-            .name(commonCodeDto.getName())
-            .mapCode(commonCodeDto.getCode())
-            .isOpen(false)
-            .build();
+            return FindAllMapCollectResDto.builder()
+                .name(commonCodeDto.getName())
+                .mapCode(commonCodeDto.getCode())
+                .isOpen(false)
+                .build();
     }
 
 
     public FindAllMapCollectResDto isContain(List<String> mapCollect) {
-        if (mapCollect.contains(this.mapCode)) {
+        if (mapCollect.contains(this.mapCode) || this.mapCode.equals("MP000")) {
             this.setIsOpen(true);
         } else {
             this.setIsOpen(false);

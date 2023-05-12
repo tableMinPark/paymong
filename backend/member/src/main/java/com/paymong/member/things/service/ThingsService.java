@@ -69,6 +69,7 @@ public class ThingsService {
         //나의 things code 리스트 가져오기
         Map<String,Integer> check = new HashMap<>();
         List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
+        System.out.println("코드사이즈"+myThings.size());
         for(Things things : myThings) {
             System.out.print(things.getThingsCode() + " // ");
             check.put(things.getThingsCode(),1);

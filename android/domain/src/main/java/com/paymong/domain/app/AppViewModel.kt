@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.ToastMessage
 import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.ManagementRealTimeResDto
 import com.paymong.data.repository.ManagementRepository
@@ -43,6 +44,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var undomong by mutableStateOf(MongCode.CH000)
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
+    var isHappy by mutableStateOf(false)
+    var showtoast by mutableStateOf(false)
+    var msg by mutableStateOf("")
 
     var retry by mutableStateOf(false)
 
@@ -160,6 +164,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 .collect{
                         data->
                     mong.mongCode = MongCode.valueOf(data.mongCode)
+                }
+        }
+    }
+
+    fun stroke(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.stroke()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                        data ->
+                    if(data.code == "200"){
+                        showtoast = false
+                        isHappy = true
+                    } else{
+                        showtoast = true
+                        msg = "쓰다듬기는 한 시간에 한 번만 가능합니다."
+                    }
                 }
         }
     }

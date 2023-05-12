@@ -2,6 +2,8 @@ package com.paymong.management.global.socket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.code.WebSocketCode;
+import com.paymong.management.mong.dto.MapCodeDto;
+import com.paymong.management.mong.dto.MapCodeWsDto;
 import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.global.socket.dto.MongSocketDto;
 import com.paymong.management.mong.entity.Mong;
@@ -67,6 +69,32 @@ public class WebSocketService {
                         .forEach(s ->
                         {
                             try {
+                                log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
+                                s.getSession().sendMessage(message);
+                            } catch (IOException e) {
+                                log.info("응 못보내");
+                            }
+                        });
+//                WebSocketSession session = members.get(mong.getMemberId()).getSession();
+//                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode))));
+            }
+        }catch (IOException e){
+            log.info("메세지 생성 실패");
+        }
+
+    }
+
+    public void sendMap(MapCodeWsDto mapCodeWsDto, WebSocketCode webSocketCode) {
+        try {
+            if(!members.containsKey(mapCodeWsDto.getMemberId())){
+                log.info("{}와 연결된 소켓이 없습니다.", mapCodeWsDto.getMemberId());
+            }else{
+                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mapCodeWsDto, webSocketCode)));
+                members.get(mapCodeWsDto.getMemberId()).stream()
+                        .forEach(s ->
+                        {
+                            try {
+                                log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
                                 s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");

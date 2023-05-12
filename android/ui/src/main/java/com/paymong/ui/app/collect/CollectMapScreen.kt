@@ -148,7 +148,8 @@ fun ComponentRow(
             }
             Component(text, code)
         }
-        Log.d("index",(index).toString()+" "+(index+1).toString()+" "+collectMapViewModel.mapList.size.toString())
+        text = "???"
+        code = R.drawable.none_map
         if(index+1<collectMapViewModel.mapList.size){
             Box(modifier = Modifier
                 .weight(1f)

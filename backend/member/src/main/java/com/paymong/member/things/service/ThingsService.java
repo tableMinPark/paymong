@@ -69,7 +69,6 @@ public class ThingsService {
         //나의 things code 리스트 가져오기
         Map<String,Integer> check = new HashMap<>();
         List<Things> myThings = thingsRepository.findAllByMemberId(memberId);
-        System.out.println("코드사이즈"+myThings.size());
         for(Things things : myThings) {
             check.put(things.getThingsCode(),1);
         }
@@ -77,12 +76,9 @@ public class ThingsService {
         List<FindAddableThingsResDto> ret = new ArrayList<>();
         //나한테 없는 코드 찾기
         for( ThingsCommonCode thingsCode : thingsCommonCodeList.getCommonCodeDtoList()){
-            if(!check.containsKey(thingsCode.getCode())) {
+            if(!check.containsKey(thingsCode.getCode()))
                 ret.add(new FindAddableThingsResDto(thingsCode.getCode(), thingsCode.getName()));
-                System.out.println(thingsCode.getCode() + " "+thingsCode.getName());
-            }else{
-                System.out.println(thingsCode.getCode() + "있다.");
-            }
+
         }
         return ret;
     }

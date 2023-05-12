@@ -62,7 +62,7 @@ class BattleViewModel (
     var totalTurn = 10
     var nextAttacker by mutableStateOf("A")
     var battleSelectTime by mutableStateOf(0.0)
-    var selectState by mutableStateOf(MessageType.LEFT)
+    var selectState by mutableStateOf(MessageType.STAY)
 
     // Battle - 끝
     var win by mutableStateOf(false)
@@ -247,7 +247,7 @@ class BattleViewModel (
     fun battleSelect() {
         Log.e("battleViewModel", "battleSelect()")
         viewModelScope.launch {
-            selectState = MessageType.LEFT
+            selectState = MessageType.STAY
             battleSelectTime = 0.0
             do {
                 delay(SELECT_DELAY)
@@ -266,7 +266,10 @@ class BattleViewModel (
     fun battleEnd() {
         Log.e("battleViewModel", "battleEnd()")
         viewModelScope.launch {
-            if (battleActive.order == "A" &&
+            if (battleActive.healthA == battleActive.healthB) {
+                win = true
+            }
+            else if (battleActive.order == "A" &&
                 battleActive.healthA > battleActive.healthB) {
                 win = true
             }

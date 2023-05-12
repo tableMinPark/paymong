@@ -62,16 +62,13 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
 
-//        val dataApplicationRepository = DataApplicationRepository()
-//        dataApplicationRepository.setValue("watchId", "abcde")
-//        dataApplicationRepository.setValue("refreshToken", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ijc4OTQ1NjEyMzIiLCJpYXQiOjE2ODM3NzA1MDcsImV4cCI6MTY5MTU0NjUwN30.LBnWqR03WR8PZ3_5h3XKitbdeUj3fl643H4_kIzJ5og")
-//        val serviceIntent = Intent(this, ForegroundService::class.java)
-//        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            this.startForegroundService(serviceIntent)
-//        } else {
-//            this.startService(serviceIntent)
-//        }-
+        val serviceIntent = Intent(this, ForegroundService::class.java)
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.startForegroundService(serviceIntent)
+        } else {
+            this.startService(serviceIntent)
+        }
 
         // 권한 확인 #######################################################
         if (!isNotificationPermissionGranted()){

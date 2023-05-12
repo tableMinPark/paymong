@@ -27,8 +27,8 @@ class CollectMapViewModel : ViewModel() {
             }.collect{
                 data ->
                 mapList.clear()
-                for(i in 1..data.size){
-                    mapList.add(Collect(data[i-1].isOpen, data[i-1].name, data[i-1].mapCode))
+                for(i in data.indices){
+                    mapList.add(Collect(data[i].isOpen, data[i].name, data[i].mapCode))
                 }
                 success.value = true
             }

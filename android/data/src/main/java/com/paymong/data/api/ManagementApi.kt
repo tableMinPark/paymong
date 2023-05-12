@@ -39,4 +39,7 @@ interface ManagementApi {
 
     @PUT("/management/evolution")
     suspend fun evolution(): Response<EvolutionResDto>
+
+    @PUT("/management/graduation")
+    suspend fun graduation(): Response<GraduationResDto>
 }

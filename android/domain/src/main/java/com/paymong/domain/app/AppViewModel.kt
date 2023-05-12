@@ -35,6 +35,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
 
+    var retry by mutableStateOf(false)
+
     private val memberRepository: MemberRepository = MemberRepository()
     private val informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
@@ -106,6 +108,20 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     data->
                     undomong = mong.mongCode
                     stateCode = MongStateCode.valueOf(data.stateCode)
+                    mong.mongCode = MongCode.valueOf(data.mongCode)
+                }
+        }
+    }
+
+    //졸업
+    fun graduation(){
+        viewModelScope.launch(Dispatchers.IO) {
+            managementRepository.graduation()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{
+                        data->
                     mong.mongCode = MongCode.valueOf(data.mongCode)
                 }
         }

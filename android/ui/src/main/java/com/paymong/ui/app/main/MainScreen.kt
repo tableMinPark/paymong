@@ -689,7 +689,7 @@ fun Btn(
             )
             Text(
                 text = "몽집", textAlign = TextAlign.Center,
-                fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
+                fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = 2.sp
             )
         }
         val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
@@ -713,7 +713,7 @@ fun Btn(
                 )
                 Text(
                     text = "지수", textAlign = TextAlign.Center,
-                    fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    fontFamily = dalmoori, fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = 2.sp
                 )
             }
         }

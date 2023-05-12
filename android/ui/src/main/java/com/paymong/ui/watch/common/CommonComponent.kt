@@ -200,6 +200,7 @@ fun DefenceGif() {
 @ExperimentalCoilApi
 @Composable
 fun CharacterGif(mainViewModel:WatchViewModel) {
+
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {
@@ -213,7 +214,8 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
     Image(
         painter = rememberImagePainter(
             imageLoader = imageLoader,
-            data = R.drawable.test2,
+//            data = mainViewModel.mong.mongCode.gifCode,
+            data = R.drawable.ch101g,
             builder = {
                 size(OriginalSize)
             }

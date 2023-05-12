@@ -66,23 +66,16 @@ fun MainInfo(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-//                Image(
-//                    painter = painterResource(mongResourceCode),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .width(characterSize.dp)
-//                        .clickable(
-//                            interactionSource = remember { MutableInteractionSource() },
-//                            indication = null,
-//                        ){
-//                            mainViewModel.stroke()
-//                            Handler(Looper.getMainLooper()).postDelayed({
-//                                mainViewModel.isHappy = false
-//                            }, 2000)
-//                        }
-//                )
                 if (mainViewModel.mong.mongCode.code == "CH444") {
-                    LoadingGif()
+                    Text(
+                        text = "스마트폰에서\n알을 생성해주세요.",
+                        textAlign = TextAlign.Center,
+                        lineHeight = 50.sp,
+                        fontFamily = dalmoori,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 } else if (mainViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
                     Box(contentAlignment = Alignment.Center,) {
                         Image(painter = painterResource(R.drawable.rip),
@@ -139,7 +132,7 @@ fun MainInfo(
                                 }, 1800)
                             } else {
                                 CharacterGif(mainViewModel)
-                                EmotionGif(mainViewModel, 10, 0, 20)
+                                EmotionGif(mainViewModel, 0, 0, 40)
 //                                Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode),
 //                                    contentDescription = null,
 //                                    modifier = Modifier

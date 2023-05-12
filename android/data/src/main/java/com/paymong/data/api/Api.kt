@@ -128,7 +128,6 @@ interface Api {
                         DataApplication.prefs.setString("refreshToken", "")
                     }
                 }
-
                 return response
             }
         }

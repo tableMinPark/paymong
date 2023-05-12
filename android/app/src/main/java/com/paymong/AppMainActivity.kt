@@ -71,7 +71,7 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
 //            this.startForegroundService(serviceIntent)
 //        } else {
 //            this.startService(serviceIntent)
-//        }
+//        }-
 
         // 권한 확인 #######################################################
         if (!isNotificationPermissionGranted()){

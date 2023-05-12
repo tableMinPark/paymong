@@ -77,14 +77,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
 
 
         // Things
-        val packageName: String = sbn.packageName ?: ""
         val extras = sbn.notification.extras
-        val extraTitle: String = extras?.get(Notification.EXTRA_TITLE).toString()
-        val extraText: String = extras?.get(Notification.EXTRA_TEXT).toString()
-        val extraBigText: String = extras?.get(Notification.EXTRA_BIG_TEXT).toString()
-        val extraInfoText: String = extras?.get(Notification.EXTRA_INFO_TEXT).toString()
-        val extraSubText: String = extras?.get(Notification.EXTRA_SUB_TEXT).toString()
-        val extraSummaryText: String = extras?.get(Notification.EXTRA_SUMMARY_TEXT).toString()
 
         try {
             val packageName: String = sbn.packageName ?: ""

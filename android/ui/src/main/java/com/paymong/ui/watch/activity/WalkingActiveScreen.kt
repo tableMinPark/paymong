@@ -62,7 +62,6 @@ fun WalkingActive(
             launchSingleTop = true
         }
     }
-    Log.e("walkingActive", walkingViewModel.walkingState.toString())
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -74,7 +73,7 @@ fun WalkingActive(
 
         WalkingTime(walkingViewModel)
 
-        // 산책 중
+        // 산책 중 아닐 때
         if (walkingViewModel.walkingState == WalkingCode.PAUSE) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -93,7 +92,7 @@ fun WalkingActive(
                 )
             }
         }
-        // 산책 중 아닐 때
+        // 산책 중
         else {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -146,7 +145,7 @@ fun WalkingActive(
                                     // 산책 끝
                                     Log.e("walkingActive", walkingViewModel.walkingState.toString())
                                     soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
-                                    walkingViewModel.walkingEnd()
+                                    walkingViewModel.walkingEnd(watchViewModel)
                                 }
                         )
                         Text(

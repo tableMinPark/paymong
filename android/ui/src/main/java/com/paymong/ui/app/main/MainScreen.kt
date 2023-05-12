@@ -682,7 +682,7 @@ fun Btn(
             )
         }
         val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
-        if (code >= 200){
+        if (code >= 100){
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(horizontal = 10.dp)

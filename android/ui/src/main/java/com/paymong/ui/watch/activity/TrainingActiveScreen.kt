@@ -75,6 +75,8 @@ fun TrainingActive(
 
         // 훈련 끝
         if (trainingViewModel.isTrainingEnd) {
+            trainingViewModel.trainingEnd(watchViewModel)
+
             TrainingEnd(successHeight, successWidth, successHeight, successPadding, soundViewModel, failHeight, failWidth, failPadding, trainingViewModel)
             Box(
                 modifier = Modifier
@@ -91,14 +93,11 @@ fun TrainingActive(
                         .fillMaxHeight()
                         .clickable {
                             soundViewModel.soundPlay(SoundCode.TRAINING_BUTTON)
-
-                            if(trainingViewModel.isTrainingEnd) {
-                                trainingViewModel.isTrainingEnd = false
-                                watchViewModel.point -= 50
-                                navController.navigate(WatchNavItem.Activity.route) {
-                                    popUpTo(navController.graph.findStartDestination().id)
-                                    launchSingleTop = true
-                                }
+                            trainingViewModel.isTrainingEnd = false
+                            watchViewModel.point -= 50
+                            navController.navigate(WatchNavItem.Activity.route) {
+                                popUpTo(navController.graph.findStartDestination().id)
+                                launchSingleTop = true
                             }
                         }
                 )

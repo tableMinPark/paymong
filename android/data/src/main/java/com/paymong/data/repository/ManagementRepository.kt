@@ -42,55 +42,52 @@ class ManagementRepository(
         }
     }
 
-    fun sleep() : Flow<Boolean> = flow {
+    fun sleep() : Flow<ManagementResDto> = flow {
         val response = api.sleep()
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }
-    fun poop() : Flow<Boolean> = flow {
+    fun poop() : Flow<ManagementResDto> = flow {
         val response = api.poop()
         if(response.code() == 200){
             response.body()?.let{
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }
 
-    fun eatFood(foodCode: String) : Flow<Boolean> = flow {
+    fun eatFood(foodCode: String) : Flow<ManagementResDto> = flow {
         val response = api.eatFood(foodCode)
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }
-
-    fun eatSnack(snackCode: String) : Flow<Boolean> = flow {
+    fun eatSnack(snackCode: String) : Flow<ManagementResDto> = flow {
         val response = api.eatSnack(snackCode)
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }
-
-    fun training(trainingCount: Int): Flow<Boolean> = flow {
+    fun training(trainingCount: Int): Flow<ManagementResDto> = flow {
         val response = api.training(trainingCount)
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }
-
-    fun walking(walkingCount: Int): Flow<Boolean> = flow {
+    fun walking(walkingCount: Int): Flow<ManagementResDto> = flow {
         val response = api.walking(walkingCount)
         if(response.code() == 200){
             response.body()?.let {
-                emit(true)
+                emit(response.body()!!)
             }
         }
     }

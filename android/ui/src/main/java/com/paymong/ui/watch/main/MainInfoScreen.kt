@@ -142,7 +142,6 @@ fun MainInfo(
                                     EmotionGif(mainViewModel, 0, 0, 0, 40, mainViewModel.stateCode)
                                 } else if(code / 100 == 2){
                                     val end = code % 10
-                                    Log.d("end",end.toString())
                                     if(end == 1){ //2_1
                                         EmotionGif(mainViewModel, 0, 25, 40, 40, mainViewModel.stateCode)
                                     } else { //2_0, 2_2

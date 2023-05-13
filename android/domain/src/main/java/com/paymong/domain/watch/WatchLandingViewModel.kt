@@ -3,7 +3,6 @@ package com.paymong.domain.watch
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,7 +28,7 @@ class WatchLandingViewModel(
     companion object {
         private const val START_APP_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_PHONE_APP = "app_paymong"
-        private const val ANDROID_MARKET_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
+        private const val ANDROID_MARKET_APP_URI = "market://details?id=com.paymong&hl=en-US&ah=stDCGwZh4347ASlHN4muxnFaZwk"
     }
 
     // 로그인 플래그
@@ -54,7 +53,6 @@ class WatchLandingViewModel(
                     else
                         LandingCode.LOGIN_FAIL
                 }
-            Log.e("loginCheck()", loginState.toString())
         }
     }
     fun installCheck() {
@@ -87,8 +85,8 @@ class WatchLandingViewModel(
                 androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
                 mobileAppInstallRequest()
             }
-        } catch (cancellationException: CancellationException) {
-        } catch (throwable: Throwable) {
+        } catch (_: CancellationException) {
+        } catch (_: Throwable) {
         }
     }
     private fun mobileAppInstallRequest() {
@@ -134,7 +132,6 @@ class WatchLandingViewModel(
     }
     
     fun openAppOnPhone() {
-        Log.d("openAppOnPhone()", "모바일에서 앱 열기")
         viewModelScope.launch {
             try {
                 val nodes = capabilityClient
@@ -151,11 +148,9 @@ class WatchLandingViewModel(
                     }
                 }.awaitAll()
 
-                Log.d("registWearable()", "Starting activity requests sent successfully")
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
-            } catch (exception: Exception) {
-                Log.d("registWearable()", "Starting activity failed: $exception")
+            } catch (_: Exception) {
             }
         }
     }

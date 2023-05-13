@@ -1,9 +1,7 @@
 package com.paymong.ui.app.main
 
-import android.media.SoundPool
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,7 +31,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
-import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.SoundCode
@@ -54,7 +51,7 @@ import java.util.*
 @Composable
 fun Main(
     navController: NavController,
-    appViewModel: AppViewModel = viewModel(),
+    appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ) {
     // 배경
@@ -283,7 +280,6 @@ fun NicknameDialog(
                         soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                         if (name.value.isEmpty()) {
                             noNickname.value = "닉네임 입력은 필수에요🥺"
-                            Log.d("error",noNickname.value)
                             return@Button
                         }
                         setValue(name.value)
@@ -394,7 +390,6 @@ fun SleepDialog(
                     time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setSleepValue(newTime)
-                        Log.d("sleepTime",newTime.toString())
                         setShowSleepDialog(false)
                         setShowWakeDialog(true)
                         appViewModel.mongsleepStart = newTime.toString()
@@ -436,7 +431,6 @@ fun WakeDialog(
                     time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setWakeValue(newTime)
-                        Log.d("wakeTime",newTime.toString())
                         setShowWakeDialog(false)
                         appViewModel.mongsleepEnd = newTime.toString()
                         appViewModel.addMong()

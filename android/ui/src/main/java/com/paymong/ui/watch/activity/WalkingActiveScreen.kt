@@ -218,7 +218,6 @@ fun WalkingActive(
                         .clickable {
                             soundViewModel.soundPlay(SoundCode.WALKING_BUTTON)
                             walkingViewModel.walkingState = WalkingCode.PAUSE
-                            Log.d("walkingActive", walkingViewModel.walkingState.toString())
                         }
                 )
                 Text(

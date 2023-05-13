@@ -38,7 +38,7 @@ class AppLandinglViewModel(
     companion object {
         private const val START_WEAR_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
-        private const val PLAY_STORE_APP_URI = "market://details?id=com.paymong&hl=en-US&ah=stDCGwZh4347ASlHN4muxnFaZwk"
+        private const val PLAY_STORE_APP_URI = "market://details?id=com.paymong"
     }
 
     private val authRepository: AuthRepository = AuthRepository()

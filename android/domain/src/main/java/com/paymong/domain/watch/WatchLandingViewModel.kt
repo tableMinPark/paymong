@@ -28,7 +28,7 @@ class WatchLandingViewModel(
     companion object {
         private const val START_APP_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_PHONE_APP = "app_paymong"
-        private const val ANDROID_MARKET_APP_URI = "market://details?id=com.paymong&hl=en-US&ah=stDCGwZh4347ASlHN4muxnFaZwk"
+        private const val ANDROID_MARKET_APP_URI = "market://details?id=com.paymong"
     }
 
     // 로그인 플래그

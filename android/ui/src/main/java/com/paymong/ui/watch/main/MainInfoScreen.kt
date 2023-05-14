@@ -131,10 +131,10 @@ fun MainInfo(
                                     mainViewModel.evolutionisClick = false
                                 }, 1800)
                             } else {
-                                val context = LocalContext.current
-                                if(mainViewModel.showtoast){
-                                    showToast(context, mainViewModel.msg)
-                                }
+//                                val context = LocalContext.current
+//                                if(mainViewModel.showtoast){
+//                                    showToast(context, mainViewModel.msg)
+//                                }
 
                                 CharacterGif(mainViewModel)
                                 val code = mainViewModel.mong.mongCode.code.split("CH")[1].toInt()

@@ -589,10 +589,10 @@ fun MakeEgg(
                                 appViewModel.isClick = false
                             }, 1800)
                         } else{
-                            val context = LocalContext.current
-                            if(appViewModel.showtoast){
-                                showToast(context, appViewModel.msg)
-                            }
+//                            val context = LocalContext.current
+//                            if(appViewModel.showtoast){
+//                                showToast(context, appViewModel.msg)
+//                            }
                             val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
 
                             if(code / 100 == 1){

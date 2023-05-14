@@ -1,5 +1,5 @@
 package com.paymong.member.member.repository;
-;
+
 import java.util.Optional;
 
 import com.paymong.member.member.entity.Member;

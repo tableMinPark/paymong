@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "561491513972",
+    "project_id": "paymong-7a7a5",
+    "storage_bucket": "paymong-7a7a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561491513972:android:34bef9680ba89094ec7721",
+        "android_client_info": {
+          "package_name": "com.paymong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "561491513972-b5qe05f4k7bnb6ca5hns00470cvbmkak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnWfhJ96NJCgA5-ASnQOW2yNMW1KpU2Ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "561491513972-b5qe05f4k7bnb6ca5hns00470cvbmkak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

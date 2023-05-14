@@ -181,7 +181,7 @@ class WatchViewModel (
                     )
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
-                    mapCode = MapCode.valueOf(data.mapCode)
+                    mapCode = MapCode.valueOf(data.mapCode ?: "MP000")
                 }
         }
     }

@@ -64,7 +64,7 @@ public class PaypointService {
         member.setPoint(totalPoint);
 
         //가격반영 소켓 요청
-        managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
+        //managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
 
         //브랜드명 뽑기(없으면 null)
         String brand = Pay.getMap(action);
@@ -118,7 +118,7 @@ public class PaypointService {
         member.setPoint(totalPoint);
 
         //가격반영 소켓 요청
-        managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
+        //managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
 
         //history에 기록
         PointHistory pointHistory = PointHistory.builder()

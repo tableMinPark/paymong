@@ -94,9 +94,10 @@ public class ThingsController {
                 thingsService.alarmOpenDoor(memberIdStr, mongIdStr, thingsCode);
             }else if (thingsCode.equals("ST002")){ //허브무선충전
                 thingsService.alarmHubCharge(memberIdStr, mongIdStr, thingsCode);
-            }else if (thingsCode.equals("ST003")){ //스마트버튼
-
-            }else{
+            }
+            //else if (thingsCode.equals("ST003")){ //스마트버튼
+            //}
+            else{
                 throw new NotFoundThingsCodeException();
             }
             GetThingsAlarmResDto ret = GetThingsAlarmResDto.builder()

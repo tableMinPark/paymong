@@ -59,6 +59,8 @@ public class Pay {
             return "GS25";
         if( brand.contains("세븐일레븐"))
             return "세븐일레븐";
+        if( brand.contains("이스턴웰스"))
+            return "싸피자판기";
         return null;
     }
     

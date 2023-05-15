@@ -15,7 +15,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 class TrainingViewModel (
-    private val application: Application
+    application: Application
 ): AndroidViewModel(application) {
     companion object {
         private const val MAX_TIME : Long = 10000

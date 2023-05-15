@@ -50,7 +50,6 @@ class WalkingViewModel (
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            walkingState = WalkingCode.WALKING
             setSensor()
         }
     }
@@ -60,7 +59,6 @@ class WalkingViewModel (
         viewModelScope.launch {
             sensorManager = application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-//            stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
             stepSensorEventListener = object : SensorEventListener {
                 override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
                 override fun onSensorChanged(event: SensorEvent) {
@@ -69,7 +67,6 @@ class WalkingViewModel (
                     }
                     var nowCount = event!!.values[0].toInt()
                     walkCount = nowCount - startCount
-//                    count += event.values[0].toInt()
                 }
             }
             sensorManager.registerListener(

@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.activity
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,7 +29,6 @@ import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.common.WalkingBackgroundGif
 
-
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun WalkingActive(
@@ -55,6 +53,9 @@ fun WalkingActive(
     val yesNoBntWidth = if (screenWidthDp < 200) 55 else 45
     val yesNoBntHeight = if (screenWidthDp < 200) 20 else 40
 
+    val mongCode = watchViewModel.mong.mongCode
+    val mongResourceCode = painterResource(mongCode.resourceCode)
+
     // 끝남
     if (walkingViewModel.walkingState == WalkingCode.WALKING_END) {
         navController.navigate(WatchNavItem.Activity.route) {
@@ -73,7 +74,7 @@ fun WalkingActive(
 
         WalkingTime(walkingViewModel)
 
-        // 산책 중 아닐 때
+        // 산책 중이 아닐 때
         if (walkingViewModel.walkingState == WalkingCode.PAUSE) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -100,8 +101,6 @@ fun WalkingActive(
                     .fillMaxWidth()
                     .padding(top = 5.dp)
             ) {
-                val mongCode = watchViewModel.mong.mongCode
-                val mongResourceCode = painterResource(mongCode.resourceCode)
                 if ( mongCode.code == "CH444") {
                     Box(
                         modifier = Modifier
@@ -120,6 +119,7 @@ fun WalkingActive(
             }
         }
 
+        // 산책 중이 아닐 때
         if (walkingViewModel.walkingState == WalkingCode.PAUSE) {
             Box(modifier = Modifier.padding(bottom =0.dp)) {
                 Row(
@@ -201,6 +201,7 @@ fun WalkingActive(
                 }
             }
         }
+        // 산책 중 일 때
         else {
             Box(
                 modifier = Modifier

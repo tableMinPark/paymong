@@ -181,8 +181,8 @@ public class SleepScheduler{
     }
 
     public void minusScheduler(Long mongId){
-        if(!minusSchedulerMap.containsKey(mongId)){
-            log.info("{}이 없습니다.", mongId);
+        if(minusSchedulerMap.containsKey(mongId)){
+            log.info("{}은 이미 수면 감소 중입니다.", mongId);
             return;
         }
 

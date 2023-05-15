@@ -2,8 +2,6 @@ package com.paymong.ui.watch.common
 
 import android.content.Context
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -18,6 +16,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -25,17 +25,14 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
-import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchViewModel
 
 @Composable
-fun Background(
-    isGif: Boolean = false,
-    mapCode: MapCode = MapCode.MP000
-) {
-    val background = painterResource(mapCode.code)
+fun Background(isGif: Boolean = false) {
+    val watchViewModel = viewModel<WatchViewModel>(checkNotNull(LocalViewModelStoreOwner.current))
+    val background = painterResource(watchViewModel.mapCode.code)
     Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
     if (isGif) MainBackgroundGif()
 }
@@ -119,12 +116,9 @@ fun WalkingBackgroundGif() {
     )
 }
 
-
 @ExperimentalCoilApi
 @Composable
-fun BattleBackgroundGif(
-
-) {
+fun BattleBackgroundGif() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {
@@ -231,10 +225,6 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
             onClick = {
                 if(mainViewModel.stateCode!=MongStateCode.CD002) {
                     mainViewModel.stroke()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        mainViewModel.isHappy = false
-//                        mainViewModel.showtoast = false
-                    }, 2000)
                 }
             }
         )
@@ -286,9 +276,6 @@ fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, p
             .size(size.dp)
     )
 }
-
-
-
 
 @Composable
 fun Logo(){

@@ -9,7 +9,6 @@ class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
             val serviceIntent = Intent(context, ForegroundService::class.java)
-            serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(serviceIntent)
             } else {

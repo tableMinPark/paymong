@@ -41,7 +41,7 @@ fun AppMain(appLandinglViewModel : AppLandinglViewModel) {
 }
 
 @Composable
-fun AppMainNav(appLandinglViewModel : AppLandinglViewModel){
+fun AppMainNav(appLandingViewModel : AppLandinglViewModel){
     val navController = rememberNavController()
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
 
@@ -50,11 +50,10 @@ fun AppMainNav(appLandinglViewModel : AppLandinglViewModel){
         startDestination = AppNavItem.Landing.route)
     {
         composable(route = AppNavItem.Landing.route){
-            Landing(navController, appLandinglViewModel)
+            Landing(navController, appLandingViewModel)
         }
         composable(route = AppNavItem.Login.route){
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            Login(navController, appLandinglViewModel, soundViewModel)
+            Login(navController, appLandingViewModel)
         }
         composable(route = AppNavItem.Main.route){
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)

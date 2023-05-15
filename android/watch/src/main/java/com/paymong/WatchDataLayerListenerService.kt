@@ -19,10 +19,13 @@ class WatchDataLayerListenerService : WearableListenerService() {
         when (messageEvent.path) {
             START_WEAR_ACTIVITY_PATH -> {
                 val playerId = messageEvent.data.decodeToString()
+                dataApplicationRepository.setValue("accessToken", "")
+                dataApplicationRepository.setValue("refreshToken", "")
                 dataApplicationRepository.setValue("playerId", playerId)
                 startActivity(
                     Intent(this, WatchMainActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 )
             }
         }

@@ -1,6 +1,5 @@
 package com.paymong.ui.app.landing
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -14,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.navigation.AppNavItem
-import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
@@ -24,17 +22,17 @@ import kotlinx.coroutines.delay
 @Composable
 fun Landing(
     navController: NavController,
-    appLandinglViewModel : AppLandinglViewModel
+    appLandingViewModel : AppLandinglViewModel
 ) {
     LaunchedEffect(key1 = true){
+        appLandingViewModel.refreshLogin()
         delay(2000)
-        // 리프레시 로그인 여부 확인
-        appLandinglViewModel.refreshLogin()
     }
+    BgGif()
 
     // 리프레시 로그인 성공
-    if(appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
-        appLandinglViewModel.landingCode = LandingCode.DONE
+    if(appLandingViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
+        appLandingViewModel.landingCode = LandingCode.DONE
         navController.navigate(AppNavItem.Main.route){
             popUpTo(navController.graph.id) {
                 inclusive = true
@@ -45,8 +43,8 @@ fun Landing(
         }
     }
     // 리프레시 로그인 실패
-    else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL){
-        appLandinglViewModel.landingCode = LandingCode.LOADING
+    else if (appLandingViewModel.landingCode == LandingCode.LOGIN_FAIL){
+        appLandingViewModel.landingCode = LandingCode.LOADING
         navController.navigate(AppNavItem.Login.route){
             popUpTo(navController.graph.id) {
                 inclusive = true
@@ -54,8 +52,7 @@ fun Landing(
         }
     }
 
-    
-    BgGif()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -69,14 +66,5 @@ fun Landing(
                 .fillMaxWidth()
                 .padding(80.dp))
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LandingPreview() {
-    val navController = rememberNavController()
-    PaymongTheme {
-//        Landing(navController)
     }
 }

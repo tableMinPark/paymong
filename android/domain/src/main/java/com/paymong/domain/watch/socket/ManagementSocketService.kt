@@ -1,7 +1,5 @@
 package com.paymong.domain.watch.socket
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.paymong.data.repository.DataApplicationRepository
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,7 +19,6 @@ class ManagementSocketService {
     private lateinit var webSocket: WebSocket
     private lateinit var dataApplicationRepository: DataApplicationRepository
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun init(listener: WebSocketListener){
         dataApplicationRepository = DataApplicationRepository()
         val accessToken = dataApplicationRepository.getValue("accessToken")

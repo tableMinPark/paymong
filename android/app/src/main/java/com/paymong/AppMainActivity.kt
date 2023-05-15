@@ -1,5 +1,6 @@
 package com.paymong
 
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -7,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
@@ -33,67 +35,63 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     companion object {
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
     }
-
+    // 모바일-워치 간 연결
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var nodeClient: NodeClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
     private lateinit var messageClient: MessageClient
-
+    // google-play-games
     private lateinit var gamesSignInClient : GamesSignInClient
     private lateinit var playersClient: PlayersClient
-
+    // 로그인을 위한 viewModel
     private lateinit var appLandingViewModelFactory : AppLandingViewModelFactory
     private lateinit var appLandinglViewModel : AppLandinglViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 워치가 연결되어 있을 때 앱 설치 여부 확인 ############################
+        // 모바일-워치 간 연결
         capabilityClient = Wearable.getCapabilityClient(this)
         nodeClient = Wearable.getNodeClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
         messageClient = Wearable.getMessageClient(this)
-
-        // google-play-games #############################################
+        // google-play-games
         PlayGamesSdk.initialize(this)
         gamesSignInClient = PlayGames.getGamesSignInClient(this)
         playersClient = PlayGames.getPlayersClient(this)
-
+        // 로그인을 위한 viewModel
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
 
         val serviceIntent = Intent(this, ForegroundService::class.java)
-        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.startForegroundService(serviceIntent)
-        } else {
-            this.startService(serviceIntent)
-        }
+        this.startForegroundService(serviceIntent)
 
-        // 권한 확인 #######################################################
-        if (!isNotificationPermissionGranted()){
-            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-        }
+        // 필요 권한 동의 확인
+        if (!isNotificationPermissionGranted()) startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        
         setContent {
             PaymongTheme {
                 AppMain(appLandinglViewModel)
             }
         }
     }
-    // 워치가 연결되어 있을 때 앱 설치 여부 확인 ############################
+    
+    // 웨어러블 연결 여부 확인해서 연결 때마다 앱 설치 여부 확인
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
         appLandinglViewModel.wearNodesWithApp = capabilityInfo.nodes
         appLandinglViewModel.installCheck()
     }
+    // 앱 중지 마다 리스너 해제
     override fun onPause() {
         super.onPause()
         capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
     }
+    // 앱 중지 해제 시 마다 리스너 추가
     override fun onResume() {
         super.onResume()
         capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
     }
-    // 권한 확인 #######################################################
+    // 필요 권한 동의 확인 함수
     private fun isNotificationPermissionGranted(): Boolean {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -102,5 +100,21 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         else {
             return NotificationManagerCompat.getEnabledListenerPackages(applicationContext).contains(applicationContext.packageName)
         }
+    }
+    // 포그라운드 서비스 동작 확인 함수
+    private fun isForegroundServiceRunning(serviceClass: Class<*>): Boolean {
+        try {
+            val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+                if (serviceClass.name == service.service.className) {
+                    return true
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+
+        return false
     }
 }

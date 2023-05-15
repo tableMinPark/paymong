@@ -14,15 +14,14 @@ class ForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val input : String? = intent?.getStringExtra("inputExtra")
         createNotificationChannel()
 
         val notificationIntent = Intent(this, AppMainActivity::class.java)
         val pendingIntent : PendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         val notification : Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Foreground Service")
-            .setContentText(input)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Paymong Foreground Service")
+            .setContentText("Samsung Pay Notification Read Service")
+            .setSmallIcon(com.paymong.common.R.drawable.app_logo)
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)
@@ -41,7 +40,7 @@ class ForegroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
-                "Foreground Service Channel",
+                "Paymong Foreground Service Channel",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             val manager = getSystemService(NotificationManager::class.java)

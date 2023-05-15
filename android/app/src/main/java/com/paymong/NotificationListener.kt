@@ -3,6 +3,7 @@ package com.paymong
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.MessageClient
@@ -16,10 +17,8 @@ import kotlinx.coroutines.flow.catch
 class NotificationListener : NotificationListenerService(), CapabilityClient.OnCapabilityChangedListener{
 
     companion object {
-        private const val THINGS_ALARM = "/thingsAlarm"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
-        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.kakao.talk"
-//        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.samsung.android.spay"
+        private const val SAMSUNG_PAY_PACKAGE_NAME = "com.samsung.android.spay"
         private const val SAMSUNG_THINGS_PACKAGE_NAME = "com.samsung.android.oneconnect"
     }
 
@@ -49,8 +48,6 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
 
             if (title == "null") return
 
-            Log.d("onNotification", "$packageName $title")
-
             when(packageName){
                 SAMSUNG_PAY_PACKAGE_NAME -> {
                     val message: List<String> = title.trim().split("₩")
@@ -72,13 +69,13 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
                             .catch {
                                 it.printStackTrace()
                             }
-                            .collect{ }
+                            .collect{}
                     }
                 }
             }
 
 
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (_: Exception) {}
     }
 
     override fun onCapabilityChanged(p0: CapabilityInfo) { }

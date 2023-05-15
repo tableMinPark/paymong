@@ -14,10 +14,7 @@ import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
-import com.paymong.management.mong.dto.EvolutionMongResDto;
-import com.paymong.management.mong.dto.GraduationMongResDto;
-import com.paymong.management.mong.dto.MapCodeDto;
-import com.paymong.management.mong.dto.MapCodeWsDto;
+import com.paymong.management.mong.dto.*;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -337,5 +334,10 @@ public class MongService {
         LOGGER.info("새로운 map이 왔습니다. memberId : {}, mapCode : {}",mapCodeWsDto.getMemberId(), mapCodeWsDto.getMapCode());
         webSocketService.sendMap(mapCodeWsDto, WebSocketCode.MAP);
         mapScheduler.startScheduler(mapCodeWsDto.getMemberId());
+    }
+
+    public void sendThing(SendThingsResDto sendThingsResDto){
+        LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendThingsResDto.getMemberId());
+        webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
     }
 }

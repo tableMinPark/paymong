@@ -3,6 +3,7 @@ package com.paymong.management.global.scheduler.task;
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.code.WebSocketCode;
+import com.paymong.management.global.exception.EvolutionReadyException;
 import com.paymong.management.global.exception.NotFoundMongException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
@@ -28,10 +29,13 @@ public class SleepTask {
     private final WebSocketService webSocketService;
 
     @Transactional
-    public void sleepMong(Long mongId) throws NotFoundMongException {
+    public void sleepMong(Long mongId) throws NotFoundMongException, EvolutionReadyException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
+        if(mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            throw new EvolutionReadyException();
+        }
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
 
         mong.setStateCode(MongConditionCode.SLEEP.getCode());

@@ -8,6 +8,7 @@ import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.*;
 import com.paymong.management.global.scheduler.EvolutionScheduler;
 import com.paymong.management.global.scheduler.MapScheduler;
+import com.paymong.management.global.scheduler.SleepScheduler;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.global.socket.service.WebSocketService;
@@ -48,6 +49,7 @@ public class MongService {
     private final ActiveHistoryRepository activeHistoryRepository;
     private final WebSocketService webSocketService;
     private final MapScheduler mapScheduler;
+    private final SleepScheduler sleepScheduler;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -108,7 +110,7 @@ public class MongService {
     }
 
     @Transactional
-    public EvolutionMongResDto evolutionMong(Long mongId) throws NotFoundMongException, GatewayException, UnsuitableException {
+    public void evolutionMong(Long mongId) throws NotFoundMongException, GatewayException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(()-> new NotFoundMongException());
 
@@ -211,12 +213,34 @@ public class MongService {
             activeHistoryRepository.save(activeHistory);
         }
 
+
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+    }
+
+    @Transactional
+    public EvolutionMongResDto mongSleepCheck(Long mongId) throws NotFoundMongException {
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
+                .orElseThrow(()-> new NotFoundMongException());
+
         EvolutionMongResDto mongResDto = new EvolutionMongResDto();
         mongResDto.setWeight(mong.getWeight());
-        mongResDto.setMongCode(mong.getCode());
+
         mongResDto.setStateCode(mong.getStateCode());
-        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+
+        if(!mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())
+        || !mong.getStateCode().equals(MongConditionCode.DIE.getCode())
+        || !mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            if(sleepScheduler.checkTime(mong.getSleepStart(), mong.getSleepEnd())){
+                sleepScheduler.getSleepRunnable(mongId).run();
+                mongResDto.setMongCode(MongConditionCode.SLEEP.getCode());
+            }
+        }
+
+
+
+
         return mongResDto;
+
     }
 
     @Transactional

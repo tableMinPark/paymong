@@ -42,14 +42,16 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         super.onNotificationPosted(sbn)
 
         try {
+
             val packageName: String = sbn.packageName ?: ""
             val extras = sbn.notification.extras
-            val title = extras.get(Notification.EXTRA_TEXT).toString()
+            val title = extras.get(Notification.EXTRA_TITLE).toString()
 
             if (title == "null") return
 
             when(packageName){
-                SAMSUNG_PAY_PACKAGE_NAME -> {
+                SAMSUNG_PAY_PACKAGE_NAME
+                -> {
                     val message: List<String> = title.trim().split("₩")
                     val content : String = message[0].trim()
                     val price : Int = message[1].trim().replace(",", "").toInt()
@@ -75,7 +77,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
             }
 
 
-        } catch (_: Exception) {}
+        } catch (e: Exception) {e.printStackTrace()}
     }
 
     override fun onCapabilityChanged(p0: CapabilityInfo) { }

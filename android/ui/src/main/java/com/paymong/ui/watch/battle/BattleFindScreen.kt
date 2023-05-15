@@ -11,20 +11,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.BattleViewModel
 import com.paymong.domain.SoundViewModel
-import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleFind(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
@@ -65,17 +64,16 @@ fun BattleFind(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
-
             if (battleViewModel.battleActive.order == "B"){
                 Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
                     .width(characterSize.dp)
-                    .height(characterSize.dp))
+                    .height(characterSize.dp)
+                )
             } else {
-            // playerResourceCodeB :: 위쪽
-            Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
-                .width(characterSize.dp)
-                .height(characterSize.dp))
+                Image(painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp)
+                )
             }
         }
         Row(
@@ -87,26 +85,21 @@ fun BattleFind(
         }
         Row(
             horizontalArrangement = Arrangement.Start,
-//            modifier = Modifier.fillMaxWidth()
         ) {
-//            battleViewModel.battleEntity?.let { Text(text = it.battleRoomId, textAlign = TextAlign.Center) }
-
-            // playerResourceCodeA :: 아래쪽
             if (battleViewModel.battleActive.order == "B") {
                 Image(
                     painter = playerResourceCodeA, contentDescription = null, modifier = Modifier
                         .width(characterSize.dp)
                         .height(characterSize.dp)
                 )
-            }else {
+            } else {
                 // playerResourceCodeB :: 위쪽
-                Image(painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
-                    .width(characterSize.dp)
-                    .height(characterSize.dp))
+                Image(
+                    painter = playerResourceCodeB, contentDescription = null, modifier = Modifier
+                        .width(characterSize.dp)
+                        .height(characterSize.dp)
+                )
             }
-
-
-            }
-
+        }
     }
 }

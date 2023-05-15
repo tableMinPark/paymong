@@ -1,6 +1,7 @@
 package com.paymong.data.api
 
 import android.content.res.Resources.NotFoundException
+import android.util.Log
 import com.google.gson.*
 import com.paymong.data.DataApplication
 import com.paymong.data.repository.AuthRepository
@@ -84,6 +85,7 @@ interface Api {
                 // 일반 요청 경우
                 else {
                     val accessToken = DataApplication.prefs.getString("accessToken", "")
+                    Log.d("interceptor", accessToken)
                     return if ("" != accessToken) {
                         val token = "Bearer $accessToken"
                         val newRequest = chain.request().newBuilder()

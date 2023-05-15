@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.SoundCode
@@ -24,10 +25,10 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleEnd(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel,
 ) {

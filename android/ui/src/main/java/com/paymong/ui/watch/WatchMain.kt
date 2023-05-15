@@ -118,15 +118,15 @@ fun BattleGraphUI (
         }
         composable(route = WatchNavItem.BattleFind.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleFind(navController, watchViewModel, soundViewModel, battleViewModel)
+            BattleFind(navController, soundViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleActive.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleActive(navController, watchViewModel, soundViewModel, battleViewModel)
+            BattleActive(navController, soundViewModel, battleViewModel)
         }
         composable(route = WatchNavItem.BattleSelectBefore.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleSelectBefore(navController, watchViewModel, soundViewModel, battleViewModel)
+            BattleSelectBefore(navController, battleViewModel)
         }
         composable(route = WatchNavItem.BattleSelect.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
@@ -134,7 +134,7 @@ fun BattleGraphUI (
         }
         composable(route = WatchNavItem.BattleEnd.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleEnd(navController, watchViewModel, soundViewModel, battleViewModel)
+            BattleEnd(navController, soundViewModel, battleViewModel)
         }
     }
 }

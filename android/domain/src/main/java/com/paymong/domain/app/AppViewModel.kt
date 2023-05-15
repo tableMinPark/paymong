@@ -1,6 +1,7 @@
 package com.paymong.domain.app
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,8 @@ import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.ManagementRealTimeResDto
+import com.paymong.data.model.response.MapRealTimeResDto
+import com.paymong.data.model.response.RealTimeResDto
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
@@ -66,14 +69,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
-                val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
+                val managementResDto = Gson().fromJson(text, RealTimeResDto::class.java)
 
-                if (managementRealTimeResDto.code != "201") {
-                    if (managementRealTimeResDto.code != "209") {
-                        stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
-                        poopCount = managementRealTimeResDto.poopCount
-                    } else {
-                        mapCode = MapCode.valueOf(managementRealTimeResDto.mapCode)
+                if (managementResDto.code != "201") {
+                    Log.d("socket", managementResDto.toString())
+                    when(managementResDto.code) {
+                        "200" -> {
+                            val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
+                            stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
+                            poopCount = managementRealTimeResDto.poopCount
+                        }
+                        "209" -> {
+                            val mapRealTimeResDto = Gson().fromJson(text, MapRealTimeResDto::class.java)
+                            mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
+                        }
+                        else -> {}
                     }
                 }
             } catch (e: Exception) {

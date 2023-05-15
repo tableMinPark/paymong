@@ -1,7 +1,6 @@
 package com.paymong
 
 import android.content.Intent
-import android.util.Log
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
 import com.paymong.data.repository.DataApplicationRepository
@@ -26,6 +25,7 @@ class AppDataLayerListenerService : WearableListenerService() {
                 startActivity(
                     Intent(this, AppMainActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 )
             }
         }

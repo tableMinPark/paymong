@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
@@ -19,7 +20,7 @@ import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun Main(
     animationState: MutableState<AnimationCode>,
@@ -29,7 +30,6 @@ fun Main(
     watchViewModel : WatchViewModel,
     soundViewModel: SoundViewModel
 ) {
-    // 배경
     Background(false)
 
     if(watchViewModel.mapCode == MapCode.MP000){
@@ -67,8 +67,7 @@ fun Main(
     }
     Box() {
         if (watchViewModel.stateCode == MongStateCode.CD002) {
-            Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
-            }
+            Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {}
         }
     }
 }

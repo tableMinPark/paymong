@@ -16,19 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MapCode
@@ -41,13 +37,13 @@ import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.CharacterGif
 import com.paymong.ui.app.component.EmotionGif
-import com.paymong.ui.app.component.showToast
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Main(
     navController: NavController,
@@ -55,7 +51,7 @@ fun Main(
     soundViewModel: SoundViewModel
 ) {
     // 배경
-    var findBgCode = appViewModel.mapCode
+    val findBgCode = appViewModel.mapCode
     val bg = painterResource(findBgCode.phoneCode)
 
     if(findBgCode == MapCode.MP000){
@@ -68,7 +64,7 @@ fun Main(
     }
 
     Top(navController, appViewModel, soundViewModel)
-    MakeEgg(navController, appViewModel,soundViewModel)
+    MakeEgg(appViewModel,soundViewModel)
     Btn(navController, appViewModel, soundViewModel)
 }
 
@@ -100,7 +96,6 @@ fun Help(navController: NavController,
 
 @Composable
 fun Info(
-    appViewModel: AppViewModel,
     navController: NavController,
     soundViewModel: SoundViewModel
 ){
@@ -127,7 +122,6 @@ fun Info(
 
 @Composable
 fun Things(
-    appViewModel: AppViewModel,
     navController: NavController,
     soundViewModel: SoundViewModel
 ){
@@ -225,8 +219,8 @@ fun Top(
     ) {
         Row (    horizontalArrangement = Arrangement.SpaceBetween){
             Help(navController, soundViewModel)
-            Info(appViewModel, navController, soundViewModel)
-            Things(appViewModel, navController, soundViewModel)
+            Info(navController, soundViewModel)
+            Things(navController, soundViewModel)
         }
         Point(navController, appViewModel, soundViewModel)
     }
@@ -300,17 +294,11 @@ fun NicknameDialog(
 
 @Composable
 fun TimePicker(
-    time: LocalTime,
     onTimeSelected: (LocalTime) -> Unit,
     soundViewModel: SoundViewModel
 ) {
-    val hour by remember { mutableStateOf(time.hour) }
-    val minute by remember { mutableStateOf(time.minute/10*10) }
-
     val hourScrollState = rememberLazyListState()
-    val hourSelected= remember { mutableStateOf(hour) }
     val minuteScrollState = rememberLazyListState()
-    val minuteSelected= remember { mutableStateOf(minute) }
 
     Row(
         modifier = Modifier
@@ -387,7 +375,6 @@ fun SleepDialog(
                     color = Color.Black
                 )
                 TimePicker(
-                    time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setSleepValue(newTime)
                         setShowSleepDialog(false)
@@ -428,7 +415,6 @@ fun WakeDialog(
                     color = Color.Black
                 )
                 TimePicker(
-                    time = LocalDateTime.now().toLocalTime(),
                     onTimeSelected = { newTime ->
                         setWakeValue(newTime)
                         setShowWakeDialog(false)
@@ -446,7 +432,6 @@ fun WakeDialog(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MakeEgg(
-    navController: NavController,
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ){
@@ -522,125 +507,131 @@ fun MakeEgg(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(contentAlignment = Alignment.Center,) {
-                    if (appViewModel.stateCode == MongStateCode.CD007) { //진화대기
-                        Text(
-                            text = "성장을 위해\n화면을 터치해주세요.",
-                            textAlign = TextAlign.Center,
-                            lineHeight = 50.sp,
-                            fontFamily = dalmoori,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.clickable {
-                                appViewModel.evolution()
-                                appViewModel.isClick = true
-                            }
-                        )
-                    } else if(appViewModel.stateCode == MongStateCode.CD005) { // 죽음
-                        Image(
-                            painter = painterResource(R.drawable.rip),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(300.dp)
-                        )
-                        Text(
-                            text = "다시 시작",
-                            textAlign = TextAlign.Center,
-                            lineHeight = 50.sp,
-                            fontFamily = dalmoori,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier
-                                .background(color = Color.Black.copy(alpha = 0.4f))
-                                .fillMaxWidth()
-                                .padding(vertical = 30.dp)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = {
-                                        appViewModel.retry = true
-                                    }
-                                )
-                        )
-                    } else if(appViewModel.stateCode == MongStateCode.CD006) { // 졸업
-                        Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(250.dp)
-                        )
-                        GraduationEffect(appViewModel)
-                    } else {
-                        if(appViewModel.isClick){
-                            Image(painter = painterResource(appViewModel.undomong.resourceCode),
+                Box(contentAlignment = Alignment.Center) {
+                    when (appViewModel.stateCode) {
+                        MongStateCode.CD007 -> { //진화대기
+                            Text(
+                                text = "성장을 위해\n화면을 터치해주세요.",
+                                textAlign = TextAlign.Center,
+                                lineHeight = 50.sp,
+                                fontFamily = dalmoori,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.clickable {
+                                    appViewModel.evolution()
+                                    appViewModel.isClick = true
+                                }
+                            )
+                        }
+                        MongStateCode.CD005 -> { // 죽음
+                            Image(
+                                painter = painterResource(R.drawable.rip),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .height(250.dp)
+                                    .size(300.dp)
+                            )
+                            Text(
+                                text = "다시 시작",
+                                textAlign = TextAlign.Center,
+                                lineHeight = 50.sp,
+                                fontFamily = dalmoori,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .background(color = Color.Black.copy(alpha = 0.4f))
+                                    .fillMaxWidth()
+                                    .padding(vertical = 30.dp)
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null,
                                         onClick = {
+                                            appViewModel.retry = true
                                         }
                                     )
                             )
-                            CreateImageList()
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                appViewModel.isClick = false
-                            }, 1800)
-                        } else{
-//                            val context = LocalContext.current
-//                            if(appViewModel.showtoast){
-//                                showToast(context, appViewModel.msg)
-//                            }
-                            val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
-
-                            if(code / 100 == 1){
-                                CharacterGif(appViewModel, 200)
-                                EmotionGif(appViewModel, 0, 0, 20, 60)
-                            } else if(code / 100 == 2){
-                                CharacterGif(appViewModel, 250)
-                                val end = code % 10
-                                if(end == 1){ //2_1
-                                    EmotionGif(appViewModel, 0, 45, 90, 70)
-                                } else { //2_0, 2_2
-                                    EmotionGif(appViewModel, 0, 0, 90, 70)
-                                }
-                            } else if(code / 100 == 3){
-                                CharacterGif(appViewModel, 300)
-                                val end = code % 10
-                                if(end == 1){ //3_1
-                                    EmotionGif(appViewModel, 0, 110, 100, 80)
-                                } else{ //3_0, 3_2
-                                    EmotionGif(appViewModel, 0, 0, 80  , 80)
-                                }
-                            } else{
-                                CharacterGif(appViewModel, 200)
-                            }
-
-                            if(appViewModel.stateCode == MongStateCode.CD002){
-                                Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
-                                }
-                            }
                         }
+                        MongStateCode.CD006 -> { // 졸업
+                            Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(250.dp)
+                            )
+                            GraduationEffect(appViewModel)
+                        }
+                        else -> {
+                            if(appViewModel.isClick){
+                                Image(painter = painterResource(appViewModel.undomong.resourceCode),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .height(250.dp)
+                                        .clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = null,
+                                            onClick = {
+                                            }
+                                        )
+                                )
+                                CreateImageList()
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    appViewModel.isClick = false
+                                }, 1800)
+                            } else{
+                                val mongCodeNumber = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
 
-                        val poopCount = appViewModel.poopCount
-                        val poopSize = 60
+                                if(mongCodeNumber / 100 == 1){
+                                    CharacterGif(appViewModel, 200)
+                                    EmotionGif(appViewModel, 0, 0, 20, 60)
+                                } else if(mongCodeNumber / 100 == 2){
+                                    CharacterGif(appViewModel, 250)
+                                    val end = mongCodeNumber % 10
+                                    if(end == 1){ //2_1
+                                        EmotionGif(appViewModel, 0, 45, 90, 70)
+                                    } else { //2_0, 2_2
+                                        EmotionGif(appViewModel, 0, 0, 90, 70)
+                                    }
+                                } else if(mongCodeNumber / 100 == 3){
+                                    CharacterGif(appViewModel, 300)
+                                    val end = mongCodeNumber % 10
+                                    if(end == 1){ //3_1
+                                        EmotionGif(appViewModel, 0, 110, 100, 80)
+                                    } else{ //3_0, 3_2
+                                        EmotionGif(appViewModel, 0, 0, 80  , 80)
+                                    }
+                                } else{
+                                    CharacterGif(appViewModel, 200)
+                                }
 
-                        if (poopCount == 1) {
-                            Poops(0, 300, 150, 0, poopSize)
-                        } else if (poopCount == 2) {
-                            Poops(0, 300, 150, 0, poopSize)
-                            Poops(280, 0, 200, 0, poopSize)
-                        } else if (poopCount == 3) {
-                            Poops(0, 300, 150, 0, poopSize)
-                            Poops(280, 0, 200, 0, poopSize)
-                            Poops(150, 0, 300, 0, poopSize)
-                        } else if (poopCount == 4) {
-                            Poops(0, 300, 150, 0, poopSize)
-                            Poops(280, 0, 200, 0, poopSize)
-                            Poops(150, 0, 300, 0, poopSize)
-                            Poops(0, 180, 320, 0, poopSize)
+                                if(appViewModel.stateCode == MongStateCode.CD002){
+                                    Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
+                                    }
+                                }
+                            }
+
+                            val poopCount = appViewModel.poopCount
+                            val poopSize = 60
+
+                            when (poopCount) {
+                                1 -> {
+                                    Poops(0, 300, 150, 0, poopSize)
+                                }
+                                2 -> {
+                                    Poops(0, 300, 150, 0, poopSize)
+                                    Poops(280, 0, 200, 0, poopSize)
+                                }
+                                3 -> {
+                                    Poops(0, 300, 150, 0, poopSize)
+                                    Poops(280, 0, 200, 0, poopSize)
+                                    Poops(150, 0, 300, 0, poopSize)
+                                }
+                                4 -> {
+                                    Poops(0, 300, 150, 0, poopSize)
+                                    Poops(280, 0, 200, 0, poopSize)
+                                    Poops(150, 0, 300, 0, poopSize)
+                                    Poops(0, 180, 320, 0, poopSize)
+                                }
+                            }
                         }
                     }
                 }
@@ -735,7 +726,7 @@ fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
 fun CreateImageList() {
     val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3)
 
-    Box() {
+    Box {
         var currentIndex by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
@@ -762,7 +753,7 @@ fun GraduationEffect(
 ) {
     val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
 
-    Box() {
+    Box {
         var currentIndex by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
@@ -807,16 +798,5 @@ fun GraduationEffect(
                 modifier = Modifier.size(500.dp)
             )
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun InfoPreview() {
-    val navController = rememberNavController()
-    val appViewModel:AppViewModel = viewModel()
-    val soundViewModel:SoundViewModel = viewModel()
-    PaymongTheme {
-        MakeEgg(navController, appViewModel, soundViewModel)
     }
 }

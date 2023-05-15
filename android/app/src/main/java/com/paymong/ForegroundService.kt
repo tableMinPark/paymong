@@ -13,16 +13,6 @@ class ForegroundService : Service() {
         const val CHANNEL_ID = "ForegroundServiceChannel"
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        Log.e("foreground", "Create!")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("foreground", "Destroy!")
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val input : String? = intent?.getStringExtra("inputExtra")
         createNotificationChannel()

@@ -3,7 +3,6 @@ package com.paymong
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.MessageClient
@@ -13,12 +12,10 @@ import com.paymong.data.model.request.AddRoutineReqDto
 import com.paymong.data.repository.MemberRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.tasks.await
 
 class NotificationListener : NotificationListenerService(), CapabilityClient.OnCapabilityChangedListener{
 
     companion object {
-        private const val START_WEAR_ACTIVITY_PATH = "/thingsAlarm"
         private const val THINGS_ALARM = "/thingsAlarm"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
         private const val SAMSUNG_PAY_PACKAGE_NAME = "com.kakao.talk"
@@ -29,36 +26,6 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
     private var memberRepository:MemberRepository = MemberRepository()
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var messageClient: MessageClient
-
-
-    private fun thingsAlarm(thingsCode: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val nodes = capabilityClient
-                    .getCapability(CAPABILITY_WEAR_APP, CapabilityClient.FILTER_REACHABLE)
-                    .await()
-                    .nodes
-
-                // Send a message to all nodes in parallel
-                nodes.map { node ->
-                    async {
-                        if (node.id != "") {
-                            messageClient.sendMessage(
-                                node.id,
-                                THINGS_ALARM,
-                                thingsCode.toByteArray()
-                            )
-                                .await()
-                        }
-                    }
-                }.awaitAll()
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-            }
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -80,7 +47,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
             val extras = sbn.notification.extras
             val title = extras.get(Notification.EXTRA_TEXT).toString()
 
-            if (title == "null" || title == null) return
+            if (title == "null") return
 
             Log.d("onNotification", "$packageName $title")
 
@@ -105,11 +72,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
                             .catch {
                                 it.printStackTrace()
                             }
-                            .collect{
-                                data ->
-                                Log.d("thing 수신 테스트", data.thingsCode)
-                                thingsAlarm(data.thingsCode)
-                            }
+                            .collect{ }
                     }
                 }
             }
@@ -118,8 +81,7 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         } catch (e: Exception) { e.printStackTrace() }
     }
 
-    override fun onCapabilityChanged(p0: CapabilityInfo) {
-    }
+    override fun onCapabilityChanged(p0: CapabilityInfo) { }
 }
 
 

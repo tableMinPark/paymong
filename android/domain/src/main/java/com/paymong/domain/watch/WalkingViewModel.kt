@@ -83,7 +83,9 @@ class WalkingViewModel (
     private fun walkTimerStart(){
         walkingState = WalkingCode.WALKING
         viewModelScope.launch(Dispatchers.IO) {
-            while(walkNowTime < walkMaxTime && walkingState != WalkingCode.PAUSE) {
+            while(walkNowTime < walkMaxTime) {
+                if (walkingState == WalkingCode.PAUSE) continue
+                if (walkingState == WalkingCode.WALKING_END) break
                 delay(interval)
                 walkNowTime += interval
 

@@ -1,6 +1,5 @@
 package com.paymong.domain.app
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,10 +53,5 @@ class InfoDetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             findMongInfo()
         }
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }

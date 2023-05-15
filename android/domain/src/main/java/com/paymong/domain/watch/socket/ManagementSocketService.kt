@@ -1,12 +1,7 @@
 package com.paymong.domain.watch.socket
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import com.google.gson.Gson
-import com.paymong.common.code.MessageType
-import com.paymong.data.model.request.BattleConnectReqDto
-import com.paymong.data.model.request.BattleMessageReqDto
 import com.paymong.data.repository.DataApplicationRepository
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -36,10 +31,8 @@ class ManagementSocketService {
             val request: Request = Request.Builder().url(url).header("Authorization", String.format("Bearer %s", accessToken)).build()
             webSocket = socket.newWebSocket(request, listener)
         }
-        Log.e("ManagementSocketService", "연결 성공")
     }
     fun disConnect() {
-        Log.e("ManagementSocketService", "연결 종료")
         webSocket.close(1000, "연결 종료")
     }
 }

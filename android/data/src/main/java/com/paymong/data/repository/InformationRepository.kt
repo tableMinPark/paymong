@@ -1,6 +1,5 @@
 package com.paymong.data.repository
 
-import android.util.Log
 import com.paymong.data.api.Api
 import com.paymong.data.api.InformationApi
 import com.paymong.data.model.response.FindMongInfoResDto
@@ -33,7 +32,6 @@ class InformationRepository (
     fun findMongStats(): Flow<FindMongStatsResDto> = flow {
         val response = api.findMongStats()
         if (response.code() == 200) {
-            Log.d("findMongstate", response.toString())
             response.body()?.let {
                 emit(response.body()!!)
             }

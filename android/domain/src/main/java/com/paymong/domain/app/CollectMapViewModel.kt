@@ -1,13 +1,11 @@
 package com.paymong.domain.app
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.CollectRepository
 import com.paymong.domain.entity.Collect
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
@@ -16,10 +14,6 @@ class CollectMapViewModel : ViewModel() {
     var success = mutableStateOf(false)
     private var collectRepository: CollectRepository = CollectRepository()
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
     fun map(){
         viewModelScope.launch(Dispatchers.IO){
             collectRepository.map().catch {
@@ -27,8 +21,8 @@ class CollectMapViewModel : ViewModel() {
             }.collect{
                 data ->
                 mapList.clear()
-                for(i in 1..data.size){
-                    mapList.add(Collect(data[i-1].isOpen, data[i-1].name, data[i-1].mapCode))
+                for(i in data.indices){
+                    mapList.add(Collect(data[i].isOpen, data[i].name, data[i].mapCode))
                 }
                 success.value = true
             }

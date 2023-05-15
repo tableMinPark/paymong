@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class ConditionViewModel : ViewModel() {
-
     var mongStats by mutableStateOf(MongStats())
 
     private val informationRepository: InformationRepository = InformationRepository()
@@ -40,10 +39,5 @@ class ConditionViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             findMongCondition()
         }
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }

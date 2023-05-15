@@ -32,6 +32,7 @@ import com.paymong.ui.watch.common.AttackGif
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 import com.paymong.ui.watch.common.DefenceGif
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -68,16 +69,17 @@ fun BattleActive(
             battleViewModel.battleSelectBefore()
         }
         MatchingCode.END -> {
-            navController.navigate(WatchNavItem.BattleEnd.route) {
-                popUpTo(0)
-                launchSingleTop = true
-            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                navController.navigate(WatchNavItem.BattleEnd.route) {
+                    popUpTo(0)
+                    launchSingleTop = true
+                }
+            }, 3000)
             battleViewModel.battleEnd()
         }
         MatchingCode.ACTIVE_RESULT -> {
             Handler(Looper.getMainLooper()).postDelayed({
-                Log.d("battle", "싸움 애니메이션 ON")
-
                 battleViewModel.matchingState = MatchingCode.SELECT_BEFORE
             }, 4000)
         }
@@ -151,7 +153,7 @@ fun BattleActive(
 //                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
 //                )
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
-                if (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 != 0) {
+                if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 != 0) ) {
                     if (battleViewModel.battleActive.damageB > 0) {
                         Box() {
                             Row() {
@@ -201,7 +203,7 @@ fun BattleActive(
                             }
                         }
                     }
-                } else if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) {
+                } else if ((battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
                         Box() {
                             Row() {
@@ -284,8 +286,11 @@ fun BattleActive(
             modifier = Modifier.fillMaxWidth()
         ) {
             //게이지 바
-            var damA = battleViewModel.battleActive.damageA.toFloat()
-            var healA = battleViewModel.battleActive.healthA.toFloat()
+
+            var leftHeal = battleViewModel.battleActive.healthA.toFloat()
+            if (battleViewModel.battleActive.order == "B") {
+                leftHeal = battleViewModel.battleActive.healthB.toFloat()
+            }
             Box(
                 modifier = Modifier
                     .width(barWidth.dp)
@@ -296,7 +301,7 @@ fun BattleActive(
                 Row(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(fraction = healA / 500)
+                        .fillMaxWidth(fraction = leftHeal / 500)
                         .clip(CircleShape)
                         .background(color = PayMongRed)
                         .padding(8.dp)
@@ -314,8 +319,12 @@ fun BattleActive(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             //게이지 바
-            var damB = battleViewModel.battleActive.damageB.toFloat()
-            var healB = battleViewModel.battleActive.healthB.toFloat()
+            var rightHeal = battleViewModel.battleActive.healthB.toFloat()
+            if (battleViewModel.battleActive.order == "B") {
+                rightHeal = battleViewModel.battleActive.healthA.toFloat()
+            }
+
+
             Box(
                 modifier = Modifier
                     .width(barWidth.dp)
@@ -326,7 +335,7 @@ fun BattleActive(
                 Row(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(fraction = healB / 500)
+                        .fillMaxWidth(fraction = rightHeal / 500)
                         .clip(CircleShape)
                         .background(color = PayMongRed)
                         .padding(8.dp)
@@ -361,7 +370,7 @@ fun BattleActive(
 
 
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
-                if (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0) {
+                if ( (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0)  ) {
                     if (battleViewModel.battleActive.damageB > 0) {
 
                         Box() {
@@ -410,7 +419,7 @@ fun BattleActive(
                             }
                         }
                     }
-                } else if (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0) {
+                } else if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
                         Box() {
                             Row() {

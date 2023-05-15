@@ -17,7 +17,9 @@ data class FindMongResDto(
     val stateCode: String,
     val poopCount: Int,
     val mapCode: String
-)
+){
+    constructor() : this(0L, "", "", "", 0, "")
+}
 
 data class FindMongInfoResDto(
     val name: String,
@@ -76,5 +78,8 @@ data class ManagementRealTimeResDto(
     val satiety: Double,
     val strength: Double,
     val sleep: Double,
-    val mapCode: String
-)
+    val mapCode: String,
+    val thingsCode: String
+) {
+    constructor() : this("", 0, "", "", 0, 0.0, 0.0, 0.0, 0.0, "", "")
+}

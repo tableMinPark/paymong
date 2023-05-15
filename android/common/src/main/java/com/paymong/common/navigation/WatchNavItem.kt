@@ -9,6 +9,7 @@ sealed class WatchNavItem(val route: String) {
     object FeedBuyList: WatchNavItem("feed_buy_list")
 
     object Activity: WatchNavItem("activity")
+    object TrainingLanding: WatchNavItem("training_landing")
     object Training: WatchNavItem("training")
     object Walking: WatchNavItem("walking")
 

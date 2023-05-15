@@ -1,6 +1,5 @@
 package com.paymong
 
-import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -8,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
@@ -23,7 +21,6 @@ import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
 import com.google.android.gms.wearable.Wearable
-import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.app.AppLandingViewModelFactory
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.ui.app.AppMain
@@ -31,7 +28,6 @@ import com.paymong.ui.theme.PaymongTheme
 
 
 class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
-
     companion object {
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
     }
@@ -63,6 +59,7 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
 
+        // 포그라운드 서비스 실행
         val serviceIntent = Intent(this, ForegroundService::class.java)
         this.startForegroundService(serviceIntent)
 
@@ -100,21 +97,5 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         else {
             return NotificationManagerCompat.getEnabledListenerPackages(applicationContext).contains(applicationContext.packageName)
         }
-    }
-    // 포그라운드 서비스 동작 확인 함수
-    private fun isForegroundServiceRunning(serviceClass: Class<*>): Boolean {
-        try {
-            val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-                if (serviceClass.name == service.service.className) {
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-
-        return false
     }
 }

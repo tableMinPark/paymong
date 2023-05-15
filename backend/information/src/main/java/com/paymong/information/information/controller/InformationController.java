@@ -40,7 +40,7 @@ public class InformationController {
             // 아직 map코드는 안받음
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            FindMongDto findMongDto = mongService.findMong(mongId);
+            FindMongDto findMongDto = mongService.findMong(mongId, memberIdStr);
             return ResponseEntity.ok().body(findMongDto);
         }catch (NullPointerException e){
             log.info("code : {}, message : {}", InformationStateCode.NULL_POINT.getCode(), InformationStateCode.NULL_POINT.name());

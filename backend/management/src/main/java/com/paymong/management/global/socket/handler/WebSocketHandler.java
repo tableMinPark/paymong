@@ -16,14 +16,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @RequiredArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper objectMapper;
     private final WebSocketService mongSocketService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception{
         log.info("연결중... {}", session.getHandshakeHeaders().get("mongid"));
         MongSocketDto socket = MongSocketDto.builder()
-                .mongId(Long.parseLong(session.getHandshakeHeaders().get("mongid").get(0)))
                 .memberId(Long.parseLong(session.getHandshakeHeaders().get("memberid").get(0)))
                 .session(session)
                 .build();
@@ -42,7 +40,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{
         log.info("응 연결 끊김~ {}", status.getCode());
         MongSocketDto socket = MongSocketDto.builder()
-                .mongId(Long.parseLong(session.getHandshakeHeaders().get("mongid").get(0)))
                 .memberId(Long.parseLong(session.getHandshakeHeaders().get("memberid").get(0)))
                 .session(session)
                 .build();

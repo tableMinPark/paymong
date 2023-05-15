@@ -223,12 +223,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         if(battleRoom.getNowTurn() != -1){
                             if(battleRoom.getStatsMap().get("A").getMongId().equals(mongId)){
                                 // A가 탈주
+                                log.info("A가 탈주 함");
                                 Long escapeId = battleRoom.getStatsMap().get("A").getMongId();
                                 Long keepId = battleRoom.getStatsMap().get("B").getMongId();
                                 battleService.spendMoney(escapeId);
                                 battleService.earnMoney(keepId);
                             }else{
                                 // B가 탈주
+                                log.info("B가 탈주 함");
                                 Long escapeId = battleRoom.getStatsMap().get("B").getMongId();
                                 Long keepId = battleRoom.getStatsMap().get("A").getMongId();
                                 battleService.spendMoney(escapeId);

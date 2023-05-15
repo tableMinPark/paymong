@@ -30,7 +30,7 @@ public class RedisConfig {
     private String redisPassword;
 
     @Bean
-    public Jackson2JsonRedisSerializer newsEvolutionMapper() {
+    public Jackson2JsonRedisSerializer newMongSchedulerMapper() {
         ObjectMapper objectMapper = new ObjectMapper()
                 .findAndRegisterModules()
                 .enable(SerializationFeature.INDENT_OUTPUT)
@@ -55,9 +55,9 @@ public class RedisConfig {
     public RedisTemplate<?, ?> getRedisTemplate() {
         RedisTemplate<byte[], byte[]> redisSessionTemplate = new RedisTemplate<>();
         redisSessionTemplate.setKeySerializer(new StringRedisSerializer());
-        redisSessionTemplate.setValueSerializer(newsEvolutionMapper());
+        redisSessionTemplate.setValueSerializer(newMongSchedulerMapper());
         redisSessionTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisSessionTemplate.setHashValueSerializer(newsEvolutionMapper());
+        redisSessionTemplate.setHashValueSerializer(newMongSchedulerMapper());
         redisSessionTemplate.setConnectionFactory(redisCacheConnectionFactory());
         return redisSessionTemplate;
     }

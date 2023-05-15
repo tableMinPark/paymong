@@ -8,12 +8,14 @@ import java.util.Arrays;
 public enum WebSocketCode implements BasicCode{
     SUCCESS("200","성공"),
     FAIL("201","불가능"),
-    DEATH("202","죽을 수도 있습니다."),
-    SOMNOLENCE("203","졸립니다."),
-    HUNGRY("204","배고픕니다"),
-    SICK("205","아픕니다"),
-    POOP("206","똥이 많아요"),
-    EVOLUTION_READY("207","진화대기")
+    SOMNOLENCE("202","졸립니다."),
+    HUNGRY("203","배고픕니다"),
+    SICK("204","아픕니다"),
+    POOP("205","똥이 많아요"),
+    EVOLUTION_READY("206","진화대기"),
+    DEATH_READY("207","죽을 수도 있습니다."),
+    DEATH("208","죽었습니다."),
+    MAP("209", "맵이 바뀝니다.")
     ;
     private final String code;
     private final String message;

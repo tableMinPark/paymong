@@ -106,7 +106,10 @@ public class SleepTask {
         Integer sleep = mong.getSleep();
         mong.setSleep(sleep - 1 < 0 ? 0 : sleep - 1);
         if(sleep - 1 < 2){
-            mong.setStateCode(MongConditionCode.SOMNOLENCE.getCode());
+            if(mong.getStateCode().equals(MongConditionCode.NORMAL.getCode())
+                    || mong.getStateCode().equals(MongConditionCode.HUNGRY.getCode())){
+                mong.setStateCode(MongConditionCode.SOMNOLENCE.getCode());
+            }
             webSocketService.sendStatus(mong, WebSocketCode.SOMNOLENCE);
         }else{
             webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);

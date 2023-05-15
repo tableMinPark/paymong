@@ -51,6 +51,7 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
                     appViewModel.stroke()
                     Handler(Looper.getMainLooper()).postDelayed({
                         appViewModel.isHappy = false
+//                        appViewModel.showtoast = false
                     }, 2000)
                 }
             }

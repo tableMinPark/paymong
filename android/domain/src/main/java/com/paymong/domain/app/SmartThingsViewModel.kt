@@ -1,6 +1,5 @@
 package com.paymong.domain.app
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,7 +11,6 @@ import com.paymong.domain.entity.AddThingsDevice
 import com.paymong.domain.entity.Things
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SmartThingsViewModel : ViewModel() {

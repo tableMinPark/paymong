@@ -78,8 +78,6 @@ class MemberRepository(
             response.body()?.let {
                 emit(response.body()!!)
             }
-        } else {
-            Log.e("thing 루틴 response", "등록안된 루틴명")
         }
     }
 }

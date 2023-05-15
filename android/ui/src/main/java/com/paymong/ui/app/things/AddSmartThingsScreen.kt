@@ -255,7 +255,6 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                                     indication = null,
                                     onClick = {
                                         smartThingsViewModel.isSelect = i
-                                        Log.d("select", i.toString())
                                     }
                                 )
                         ) {

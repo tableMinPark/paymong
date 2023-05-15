@@ -17,8 +17,6 @@ class AuthRepository (
             response.body()?.let {
                 DataApplication.prefs.setString("accessToken", response.body()!!.accessToken)
                 DataApplication.prefs.setString("refreshToken", response.body()!!.refreshToken)
-                Log.d("login - Call - accessToken", response.body()!!.accessToken)
-                Log.d("login - Call - refreshToken", response.body()!!.refreshToken)
                 emit(true)
             }
         } else {
@@ -32,8 +30,6 @@ class AuthRepository (
             response.body()?.let {
                 DataApplication.prefs.setString("accessToken", response.body()!!.accessToken)
                 DataApplication.prefs.setString("refreshToken", response.body()!!.refreshToken)
-                Log.d("login - Call - accessToken", response.body()!!.accessToken)
-                Log.d("login - Call - refreshToken", response.body()!!.refreshToken)
                 emit(true)
             }
         } else {
@@ -44,11 +40,8 @@ class AuthRepository (
     fun reissue(): Flow<Boolean> = flow {
         val response = api.reissue()
 
-        Log.d("reissue - Call", response.toString())
-
         if (response.code() == 200) {
             DataApplication.prefs.setString("accessToken", response.body()!!.accessToken)
-            Log.d("reissue - Call - accessToken", response.body()!!.accessToken)
             emit(true)
         } else {
             emit(false)

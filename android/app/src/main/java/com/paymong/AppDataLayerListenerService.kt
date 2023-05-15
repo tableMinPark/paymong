@@ -18,10 +18,8 @@ class AppDataLayerListenerService : WearableListenerService() {
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
 
-        Log.e("AppDataLayerListenerService()", "오냐?")
         when (messageEvent.path) {
             START_APP_ACTIVITY_PATH -> {
-                Log.e("AppDataLayerListenerService()", "재시작")
                 dataApplicationRepository.setValue("accessToken", "")
                 dataApplicationRepository.setValue("refreshToken", "")
                 dataApplicationRepository.setValue("watchId", "")

@@ -35,7 +35,6 @@ fun Landing(
     // 리프레시 로그인 성공
     if(appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
         appLandinglViewModel.landingCode = LandingCode.DONE
-        Log.d("Landing()", "LOGIN_SUCCESS")
         navController.navigate(AppNavItem.Main.route){
             popUpTo(navController.graph.id) {
                 inclusive = true
@@ -48,7 +47,6 @@ fun Landing(
     // 리프레시 로그인 실패
     else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL){
         appLandinglViewModel.landingCode = LandingCode.LOADING
-        Log.d("Landing()", "LOGIN_FAIL")
         navController.navigate(AppNavItem.Login.route){
             popUpTo(navController.graph.id) {
                 inclusive = true

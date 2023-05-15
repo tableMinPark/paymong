@@ -1,19 +1,14 @@
 package com.paymong.domain.watch
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.common.code.MongStateCode
-import com.paymong.data.model.response.ManagementResDto
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Food
-import com.paymong.domain.entity.MongInfo
-import com.paymong.domain.entity.MongStats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -23,7 +18,6 @@ import java.time.LocalDateTime
 class FeedViewModel (
     application: Application
 ): AndroidViewModel(application) {
-
     var point by mutableStateOf(0)
     var name by mutableStateOf("")
     var foodCode by mutableStateOf("")
@@ -108,7 +102,6 @@ class FeedViewModel (
                         it.printStackTrace()
                     }
                     .collect {data ->
-                        Log.d("buy food", foodList[currentFoodPosition].toString())
                         success.value = false
                         watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
@@ -123,7 +116,6 @@ class FeedViewModel (
                         it.printStackTrace()
                     }
                     .collect {data ->
-                        Log.d("buy snack", foodList[currentFoodPosition].toString())
                         watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
                     }

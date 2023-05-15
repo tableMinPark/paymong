@@ -2,10 +2,7 @@ package com.paymong.domain.watch
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.os.Build
 import android.os.Looper
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +14,6 @@ import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
-import com.paymong.data.model.response.BattleErrorResDto
 import com.paymong.data.model.response.BattleMessageResDto
 import com.paymong.data.repository.InformationRepository
 import com.paymong.domain.entity.BattleActive
@@ -105,22 +101,16 @@ class BattleViewModel (
             battleSocketService.disConnect(mongId, mongCode.code)
             gpsJob.cancel()
             socketJob.cancel()
-        } catch (e: Exception) {  }
+        } catch (_: Exception) {  }
     }
 
     // -------------------------------------------------------------------------------------------------
     // gps
     private val mLocationCallback: LocationCallback = object : LocationCallback() {
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
             // 위치 한번 받고 업데이트 요청 종료
-//            val latitude = locationResult.lastLocation.latitude
-//            val longitude = locationResult.lastLocation.longitude
-
-            Log.e("test", String.format("%f : %f", locationResult.lastLocation.latitude, locationResult.lastLocation.longitude))
-
-            val latitude = 35.0963554
-            val longitude = 128.8539052
+            val latitude = locationResult.lastLocation.latitude
+            val longitude = locationResult.lastLocation.longitude
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 
@@ -130,8 +120,7 @@ class BattleViewModel (
             socketJob = viewModelScope.launch {
                 try {
                     battleSocketService.connect(mongId, mongCode.code, latitude, longitude)
-                } catch (e: NullPointerException) {
-                    Log.e("battle-matching", "서버가 유효하지 않음")
+                } catch (_: NullPointerException) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -146,7 +135,7 @@ class BattleViewModel (
 
                 if (battleMessageResDto.totalTurn == 0) {
                     // 탈주
-                    val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
+//                    val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
                     println(battleMessageResDto.toString())
@@ -188,7 +177,6 @@ class BattleViewModel (
     // -------------------------------------------------------------------------------------------------
     // 배틀 대기열 등록 함수
     fun battleWait() {
-        Log.e("battleViewModel", "battleWait()")
         viewModelScope.launch {
             mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
             mLocationRequest = LocationRequest.create().apply { priority = LocationRequest.PRIORITY_HIGH_ACCURACY }
@@ -205,7 +193,6 @@ class BattleViewModel (
 
     // 배틀 찾았을 때 호출 할 함수
     fun battleFind() {
-        Log.e("battleViewModel", "battleFind()")
         viewModelScope.launch {
             delay(FIND_DELAY)
             matchingState = MatchingCode.ACTIVE
@@ -214,20 +201,18 @@ class BattleViewModel (
 
     // 배틀 찾기 실패했을 때 호출 할 함수
     fun battleFindFail() {
-        Log.e("battleViewModel", "battleFindFail()")
         viewModelScope.launch {
             matchingState = MatchingCode.FINDING
             try {
                 battleSocketService.disConnect(mongId, mongCode.code)
                 gpsJob.cancel()
                 socketJob.cancel()
-            } catch (e: Exception) {  }
+            } catch (_: Exception) {  }
         }
     }
 
     // 배틀 시작할 때 호출 할 함수
     fun battleActive() {
-        Log.e("battleViewModel", "battleActive()")
         viewModelScope.launch {
             delay(ACTIVE_DELAY)
             matchingState = MatchingCode.SELECT_BEFORE
@@ -236,7 +221,6 @@ class BattleViewModel (
 
     // 배틀 선택 전 호출 할 함수 (선택으로 넘어가기 위한 함수)
     fun battleSelectBefore() {
-        Log.e("battleViewModel", "battleSelectBefore()")
         viewModelScope.launch {
             delay(SELECT_BEFORE_DELAY)
             matchingState = MatchingCode.SELECT
@@ -245,7 +229,6 @@ class BattleViewModel (
     
     // 배틀 선택 시 호출 할 함수
     fun battleSelect() {
-        Log.e("battleViewModel", "battleSelect()")
         viewModelScope.launch {
             selectState = MessageType.STAY
             battleSelectTime = 0.0
@@ -264,7 +247,6 @@ class BattleViewModel (
 
     // 배틀 끝난 후 호출 할 함수
     fun battleEnd() {
-        Log.e("battleViewModel", "battleEnd()")
         viewModelScope.launch {
             if (battleActive.healthA == battleActive.healthB) {
                 win = true

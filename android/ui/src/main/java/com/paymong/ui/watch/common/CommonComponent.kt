@@ -233,6 +233,7 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
                     mainViewModel.stroke()
                     Handler(Looper.getMainLooper()).postDelayed({
                         mainViewModel.isHappy = false
+//                        mainViewModel.showtoast = false
                     }, 2000)
                 }
             }

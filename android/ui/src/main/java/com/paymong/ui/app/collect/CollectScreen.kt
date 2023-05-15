@@ -27,12 +27,10 @@ import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
-fun Collect(navController: NavController,     soundViewModel: SoundViewModel
+fun Collect(
+    navController: NavController,
+    soundViewModel: SoundViewModel
 ) {
-
-
-
-
     Scaffold(
         topBar = {TopBar("몽집", navController, AppNavItem.Main.route, soundViewModel)},
         backgroundColor = PayMongNavy
@@ -45,6 +43,7 @@ fun Collect(navController: NavController,     soundViewModel: SoundViewModel
             ) {
                 Btn(navController, btnText = "PayMong", AppNavItem.CollectPayMong.route, soundViewModel)
                 Btn(navController, btnText = "Map", AppNavItem.CollectMap.route, soundViewModel)
+                Btn(navController, btnText = "MongMap", AppNavItem.MongMap.route, soundViewModel)
             }
         }
     }
@@ -52,8 +51,6 @@ fun Collect(navController: NavController,     soundViewModel: SoundViewModel
 
 @Composable
 fun Btn(navController: NavController, btnText: String, route: String, soundViewModel:SoundViewModel){
-
-
     Button(
         onClick = {
             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)

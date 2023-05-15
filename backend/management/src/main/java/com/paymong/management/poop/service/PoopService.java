@@ -27,6 +27,7 @@ public class PoopService {
     private final MongRepository mongRepository;
     private final ActiveHistoryRepository activeHistoryRepository;
     private final StatusService statusService;
+    private final WebSocketService webSocketService;
 
     int cnt = 0;
     @Transactional
@@ -48,6 +49,7 @@ public class PoopService {
 
         activeHistoryRepository.save(activeHistory);
 
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
         MongStatusDto mongStatusDto = new MongStatusDto(mong, WebSocketCode.SUCCESS);
         return mongStatusDto;
     }

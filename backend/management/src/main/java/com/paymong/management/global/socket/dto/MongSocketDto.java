@@ -13,6 +13,5 @@ import org.springframework.web.socket.WebSocketSession;
 public class MongSocketDto {
 
     private Long memberId;
-    private Long mongId;
     private WebSocketSession session;
 }

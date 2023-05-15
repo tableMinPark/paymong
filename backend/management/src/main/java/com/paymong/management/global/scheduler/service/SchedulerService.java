@@ -3,20 +3,26 @@ package com.paymong.management.global.scheduler.service;
 import com.paymong.management.global.scheduler.*;
 import com.paymong.management.global.scheduler.task.SleepTask;
 import com.paymong.management.mong.entity.Mong;
+import com.paymong.management.mong.repository.MongRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SchedulerService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerService.class);
     private final SleepScheduler sleepScheduler;
     private final HealthScheduler healthScheduler;
     private final PoopScheduler poopScheduler;
     private final SatietyScheduler satietyScheduler;
     private final EvolutionScheduler evolutionScheduler;
+
     /*
     0 : poop
     1 : health
@@ -29,12 +35,12 @@ public class SchedulerService {
 
     public void startScheduler(Mong mong){
 
-        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
         healthScheduler.startScheduler(mong.getMongId());
         poopScheduler.startScheduler(mong.getMongId());
         satietyScheduler.startScheduler(mong.getMongId());
-        evolutionScheduler.startScheduler(mong.getMongId());
-    }
 
+        evolutionScheduler.startScheduler(mong.getMongId());
+        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
+    }
 
 }

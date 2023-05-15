@@ -154,7 +154,8 @@ public class MongController {
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            EvolutionMongResDto evolutionMongResDto = mongService.evolutionMong(mongId);
+            mongService.evolutionMong(mongId);
+            EvolutionMongResDto evolutionMongResDto = mongService.mongSleepCheck(mongId);
             return  ResponseEntity.ok().body(evolutionMongResDto);
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());

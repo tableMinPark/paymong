@@ -1,8 +1,11 @@
 package com.paymong.management.global.scheduler;
 
+import com.paymong.management.global.exception.EvolutionReadyException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.redis.RedisMong;
+import com.paymong.management.global.redis.RedisService;
+import com.paymong.management.global.scheduler.dto.SchedulerDto;
 import com.paymong.management.global.scheduler.dto.SleepSchedulerDto;
-import com.paymong.management.global.scheduler.task.SatietyTask;
 import com.paymong.management.global.scheduler.task.SleepTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,133 +25,174 @@ import java.util.Map;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SleepScheduler implements ManagementScheduler{
-    private static final Map<Long, SleepSchedulerDto> schedulerMap = new HashMap<>();
+public class SleepScheduler{
+    private static final Map<Long, SleepSchedulerDto> staticSchedulerMap = new HashMap<>();
+
+    private static final Map<Long, SchedulerDto> dynamicSchedulerMap = new HashMap<>();
+
+    private static final Map<Long, ThreadPoolTaskScheduler> minusSchedulerMap = new HashMap<>();
     private final SleepTask sleepTask;
     private final DeathScheduler deathScheduler;
     private final HealthScheduler healthScheduler;
     private final PoopScheduler poopScheduler;
     private final SatietyScheduler satietyScheduler;
     private final EvolutionScheduler evolutionScheduler;
+    private final RedisService redisService;
 
-    @Override
     public void stopScheduler(Long mongId) {
-        if(schedulerMap.containsKey(mongId)){
-            log.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
-            schedulerMap.get(mongId).getDynamicScheduler().shutdown();
-            schedulerMap.get(mongId).getStaticScheduler().shutdown();
-            schedulerMap.get(mongId).getMinusScheduler().shutdown();
-            schedulerMap.remove(mongId);
+        if(staticSchedulerMap.containsKey(mongId)){
+            log.info("{}의 {} static sleep scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
+            staticSchedulerMap.get(mongId).getScheduler().shutdown();
+            staticSchedulerMap.remove(mongId);
 
         }else{
-            log.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
+            log.info("{}의 {} static sleep scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
+
+        if(dynamicSchedulerMap.containsKey(mongId)){
+            log.info("{}의 {} dynamic sleep scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
+            dynamicSchedulerMap.get(mongId).getScheduler().shutdown();
+            dynamicSchedulerMap.remove(mongId);
+
+        }else{
+            log.info("{}의 {} dynamic sleep scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
+        }
+
+        if(minusSchedulerMap.containsKey(mongId)){
+            log.info("{}의 {} minus sleep scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
+            minusSchedulerMap.get(mongId).shutdown();
+            minusSchedulerMap.remove(mongId);
+
+        }else{
+            log.info("{}의 {} minus sleep scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
+        }
+
     }
 
     public void stopMinusScheduler(Long mongId){
-        if(schedulerMap.containsKey(mongId)){
-            log.info("{}의 {} scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
-            schedulerMap.get(mongId).getMinusScheduler().shutdown();
+        if(minusSchedulerMap.containsKey(mongId)){
+            log.info("{}의 {} minus sleep scheduler를 중지합니다.", this.getClass().getSimpleName(), mongId);
+            minusSchedulerMap.get(mongId).shutdown();
+            minusSchedulerMap.remove(mongId);
 
         }else{
-            log.info("{}의 {} scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
+            log.info("{}의 {} minus sleep scheduler가 없습니다.", this.getClass().getSimpleName(), mongId);
         }
     }
     public void awakeScheduler(Long mongId){
-        if(!schedulerMap.containsKey(mongId)){
-            log.info("{}이 없습니다.", mongId);
-            return;
-        }
 
-        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
-        if(schedulerDto.getDynamicScheduler() != null){
-            log.info("{}의 수면을 취소합니다.", mongId);
-            schedulerDto.getDynamicScheduler().shutdown();
-        }else{
-            log.info("{}의 수면 스케줄러가 없습니다.", mongId);
+        if(!dynamicSchedulerMap.containsKey(mongId)){
+           log.info("{}는 자고있지 않습니다.");
+           return;
         }
-
         try
         {
-            log.info("{}의 여기까진 안와?", mongId);
-            log.info("mongId : {}, sleepStart : {}", mongId, schedulerMap.get(mongId).getStartTime());
-            Duration diff = Duration.between(schedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
+            Duration diff = Duration.between(dynamicSchedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
             Long expire = diff.toMinutes();
-            log.info("mongId : {}, sleepStart : {}, expire : {}", mongId, schedulerMap.get(mongId).getStartTime(), expire);
+            log.info("mongId : {}, sleepStart : {}, expire : {}", mongId, dynamicSchedulerMap.get(mongId).getStartTime(), expire);
             sleepTask.awakeMong(mongId, expire);
             healthScheduler.startScheduler(mongId);
             satietyScheduler.startScheduler(mongId);
             poopScheduler.startScheduler(mongId);
             deathScheduler.restartScheduler(mongId);
             evolutionScheduler.restartScheduler(mongId);
+
+            dynamicSchedulerMap.get(mongId).getScheduler().shutdown();
+            dynamicSchedulerMap.remove(mongId);
+
             minusScheduler(mongId);
+
         }catch (NotFoundMongException e){
             log.info("{}의 몽이 없습니다.", mongId);
             stopScheduler(mongId);
         }
     }
-    @Override
-    public void startScheduler(Long mongId) {
-        if(!schedulerMap.containsKey(mongId)){
-            log.info("{}이 없습니다.", mongId);
+
+    public void sleepScheduler(Long mongId) {
+        if(dynamicSchedulerMap.containsKey(mongId)){
+            log.info("{}는 이미 자고 있습니다.", mongId);
             return;
         }
 
-        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
+        getSleepRunnable(mongId).run();
+
+        log.info("{} : dynamic sleep scheduler를 추가합니다. mongId : {}", this.getClass().getSimpleName(), mongId);
+
+        SchedulerDto schedulerDto = new SchedulerDto();
         schedulerDto.setStartTime(LocalDateTime.now());
-        try {
-            sleepTask.sleepMong(mongId);
-            healthScheduler.stopScheduler(mongId);
-            satietyScheduler.stopScheduler(mongId);
-            poopScheduler.stopScheduler(mongId);
-            deathScheduler.pauseScheduler(mongId);
-            evolutionScheduler.pauseScheduler(mongId);
-            stopMinusScheduler(mongId);
-        }catch (NotFoundMongException e){
-            log.info("{}의 몽이 없습니다.", mongId);
-            stopScheduler(mongId);
+        schedulerDto.setExpire(60L * 60L * 3L);
+        schedulerDto.setMessage("dynamic-sleep-"+mongId);
+        schedulerDto.setRunnable(getAwakeRunnable(mongId,1));
+        schedulerDto.initScheduler();
+
+        dynamicSchedulerMap.put(mongId, schedulerDto);
+    }
+
+    public void resleepScheduler(RedisMong redisMong) {
+        if(dynamicSchedulerMap.containsKey(redisMong.getMongId())){
+            log.info("{}는 이미 자고 있습니다.", redisMong.getMongId());
+            return;
         }
 
-        log.info("new {}를 추가합니다.", this.getClass().getSimpleName());
+        getSleepRunnable(redisMong.getMongId()).run();
 
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.initialize();
-        scheduler.setThreadNamePrefix("dynamic-sleep-");
-        scheduler.schedule(getAwakeRunnable(mongId), Instant.now().plusSeconds(60L * 60L * 3L));
-        schedulerDto.setDynamicScheduler(scheduler);
+        log.info("{} : dynamic sleep scheduler를 추가합니다. mongId : {}", this.getClass().getSimpleName(), redisMong.getMongId());
+
+        SchedulerDto schedulerDto = new SchedulerDto();
+        schedulerDto.setStartTime(LocalDateTime.now());
+        schedulerDto.setExpire(redisMong.getExpire() * 60L);
+        schedulerDto.setMessage("dynamic-sleep-"+redisMong.getMongId());
+        schedulerDto.setRunnable(getAwakeRunnable(redisMong.getMongId(),1));
+        schedulerDto.initScheduler();
+
+        dynamicSchedulerMap.put(redisMong.getMongId(), schedulerDto);
+    }
+
+    public void addRedis(){
+        redisService.addRedis(dynamicSchedulerMap, "sleep");
     }
 
     public void initScheduler(Long mongId, LocalTime sleepStart, LocalTime sleepEnd){
-        if(schedulerMap.containsKey(mongId)) schedulerMap.remove(mongId);
+        if(staticSchedulerMap.containsKey(mongId)) staticSchedulerMap.remove(mongId);
         SleepSchedulerDto schedulerDto = new SleepSchedulerDto();
+        schedulerDto.setSleepStart(sleepStart);
+        schedulerDto.setSleepEnd(sleepEnd);
+
+        Duration diff = Duration.between(sleepStart, sleepEnd);
+        Long expire = diff.toMinutes();
+
+        schedulerDto.setExpire(expire);
+
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.initialize();
-        scheduler.setThreadNamePrefix("static-sleep-");
-        schedulerMap.put(mongId, schedulerDto);
+        scheduler.setThreadNamePrefix("static-sleep-"+mongId);
 
         if(checkTime(sleepStart, sleepEnd)){
+            log.info("자는 시간이라 바로 잡니다. mongId : {}", mongId);
             scheduler.schedule(getSleepRunnable(mongId), Instant.now());
         }
-        log.info("new {}를 추가합니다.", this.getClass().getSimpleName());
+        log.info("{} : static sleep scheduler를 추가합니다. mongId : {}", this.getClass().getSimpleName(), mongId);
         scheduler.schedule(getSleepRunnable(mongId), getCronTrigger(sleepStart));
-        scheduler.schedule(getAwakeRunnable(mongId), getCronTrigger(sleepEnd));
-        schedulerDto.setStaticScheduler(scheduler);
-        minusScheduler(mongId);
+        scheduler.schedule(getAwakeRunnable(mongId,0), getCronTrigger(sleepEnd));
+
+        schedulerDto.setScheduler(scheduler);
+
+        staticSchedulerMap.put(mongId, schedulerDto);
     }
 
     public void minusScheduler(Long mongId){
-        if(!schedulerMap.containsKey(mongId)){
+        if(!minusSchedulerMap.containsKey(mongId)){
             log.info("{}이 없습니다.", mongId);
             return;
         }
-        SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
+
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.initialize();
-        scheduler.setThreadNamePrefix("minus-sleep-");
-        log.info("new {} minus Scheduler를 추가합니다.", this.getClass().getSimpleName());
+        scheduler.setThreadNamePrefix("minus-sleep-" + mongId);
+        log.info("new {} minus Scheduler를 추가합니다. mongId : {}", this.getClass().getSimpleName(), mongId);
         scheduler.scheduleWithFixedDelay(getRunnable(mongId), Date.from(Instant.now().plusSeconds(getDelay())), getDelay() * 1000L);
 
-        schedulerDto.setMinusScheduler(scheduler);
+        minusSchedulerMap.put(mongId, scheduler);
     }
 
     public Boolean checkTime(LocalTime sleepStart, LocalTime sleepEnd){
@@ -167,7 +211,6 @@ public class SleepScheduler implements ManagementScheduler{
         return false;
     }
 
-    @Override
     public Runnable getRunnable(Long mongId) {
 
         return () -> {
@@ -182,8 +225,6 @@ public class SleepScheduler implements ManagementScheduler{
     public Runnable getSleepRunnable(Long mongId){
         return ()->{
             try {
-                SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
-                schedulerDto.setStartTime(LocalDateTime.now());
                 sleepTask.sleepMong(mongId);
                 healthScheduler.stopScheduler(mongId);
                 satietyScheduler.stopScheduler(mongId);
@@ -193,16 +234,24 @@ public class SleepScheduler implements ManagementScheduler{
                 stopMinusScheduler(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
+            }catch (EvolutionReadyException e){
+                log.info("진화 대기 상태이므로 잘 수 없습니다. mongId : {}", mongId);
             }
 
         };
     }
 
-    public Runnable getAwakeRunnable(Long mongId){
+    public Runnable getAwakeRunnable(Long mongId, Integer type){
         return ()->{
             try {
-                Duration diff = Duration.between(schedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
-                Long expire = diff.toMinutes();
+                Long expire = 0L;
+                if(type == 0){
+                   expire = staticSchedulerMap.get(mongId).getExpire();
+                }else{
+                    Duration diff = Duration.between(LocalDateTime.now(), dynamicSchedulerMap.get(mongId).getStartTime());
+                    expire = diff.toMinutes();;
+                }
+
                 sleepTask.awakeMong(mongId, expire);
                 healthScheduler.startScheduler(mongId);
                 satietyScheduler.startScheduler(mongId);
@@ -218,7 +267,6 @@ public class SleepScheduler implements ManagementScheduler{
         };
     }
 
-    @Override
     public Trigger getTrigger() {
         return null;
     }
@@ -227,7 +275,6 @@ public class SleepScheduler implements ManagementScheduler{
         return new CronTrigger("0 "+time.getMinute()+" "+time.getHour()+" * * ?");
     }
 
-    @Override
     public Long getDelay() {
         return 30L * 60L;
     }

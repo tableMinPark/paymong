@@ -371,8 +371,15 @@ fun SleepDialog(
                 Text(
                     text = "$name 재울 시간 💤",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp),
+                    modifier = Modifier.padding(bottom = 15.dp),
                     color = Color.Black
+                )
+                Text(
+                    text = "( 숫자를 스크롤해주세요 )",
+                    fontFamily = dalmoori,
+                    modifier = Modifier.padding(bottom = 20.dp).background(color = PayMongBlue.copy(alpha = 0.4f)),
+                    color = Color.Black,
+                    fontSize = 13.sp
                 )
                 TimePicker(
                     onTimeSelected = { newTime ->
@@ -411,8 +418,15 @@ fun WakeDialog(
                 Text(
                     text = "$name 깨울 시간 ☀",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp),
+                    modifier = Modifier.padding(bottom = 15.dp),
                     color = Color.Black
+                )
+                Text(
+                    text = "( 숫자를 스크롤해주세요 )",
+                    fontFamily = dalmoori,
+                    modifier = Modifier.padding(bottom = 20.dp).background(color = PayMongBlue.copy(alpha = 0.4f)),
+                    color = Color.Black,
+                    fontSize = 13.sp
                 )
                 TimePicker(
                     onTimeSelected = { newTime ->
@@ -556,7 +570,7 @@ fun MakeEgg(
                             Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .height(250.dp)
+//                                    .height(250.dp)
                             )
                             GraduationEffect(appViewModel)
                         }
@@ -565,7 +579,7 @@ fun MakeEgg(
                                 Image(painter = painterResource(appViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .height(250.dp)
+//                                        .height(250.dp)
                                         .clickable(
                                             interactionSource = remember { MutableInteractionSource() },
                                             indication = null,

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.paymong.member.background.entity.Mymap;
 import com.paymong.member.background.repository.MymapRepository;
 import com.paymong.member.global.exception.NotFoundMymapException;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -20,6 +21,7 @@ public class MymapService {
 	
 	private final MymapRepository mymapRepository;
 
+	@Transactional
     public FindMymapResDto findMymap(String memberIdStr) throws RuntimeException{
 		Long memberId = Long.parseLong(memberIdStr);
 		LocalDateTime aHourAgo = LocalDateTime.now().minusHours(1L);

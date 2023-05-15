@@ -12,6 +12,7 @@ import com.paymong.member.paypoint.repository.PaypointRepository;
 import com.paymong.member.things.dto.request.AddThingsReqDto;
 import com.paymong.member.things.dto.request.FindAddableThingsReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
+import com.paymong.member.things.dto.request.SendThingsReqDto;
 import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
 import com.paymong.member.things.dto.response.ThingsCommonCode;
@@ -118,7 +119,7 @@ public class ThingsService {
         if(mongIdStr.equals("") || mongIdStr == null) return;
 
         //청소기 모션 요청 보내기
-
+        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
@@ -160,7 +161,7 @@ public class ThingsService {
         Long mongId = Long.parseLong(mongIdStr);
 
         //충전 모션 요청 보내기
-
+        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
@@ -199,7 +200,7 @@ public class ThingsService {
         Long mongId = Long.parseLong(mongIdStr);
 
         //문열림 모션 요청 보내기
-
+        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 

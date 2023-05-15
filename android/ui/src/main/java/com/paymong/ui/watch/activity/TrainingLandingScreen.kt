@@ -38,7 +38,7 @@ fun TrainingLanding(
     LaunchedEffect(key1 = true){
         delay(1500)
         navController.navigate(WatchNavItem.Training.route){
-            popUpTo("training_landing") {
+            popUpTo(WatchNavItem.TrainingLanding.route) {
                 inclusive = true
             }
         }
@@ -47,7 +47,7 @@ fun TrainingLanding(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var buttonFont = if (screenWidthDp < 200) 20 else 24
+    val buttonFont = if (screenWidthDp < 200) 20 else 24
 
     Column(
         verticalArrangement = Arrangement.Center,

@@ -13,8 +13,6 @@ import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.BattleViewModel
-import com.paymong.domain.SoundViewModel
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
@@ -29,7 +27,7 @@ fun BattleSelectBefore(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var attackDefenceSize = if (screenWidthDp < 200) 60 else 70
+    val attackDefenceSize = if (screenWidthDp < 200) 60 else 70
 
     val defence = painterResource(R.drawable.defence)
     val attack = painterResource(R.drawable.attack)

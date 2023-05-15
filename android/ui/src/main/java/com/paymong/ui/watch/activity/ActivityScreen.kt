@@ -38,11 +38,11 @@ fun Activity(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var buttonHeight = if (screenWidthDp < 200) 95 else 100
-    var buttonPadding = if (screenWidthDp < 200) 20 else 0
-    var buttonFont = if (screenWidthDp < 200) 20 else 24
-    var pointLogoSize = if (screenWidthDp < 200) 10 else 15
-    var fontSize = if (screenWidthDp < 200) 10 else 15
+    val buttonHeight = if (screenWidthDp < 200) 95 else 100
+    val buttonPadding = if (screenWidthDp < 200) 20 else 0
+    val buttonFont = if (screenWidthDp < 200) 20 else 24
+    val pointLogoSize = if (screenWidthDp < 200) 10 else 15
+    val fontSize = if (screenWidthDp < 200) 10 else 15
 
     Column(
         verticalArrangement = Arrangement.Center,

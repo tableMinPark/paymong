@@ -29,6 +29,7 @@ import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchViewModel
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Background(isGif: Boolean = false) {
     val watchViewModel = viewModel<WatchViewModel>(checkNotNull(LocalViewModelStoreOwner.current))
@@ -193,7 +194,6 @@ fun DefenceGif() {
         ),
         contentDescription = null,
         modifier = Modifier
-//            .padding(top = 10.dp)
     )
 }
 

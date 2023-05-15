@@ -11,10 +11,9 @@ import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.ThingsCode
 import com.paymong.data.model.request.AddMongReqDto
-import com.paymong.data.model.response.ManagementRealTimeResDto
-import com.paymong.data.model.response.MapRealTimeResDto
-import com.paymong.data.model.response.RealTimeResDto
+import com.paymong.data.model.response.*
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
@@ -22,6 +21,7 @@ import com.paymong.domain.entity.Mong
 import com.paymong.domain.watch.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import okhttp3.WebSocket
@@ -34,8 +34,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var mongsleepEnd by mutableStateOf("")
 
     // 메인화면
-    var point by mutableStateOf(0L)
+    var point by mutableStateOf(0)
     var mapCode by mutableStateOf(MapCode.MP000)
+    var thingsCode by mutableStateOf(ThingsCode.ST999)
     var isClick by mutableStateOf(false)
 
     // 몽 정보
@@ -44,8 +45,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
     var isHappy by mutableStateOf(false)
-    var showtoast by mutableStateOf(false)
-    var msg by mutableStateOf("")
 
     var retry by mutableStateOf(false)
 
@@ -60,12 +59,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // 메인화면 진입시 초기화
     init {
         viewModelScope.launch(Dispatchers.Main) {
+            setSocket()
             findMong()
             findPoint()
-            managementSocketService = ManagementSocketService()
-            managementSocketService.init(listener)
         }
     }
+
+    private fun setSocket() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                managementSocketService = ManagementSocketService()
+                managementSocketService.init(listener)
+            } catch (_: Exception) {}
+        }
+    }
+
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -74,14 +82,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (managementResDto.code != "201") {
                     Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
-                        "200" -> {
+                        "200", "202", "203", "204", "205", "206", "207", "208" -> {
                             val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
                             stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
                             poopCount = managementRealTimeResDto.poopCount
                         }
                         "209" -> {
                             val mapRealTimeResDto = Gson().fromJson(text, MapRealTimeResDto::class.java)
+                            Log.d("socket", mapRealTimeResDto.toString())
                             mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
+                        }
+                        "210" -> {
+                            val thingsRealTimeResDto = Gson().fromJson(text, ThingsRealTimeResDto::class.java)
+                            Log.d("socket", thingsRealTimeResDto.toString())
+                            thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
+                        }
+                        "211" -> {
+                            val payPointRealTimeResDto = Gson().fromJson(text, PayPointRealTimeResDto::class.java)
+                            Log.d("socket", payPointRealTimeResDto.toString())
+                            point = payPointRealTimeResDto.point
                         }
                         else -> {}
                     }
@@ -124,7 +143,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     )
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
-                    mapCode = MapCode.valueOf(data.mapCode ?: "MP000")
+                    mapCode = MapCode.valueOf(data.mapCode)
                 }
         }
     }
@@ -149,8 +168,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{
-                    data->
+                .collect{ data->
+                    Log.d("evolution", data.toString())
                     undomong = mong.mongCode
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     mong = Mong(
@@ -185,11 +204,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 .collect{
                         data ->
                     if(data.code == "200"){
-                        showtoast = false
                         isHappy = true
-                    } else{
-                        showtoast = true
-                        msg = "쓰다듬기는 한 시간에 한 번만 가능합니다."
+                        delay(1500)
+                        isHappy = false
                     }
                 }
         }
@@ -200,6 +217,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         try {
             managementSocketService.disConnect()
             socketJob.cancel()
-        } catch (e: Exception) {  }
+        } catch (_: Exception) {  }
     }
 }

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -30,7 +29,6 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-
 
 class WatchViewModel (
     application: Application
@@ -83,15 +81,12 @@ class WatchViewModel (
         } catch (_: Exception) {}
     }
 
-    // socket
     private fun setSocket() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 managementSocketService = ManagementSocketService()
                 managementSocketService.init(listener)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (_: Exception) {}
         }
     }
     private val listener: WebSocketListener = object : WebSocketListener() {
@@ -102,7 +97,7 @@ class WatchViewModel (
                 if (managementResDto.code != "201") {
                     Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
-                        "200" -> {
+                        "200", "202", "203", "204", "205", "206", "207", "208" -> {
                             val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
                             Log.d("socket", managementRealTimeResDto.toString())
                             stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)

@@ -47,10 +47,6 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
             .clickable {
                 if (appViewModel.stateCode != MongStateCode.CD002) {
                     appViewModel.stroke()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        appViewModel.isHappy = false
-//                        appViewModel.showtoast = false
-                    }, 2000)
                 }
             }
             .size(size.dp)

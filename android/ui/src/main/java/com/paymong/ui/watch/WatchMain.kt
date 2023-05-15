@@ -57,10 +57,9 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
 
         // Feed
         composable( route = WatchNavItem.Feed.route){
-            val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             val feedViewModel = viewModel<FeedViewModel>(viewModelStoreOwner)
-            Feed(navController, watchViewModel, soundViewModel, feedViewModel)
+            Feed(navController, soundViewModel, feedViewModel)
         }
         composable( route = WatchNavItem.FeedBuyList.route){
             val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
@@ -117,7 +116,7 @@ fun BattleGraphUI (
         }
         composable(route = WatchNavItem.BattleWait.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)
-            BattleWait(navController, watchViewModel, soundViewModel, battleViewModel)
+            BattleWait(navController, battleViewModel)
         }
         composable(route = WatchNavItem.BattleFind.route){
             val battleViewModel = viewModel<BattleViewModel>(viewModelStoreOwner)

@@ -24,6 +24,7 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.ProgressIndicatorDefaults
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
@@ -34,6 +35,7 @@ import com.paymong.domain.SoundViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleSelect(
     navController: NavHostController,
@@ -45,7 +47,7 @@ fun BattleSelect(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var leftRightBtn = if (screenWidthDp < 200) 30 else 40
+    val leftRightBtn = if (screenWidthDp < 200) 30 else 40
 
     when(battleViewModel.matchingState) {
         MatchingCode.SELECT_AFTER -> {
@@ -80,13 +82,6 @@ fun BattleSelect(
                 onClick = {
                     soundViewModel.soundPlay(SoundCode.BATTLE_BUTTON)
                     battleViewModel.select(MessageType.LEFT)
-
-//                    selectState.value = "LEFT"
-//                    navController.navigate(WatchNavItem.BattleActive.route){
-//                        popUpTo(navController.graph.findStartDestination().id)
-//                        launchSingleTop =true
-//                    }
-//                    viewModel.isSelectEnd = true
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                         modifier = Modifier
@@ -114,11 +109,6 @@ fun BattleSelect(
                 onClick = {
                     soundViewModel.soundPlay(SoundCode.BATTLE_BUTTON)
                     battleViewModel.select(MessageType.RIGHT)
-//                    selectState.value = "RIGHT"
-//                    navController.navigate(WatchNavItem.BattleActive.route){
-//                        popUpTo(navController.graph.findStartDestination().id)
-//                        launchSingleTop =true
-//                    }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                 modifier = Modifier
@@ -134,7 +124,6 @@ fun BattleSelect(
             }
         }
     }
-
 
     val animatedProgress by animateFloatAsState(
         targetValue = battleViewModel.battleSelectTime.toFloat(),

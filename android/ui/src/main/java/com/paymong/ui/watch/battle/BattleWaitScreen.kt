@@ -9,23 +9,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.BattleViewModel
-import com.paymong.domain.SoundViewModel
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.common.showToast
 
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleWait(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
-    soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
     Background(true)

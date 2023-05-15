@@ -23,7 +23,6 @@ import com.paymong.ui.watch.common.Background
 @Composable
 fun Feed(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
     soundViewModel: SoundViewModel,
     feedViewModel: FeedViewModel
 ) {

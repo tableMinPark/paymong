@@ -26,7 +26,6 @@ import android.os.Looper
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.SoundViewModel
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.AttackGif
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif

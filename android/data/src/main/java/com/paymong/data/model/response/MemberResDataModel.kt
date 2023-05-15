@@ -3,14 +3,9 @@ package com.paymong.data.model.response
 import com.paymong.common.code.ThingsCode
 import java.time.LocalDateTime
 
-data class AddPayResDto(
-    val point : Int,
-    val mapCode: String
-)
-
 data class FindMemberResDto(
     val mongCode : String,
-    val point : Long
+    val point : Int
 )
 
 data class PointInfoResDto(

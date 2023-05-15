@@ -30,11 +30,10 @@ fun BattleLanding(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-    Background(true)
-
     LaunchedEffect(key1 = 0) {
         battleViewModel.mongId = watchViewModel.mong.mongId
     }
+    Background(true)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -73,7 +72,6 @@ fun BattleLanding(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            Text(text = "BATTLE", textAlign = TextAlign.Center)
             val battleTitle = painterResource(R.drawable.battle_title)
             Image(painter = battleTitle, contentDescription = null,  modifier = Modifier.width(battleImgSize.dp))
         }

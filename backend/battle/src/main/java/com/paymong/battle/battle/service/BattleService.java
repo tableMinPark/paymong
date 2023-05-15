@@ -146,6 +146,7 @@ public class BattleService {
     }
 
     public void earnMoney(Long mongId) {
+        log.info("earnMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
             om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
@@ -161,6 +162,7 @@ public class BattleService {
     }
 
     public void spendMoney(Long mongId) {
+        log.info("spendMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
             om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
@@ -176,6 +178,7 @@ public class BattleService {
     }
 
     public void keepMoney(Long mongId){
+        log.info("keepMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
             om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),

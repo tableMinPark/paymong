@@ -1,14 +1,13 @@
 package com.paymong.domain.watch
 
 import android.app.Application
-import androidx.compose.runtime.MutableState
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.ManagementRepository
-import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Food
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -19,7 +18,6 @@ import java.time.LocalDateTime
 class FeedViewModel (
     application: Application
 ): AndroidViewModel(application) {
-//    var point by mutableStateOf(0)
     var name by mutableStateOf("")
     var foodCode by mutableStateOf("")
     var price by mutableStateOf(0)
@@ -29,39 +27,21 @@ class FeedViewModel (
 
     var foodCategory by mutableStateOf("")
     var currentCategory by mutableStateOf("")
-    var success = mutableStateOf(false)
     var isClick by mutableStateOf(false)
+    private var success by mutableStateOf(false)
 
-    private val memberRepository: MemberRepository = MemberRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
-
-//    init {
-//        viewModelScope.launch(Dispatchers.Main) {
-//            findPayPoint()
-//        }
-//    }
-
-//    private fun findPayPoint() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            memberRepository.findMember()
-//                .catch {
-//                    it.printStackTrace()
-//                }
-//                .collect { data ->
-//                    point = data.point.toInt()
-//                }
-//        }
-//    }
 
     fun getFoodList(point: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            foodList.clear()
             managementRepository.getFoodList(foodCategory)
                 .catch {
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    foodList.clear()
                     for (i in data.indices) {
+                        Log.d("FoodList", data.toString())
                         foodList.add(
                             Food(
                                 data[i].name,
@@ -74,7 +54,7 @@ class FeedViewModel (
                     changeCurrentFoodPosition(point)
                     currentCategory = foodCategory
                     foodCategory = ""
-                    success.value = true
+                    success = true
                 }
         }
     }
@@ -99,7 +79,7 @@ class FeedViewModel (
                         it.printStackTrace()
                     }
                     .collect {data ->
-                        success.value = false
+                        success = false
                         watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
                     }
@@ -125,8 +105,8 @@ class FeedViewModel (
         foodCode = nowFood.foodCode
         price = nowFood.price
 
-        if (nowFood.lastBuy != null) {
-            isCanBuy = Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
-        } else isCanBuy = nowFood.price <= point
+        isCanBuy = if (nowFood.lastBuy != null) {
+            Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
+        } else nowFood.price <= point
     }
 }

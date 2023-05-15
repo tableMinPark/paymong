@@ -31,7 +31,7 @@ fun BattleWait(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var fontSize = if (screenWidthDp < 200) 12 else 15
+    val fontSize = if (screenWidthDp < 200) 12 else 15
 
     // 매칭 여부 확인해서 화면 이동
     when (battleViewModel.matchingState) {

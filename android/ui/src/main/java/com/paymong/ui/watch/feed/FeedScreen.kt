@@ -15,7 +15,6 @@ import androidx.wear.compose.material.*
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.FeedViewModel
 import com.paymong.common.code.SoundCode
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background

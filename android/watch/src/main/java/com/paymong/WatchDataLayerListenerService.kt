@@ -10,7 +10,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 class WatchDataLayerListenerService : WearableListenerService() {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val dataApplicationRepository: DataApplicationRepository = DataApplicationRepository()
 
@@ -18,6 +17,7 @@ class WatchDataLayerListenerService : WearableListenerService() {
         super.onMessageReceived(messageEvent)
         when (messageEvent.path) {
             START_WEAR_ACTIVITY_PATH -> {
+                // 모바일 기기와 연동시 playId 저장 후 앱 실행
                 val playerId = messageEvent.data.decodeToString()
                 dataApplicationRepository.setValue("accessToken", "")
                 dataApplicationRepository.setValue("refreshToken", "")

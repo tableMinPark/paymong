@@ -63,7 +63,7 @@ fun Main(
         )
 
     }
-    Box() {
+    Box {
         if (watchViewModel.stateCode == MongStateCode.CD002) {
             Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {}
         }

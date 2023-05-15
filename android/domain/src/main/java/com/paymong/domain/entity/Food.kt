@@ -7,6 +7,4 @@ data class Food(
     val foodCode: String,
     val price: Int,
     val lastBuy: LocalDateTime?
-){
-    constructor():this("","",0,null)
-}
+)

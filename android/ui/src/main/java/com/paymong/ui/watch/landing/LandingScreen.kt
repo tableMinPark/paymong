@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -32,7 +31,6 @@ fun Landing(
     }
     Background(true)
 
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val fontSize = if (screenWidthDp < 200) 12 else 15

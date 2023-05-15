@@ -80,16 +80,17 @@ public class SleepScheduler{
         }
     }
     public void awakeScheduler(Long mongId){
+        try {
+            Long expire = 60L * 3L;
+            if(!dynamicSchedulerMap.containsKey(mongId)) {
+                log.info("{}는 자고있지 않습니다. 하지만 깨우겠습니다.", mongId);
+                sleepTask.awakeMong(mongId, expire);
+            }else{
+                Duration diff = Duration.between(dynamicSchedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
+                expire = diff.toMinutes();
+                log.info("mongId : {}, sleepStart : {}, expire : {}", mongId, dynamicSchedulerMap.get(mongId).getStartTime(), expire);
+            }
 
-        if(!dynamicSchedulerMap.containsKey(mongId)){
-           log.info("{}는 자고있지 않습니다.", mongId);
-           return;
-        }
-        try
-        {
-            Duration diff = Duration.between(dynamicSchedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
-            Long expire = diff.toMinutes();
-            log.info("mongId : {}, sleepStart : {}, expire : {}", mongId, dynamicSchedulerMap.get(mongId).getStartTime(), expire);
             sleepTask.awakeMong(mongId, expire);
             healthScheduler.startScheduler(mongId);
             satietyScheduler.startScheduler(mongId);
@@ -111,7 +112,7 @@ public class SleepScheduler{
     public void sleepScheduler(Long mongId) {
         if(dynamicSchedulerMap.containsKey(mongId)){
             log.info("{}는 이미 자고 있습니다.", mongId);
-            return;
+            dynamicSchedulerMap.remove(mongId);
         }
 
         getSleepRunnable(mongId).run();

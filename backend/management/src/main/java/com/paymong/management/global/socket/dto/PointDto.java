@@ -1,25 +1,25 @@
-package com.paymong.management.status.dto;
+package com.paymong.management.global.socket.dto;
 
 import com.paymong.management.global.code.WebSocketCode;
-import com.paymong.management.mong.dto.SendThingsReqDto;
+import com.paymong.management.mong.dto.SendPointResDto;
 import com.paymong.management.mong.dto.SendThingsResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThingsDto {
+@Data
+@Builder
+public class PointDto {
     private String code;
     private String message;
-    private String thingsCode;
+    private Integer point;
 
-    public ThingsDto(SendThingsResDto sendThingsResDto, WebSocketCode webSocketCode){
+    public PointDto(SendPointResDto sendPointResDto, WebSocketCode webSocketCode){
         this.code = webSocketCode.getCode();
         this.message = webSocketCode.getMessage();
-        this.thingsCode = sendThingsResDto.getThingsCode();
+        this.point = sendPointResDto.getPoint();
     }
 }

@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class CollectPayMongViewModel : ViewModel() {
 
     var mongList = mutableListOf<Collect>()
+    var openList = mutableListOf<Collect>()
     var success = mutableStateOf(false)
     private var collectRepository: CollectRepository = CollectRepository()
 
@@ -28,8 +29,12 @@ class CollectPayMongViewModel : ViewModel() {
             }.collect{
                 data ->
                 mongList.clear()
+                openList.clear()
                 for(i in data.indices){
                     mongList.add(Collect(data[i].isOpen, data[i].name, data[i].characterCode))
+                    if(data[i].isOpen) {
+                        openList.add(Collect(data[i].isOpen, data[i].name, data[i].characterCode))
+                    }
                 }
                 success.value = true
             }

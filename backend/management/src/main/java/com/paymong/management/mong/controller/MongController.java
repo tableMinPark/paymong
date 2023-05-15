@@ -2,6 +2,7 @@ package com.paymong.management.mong.controller;
 
 import com.paymong.management.global.code.ManagementStateCode;
 import com.paymong.management.global.exception.*;
+import com.paymong.management.global.redis.RedisService;
 import com.paymong.management.global.response.ErrorResponse;
 import com.paymong.management.global.scheduler.DeathScheduler;
 import com.paymong.management.global.scheduler.service.SchedulerService;
@@ -29,6 +30,7 @@ public class MongController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongController.class);
     private final MongService mongService;
     private final DeathScheduler deathScheduler;
+    private final RedisService redisService;
 
     @Value("${header.member}")
     String headerMember;
@@ -98,26 +100,52 @@ public class MongController {
         }
     }
 
-    @GetMapping("/death")
-    public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.startScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/pause")
-    public ResponseEntity<Object> deathPauseMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.pauseScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
-
-    @GetMapping("/restart")
-    public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
-        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
-        deathScheduler.restartScheduler(mongId);
-        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
-    }
+//    @GetMapping("/death/start")
+//    public ResponseEntity<Object> startDeath(@RequestParam("mongId") Long mongId){
+//        deathScheduler.startScheduler(mongId);
+//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/stop")
+//    public ResponseEntity<Object> stopDeath(@RequestParam("mongId") Long mongId){
+//        deathScheduler.stopScheduler(mongId);
+//        return ResponseEntity.status(HttpStatus.OK).body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/death")
+//    public ResponseEntity<Object> deathCountMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.startScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/pause")
+//    public ResponseEntity<Object> deathPauseMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.pauseScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/restart")
+//    public ResponseEntity<Object> deathRestartMong(HttpServletRequest httpServletRequest){
+//        Long mongId = Long.parseLong(httpServletRequest.getHeader("MongId"));
+//        deathScheduler.restartScheduler(mongId);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/redis/add")
+//    public ResponseEntity<Object> redisTestAdd(){
+//
+//        deathScheduler.addRedis();
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
+//
+//    @GetMapping("/redis/out")
+//    public ResponseEntity<Object> redisTestOut(){
+//
+//        redisService.getRedisMong("death").stream().forEach(deathScheduler::restartScheduler);
+//        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+//    }
 
     @PutMapping("/evolution")
     public ResponseEntity<Object> evolutionMong(HttpServletRequest httpServletRequest){
@@ -141,5 +169,49 @@ public class MongController {
             LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
         }
+    }
+
+    @PutMapping("/graduation")
+    public ResponseEntity<Object> graduationMong(HttpServletRequest httpServletRequest){
+        String mongIdStr = httpServletRequest.getHeader(headerMong);
+        LOGGER.info("졸업을 시작합니다. id : {}", mongIdStr);
+        try {
+            if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
+            Long mongId = Long.parseLong(mongIdStr);
+            GraduationMongResDto graduationMong = mongService.graduationMong(mongId);
+            return  ResponseEntity.ok().body(graduationMong);
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }catch (NotFoundMongException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NOT_FOUND.getCode(), ManagementStateCode.NOT_FOUND.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NOT_FOUND));
+        }catch (UnsuitableException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.UNSUITABLE.getCode(), ManagementStateCode.UNSUITABLE.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.UNSUITABLE));
+        }
+    }
+
+    @PostMapping("/map")
+    public ResponseEntity<Object> changeMap(@RequestBody MapCodeDto mapCodeDto, HttpServletRequest httpServletRequest){
+
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("맵이 바뀝니도. memberId = {}", memberIdStr);
+        try {
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+            if(mapCodeDto.getMapCode() == null || mapCodeDto.getMapCode().equals("")) throw new NullPointerException();
+            Long memberId = Long.parseLong(memberIdStr);
+            MapCodeWsDto mapCodeWsDto = MapCodeWsDto.builder()
+                    .memberId(memberId)
+                    .mapCode(mapCodeDto.getMapCode())
+                    .build();
+            mongService.changeMap(mapCodeWsDto);
+            return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }
+
+
     }
 }

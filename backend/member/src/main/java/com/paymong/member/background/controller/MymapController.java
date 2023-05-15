@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/member/background")
 public class MymapController {
 
-    private MymapService mymapService;
+    private final MymapService mymapService;
 
     @GetMapping("/mymap")
     public ResponseEntity<Object> findMymap(@RequestHeader(value = "MemberId") String memberIdStr){

@@ -54,7 +54,9 @@ public class StrokeScheduler implements ManagementScheduler{
 
     @Override
     public Long getDelay() {
-        return 60L * 60L;
+
+//        return 60L * 60L;
+        return 5L;
     }
 
     public Boolean checkMong(Long mongId){

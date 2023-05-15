@@ -36,12 +36,14 @@ public class SatietyTask {
         if(satiety < 5){
             if(mong.getStateCode().equals(MongConditionCode.NORMAL.getCode())){
                 mong.setStateCode(MongConditionCode.HUNGRY.getCode());
+                log.info("{}의 포만감이 감소하여 배고픔 상태에 들어갑니다.", mongId);
+                webSocketService.sendStatus(mong, WebSocketCode.HUNGRY);
             }
         }
 
         if(satiety == 0){
             log.info("{}의 죽음의 카운트가 시작됩니다.", mongId);
-            webSocketService.sendStatus(mong, WebSocketCode.HUNGRY);
+            webSocketService.sendStatus(mong, WebSocketCode.DEATH_READY);
             return false;
         }
         log.info("{}의 포만감이 감소하였습니다.", mongId);

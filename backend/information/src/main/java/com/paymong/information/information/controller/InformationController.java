@@ -120,4 +120,16 @@ public class InformationController {
         }
 
     }
+
+    @GetMapping("/mong/master")
+    public ResponseEntity<Object> findMongMaster(FindMongMasterReqDto findMongMasterReqDto){
+       try{
+            FindMongMasterResDto findMongMasterResDto = mongService.findMongMaster(findMongMasterReqDto.getMongId());
+            log.info("code : {}, message : {}", InformationStateCode.SUCCESS.getCode(), InformationStateCode.SUCCESS.name());
+            return ResponseEntity.status(HttpStatus.OK).body(findMongMasterResDto);
+       }catch (NotFoundMongException e){
+           log.info("code : {}, message : {}", InformationStateCode.NOT_FOUND.getCode(), InformationStateCode.NOT_FOUND.name());
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NOT_FOUND));
+       }
+    }
 }

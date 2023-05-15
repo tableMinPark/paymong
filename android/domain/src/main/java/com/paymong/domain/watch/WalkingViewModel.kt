@@ -63,9 +63,9 @@ class WalkingViewModel (
                 override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
                 override fun onSensorChanged(event: SensorEvent) {
                     if (startCount == 0) {
-                        startCount = event!!.values[0].toInt()
+                        startCount = event.values[0].toInt()
                     }
-                    var nowCount = event!!.values[0].toInt()
+                    var nowCount = event.values[0].toInt()
                     walkCount = nowCount - startCount
                 }
             }

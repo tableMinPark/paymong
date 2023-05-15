@@ -21,7 +21,6 @@ import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.app.main.CreateImageList
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.CharacterGif
 import com.paymong.ui.watch.common.EmotionGif
@@ -178,6 +177,31 @@ fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
             painter = poops,
             contentDescription = null,
             modifier = Modifier.size(poopSize.dp)
+        )
+    }
+}
+
+@Composable
+fun CreateImageList() {
+    val imageList = listOf(R.drawable.create_effect_1, R.drawable.create_effect_2, R.drawable.create_effect_3)
+
+    Box {
+        var currentIndex by remember { mutableStateOf(0) }
+
+        LaunchedEffect(Unit) {
+            delay(100L)
+            currentIndex = 0
+            delay(500L)
+            currentIndex = 1
+            delay(500L)
+            currentIndex = 2
+            delay(500L)
+        }
+
+        Image(
+            painter = painterResource(id = imageList[currentIndex]),
+            contentDescription = null,
+            modifier = Modifier.size(500.dp)
         )
     }
 }

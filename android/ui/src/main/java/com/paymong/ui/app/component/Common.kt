@@ -5,9 +5,11 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,8 @@ import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.SoundCode
+import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 
 @ExperimentalCoilApi
@@ -44,15 +48,18 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
         ),
         contentDescription = null,
         modifier = Modifier
-            .clickable {
-                if (appViewModel.stateCode != MongStateCode.CD002) {
-                    appViewModel.stroke()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        appViewModel.isHappy = false
-//                        appViewModel.showtoast = false
-                    }, 2000)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {
+                    if (appViewModel.stateCode != MongStateCode.CD002) {
+                        appViewModel.stroke()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            appViewModel.isHappy = false
+                        }, 2000)
+                    }
                 }
-            }
+            )
             .size(size.dp)
     )
 }

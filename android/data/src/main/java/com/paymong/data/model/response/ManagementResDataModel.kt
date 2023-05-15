@@ -90,3 +90,9 @@ data class ThingsRealTimeResDto(
     val message: String,
     val thingsCode: String
 )
+
+data class PayPointRealTimeResDto(
+    val code: String,
+    val message: String,
+    val point: Int
+)

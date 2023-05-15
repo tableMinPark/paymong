@@ -14,13 +14,11 @@ import androidx.navigation.NavController
 import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.LandingCode
-import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.Logo
-import com.paymong.ui.watch.common.showToast
 import kotlinx.coroutines.delay
 
 @Composable
@@ -40,28 +38,23 @@ fun Landing(
     val fontSize = if (screenWidthDp < 200) 12 else 15
 
     // 로그인  (리프레시 있는 경우)
-    if(watchLandingViewModel.loginState == LandingCode.LOGIN_SUCCESS) {
-        watchLandingViewModel.loginState = LandingCode.DONE
-        navController.navigate(WatchNavItem.Main.route){
-            popUpTo(navController.graph.id) {
-                inclusive = true
+    when(watchLandingViewModel.loginState) {
+         LandingCode.LOGIN_SUCCESS -> {
+            watchLandingViewModel.loginState = LandingCode.DONE
+            navController.navigate(WatchNavItem.Main.route){
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+                // 스택 첫 화면 메인화면으로 변경
+                navController.graph.setStartDestination(WatchNavItem.Main.route)
+                launchSingleTop =true
             }
-            // 스택 첫 화면 메인화면으로 변경
-            navController.graph.setStartDestination(WatchNavItem.Main.route)
-            launchSingleTop =true
         }
-    }
-    // 로그인 실패 (리프레시 없음)
-    else if (watchLandingViewModel.loginState == LandingCode.LOGIN_FAIL){
-        watchLandingViewModel.installCheck()
-    }
-    // 연결과 설치는 되있지만 playerId가 없는 경우 (최초 인증하지 않은 경우)
-    else if (watchLandingViewModel.landingCode == LandingCode.INSTALL){
-        showToast(context, ToastMessage.INSTALL)
-    }
-    // 연결만 되어있고 설치가 안되어있는 경우
-    else if  (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL){
-        showToast(context, ToastMessage.NOT_INSTALL)
+        // 로그인 실패 (리프레시 없음)
+        LandingCode.LOGIN_FAIL -> {
+            watchLandingViewModel.installCheck()
+        }
+        else -> {}
     }
 
     Column(

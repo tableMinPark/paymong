@@ -233,7 +233,7 @@ fun CharacterGif(mainViewModel:WatchViewModel) {
 
 @ExperimentalCoilApi
 @Composable
-fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, paddingBottom: Int, size:Int, stateCode:MongStateCode) {
+fun EmotionGif(mainViewModel:WatchViewModel, paddingTop:Int, paddingRight:Int, paddingBottom: Int, size:Int) {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .componentRegistry {

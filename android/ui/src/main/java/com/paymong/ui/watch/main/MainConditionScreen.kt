@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.main
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -105,7 +104,6 @@ fun MainCondition(
                     indicatorColor = PayMongBlue,
                 )
             }
-
         }
     }
 }

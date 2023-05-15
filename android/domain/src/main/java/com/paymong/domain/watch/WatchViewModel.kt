@@ -137,12 +137,15 @@ class WatchViewModel (
                             Log.d("socket", thingsRealTimeResDto.toString())
                             thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
                         }
+                        "211" -> {
+                            val payPointRealTimeResDto = Gson().fromJson(text, PayPointRealTimeResDto::class.java)
+                            Log.d("socket", payPointRealTimeResDto.toString())
+                            point = payPointRealTimeResDto.point
+                        }
                         else -> {}
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (_: Exception) {}
         }
     }
     fun updateStates(managementResDto: ManagementResDto) {

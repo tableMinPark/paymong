@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.main
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -78,7 +76,7 @@ fun MainInteraction(
             .padding(15.dp)//, bottom = 15.dp)
             .fillMaxSize(1f)
     ) {
-        Box () {
+        Box  {
             //BATTLE
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -87,7 +85,7 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            if (isBtnActive == true) {
+                            if (isBtnActive) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Battle.route)
                             }
@@ -106,10 +104,9 @@ fun MainInteraction(
                     )
                     {
                         val battle = painterResource(R.drawable.battle)
-//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_pink)
-                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f)
+                        Image(painter = interactionBntBorder, contentDescription = null)
                         Image(painter = battle, contentDescription = null,  modifier = Modifier.size(buttonIconSize.dp))
                     }
                 }
@@ -126,7 +123,7 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            if (isBtnActive == true) {
+                            if (isBtnActive) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             navController.navigate(WatchNavItem.Feed.route)
                             }
@@ -145,10 +142,9 @@ fun MainInteraction(
                         contentAlignment = Alignment.Center
                     ){
                         val feed = painterResource(R.drawable.feed)
-//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_orange)
-                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f)
+                        Image(painter = interactionBntBorder, contentDescription = null)
                         Image(
                             painter = feed,
                             contentDescription = null,
@@ -161,7 +157,7 @@ fun MainInteraction(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            if (isBtnActive == true) {
+                            if (isBtnActive) {
                                 soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                                 navController.navigate(WatchNavItem.Activity.route)
                             }
@@ -179,10 +175,9 @@ fun MainInteraction(
                         contentAlignment = Alignment.Center
                     ){
                         val activity = painterResource(R.drawable.activity)
-//                        val interactionBnt = painterResource(R.drawable.interaction_bnt)
                         val interactionBntBorder = painterResource(R.drawable.interaction_bnt_green)
-                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                        Image(painter = interactionBntBorder, contentDescription = null,)
+                        Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f)
+                        Image(painter = interactionBntBorder, contentDescription = null)
                         Image(
                             painter = activity,
                             contentDescription = null,
@@ -204,7 +199,7 @@ fun MainInteraction(
             Box(
                 modifier = Modifier
                     .clickable {
-                        if (isBtnActive == true || sleepActive == true) {
+                        if (isBtnActive || sleepActive) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             watchViewModel.isClicked = true
                             animationState.value = AnimationCode.Sleep
@@ -224,10 +219,9 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ) {
                     val sleep = painterResource(R.drawable.sleep)
-//                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
                     val interactionBntBorder = painterResource(R.drawable.interaction_bnt_blue)
-                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                    Image(painter = interactionBntBorder, contentDescription = null,)
+                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f)
+                    Image(painter = interactionBntBorder, contentDescription = null)
                     Image(
                         painter = sleep,
                         contentDescription = null,
@@ -260,10 +254,9 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ){
                     val poop = painterResource(R.drawable.poop)
-//                    val interactionBnt = painterResource(R.drawable.interaction_bnt)
                     val interactionBntBorder = painterResource(R.drawable.interaction_bnt_purple)
-                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f,)
-                    Image(painter = interactionBntBorder, contentDescription = null,)
+                    Image(painter = interactionBnt, contentDescription = null, alpha = 0.8f)
+                    Image(painter = interactionBntBorder, contentDescription = null)
                     Image(
                         painter = poop,
                         contentDescription = null,

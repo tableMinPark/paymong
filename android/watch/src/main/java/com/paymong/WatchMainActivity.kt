@@ -14,10 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
-import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.WatchMain
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {

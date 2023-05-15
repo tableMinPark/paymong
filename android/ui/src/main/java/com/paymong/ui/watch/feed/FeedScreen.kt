@@ -27,7 +27,7 @@ fun Feed(
     soundViewModel: SoundViewModel,
     feedViewModel: FeedViewModel
 ) {
-    LaunchedEffect(key1 = 0) {
+    LaunchedEffect(key1 = true) {
         feedViewModel.foodCategory = ""
         feedViewModel.currentFoodPosition = 0
     }

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
-import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.app.main.CreateImageList
@@ -31,8 +30,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MainInfo(
-    animationState: MutableState<AnimationCode>,
-    mainViewModel : WatchViewModel
+    watchViewModel : WatchViewModel
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -40,9 +38,9 @@ fun MainInfo(
     val characterSize = if (screenWidthDp < 200) 110 else 120
     val poopSize = if (screenWidthDp < 200) 25 else 35
     val boxTopPadding = if (screenWidthDp < 200) 65 else 75
-    val graduFontSize = if (screenWidthDp < 200 ) 10 else 12
+    val graduationFontSize = if (screenWidthDp < 200 ) 10 else 12
 
-    if(mainViewModel.isHappy) {
+    if(watchViewModel.isHappy) {
         Box(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier
@@ -67,7 +65,7 @@ fun MainInfo(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-                if (mainViewModel.mong.mongCode.code == "CH444") {
+                if (watchViewModel.mong.mongCode.code == "CH444") {
                     Text(
                         text = "스마트폰에서\n알을 생성해주세요.",
                         textAlign = TextAlign.Center,
@@ -77,24 +75,24 @@ fun MainInfo(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-                } else if (mainViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
-                    Box(contentAlignment = Alignment.Center,) {
+                } else if (watchViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
+                    Box(contentAlignment = Alignment.Center) {
                         Image(painter = painterResource(R.drawable.rip),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(characterSize.dp))
                     }
-                } else if (mainViewModel.stateCode == MongStateCode.CD006) { // 졸업
-                    Box(contentAlignment = Alignment.Center,) {
-                        Image(painter = painterResource(mainViewModel.mong.mongCode.resourceCode), // 졸업 이미지 넣기
+                } else if (watchViewModel.stateCode == MongStateCode.CD006) { // 졸업
+                    Box(contentAlignment = Alignment.Center) {
+                        Image(painter = painterResource(watchViewModel.mong.mongCode.resourceCode), // 졸업 이미지 넣기
                             contentDescription = null,
                             modifier = Modifier
                                 .size(characterSize.dp))
-                        GraduationEffect(mainViewModel, graduFontSize)
+                        GraduationEffect(watchViewModel, graduationFontSize)
                     }
                 } else {
-                    Box(contentAlignment = Alignment.Center,) {
-                        if (mainViewModel.stateCode == MongStateCode.CD007) { //진화대기
+                    Box(contentAlignment = Alignment.Center) {
+                        if (watchViewModel.stateCode == MongStateCode.CD007) { //진화대기
                             Text(
                                 text = "성장을 위해\n화면을 터치해주세요.",
                                 textAlign = TextAlign.Center,
@@ -104,13 +102,13 @@ fun MainInfo(
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
                                 modifier = Modifier.clickable {
-                                    mainViewModel.evolution()
-                                    mainViewModel.evolutionisClick = true
+                                    watchViewModel.evolution()
+                                    watchViewModel.evolutionisClick = true
                                 }
                             )
                         } else {
-                            if (mainViewModel.evolutionisClick) {
-                                Image(painter = painterResource(mainViewModel.undomong.resourceCode),
+                            if (watchViewModel.evolutionisClick) {
+                                Image(painter = painterResource(watchViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(characterSize.dp))
@@ -119,23 +117,23 @@ fun MainInfo(
                                     CreateImageList()
                                 }
                             } else {
-                                CharacterGif(mainViewModel)
-                                val code = mainViewModel.mong.mongCode.code.split("CH")[1].toInt()
+                                CharacterGif(watchViewModel)
+                                val code = watchViewModel.mong.mongCode.code.split("CH")[1].toInt()
                                 if(code / 100 == 1){
-                                    EmotionGif(mainViewModel, 0, 0, 0, 40, mainViewModel.stateCode)
+                                    EmotionGif(watchViewModel, 0, 0, 0, 40)
                                 } else if(code / 100 == 2){
                                     val end = code % 10
                                     if(end == 1){ //2_1
-                                        EmotionGif(mainViewModel, 0, 25, 40, 40, mainViewModel.stateCode)
+                                        EmotionGif(watchViewModel, 0, 25, 40, 40)
                                     } else { //2_0, 2_2
-                                        EmotionGif(mainViewModel, 0, 0, 50, 40, mainViewModel.stateCode)
+                                        EmotionGif(watchViewModel, 0, 0, 50, 40)
                                     }
                                 } else if(code / 100 == 3){
                                     val end = code % 10
                                     if(end == 1){ //3_1
-                                        EmotionGif(mainViewModel, 0, 50, 40, 40, mainViewModel.stateCode)
+                                        EmotionGif(watchViewModel, 0, 50, 40, 40)
                                     } else{ //3_0, 3_2
-                                        EmotionGif(mainViewModel, 0, 0, 35  , 40, mainViewModel.stateCode)
+                                        EmotionGif(watchViewModel, 0, 0, 35  , 40)
                                     }
                                 }
                             }
@@ -144,7 +142,7 @@ fun MainInfo(
                 }}
 
                 // 똥
-                when (mainViewModel.poopCount) {
+                when (watchViewModel.poopCount) {
                     1 -> Poops(0, 100, 75, 0, poopSize)
                     2 -> {
                         Poops(0, 100, 75, 0, poopSize)
@@ -187,11 +185,11 @@ fun Poops(start: Int, end: Int, top: Int, bottom: Int, poopSize: Int){
 @Composable
 fun GraduationEffect(
     mainViewModel: WatchViewModel,
-    graduFontSize : Int
+    graduationFontSize : Int
 ) {
     val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
 
-    Box() {
+    Box {
         var currentIndex by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
@@ -215,7 +213,7 @@ fun GraduationEffect(
                 textAlign = TextAlign.Center,
                 lineHeight = 25.sp,
                 fontFamily = dalmoori,
-                fontSize = graduFontSize.sp,
+                fontSize = graduationFontSize.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier

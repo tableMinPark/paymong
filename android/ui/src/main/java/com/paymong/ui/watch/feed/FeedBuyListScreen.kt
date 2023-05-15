@@ -27,7 +27,6 @@ import com.paymong.common.code.FoodCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
-import com.paymong.domain.entity.MongInfo
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
@@ -45,8 +44,8 @@ fun FeedBuyList(
     soundViewModel: SoundViewModel,
     feedViewModel: FeedViewModel
 ) {
-    LaunchedEffect(key1 = 0) {
-        feedViewModel.getFoodList()
+    LaunchedEffect(key1 = true) {
+        feedViewModel.getFoodList(watchViewModel.point)
     }
     Background(true)
 
@@ -63,10 +62,10 @@ fun FeedBuyList(
     val foodRowHeight = if (screenWidthDp < 200) 20 else 21
     val foodFontSize = if (screenWidthDp < 200) 16 else 21
 
-    val payPointText = if (feedViewModel.point.toString().length > 5) {
-        feedViewModel.point.toString().substring(0, 5) + "+"
+    val payPointText = if (watchViewModel.point.toString().length > 5) {
+        watchViewModel.point.toString().substring(0, 5) + "+"
     } else {
-        feedViewModel.point.toString()
+        watchViewModel.point.toString()
     }
 
     if(feedViewModel.isClick){
@@ -146,7 +145,7 @@ fun FeedBuyList(
                 Button(
                     onClick = {
                         soundViewModel.soundPlay(SoundCode.FEED_BUTTON)
-                        feedViewModel.prevButtonClick()
+                        feedViewModel.prevButtonClick(watchViewModel.point)
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)
@@ -220,7 +219,7 @@ fun FeedBuyList(
                 Button(
                     onClick = {
                         soundViewModel.soundPlay(SoundCode.FEED_BUTTON)
-                        feedViewModel.nextButtonClick()
+                        feedViewModel.nextButtonClick(watchViewModel.point)
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                     modifier = Modifier.fillMaxHeight(1f)

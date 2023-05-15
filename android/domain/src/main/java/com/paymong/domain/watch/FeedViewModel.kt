@@ -1,6 +1,7 @@
 package com.paymong.domain.watch
 
 import android.app.Application
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +19,7 @@ import java.time.LocalDateTime
 class FeedViewModel (
     application: Application
 ): AndroidViewModel(application) {
-    var point by mutableStateOf(0)
+//    var point by mutableStateOf(0)
     var name by mutableStateOf("")
     var foodCode by mutableStateOf("")
     var price by mutableStateOf(0)
@@ -30,30 +31,29 @@ class FeedViewModel (
     var currentCategory by mutableStateOf("")
     var success = mutableStateOf(false)
     var isClick by mutableStateOf(false)
-    var buttonSound by mutableStateOf(0)
 
     private val memberRepository: MemberRepository = MemberRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
-    init {
-        viewModelScope.launch(Dispatchers.Main) {
-            findPayPoint()
-        }
-    }
+//    init {
+//        viewModelScope.launch(Dispatchers.Main) {
+//            findPayPoint()
+//        }
+//    }
 
-    private fun findPayPoint() {
-        viewModelScope.launch(Dispatchers.IO) {
-            memberRepository.findMember()
-                .catch {
-                    it.printStackTrace()
-                }
-                .collect { data ->
-                    point = data.point.toInt()
-                }
-        }
-    }
+//    private fun findPayPoint() {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            memberRepository.findMember()
+//                .catch {
+//                    it.printStackTrace()
+//                }
+//                .collect { data ->
+//                    point = data.point.toInt()
+//                }
+//        }
+//    }
 
-    fun getFoodList() {
+    fun getFoodList(point: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             managementRepository.getFoodList(foodCategory)
                 .catch {
@@ -71,28 +71,25 @@ class FeedViewModel (
                             )
                         )
                     }
-                    changeCurrentFoodPosition()
+                    changeCurrentFoodPosition(point)
                     currentCategory = foodCategory
                     foodCategory = ""
                     success.value = true
                 }
         }
     }
-
-    fun prevButtonClick() {
+    fun prevButtonClick(point: Int) {
         currentFoodPosition--
         if (currentFoodPosition < 0)
             currentFoodPosition = foodList.size - 1
-        changeCurrentFoodPosition()
+        changeCurrentFoodPosition(point)
     }
-
-    fun nextButtonClick() {
+    fun nextButtonClick(point: Int) {
         currentFoodPosition++
         if (currentFoodPosition >= foodList.size)
             currentFoodPosition = 0
-        changeCurrentFoodPosition()
+        changeCurrentFoodPosition(point)
     }
-
     fun selectButtonClick(fc: String, watchViewModel: WatchViewModel) {
         // food
         if (fc == "FD") {
@@ -122,8 +119,7 @@ class FeedViewModel (
             }
         }
     }
-
-    private fun changeCurrentFoodPosition() {
+    private fun changeCurrentFoodPosition(point: Int) {
         val nowFood = foodList[currentFoodPosition]
         name = nowFood.name
         foodCode = nowFood.foodCode

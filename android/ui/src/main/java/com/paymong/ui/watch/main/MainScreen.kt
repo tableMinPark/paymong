@@ -35,9 +35,7 @@ fun Main(
     if(watchViewModel.mapCode == MapCode.MP000){
         MainBackgroundGif()
     } else if (pagerState.currentPage != 1){
-        Box( modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.4f)) )
+        Box( modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(alpha = 0.4f)) )
     }
 
     Column {
@@ -49,7 +47,7 @@ fun Main(
                 page: Int ->
             when (page) {
                 0 -> MainCondition(watchViewModel)
-                1 -> MainInfo(animationState, watchViewModel)
+                1 -> MainInfo(watchViewModel)
                 2 -> MainInteraction(animationState, pagerState, coroutineScope, navController, watchViewModel, soundViewModel)
                 3 -> MainInfoDetail(watchViewModel)
             }

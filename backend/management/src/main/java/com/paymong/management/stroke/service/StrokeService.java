@@ -11,12 +11,14 @@ import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.stroke.vo.StrokeMongReqVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StrokeService {
     private final MongRepository mongRepository;
@@ -26,6 +28,7 @@ public class StrokeService {
     public MongStatusDto strokeMong(StrokeMongReqVo strokeMongReqVo) throws Exception{
 
         if(strokeScheduler.checkMong(strokeMongReqVo.getMongId())){
+            log.info("지금은 쓰다듬을 수 없습니다.");
             MongStatusDto mongStatusDto = new MongStatusDto(WebSocketCode.FAIL);
             return mongStatusDto;
         }

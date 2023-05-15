@@ -1,17 +1,15 @@
-package com.paymong.management.global.socket.dto;
+package com.paymong.management.mong.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.socket.WebSocketSession;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class MongSocketDto {
-
+public class MapCodeWsDto {
     private Long memberId;
-    private WebSocketSession session;
+    private String mapCode;
 }

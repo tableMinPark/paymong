@@ -36,8 +36,12 @@ public class SleepController {
         try {
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            sleepService.sleepMong(mongId);
-            return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            if(sleepService.sleepMong(mongId)){
+                return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+            }else{
+                return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.IMPOSSIBLE));
+            }
+
         }catch (NullPointerException e){
             LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));

@@ -221,7 +221,7 @@ public class MongService {
 
         EvolutionMongResDto mongResDto = new EvolutionMongResDto();
         mongResDto.setWeight(mong.getWeight());
-
+        mongResDto.setMongCode(mong.getCode());
         mongResDto.setStateCode(mong.getStateCode());
 
         if(!mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())
@@ -232,9 +232,6 @@ public class MongService {
                 mongResDto.setMongCode(MongConditionCode.SLEEP.getCode());
             }
         }
-
-
-
 
         return mongResDto;
 
@@ -339,5 +336,10 @@ public class MongService {
     public void sendThing(SendThingsResDto sendThingsResDto){
         LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendThingsResDto.getMemberId());
         webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
+    }
+
+    public void sendPoint(SendPointResDto sendPointResDto){
+        LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendPointResDto.getMemberId());
+        webSocketService.sendPoint(sendPointResDto, WebSocketCode.POINT);
     }
 }

@@ -2,18 +2,18 @@ package com.paymong.management.global.socket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.code.WebSocketCode;
-import com.paymong.management.mong.dto.MapCodeDto;
+import com.paymong.management.global.socket.dto.PointDto;
 import com.paymong.management.mong.dto.MapCodeWsDto;
+import com.paymong.management.mong.dto.SendPointResDto;
 import com.paymong.management.mong.dto.SendThingsResDto;
 import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.global.socket.dto.MongSocketDto;
 import com.paymong.management.mong.entity.Mong;
-import com.paymong.management.status.dto.ThingsDto;
+import com.paymong.management.global.socket.dto.ThingsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class WebSocketService {
                         .forEach(s ->
                         {
                             try {
-                                log.info("{}에 메세지를 보냅니다.", mong.getMemberId());
+                                log.info("{}에 상태 메세지를 보냅니다.", mong.getMemberId());
                                 s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");
@@ -101,7 +101,7 @@ public class WebSocketService {
                         .forEach(s ->
                         {
                             try {
-                                log.info("{}에 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
+                                log.info("{}에 맵 메세지를 보냅니다.", mapCodeWsDto.getMemberId());
                                 s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");
@@ -127,13 +127,39 @@ public class WebSocketService {
                         .forEach(s ->
                         {
                             try {
-                                log.info("{}에 메세지를 보냅니다.", sendThingsResDto.getMemberId());
+                                log.info("{}에 띵스 메세지를 보냅니다.", sendThingsResDto.getMemberId());
                                 s.getSession().sendMessage(message);
                             } catch (IOException e) {
                                 log.info("응 못보내");
                             }
                         });
                 members.get(sendThingsResDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+            }
+        }catch (IOException e){
+            log.info("메세지 생성 실패");
+        }
+
+    }
+
+    public void sendPoint(SendPointResDto sendPointResDto, WebSocketCode webSocketCode) {
+        try {
+            if(!members.containsKey(sendPointResDto.getMemberId())){
+                log.info("{}와 연결된 소켓이 없습니다.", sendPointResDto.getMemberId());
+            }else{
+                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new PointDto(sendPointResDto, webSocketCode)));
+                log.info("연결된 세션수 : {}",members.get(sendPointResDto.getMemberId()).size());
+                members.get(sendPointResDto.getMemberId()).stream()
+                        .filter(s -> s.getSession().isOpen())
+                        .forEach(s ->
+                        {
+                            try {
+                                log.info("{}에 포인트 메세지를 보냅니다.", sendPointResDto.getMemberId());
+                                s.getSession().sendMessage(message);
+                            } catch (IOException e) {
+                                log.info("응 못보내");
+                            }
+                        });
+                members.get(sendPointResDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");

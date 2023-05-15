@@ -183,4 +183,23 @@ public class MongController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }
     }
+
+    @PostMapping("/point")
+    public ResponseEntity<Object> sendPoint(@RequestBody SendPointReqDto sendPointReqDto, HttpServletRequest httpServletRequest){
+        String memberIdStr = httpServletRequest.getHeader(headerMember);
+        LOGGER.info("Things. memberId = {}", memberIdStr);
+        try {
+            if(memberIdStr == null || memberIdStr.equals("")) throw new NullPointerException();
+            Long memberId = Long.parseLong(memberIdStr);
+            SendPointResDto sendPointResDto = new SendPointResDto();
+            sendPointResDto.setPoint(sendPointReqDto.getPoint());
+            sendPointResDto.setMemberId(memberId);
+
+            mongService.sendPoint(sendPointResDto);
+            return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+        }catch (NullPointerException e){
+            LOGGER.info("code : {}, message : {}", ManagementStateCode.NULL_POINT.getCode(), ManagementStateCode.NULL_POINT.name());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
+        }
+    }
 }

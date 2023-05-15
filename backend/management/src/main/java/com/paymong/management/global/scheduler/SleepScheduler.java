@@ -71,6 +71,7 @@ public class SleepScheduler implements ManagementScheduler{
         try
         {
             log.info("{}의 여기까진 안와?", mongId);
+            log.info("mongId : {}, sleepStart : {}", mongId, schedulerMap.get(mongId).getStartTime());
             Duration diff = Duration.between(schedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
             Long expire = diff.toMinutes();
             log.info("mongId : {}, sleepStart : {}, expire : {}", mongId, schedulerMap.get(mongId).getStartTime(), expire);

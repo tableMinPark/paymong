@@ -59,14 +59,18 @@ public class SleepScheduler implements ManagementScheduler{
             log.info("{}이 없습니다.", mongId);
             return;
         }
-        log.info("{}이 여기야?.", mongId);
+
         SleepSchedulerDto schedulerDto = schedulerMap.get(mongId);
-        schedulerDto.getDynamicScheduler().shutdown();
+        if(schedulerDto.getDynamicScheduler() != null){
+            log.info("{}의 수면을 취소합니다.", mongId);
+            schedulerDto.getDynamicScheduler().shutdown();
+        }else{
+            log.info("{}의 수면 스케줄러가 없습니다.", mongId);
+        }
+
         try
         {
-            log.info("{}이 여기야?.2222", mongId);
             Duration diff = Duration.between(schedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
-            log.info("{}이 여기야?.3333333", mongId);
             Long expire = diff.toMinutes();
             sleepTask.awakeMong(mongId, expire);
             healthScheduler.startScheduler(mongId);

@@ -339,7 +339,7 @@ public class MongService {
     }
 
     public void sendPoint(SendPointResDto sendPointResDto){
-        LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendPointResDto.getMemberId());
+        LOGGER.info("point 코드를 전송합니다 : memberId : {}", sendPointResDto.getMemberId());
         webSocketService.sendPoint(sendPointResDto, WebSocketCode.POINT);
     }
 }

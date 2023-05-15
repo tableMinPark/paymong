@@ -1,5 +1,6 @@
 package com.paymong.management.global.scheduler.service;
 
+import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.scheduler.*;
 import com.paymong.management.global.scheduler.task.SleepTask;
 import com.paymong.management.mong.entity.Mong;
@@ -39,8 +40,10 @@ public class SchedulerService {
         poopScheduler.startScheduler(mong.getMongId());
         satietyScheduler.startScheduler(mong.getMongId());
 
-        evolutionScheduler.startScheduler(mong.getMongId());
+        sleepScheduler.minusScheduler(mong.getMongId());
+
         sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
+
     }
 
 }

@@ -32,11 +32,11 @@ public class SleepService {
         }
         // 자는 상태일때 깨우기
         if(mong.getStateCode().equals(MongConditionCode.SLEEP.getCode())){
-            log.info("잠 재울 준비중입니다. mongId = {}", mongId);
+            log.info("잠 깨울 준비중입니다. mongId = {}", mongId);
             sleepScheduler.awakeScheduler(mongId);
 
         }else{ // 자는 상태가 아닐 땐 재우기
-            log.info("잠 깨울 준비중입니다. mongId = {}", mongId);
+            log.info("잠 재울 준비중입니다. mongId = {}", mongId);
             sleepScheduler.startScheduler(mongId);
         }
 

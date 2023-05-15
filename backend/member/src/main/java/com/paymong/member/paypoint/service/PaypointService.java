@@ -60,8 +60,11 @@ public class PaypointService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException());
         Integer prePoint = member.getPoint();
-        member.setPoint(prePoint + point);
-        Integer totalPoint = member.getPoint();
+        Integer totalPoint = prePoint + point;
+        member.setPoint(totalPoint);
+
+        //가격반영 소켓 요청
+        managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
 
         //브랜드명 뽑기(없으면 null)
         String brand = Pay.getMap(action);
@@ -111,7 +114,11 @@ public class PaypointService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException());
         Integer prePoint = member.getPoint();
-        member.setPoint(prePoint + point);
+        Integer totalPoint = prePoint + point;
+        member.setPoint(totalPoint);
+
+        //가격반영 소켓 요청
+        managementServiceClient.sendPoint(memberIdStr, new SendPointReqDto(totalPoint));
 
         //history에 기록
         PointHistory pointHistory = PointHistory.builder()

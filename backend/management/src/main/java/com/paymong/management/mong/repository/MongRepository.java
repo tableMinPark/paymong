@@ -4,6 +4,7 @@ import com.paymong.management.mong.entity.Mong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,4 +14,6 @@ public interface MongRepository extends JpaRepository<Mong, Long> {
     Optional<Mong> findByMemberIdAndActive(Long memberId, Boolean active);
 
     Optional<Mong> findByMongIdAndActive(Long mongId, Boolean active);
+
+    List<Mong> findByActive(Boolean active);
 }

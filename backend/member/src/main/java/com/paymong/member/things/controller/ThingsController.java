@@ -10,6 +10,7 @@ import com.paymong.member.things.dto.request.GetAlarmReqDto;
 import com.paymong.member.things.dto.request.RemoveThingsReqDto;
 import com.paymong.member.things.dto.response.FindAddableThingsResDto;
 import com.paymong.member.things.dto.response.FindThingsListResDto;
+import com.paymong.member.things.dto.response.GetThingsAlarmResDto;
 import com.paymong.member.things.entity.Things;
 import com.paymong.member.things.service.ThingsService;
 import lombok.RequiredArgsConstructor;
@@ -93,12 +94,16 @@ public class ThingsController {
                 thingsService.alarmOpenDoor(memberIdStr, mongIdStr, thingsCode);
             }else if (thingsCode.equals("ST002")){ //허브무선충전
                 thingsService.alarmHubCharge(memberIdStr, mongIdStr, thingsCode);
-            }else if (thingsCode.equals("ST003")){ //스마트버튼
-
-            }else{
+            }
+            //else if (thingsCode.equals("ST003")){ //스마트버튼
+            //}
+            else{
                 throw new NotFoundThingsCodeException();
             }
-            return ResponseEntity.ok().body(new SuccessResponse(ThingsStateCode.SUCCESS));
+            GetThingsAlarmResDto ret = GetThingsAlarmResDto.builder()
+                    .thingsCode(thingsCode)
+                    .build();
+            return ResponseEntity.ok().body(ret);
         }catch (NotFoundThingsCodeException e){
             log.error(ThingsStateCode.THINGS_CODE_ERROR.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse(ThingsStateCode.THINGS_CODE_ERROR));

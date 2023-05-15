@@ -1,12 +1,16 @@
 package com.paymong.information.information.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymong.information.global.client.MemberServiceClient;
 import com.paymong.information.global.exception.NotFoundMongException;
 import com.paymong.information.information.dto.FindLastBuyResDto;
 import com.paymong.information.information.dto.FindMongBattleDto;
 import com.paymong.information.information.dto.FindMongDto;
 import com.paymong.information.information.dto.FindMongInfoDto;
+import com.paymong.information.information.dto.FindMongMasterResDto;
 import com.paymong.information.information.dto.FindMongStatusDto;
+import com.paymong.information.information.dto.FindMymapResDto;
 import com.paymong.information.information.entity.ActiveHistory;
 import com.paymong.information.information.entity.Mong;
 import com.paymong.information.information.repository.ActiveHistroyRepository;
@@ -26,11 +30,23 @@ public class MongService {
 
     private final ActiveHistroyRepository activeHistroyRepository;
 
-    @Transactional
-    public FindMongDto findMong(Long mongId) throws NotFoundMongException {
-        Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());
-        FindMongDto findMongDto = new FindMongDto(mong);
+    private final MemberServiceClient memberServiceClient;
 
+    @Transactional
+    public FindMongDto findMong(Long mongId, String memberIdStr) throws NotFoundMongException {
+        Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());
+        String mapCode;
+        try {
+            ObjectMapper om = new ObjectMapper();
+            FindMymapResDto findMymapResDto = om.convertValue(memberServiceClient.findMymap(memberIdStr).getBody(),
+                FindMymapResDto.class);
+            mapCode = findMymapResDto.getMapCode();
+            log.info(mapCode);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new NullPointerException();
+        }
+        FindMongDto findMongDto = new FindMongDto(mong, mapCode);
         return findMongDto;
     }
 
@@ -104,6 +120,12 @@ public class MongService {
             log.info("isPresent - {}", activeHistory.isPresent());
             return new FindLastBuyResDto(null);
         }
+    }
+
+    @Transactional
+    public FindMongMasterResDto findMongMaster(Long mongId) throws NotFoundMongException {
+        Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());
+        return new FindMongMasterResDto(mong.getMemberId());
     }
 
 }

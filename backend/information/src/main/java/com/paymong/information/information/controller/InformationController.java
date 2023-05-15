@@ -40,7 +40,7 @@ public class InformationController {
             // 아직 map코드는 안받음
             if(mongIdStr == null || mongIdStr.equals("")) throw new NullPointerException();
             Long mongId = Long.parseLong(mongIdStr);
-            FindMongDto findMongDto = mongService.findMong(mongId);
+            FindMongDto findMongDto = mongService.findMong(mongId, memberIdStr);
             return ResponseEntity.ok().body(findMongDto);
         }catch (NullPointerException e){
             log.info("code : {}, message : {}", InformationStateCode.NULL_POINT.getCode(), InformationStateCode.NULL_POINT.name());
@@ -119,5 +119,17 @@ public class InformationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NOT_FOUND));
         }
 
+    }
+
+    @GetMapping("/mong/master")
+    public ResponseEntity<Object> findMongMaster(FindMongMasterReqDto findMongMasterReqDto){
+       try{
+            FindMongMasterResDto findMongMasterResDto = mongService.findMongMaster(findMongMasterReqDto.getMongId());
+            log.info("code : {}, message : {}", InformationStateCode.SUCCESS.getCode(), InformationStateCode.SUCCESS.name());
+            return ResponseEntity.status(HttpStatus.OK).body(findMongMasterResDto);
+       }catch (NotFoundMongException e){
+           log.info("code : {}, message : {}", InformationStateCode.NOT_FOUND.getCode(), InformationStateCode.NOT_FOUND.name());
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(InformationStateCode.NOT_FOUND));
+       }
     }
 }

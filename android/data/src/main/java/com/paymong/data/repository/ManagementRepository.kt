@@ -1,6 +1,5 @@
 package com.paymong.data.repository
 
-import android.util.Log
 import com.paymong.data.api.Api
 import com.paymong.data.api.ManagementApi
 import com.paymong.data.model.request.AddMongReqDto

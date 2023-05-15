@@ -54,9 +54,6 @@ fun CharacterGif(appViewModel: AppViewModel, size: Int) {
                 onClick = {
                     if (appViewModel.stateCode != MongStateCode.CD002) {
                         appViewModel.stroke()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            appViewModel.isHappy = false
-                        }, 2000)
                     }
                 }
             )

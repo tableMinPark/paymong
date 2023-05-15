@@ -169,7 +169,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     it.printStackTrace()
                 }
                 .collect{ data->
-                    Log.d("evolution", data.toString())
                     undomong = mong.mongCode
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     mong = Mong(
@@ -188,8 +187,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{
-                        data->
+                .collect{ data->
                     mong.mongCode = MongCode.valueOf(data.mongCode)
                 }
         }
@@ -205,7 +203,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         data ->
                     if(data.code == "200"){
                         isHappy = true
-                        delay(1500)
+                        delay(2000)
                         isHappy = false
                     }
                 }
@@ -217,6 +215,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         try {
             managementSocketService.disConnect()
             socketJob.cancel()
-        } catch (_: Exception) {  }
+        } catch (_: Exception) {}
     }
 }

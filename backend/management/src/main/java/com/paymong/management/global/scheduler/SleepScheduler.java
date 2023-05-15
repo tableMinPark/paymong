@@ -81,6 +81,13 @@ public class SleepScheduler{
     }
     public void awakeScheduler(Long mongId){
         try {
+
+            if(staticSchedulerMap.containsKey(mongId)){
+                if(checkTime(staticSchedulerMap.get(mongId).getSleepStart(), staticSchedulerMap.get(mongId).getSleepEnd())){
+
+                }
+            }
+
             Long expire = 60L * 3L;
             if(!dynamicSchedulerMap.containsKey(mongId)) {
                 log.info("{}는 자고있지 않습니다. 하지만 깨우겠습니다.", mongId);
@@ -245,21 +252,30 @@ public class SleepScheduler{
     public Runnable getAwakeRunnable(Long mongId, Integer type){
         return ()->{
             try {
-                Long expire = 0L;
-                if(type == 0){
-                   expire = staticSchedulerMap.get(mongId).getExpire();
-                }else{
-                    Duration diff = Duration.between(LocalDateTime.now(), dynamicSchedulerMap.get(mongId).getStartTime());
-                    expire = diff.toMinutes();;
+                if(staticSchedulerMap.containsKey(mongId)){
+                    if(checkTime(staticSchedulerMap.get(mongId).getSleepStart(), staticSchedulerMap.get(mongId).getSleepEnd())){
+                        log.info("자는 시간입니다. 깨우지 마세요. mongId : {}", mongId);
+                    }else{
+                        Long expire = 0L;
+                        if(type == 0){
+                            expire = staticSchedulerMap.get(mongId).getExpire();
+                        }else{
+                            Duration diff = Duration.between(LocalDateTime.now(), dynamicSchedulerMap.get(mongId).getStartTime());
+                            expire = diff.toMinutes();;
+                        }
+
+                        sleepTask.awakeMong(mongId, expire);
+                        healthScheduler.startScheduler(mongId);
+                        satietyScheduler.startScheduler(mongId);
+                        poopScheduler.startScheduler(mongId);
+                        deathScheduler.restartScheduler(mongId);
+                        evolutionScheduler.restartScheduler(mongId);
+                        minusScheduler(mongId);
+                    }
+                }else {
+                    log.info("초기화가 안됐습니다. mongId : {}", mongId);
                 }
 
-                sleepTask.awakeMong(mongId, expire);
-                healthScheduler.startScheduler(mongId);
-                satietyScheduler.startScheduler(mongId);
-                poopScheduler.startScheduler(mongId);
-                deathScheduler.restartScheduler(mongId);
-                evolutionScheduler.restartScheduler(mongId);
-                minusScheduler(mongId);
             }catch (NotFoundMongException e){
                 log.info("{}의 몽이 없습니다.", mongId);
                 stopScheduler(mongId);

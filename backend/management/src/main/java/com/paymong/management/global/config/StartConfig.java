@@ -45,6 +45,9 @@ public class StartConfig implements CommandLineRunner {
 //        List<Mong> mongs = new ArrayList<>();
 //        mongs.add(mongRepository.findByMongId(66L).get());
 //        mongs.add(mongRepository.findByMongId(67L).get());
+
+        mongs.stream().forEach( m -> sleepScheduler.initScheduler(m.getMongId(), m.getSleepStart(), m.getSleepEnd()));
+
         mongs.stream()
                 .filter(mong -> !mong.getStateCode().equals(MongConditionCode.SLEEP.getCode())
                         && !mong.getStateCode().equals(MongConditionCode.DIE.getCode())

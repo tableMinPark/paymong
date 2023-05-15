@@ -103,7 +103,10 @@ public class MongService {
     public void startScheduler(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(()-> new NotFoundMongException());
+
         schedulerService.startScheduler(mong);
+        evolutionScheduler.startScheduler(mongId);
+        sleepScheduler.initScheduler(mongId, mong.getSleepStart(), mong.getSleepEnd());
     }
 
     @Transactional

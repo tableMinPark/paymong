@@ -47,8 +47,8 @@ public class StartConfig implements CommandLineRunner {
 //        mongs.add(mongRepository.findByMongId(67L).get());
         mongs.stream()
                 .filter(mong -> !mong.getStateCode().equals(MongConditionCode.SLEEP.getCode())
-                        || !mong.getStateCode().equals(MongConditionCode.DIE.getCode())
-                        || !mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode()))
+                        && !mong.getStateCode().equals(MongConditionCode.DIE.getCode())
+                        && !mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode()))
                         .forEach(schedulerService::startScheduler);
 
     }

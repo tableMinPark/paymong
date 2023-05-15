@@ -16,4 +16,5 @@ sealed class AppNavItem(
     object Collect: AppNavItem("collect")
     object CollectMap: AppNavItem("collect_map")
     object CollectPayMong: AppNavItem("collect_paymong")
+    object MongMap: AppNavItem("mong_map")
 }

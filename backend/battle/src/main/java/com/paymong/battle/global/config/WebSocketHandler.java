@@ -200,9 +200,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     locationRepository.save(mongId, latitude, longitude);
                     matchingQueue.add(player);
                     matchingMap.put(mongId, player);
-
-                    System.out.println(matchingQueue);
-                    System.out.println(matchingMap);
                     break;
 
                 case DISCONNECT:
@@ -216,15 +213,34 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     System.out.println(matchingQueue);
                     System.out.println(matchingMap);
 
-                    // 배틀중에 탈주하는 경우
+
                     String battleRoomId = battleCharacterIdMap.get(mongId);
                     if (battleRoomId != null){
+                        // 게임을 진행중이거나 게임이 끝난 경우
                         BattleRoom battleRoom = battleService.findBattleRoom(battleRoomId);
-                        // 정상 종료
+
+                        // 탈주하는 경우
+                        if(battleRoom.getNowTurn() != -1){
+                            if(battleRoom.getStatsMap().get("A").getMongId().equals(mongId)){
+                                // A가 탈주
+                                Long escapeId = battleRoom.getStatsMap().get("A").getMongId();
+                                Long keepId = battleRoom.getStatsMap().get("B").getMongId();
+                                battleService.spendMoney(escapeId);
+                                battleService.earnMoney(keepId);
+                            }else{
+                                // B가 탈주
+                                Long escapeId = battleRoom.getStatsMap().get("B").getMongId();
+                                Long keepId = battleRoom.getStatsMap().get("A").getMongId();
+                                battleService.spendMoney(escapeId);
+                                battleService.earnMoney(keepId);
+                            }
+                        }
+
                         battleRoom.endBattle(battleService, battleRoomId);
                         if (battleRoom != null) {
                             battleService.removeBattleRoom(battleRoomId);
                         }
+
                     }
                     break;
 

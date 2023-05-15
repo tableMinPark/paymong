@@ -8,6 +8,7 @@ import com.paymong.information.information.dto.FindLastBuyResDto;
 import com.paymong.information.information.dto.FindMongBattleDto;
 import com.paymong.information.information.dto.FindMongDto;
 import com.paymong.information.information.dto.FindMongInfoDto;
+import com.paymong.information.information.dto.FindMongMasterResDto;
 import com.paymong.information.information.dto.FindMongStatusDto;
 import com.paymong.information.information.dto.FindMymapResDto;
 import com.paymong.information.information.entity.ActiveHistory;
@@ -35,12 +36,13 @@ public class MongService {
     public FindMongDto findMong(Long mongId, String memberIdStr) throws NotFoundMongException {
         Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());
         String mapCode;
-        try{
+        try {
             ObjectMapper om = new ObjectMapper();
-            FindMymapResDto findMymapResDto = om.convertValue(memberServiceClient.findMymap(memberIdStr).getBody(), FindMymapResDto.class);
+            FindMymapResDto findMymapResDto = om.convertValue(memberServiceClient.findMymap(memberIdStr).getBody(),
+                FindMymapResDto.class);
             mapCode = findMymapResDto.getMapCode();
             log.info(mapCode);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info(e.getMessage());
             throw new NullPointerException();
         }
@@ -118,6 +120,12 @@ public class MongService {
             log.info("isPresent - {}", activeHistory.isPresent());
             return new FindLastBuyResDto(null);
         }
+    }
+
+    @Transactional
+    public FindMongMasterResDto findMongMaster(Long mongId) throws NotFoundMongException {
+        Mong mong = mongRepository.findById(mongId).orElseThrow(() -> new NotFoundMongException());
+        return new FindMongMasterResDto(mong.getMemberId());
     }
 
 }

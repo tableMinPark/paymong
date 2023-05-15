@@ -6,19 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RedisMong {
+public class RedisMong implements Serializable {
 
     @Id
     private Long mongId;
 
-    private LocalDateTime startTime;
-    private LocalDateTime stopTime;
+    private Long expire;
 
 
 }

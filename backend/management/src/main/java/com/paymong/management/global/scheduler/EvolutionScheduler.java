@@ -3,6 +3,8 @@ package com.paymong.management.global.scheduler;
 import com.paymong.management.global.dto.FindMongLevelCodeDto;
 import com.paymong.management.global.exception.GatewayException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.redis.RedisMong;
+import com.paymong.management.global.redis.RedisService;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.dto.SchedulerDto;
 import com.paymong.management.global.scheduler.task.EvolutionTask;
@@ -25,6 +27,7 @@ public class EvolutionScheduler implements ManagementScheduler {
 
     private static final Map<Long, SchedulerDto> schedulerMap = new HashMap<>();
     private final EvolutionTask evolutionTask;
+    private final RedisService redisService;
     @Override
     public void stopScheduler(Long mongId) {
         if(schedulerMap.containsKey(mongId)){
@@ -42,7 +45,11 @@ public class EvolutionScheduler implements ManagementScheduler {
             Duration diff = Duration.between(schedulerDto.getStartTime(), LocalDateTime.now());
             Long expire = schedulerDto.getExpire();
             if(expire - diff.toSeconds() < 0){
-
+                try {
+                    evolutionTask.evolutionMong(mongId);
+                }catch (NotFoundMongException e){
+                    stopScheduler(mongId);
+                }
             }else{
                 // 남은 기간 계산
                 log.info("남은 기간 : {}", expire - diff.toSeconds());
@@ -80,6 +87,9 @@ public class EvolutionScheduler implements ManagementScheduler {
             SchedulerDto scDto= new SchedulerDto();
             scDto.setRunnable(getRunnable(levelDto.getMongId()));
             schedulerMap.put(levelDto.getMongId(), scDto);
+        }else{
+            log.info("{}의 존재중인 스케줄러를 중지합니다.", levelDto.getMongId());
+            schedulerMap.get(levelDto.getMongId()).getScheduler().shutdown();
         }
 
         SchedulerDto schedulerDto = schedulerMap.get(levelDto.getMongId());
@@ -116,12 +126,34 @@ public class EvolutionScheduler implements ManagementScheduler {
         }
     }
 
+    public void restartScheduler(RedisMong redisMong){
+        if(schedulerMap.containsKey(redisMong.getMongId())){
+            log.info("{}의 {} evolution scheduler가 이미 돌아가고 있습니다.", this.getClass().getSimpleName(), redisMong.getMongId());
+
+        }else {
+            SchedulerDto schedulerDto = new SchedulerDto();
+            schedulerDto.setStartTime(LocalDateTime.now());
+            schedulerDto.setExpire(redisMong.getExpire());
+            schedulerDto.setMessage("evolution-");
+            schedulerDto.setRunnable(getRunnable(redisMong.getMongId()));
+            schedulerDto.initScheduler();
+            log.info("{}의 evolution 스케쥴러를 재시작합니다. 남은 기간 : {}", this.getClass().getSimpleName(), schedulerDto.getExpire());
+
+            schedulerMap.put(redisMong.getMongId(), schedulerDto);
+        }
+    }
+
+    public void addRedis(){
+        redisService.addRedis(schedulerMap, "evolution");
+    }
+
     @Override
     public Runnable getRunnable(Long mongId) {
 
         return () -> {
             try {
                 evolutionTask.evolutionMong(mongId);
+                stopScheduler(mongId);
             }catch (NotFoundMongException e){
                 stopScheduler(mongId);
             }

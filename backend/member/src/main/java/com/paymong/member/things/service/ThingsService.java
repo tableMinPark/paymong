@@ -119,7 +119,7 @@ public class ThingsService {
         if(mongIdStr.equals("") || mongIdStr == null) return;
 
         //청소기 모션 요청 보내기
-        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
+        managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
@@ -161,7 +161,7 @@ public class ThingsService {
         Long mongId = Long.parseLong(mongIdStr);
 
         //충전 모션 요청 보내기
-        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
+        managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
@@ -177,7 +177,7 @@ public class ThingsService {
 
         //보너스 적립
         String action = "스마트싱스 허브충전 보너스";
-        Integer point = 100;
+        Integer point = 200;
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)
                 .action(action)
@@ -200,7 +200,7 @@ public class ThingsService {
         Long mongId = Long.parseLong(mongIdStr);
 
         //문열림 모션 요청 보내기
-        //managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
+        managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
 
         ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
 
@@ -216,7 +216,7 @@ public class ThingsService {
 
         //보너스 적립
         String action = "스마트싱스 문열림센서 보너스";
-        Integer point = 75;
+        Integer point = 100;
         PointHistory pointHistory = PointHistory.builder()
                 .point(point)
                 .action(action)

@@ -75,6 +75,9 @@ fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             Activity(navController, watchViewModel, soundViewModel)
         }
+        composable(route = WatchNavItem.TrainingLanding.route){
+            TrainingLanding(navController)
+        }
         composable(route = WatchNavItem.Training.route){
             val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)

@@ -59,7 +59,7 @@ fun Activity(
                     if (watchViewModel.point < 50)
                         showToast(context, ToastMessage.TRAINING_NOT_POINT)
                     else
-                        navController.navigate(WatchNavItem.Training.route)
+                        navController.navigate(WatchNavItem.TrainingLanding.route)
                 },
                 modifier = Modifier
                     .size(width = 200.dp, height = buttonHeight.dp)

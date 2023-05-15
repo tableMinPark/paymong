@@ -22,7 +22,6 @@ public class SchedulerService {
     private final HealthScheduler healthScheduler;
     private final PoopScheduler poopScheduler;
     private final SatietyScheduler satietyScheduler;
-    private final EvolutionScheduler evolutionScheduler;
 
     /*
     0 : poop
@@ -39,10 +38,7 @@ public class SchedulerService {
         healthScheduler.startScheduler(mong.getMongId());
         poopScheduler.startScheduler(mong.getMongId());
         satietyScheduler.startScheduler(mong.getMongId());
-
         sleepScheduler.minusScheduler(mong.getMongId());
-
-        sleepScheduler.initScheduler(mong.getMongId(), mong.getSleepStart(), mong.getSleepEnd());
 
     }
 

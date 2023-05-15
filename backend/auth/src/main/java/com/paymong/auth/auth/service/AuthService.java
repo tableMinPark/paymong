@@ -59,7 +59,7 @@ public class AuthService {
         }
 
         // 토큰 발급 및 캐시 서버에 저장
-        TokenInfo tokenInfo = provideToken(loginReqDto, memberLoginResDto);
+        TokenInfo tokenInfo = provideToken(loginReqDto, memberLoginResDto,"a");
 
         // 역할 설정
         authRepository.save(
@@ -73,16 +73,48 @@ public class AuthService {
 
     }
 
-    public TokenInfo provideToken(LoginReqDto loginReqDto, MemberLoginResDto memberLoginResDto)
+    @Transactional
+    public LoginResDto loginWatch(LoginReqDto loginReqDto) throws RuntimeException {
+        String password = passwordEncoder.encode(UUID.randomUUID().toString());
+
+        loginReqDto.setPassword(password);
+        //try-catch 잡기
+        MemberLoginResDto memberLoginResDto;
+        try {
+            // loginReq to findByPlayIdReqDto 만들기
+            ObjectMapper om = new ObjectMapper();
+            memberLoginResDto = om.convertValue(
+                memberServiceClient.memberLogin(loginReqDto).getBody(), MemberLoginResDto.class);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new NotFoundException();
+        }
+
+        // 토큰 발급 및 캐시 서버에 저장
+        TokenInfo tokenInfo = provideToken(loginReqDto, memberLoginResDto, "w");
+
+        // 역할 설정
+        authRepository.save(
+            Auth.builder().memberId(String.valueOf(memberLoginResDto.getMemberId())).role("USER")
+                .build());
+
+        return LoginResDto.builder()
+            .accessToken(tokenInfo.getAcessToken())
+            .refreshToken(tokenInfo.getRefreshToken())
+            .build();
+
+    }
+
+    public TokenInfo provideToken(LoginReqDto loginReqDto, MemberLoginResDto memberLoginResDto, String str)
         throws RuntimeException {
 
-        String accessToken = tokenProvider.generateAccessToken(loginReqDto.getPlayerId());
-        String refreshToken = tokenProvider.generateRefreshToken(loginReqDto.getPlayerId());
+        String accessToken = tokenProvider.generateAccessToken(loginReqDto.getPlayerId()+str);
+        String refreshToken = tokenProvider.generateRefreshToken(loginReqDto.getPlayerId()+str);
 
         // 캐시 서버에 token 저장
         try {
             refreshTokenRedisRepository.save(RefreshToken.builder()
-                .id(loginReqDto.getPlayerId())
+                .id(loginReqDto.getPlayerId()+str)
                 .memberKey(String.valueOf(memberLoginResDto.getMemberId()))
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)

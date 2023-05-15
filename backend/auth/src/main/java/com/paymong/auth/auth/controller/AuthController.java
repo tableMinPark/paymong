@@ -52,6 +52,29 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/login/watch")
+    public ResponseEntity<Object> loginWatch(@RequestBody LoginReqDto loginRequestDto) {
+        log.info("login - Call");
+        try {
+            LoginResDto loginResDto = authService.loginWatch(loginRequestDto);
+            log.info("code : {}, message : {}", ErrorStateCode.SUCCESS.getCode(),
+                ErrorStateCode.SUCCESS.name());
+            return ResponseEntity.ok().body(loginResDto);
+        } catch (NotFoundException e) {
+            log.info("code : {}, message : {}", ErrorStateCode.GATEWAY.getCode(),
+                ErrorStateCode.GATEWAY.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.GATEWAY));
+        } catch (TimeoutException e){
+            log.info("code : {}, message : {}", ErrorStateCode.REDIS.getCode(),
+                ErrorStateCode.REDIS.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.REDIS));
+        } catch (RuntimeException e) {
+            log.info("code : {}, message : {}", ErrorStateCode.RUNTIME.getCode(),
+                ErrorStateCode.RUNTIME.name());
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorStateCode.RUNTIME));
+        }
+    }
+
 //    @GetMapping("/test")
 //    public ResponseEntity<Object> test() {
 //        log.info("Authtest - Call");

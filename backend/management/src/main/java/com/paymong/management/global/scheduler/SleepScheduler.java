@@ -82,7 +82,7 @@ public class SleepScheduler{
     public void awakeScheduler(Long mongId){
 
         if(!dynamicSchedulerMap.containsKey(mongId)){
-           log.info("{}는 자고있지 않습니다.");
+           log.info("{}는 자고있지 않습니다.", mongId);
            return;
         }
         try

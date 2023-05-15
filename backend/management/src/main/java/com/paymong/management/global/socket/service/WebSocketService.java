@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.mong.dto.MapCodeDto;
 import com.paymong.management.mong.dto.MapCodeWsDto;
+import com.paymong.management.mong.dto.SendThingsResDto;
 import com.paymong.management.status.dto.MongStatusDto;
 import com.paymong.management.global.socket.dto.MongSocketDto;
 import com.paymong.management.mong.entity.Mong;
+import com.paymong.management.status.dto.ThingsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -106,6 +108,32 @@ public class WebSocketService {
                             }
                         });
                 members.get(mapCodeWsDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+            }
+        }catch (IOException e){
+            log.info("메세지 생성 실패");
+        }
+
+    }
+
+    public void sendThings(SendThingsResDto sendThingsResDto, WebSocketCode webSocketCode) {
+        try {
+            if(!members.containsKey(sendThingsResDto.getMemberId())){
+                log.info("{}와 연결된 소켓이 없습니다.", sendThingsResDto.getMemberId());
+            }else{
+                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new ThingsDto(sendThingsResDto, webSocketCode)));
+                log.info("연결된 세션수 : {}",members.get(sendThingsResDto.getMemberId()).size());
+                members.get(sendThingsResDto.getMemberId()).stream()
+                        .filter(s -> s.getSession().isOpen())
+                        .forEach(s ->
+                        {
+                            try {
+                                log.info("{}에 메세지를 보냅니다.", sendThingsResDto.getMemberId());
+                                s.getSession().sendMessage(message);
+                            } catch (IOException e) {
+                                log.info("응 못보내");
+                            }
+                        });
+                members.get(sendThingsResDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");

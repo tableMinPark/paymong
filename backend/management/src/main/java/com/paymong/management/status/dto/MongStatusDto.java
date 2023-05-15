@@ -3,6 +3,7 @@ package com.paymong.management.status.dto;
 import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.mong.dto.MapCodeDto;
 import com.paymong.management.mong.dto.MapCodeWsDto;
+import com.paymong.management.mong.dto.SendThingsReqDto;
 import com.paymong.management.mong.entity.Mong;
 import lombok.AllArgsConstructor;
 import lombok.Data;

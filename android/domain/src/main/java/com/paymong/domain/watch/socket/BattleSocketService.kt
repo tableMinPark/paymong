@@ -1,7 +1,6 @@
 package com.paymong.domain.watch.socket
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.paymong.common.code.MessageType
@@ -21,7 +20,6 @@ class BattleSocketService {
     }
 
     private val url = "ws://dev.paymong.com:8080/battle"
-//    private val url = "ws://10.0.2.2:11050/ws/battle"
     private lateinit var socket: OkHttpClient
     private lateinit var webSocket: WebSocket
 
@@ -33,15 +31,12 @@ class BattleSocketService {
     }
 
     fun connect(mongId: Long, mongCode: String, latitude: Double, longitude: Double) {
-        Log.e("SocketService", "연결")
         val battleMessageResDto = BattleConnectReqDto(MessageType.CONNECT, mongId, mongCode, latitude, longitude)
         val json = Gson().toJson(battleMessageResDto)
-        Log.e("battle", webSocket.toString())
         webSocket.send(json)
     }
 
     fun disConnect(mongId: Long, mongCode: String) {
-        Log.e("SocketService", "연결 종료")
         val battleMessageResDto = BattleConnectReqDto(MessageType.DISCONNECT, mongId, mongCode, 0.0, 0.0)
         val json = Gson().toJson(battleMessageResDto)
         webSocket.send(json)
@@ -49,7 +44,6 @@ class BattleSocketService {
     }
 
     fun select(type: MessageType, characterId: Long, battleRoomId: String, order: String) {
-        Log.e("SocketService", "배틀 선택")
         val battleMessageReqDto =
             BattleMessageReqDto(type, characterId, battleRoomId, order)
         val json = Gson().toJson(battleMessageReqDto)

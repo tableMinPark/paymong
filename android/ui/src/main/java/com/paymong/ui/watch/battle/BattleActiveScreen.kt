@@ -80,8 +80,6 @@ fun BattleActive(
         }
         MatchingCode.ACTIVE_RESULT -> {
             Handler(Looper.getMainLooper()).postDelayed({
-                Log.d("battle", "싸움 애니메이션 ON")
-
                 battleViewModel.matchingState = MatchingCode.SELECT_BEFORE
             }, 4000)
         }

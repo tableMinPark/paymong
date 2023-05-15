@@ -38,7 +38,7 @@ class AppLandinglViewModel(
     companion object {
         private const val START_WEAR_ACTIVITY_PATH = "/start-activity"
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
-        private const val PLAY_STORE_APP_URI = "market://details?id=com.nhn.android.search&hl=ko"
+        private const val PLAY_STORE_APP_URI = "market://details?id=com.paymong"
     }
 
     private val authRepository: AuthRepository = AuthRepository()
@@ -47,9 +47,6 @@ class AppLandinglViewModel(
     var landingCode by mutableStateOf(LandingCode.LOADING)
     var wearNodesWithApp: Set<Node>? = null
     var allConnectedNodes: List<Node>? = null
-
-    init {
-    }
 
     // 리프레시 토큰 로그인
     fun refreshLogin() {
@@ -69,7 +66,6 @@ class AppLandinglViewModel(
     }
     // 웨어러블 최초 등록 여부 확인
     fun registCheck() {
-        Log.d("landing", landingCode.toString())
         viewModelScope.launch {
             val watchId = dataApplicationRepository.getValue("watchId")
 
@@ -78,7 +74,6 @@ class AppLandinglViewModel(
             } else {
                 installCheck()
             }
-            Log.d("landing", landingCode.toString())
         }
     }
     fun googlePlayLogin() {
@@ -175,7 +170,7 @@ class AppLandinglViewModel(
         val wearNodesWithApp = wearNodesWithApp
 
         // 연결된 기기가 있고 설치된 경우
-        if (wearNodesWithApp != null && wearNodesWithApp.isNotEmpty()) {
+        if (!wearNodesWithApp.isNullOrEmpty()) {
             landingCode = LandingCode.HAS_WEARABLE_SUCCESS
         }
         // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
@@ -188,6 +183,7 @@ class AppLandinglViewModel(
         }
     }
     fun openPlayStoreOnWearDevicesWithoutApp() {
+        Log.e("openPlayStoreOnWearDevicesWithoutApp()", "start")
         val wearNodesWithApp = wearNodesWithApp ?: return
         val allConnectedNodes = allConnectedNodes ?: return
         val nodesWithoutApp = allConnectedNodes - wearNodesWithApp
@@ -197,7 +193,6 @@ class AppLandinglViewModel(
         nodesWithoutApp.forEach { node ->
             viewModelScope.launch {
                 try {
-                    delay(1000)
                     remoteActivityHelper
                         .startRemoteActivity(
                             targetIntent = intent,
@@ -206,6 +201,8 @@ class AppLandinglViewModel(
                         .await()
                 } catch (throwable: Throwable) {
                     throwable.printStackTrace()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
@@ -217,8 +214,6 @@ class AppLandinglViewModel(
                     .getCapability(CAPABILITY_WEAR_APP, CapabilityClient.FILTER_REACHABLE)
                     .await()
                     .nodes
-
-                // Send a message to all nodes in parallel
                 nodes.map { node ->
                     async {
                         if (node.id != "") {

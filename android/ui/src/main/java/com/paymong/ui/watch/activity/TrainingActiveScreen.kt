@@ -30,7 +30,6 @@ import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 
-
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun TrainingActive(
@@ -41,7 +40,6 @@ fun TrainingActive(
 ) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val boxHeight = if (screenWidthDp < 200) 60 else 90
     val successPadding = if (screenWidthDp < 200) 7 else 12
     val successWidth = if (screenWidthDp < 200) 160 else 180
     val successHeight = if (screenWidthDp < 200) 80 else 100
@@ -69,7 +67,6 @@ fun TrainingActive(
         TrainingTime(trainingViewModel)
         Spacer(modifier = Modifier.height(3.dp))
 
-        // Character
         val mongCode = watchViewModel.mong.mongCode
         val mongResourceCode = painterResource(mongCode.resourceCode)
 

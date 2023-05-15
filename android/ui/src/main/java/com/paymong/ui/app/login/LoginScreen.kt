@@ -1,7 +1,5 @@
 package com.paymong.ui.app.login
 
-import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -20,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Text
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
@@ -42,7 +39,6 @@ fun Login(
     LaunchedEffect(key1 = true) {
         appLandinglViewModel.registCheck()
     }
-    Log.d("landing", appLandinglViewModel.landingCode.toString())
     if (appLandinglViewModel.landingCode == LandingCode.LOGIN_SUCCESS) {
         appLandinglViewModel.landingCode = LandingCode.DONE
         navController.navigate(AppNavItem.Main.route) {
@@ -54,13 +50,13 @@ fun Login(
         }
     } 
     // 등록된 와치가 있는 경우
-    else if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS) {
-        Toast.makeText(
-            LocalContext.current,
-            ToastMessage.REGIST_WEARABLE_SUCCESS.message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+//    else if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_SUCCESS) {
+//        Toast.makeText(
+//            LocalContext.current,
+//            ToastMessage.REGIST_WEARABLE_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    }
     // 돈없어서 워치 없는 친구들 여기야 여기!
     else if (appLandinglViewModel.landingCode == LandingCode.REGIST_WEARABLE_FAIL) {
         Toast.makeText(
@@ -70,21 +66,21 @@ fun Login(
         ).show()
     }
     // 연결된 기기가 있고 설치된 경우
-    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
-        Toast.makeText(
-            LocalContext.current,
-            ToastMessage.HAS_WEARABLE_SUCCESS.message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+//    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_SUCCESS) {
+//        Toast.makeText(
+//            LocalContext.current,
+//            ToastMessage.HAS_WEARABLE_SUCCESS.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    }
     // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
-    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
-        Toast.makeText(
-            LocalContext.current,
-            ToastMessage.HAS_WEARABLE_FAIL.message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+//    else if (appLandinglViewModel.landingCode == LandingCode.HAS_WEARABLE_FAIL) {
+//        Toast.makeText(
+//            LocalContext.current,
+//            ToastMessage.HAS_WEARABLE_FAIL.message,
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    }
     else if (appLandinglViewModel.landingCode == LandingCode.LOGIN_FAIL) {
         Toast.makeText(
             LocalContext.current,
@@ -184,13 +180,5 @@ fun Login(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LandingLoginPreview() {
-    val navController = rememberNavController()
-    PaymongTheme {
     }
 }

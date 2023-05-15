@@ -4,15 +4,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paymong.data.repository.MemberRepository
-import com.paymong.domain.entity.Collect
 import com.paymong.domain.entity.Point
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class PayPointViewModel : ViewModel() {
-
     var payList = mutableListOf<Point>()
     var success = mutableStateOf(false)
     private val memberRepository: MemberRepository = MemberRepository()
@@ -36,9 +33,5 @@ class PayPointViewModel : ViewModel() {
                 success.value = true
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }

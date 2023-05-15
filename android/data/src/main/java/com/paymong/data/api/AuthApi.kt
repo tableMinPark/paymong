@@ -1,15 +1,10 @@
 package com.paymong.data.api
 
 import com.paymong.data.model.request.LoginReqDto
-import com.paymong.data.model.request.ReissueReqDto
 import com.paymong.data.model.response.LoginResDto
 import com.paymong.data.model.response.ReissueResDto
-import kotlinx.coroutines.Deferred
-import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApi {

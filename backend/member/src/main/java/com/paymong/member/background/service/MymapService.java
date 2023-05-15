@@ -23,7 +23,7 @@ public class MymapService {
     public FindMymapResDto findMymap(String memberIdStr) throws RuntimeException{
 		Long memberId = Long.parseLong(memberIdStr);
 		LocalDateTime aHourAgo = LocalDateTime.now().minusHours(1L);
-		System.out.println(aHourAgo);
+		System.out.println("한시간전:"+aHourAgo);
 		Mymap mymap = mymapRepository.getByMemberId(memberId).orElseThrow(() -> new NotFoundMymapException());
 		if( mymap.getUpdDt().isBefore(aHourAgo )){
 			mymap.setMapCode("MP000");

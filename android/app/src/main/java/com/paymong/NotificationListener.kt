@@ -42,7 +42,6 @@ class NotificationListener : NotificationListenerService(), CapabilityClient.OnC
         super.onNotificationPosted(sbn)
 
         try {
-
             val packageName: String = sbn.packageName ?: ""
             val extras = sbn.notification.extras
             val title = extras.get(Notification.EXTRA_TITLE).toString()

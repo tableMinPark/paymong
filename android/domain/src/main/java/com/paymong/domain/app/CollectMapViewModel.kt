@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class CollectMapViewModel : ViewModel() {
     var mapList = mutableListOf<Collect>()
+    var openList = mutableListOf<Collect>()
     var success = mutableStateOf(false)
     private var collectRepository: CollectRepository = CollectRepository()
 
@@ -21,8 +22,12 @@ class CollectMapViewModel : ViewModel() {
             }.collect{
                 data ->
                 mapList.clear()
+                openList.clear()
                 for(i in data.indices){
                     mapList.add(Collect(data[i].isOpen, data[i].name, data[i].mapCode))
+                    if(data[i].isOpen) {
+                        openList.add(Collect(data[i].isOpen, data[i].name, data[i].mapCode))
+                    }
                 }
                 success.value = true
             }

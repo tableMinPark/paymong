@@ -15,9 +15,11 @@ import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.domain.app.AppLandinglViewModel
+import com.paymong.domain.app.CollectPayMongViewModel
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
 import com.paymong.ui.app.collect.CollectMap
+import com.paymong.ui.app.collect.MongMap
 import com.paymong.ui.app.condition.Condition
 import com.paymong.ui.app.help.Help
 import com.paymong.ui.app.info_detail.InfoDetail
@@ -93,6 +95,10 @@ fun AppMainNav(appLandingViewModel : AppLandinglViewModel){
             val mapViewModel = viewModel<CollectMapViewModel>(viewModelStoreOwner)
             val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             CollectMap(navController, mapViewModel, soundViewModel)
+        }
+        composable(route = AppNavItem.MongMap.route) {
+            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+            MongMap(navController, soundViewModel)
         }
     }
 }

@@ -1,10 +1,8 @@
 package com.paymong.ui.app.component
 
-import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -99,12 +97,4 @@ fun EmotionGif(appViewModel: AppViewModel, paddingTop:Int, paddingRight:Int, pad
             .padding(top = paddingTop.dp, end = paddingRight.dp, bottom = paddingBottom.dp)
             .size(size.dp)
     )
-}
-
-fun showToast(context: Context, toastMessage: String) {
-    Toast.makeText(
-        context,
-        toastMessage,
-        Toast.LENGTH_SHORT
-    ).show()
 }

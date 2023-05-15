@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
@@ -17,11 +18,10 @@ import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleSelectBefore(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
-    soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
     Background(false)
@@ -29,7 +29,6 @@ fun BattleSelectBefore(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var fontSize = if (screenWidthDp < 200) 20 else 25
     var attackDefenceSize = if (screenWidthDp < 200) 60 else 70
 
     val defence = painterResource(R.drawable.defence)

@@ -17,9 +17,7 @@ data class FindMongResDto(
     val stateCode: String,
     val poopCount: Int,
     val mapCode: String
-){
-    constructor() : this(0L, "", "", "", 0, "")
-}
+)
 
 data class FindMongInfoResDto(
     val name: String,
@@ -53,10 +51,7 @@ data class ManagementResDto(
     val satiety: Double,
     val strength: Double,
     val sleep: Double,
-    val mapCode: String
-) {
-    constructor() : this("", 0, "", "", 0, 0.0, 0.0, 0.0, 0.0, "")
-}
+)
 
 data class EvolutionResDto(
     val mongCode: String,
@@ -67,19 +62,31 @@ data class GraduationResDto(
     val mongCode: String,
 )
 
+data class RealTimeResDto(
+    val code: String,
+    val message: String
+)
 
 data class ManagementRealTimeResDto(
     val code: String,
-    val poopCount: Int,
     val message: String,
+    val poopCount: Int,
     val stateCode: String,
     val weight: Int,
     val health: Double,
     val satiety: Double,
     val strength: Double,
-    val sleep: Double,
-    val mapCode: String,
+    val sleep: Double
+)
+
+data class MapRealTimeResDto(
+    val code: String,
+    val message: String,
+    val mapCode: String
+)
+
+data class ThingsRealTimeResDto(
+    val code: String,
+    val message: String,
     val thingsCode: String
-) {
-    constructor() : this("", 0, "", "", 0, 0.0, 0.0, 0.0, 0.0, "", "")
-}
+)

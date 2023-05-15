@@ -17,6 +17,7 @@ import com.google.android.gms.wearable.*
 import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.WatchMain
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
@@ -28,23 +29,21 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
     private lateinit var messageClient: MessageClient
-
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 설치여부확인
+        // 설치 여부 확인
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
         messageClient = Wearable.getMessageClient(this)
-
         watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
 
         // 필수 권한 확인
-        checkPermission()
+        isNotificationPermissionGranted()
 
         // 화면 켜짐 유지
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -54,10 +53,6 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         }
 
     }
-    override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        watchLandingViewModel.androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
-        watchLandingViewModel.installCheck()
-    }
     override fun onPause() {
         super.onPause()
         capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
@@ -66,8 +61,12 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         super.onResume()
         capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
     }
+    override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
+        watchLandingViewModel.androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
+        watchLandingViewModel.installCheck()
+    }
     // 필수 권한 확인
-    private fun checkPermission() {
+    private fun isNotificationPermissionGranted() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION

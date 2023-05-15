@@ -240,7 +240,7 @@ fun MainInteraction(
             Box (
                 modifier = Modifier
                     .clickable {
-                        if (isBtnActive == true) {
+                        if (isBtnActive) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             animationState.value = AnimationCode.Poop
                             watchViewModel.poop()

@@ -1,8 +1,5 @@
 package com.paymong.ui.watch.main
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,15 +21,11 @@ import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MongStateCode
-import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.app.component.showToast
 import com.paymong.ui.app.main.CreateImageList
-import com.paymong.ui.app.main.GraduationEffect
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.CharacterGif
 import com.paymong.ui.watch.common.EmotionGif
-import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoilApi::class)
@@ -49,7 +41,6 @@ fun MainInfo(
     val poopSize = if (screenWidthDp < 200) 25 else 35
     val boxTopPadding = if (screenWidthDp < 200) 65 else 75
     val graduFontSize = if (screenWidthDp < 200 ) 10 else 12
-    val mongResourceCode = mainViewModel.mong.mongCode.resourceCode
 
     if(mainViewModel.isHappy) {
         Box(
@@ -127,15 +118,7 @@ fun MainInfo(
                                 Box(modifier = Modifier.scale(2f)) {
                                     CreateImageList()
                                 }
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    mainViewModel.evolutionisClick = false
-                                }, 1800)
                             } else {
-//                                val context = LocalContext.current
-//                                if(mainViewModel.showtoast){
-//                                    showToast(context, mainViewModel.msg)
-//                                }
-
                                 CharacterGif(mainViewModel)
                                 val code = mainViewModel.mong.mongCode.code.split("CH")[1].toInt()
                                 if(code / 100 == 1){

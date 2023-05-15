@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.battle
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -32,13 +31,11 @@ import com.paymong.ui.watch.common.AttackGif
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 import com.paymong.ui.watch.common.DefenceGif
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleActive(
     navController: NavHostController,
-    watchViewModel: WatchViewModel,
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
@@ -124,39 +121,17 @@ fun BattleActive(
 
                 } else {
                     Image(
-                        painter = defence, contentDescription = null,
-                        modifier = Modifier
+                        painter = defence, contentDescription = null, modifier = Modifier
                             .padding(horizontal = 25.dp)
                             .size(attackDefenceSizeSmall.dp)
                     )
                 }
             }
-//
-//
-//            var findCode = ""
-//            val chCode : CharacterCode
-//            val player1: Painter
-//
-//            if (battleViewModel.battleActive.order == "A") {
-//                findCode = battleViewModel.playerCodeB
-//                chCode = CharacterCode.valueOf(findCode)
-//                player1 = painterResource(chCode.resourceCode)
-//
-//            } else {
-//                findCode = battleViewModel.playerCodeA
-//                chCode = CharacterCode.valueOf(findCode)
-//                player1 = painterResource(chCode.resourceCode)
-//            }
-//                Image(
-//                    painter = chA,
-//                    contentDescription = null,
-//                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-//                )
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
                 if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 != 0) ) {
                     if (battleViewModel.battleActive.damageB > 0) {
-                        Box() {
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeA,
                                     contentDescription = null,
@@ -169,19 +144,12 @@ fun BattleActive(
                             Row(modifier = Modifier.size(characterSize.dp)) {
                                 soundViewModel.soundPlay(SoundCode.BATTLE_ATTACK)
                                 AttackGif()
-//                            Image(
-//                                painter = attack,
-//                                contentDescription = null,
-//                                modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-//                            )
                             }
                         }
 
                     } else {
-
-                        Box() {
-
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeA,
                                     contentDescription = null,
@@ -190,8 +158,7 @@ fun BattleActive(
                                         .height(characterSize.dp)
                                 )
                             }
-
-                            Row() {
+                            Row {
                                 Row(
                                     modifier = Modifier
                                         .size(characterSize.dp)
@@ -205,8 +172,8 @@ fun BattleActive(
                     }
                 } else if ((battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
-                        Box() {
-                            Row() {
+                        Box{
+                            Row {
                                 Image(
                                     painter = playerResourceCodeA,
                                     contentDescription = null,
@@ -219,18 +186,13 @@ fun BattleActive(
                             Row(modifier = Modifier.size(characterSize.dp)) {
                                 soundViewModel.soundPlay(SoundCode.BATTLE_ATTACK)
                                 AttackGif()
-//                                Image(
-//                                    painter = attack,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-//                                )
                             }
                         }
 
                     } else {
 
-                        Box() {
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeA,
                                     contentDescription = null,
@@ -252,8 +214,8 @@ fun BattleActive(
                     }
 
                 } else {
-                    Box() {
-                        Row() {
+                    Box {
+                        Row {
                             Image(
                                 painter = playerResourceCodeA,
                                 contentDescription = null,
@@ -266,8 +228,8 @@ fun BattleActive(
                 }
 
             } else {
-                Box() {
-                    Row() {
+                Box {
+                    Row {
                         Image(
                             painter = playerResourceCodeA,
                             contentDescription = null,
@@ -285,8 +247,6 @@ fun BattleActive(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            //게이지 바
-
             var leftHeal = battleViewModel.battleActive.healthA.toFloat()
             if (battleViewModel.battleActive.order == "B") {
                 leftHeal = battleViewModel.battleActive.healthB.toFloat()
@@ -347,34 +307,12 @@ fun BattleActive(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            Text(text = "B", textAlign = TextAlign.Center)
-            // player2 :: 아래쪽
-//            var findCode = ""
-//            val chCode : CharacterCode
-//            val player2: Painter
-//
-//            if (battleViewModel.battleActive.order == "A") {
-//                findCode = battleViewModel.playerCodeA
-//                chCode = CharacterCode.valueOf(findCode)
-//                player2 = painterResource(chCode.resourceCode)
-//
-//            } else {
-//                findCode = battleViewModel.playerCodeB
-//                chCode = CharacterCode.valueOf(findCode)
-//                player2 = painterResource(chCode.resourceCode)
-//            }
-
-//            Image(painter = player2, contentDescription = null, modifier = Modifier.width(characterSize.dp).height(characterSize.dp))
-
-            // ------------------------------------------------------------------------------------------------------------------------------------------------
-
-
             if (battleViewModel.matchingState == MatchingCode.ACTIVE_RESULT) {
                 if ( (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 != 0)  ) {
                     if (battleViewModel.battleActive.damageB > 0) {
 
-                        Box() {
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeB,
                                     contentDescription = null,
@@ -387,19 +325,14 @@ fun BattleActive(
                             Row(modifier = Modifier.size(characterSize.dp)) {
                                 soundViewModel.soundPlay(SoundCode.BATTLE_ATTACK)
                                 AttackGif()
-//                                Image(
-//                                    painter = attack,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-//                                )
                             }
                         }
 
                     } else {
 
-                        Box() {
+                        Box {
 
-                            Row() {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeB,
                                     contentDescription = null,
@@ -421,8 +354,8 @@ fun BattleActive(
                     }
                 } else if ((battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "A" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
-                        Box() {
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeB,
                                     contentDescription = null,
@@ -435,18 +368,13 @@ fun BattleActive(
                             Row(modifier = Modifier.size(characterSize.dp)) {
                                 soundViewModel.soundPlay(SoundCode.BATTLE_ATTACK)
                                 AttackGif()
-//                                Image(
-//                                    painter = attack,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.width(characterSize.dp).height(characterSize.dp)
-//                                )
                             }
                         }
 
                     } else {
 
-                        Box() {
-                            Row() {
+                        Box {
+                            Row {
                                 Image(
                                     painter = playerResourceCodeB,
                                     contentDescription = null,
@@ -468,8 +396,8 @@ fun BattleActive(
                     }
 
                 } else {
-                    Box() {
-                        Row() {
+                    Box {
+                        Row {
                             Image(
                                 painter = playerResourceCodeB,
                                 contentDescription = null,
@@ -482,8 +410,8 @@ fun BattleActive(
                 }
 
             } else {
-                Box() {
-                    Row() {
+                Box {
+                    Row {
                         Image(
                             painter = playerResourceCodeB,
                             contentDescription = null,
@@ -494,9 +422,6 @@ fun BattleActive(
                     }
                 }
             }
-            // -----------------------------------------------------------------------------------------------------------------------------------------------
-
-
             Row(modifier = Modifier.width(30.dp)) {
                 Image(
                     painter = painterResource(R.drawable.battle_me),
@@ -533,7 +458,6 @@ fun BattleActive(
                             .size(attackDefenceSize.dp)
                     )
                 } else {
-
                     Image(
                         painter = attack, contentDescription = null,
                         modifier = Modifier
@@ -542,7 +466,6 @@ fun BattleActive(
                     )
                 }
             }
-
         }
     }
 }

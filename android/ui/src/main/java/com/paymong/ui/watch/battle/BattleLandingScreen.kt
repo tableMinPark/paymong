@@ -38,9 +38,8 @@ fun BattleLanding(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var fontSize = if (screenWidthDp < 200) 12 else 15
-    var battleImgSize = if (screenWidthDp < 200) 150 else 180
-
+    val fontSize = if (screenWidthDp < 200) 12 else 15
+    val battleImgSize = if (screenWidthDp < 200) 150 else 180
 
     Column(
         verticalArrangement = Arrangement.Center,

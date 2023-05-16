@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
+import android.media.MediaScannerConnection
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -207,6 +208,13 @@ fun MongMap(
                             val imageUri = contentResolver.insert(
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                 contentValues
+                            )
+
+                            MediaScannerConnection.scanFile(
+                                context,
+                                arrayOf(imagePath),
+                                arrayOf("image/jpeg"),
+                                null
                             )
 
                             Toast.makeText(context, "이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()

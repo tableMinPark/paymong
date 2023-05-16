@@ -31,6 +31,7 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)

@@ -24,15 +24,19 @@ import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
 
 @Composable
-fun WatchMain(watchLandingViewModel : WatchLandingViewModel) {
-    PaymongTheme() {
+fun WatchMain(
+    watchLandingViewModel : WatchLandingViewModel
+) {
+    PaymongTheme {
         NavGraph(watchLandingViewModel)
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NavGraph (watchLandingViewModel : WatchLandingViewModel){
+fun NavGraph (
+    watchLandingViewModel : WatchLandingViewModel
+){
     val animationState = remember { mutableStateOf(AnimationCode.Normal) }
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState(1)

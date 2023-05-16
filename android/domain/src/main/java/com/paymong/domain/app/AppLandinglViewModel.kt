@@ -234,7 +234,6 @@ class AppLandinglViewModel(
             }
         }
     }
-
 }
 
 class AppLandingViewModelFactory(

@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
@@ -17,6 +18,7 @@ import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.common.MainBackgroundGif
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,9 +37,51 @@ fun Main(
     if(watchViewModel.mapCode == MapCode.MP000){
         MainBackgroundGif()
     } else if (pagerState.currentPage != 1){
-        Box( modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(alpha = 0.4f)) )
+        Box( modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black.copy(alpha = 0.4f)) )
     }
 
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val characterSize = if (screenWidthDp < 200) 80 else 100
+    if (!watchViewModel.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(characterSize.dp)
+                    .height(characterSize.dp)
+            ) {
+                LoadingGif()
+            }
+        }
+    } else {
+        MainSwipe(
+            animationState,
+            pagerState,
+            coroutineScope,
+            navController,
+            watchViewModel,
+            soundViewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun MainSwipe(
+    animationState: MutableState<AnimationCode>,
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope,
+    navController: NavHostController,
+    watchViewModel : WatchViewModel,
+    soundViewModel: SoundViewModel
+) {
     Column {
         HorizontalPager(
             count = 4,
@@ -61,12 +105,12 @@ fun Main(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 7.dp)
         )
-
     }
     Box {
         if (watchViewModel.stateCode == MongStateCode.CD002) {
-            Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {}
+            Row(modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Black.copy(0.4f))) {}
         }
     }
 }
-

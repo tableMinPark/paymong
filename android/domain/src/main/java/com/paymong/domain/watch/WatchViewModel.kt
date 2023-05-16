@@ -6,7 +6,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.wear.remote.interactions.RemoteActivityHelper
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.MessageClient
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
@@ -34,6 +39,7 @@ class WatchViewModel (
     application: Application
 ): AndroidViewModel(application) {    
     // 포인트 정보
+    var isLoading by mutableStateOf(false)
     var point by mutableStateOf(0)
     // 몽 기본정보 (이름, 아이디, 몽 코드)
     var mong by mutableStateOf(Mong())
@@ -71,22 +77,18 @@ class WatchViewModel (
             findMongCondition()
             findMongInfo()
             findPayPoint()
+            isLoading = true;
         }
-    }
-    override fun onCleared() {
-        super.onCleared()
-        try {
-            managementSocketService.disConnect()
-            socketJob.cancel()
-        } catch (_: Exception) {}
     }
 
     private fun setSocket() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 managementSocketService = ManagementSocketService()
                 managementSocketService.init(listener)
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
     private val listener: WebSocketListener = object : WebSocketListener() {

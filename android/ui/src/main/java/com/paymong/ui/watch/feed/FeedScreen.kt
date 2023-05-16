@@ -40,6 +40,7 @@ fun Feed(
 
     // 선택시 이동
     if(feedViewModel.foodCategory != ""){
+        feedViewModel.reset()
         navController.navigate(WatchNavItem.FeedBuyList.route)
     }
 

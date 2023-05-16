@@ -21,20 +21,29 @@ class FeedViewModel (
     var name by mutableStateOf("")
     var foodCode by mutableStateOf("")
     var price by mutableStateOf(0)
-    var isCanBuy by mutableStateOf(true)
+    var isCanBuy by mutableStateOf(false)
     private var foodList = mutableListOf<Food>()
     var currentFoodPosition by mutableStateOf(0)
 
     var foodCategory by mutableStateOf("")
     var currentCategory by mutableStateOf("")
     var isClick by mutableStateOf(false)
-    private var success by mutableStateOf(false)
 
     private val managementRepository: ManagementRepository = ManagementRepository()
 
+    fun reset() {
+        name = ""
+        foodCode = ""
+        price = 0
+        isCanBuy = false
+        foodList.clear()
+        currentFoodPosition = 0
+
+        isClick = false
+    }
+
     fun getFoodList(point: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            foodList.clear()
             managementRepository.getFoodList(foodCategory)
                 .catch {
                     it.printStackTrace()
@@ -47,30 +56,32 @@ class FeedViewModel (
                                 data[i].name,
                                 data[i].foodCode,
                                 data[i].price,
-                                data[i].lastBuy
+                                data[i].lastBuy ?: LocalDateTime.now().minusMinutes(10)
                             )
                         )
                     }
                     changeCurrentFoodPosition(point)
                     currentCategory = foodCategory
                     foodCategory = ""
-                    success = true
                 }
         }
     }
     fun prevButtonClick(point: Int) {
+        if (foodCode == "") return
         currentFoodPosition--
         if (currentFoodPosition < 0)
             currentFoodPosition = foodList.size - 1
         changeCurrentFoodPosition(point)
     }
     fun nextButtonClick(point: Int) {
+        if (foodCode == "") return
         currentFoodPosition++
         if (currentFoodPosition >= foodList.size)
             currentFoodPosition = 0
         changeCurrentFoodPosition(point)
     }
     fun selectButtonClick(fc: String, watchViewModel: WatchViewModel) {
+        if (foodCode == "") return
         // food
         if (fc == "FD") {
             viewModelScope.launch(Dispatchers.IO) {
@@ -79,7 +90,6 @@ class FeedViewModel (
                         it.printStackTrace()
                     }
                     .collect {data ->
-                        success = false
                         watchViewModel.eating = true
                         if (data.code != "201") watchViewModel.updateStates(data)
                     }
@@ -105,8 +115,7 @@ class FeedViewModel (
         foodCode = nowFood.foodCode
         price = nowFood.price
 
-        isCanBuy = if (nowFood.lastBuy != null) {
-            Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600
-        } else nowFood.price <= point
+        isCanBuy = if (nowFood.lastBuy == null && nowFood.price <= point) true
+        else Duration.between(nowFood.lastBuy, LocalDateTime.now()).seconds >= 600 && nowFood.price <= point
     }
 }

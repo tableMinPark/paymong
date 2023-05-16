@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,13 +43,13 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         isNotificationPermissionGranted()
 
         // 화면 켜짐 유지
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContent {
             WatchMain(watchLandingViewModel)
         }
-
     }
+
     override fun onPause() {
         super.onPause()
         capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
@@ -79,7 +78,7 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
             ) == PackageManager.PERMISSION_DENIED
         ) {
             // 신체 활동 접근 권한이 없으면 권한 요청
-            var permissions = arrayOf(
+            val permissions = arrayOf(
                 Manifest.permission.ACTIVITY_RECOGNITION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -89,6 +88,7 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         }
     }
     // 권한 설정
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         grantResults.forEach {

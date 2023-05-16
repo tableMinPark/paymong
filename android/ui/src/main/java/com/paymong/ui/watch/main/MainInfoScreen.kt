@@ -207,7 +207,7 @@ fun CreateImageList() {
 
 @Composable
 fun GraduationEffect(
-    mainViewModel: WatchViewModel,
+    watchViewModel: WatchViewModel,
     graduationFontSize : Int
 ) {
     val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
@@ -247,7 +247,7 @@ fun GraduationEffect(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-                            mainViewModel.graduation()
+                            watchViewModel.graduation()
                         }
                     )
             )}

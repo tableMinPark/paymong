@@ -2,7 +2,7 @@ package com.paymong.common.code
 
 enum class LandingCode {
     LOADING,
-    INSTALL, NOT_INSTALL, VALID,
+    INSTALL, NOT_INSTALL,
     DONE,
 
     LOGIN_SUCCESS, LOGIN_FAIL,

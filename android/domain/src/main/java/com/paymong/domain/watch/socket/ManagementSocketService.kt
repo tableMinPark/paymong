@@ -44,10 +44,12 @@ class ManagementSocketService {
 
         if (accessToken != "") {
             socket = OkHttpClientSingleton.instance
-            val request: Request = Request.Builder().url(url).header("Authorization", String.format("Bearer %s", accessToken)).build()
+            val request: Request = Request.Builder().url(url)
+                .header("Authorization", String.format("Bearer %s", accessToken)).build()
             webSocket = socket.newWebSocket(request, listener)
         }
     }
+
     fun disConnect() {
         webSocket.close(1000, "연결 종료")
     }

@@ -16,6 +16,7 @@ import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.SocketCode
 import com.paymong.common.code.ThingsCode
 import com.paymong.data.model.response.*
 import com.paymong.data.repository.InformationRepository
@@ -30,6 +31,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.time.LocalDateTime
@@ -40,6 +42,7 @@ class WatchViewModel (
 ): AndroidViewModel(application) {    
     // 포인트 정보
     var isLoading by mutableStateOf(false)
+    var isSocketConnect by mutableStateOf(SocketCode.LOADING)
     var point by mutableStateOf(0)
     // 몽 기본정보 (이름, 아이디, 몽 코드)
     var mong by mutableStateOf(Mong())
@@ -71,27 +74,41 @@ class WatchViewModel (
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     init {
+        Log.e("watchViewModel", "init")
         viewModelScope.launch(Dispatchers.Main) {
             setSocket()
             findMong()
             findMongCondition()
             findMongInfo()
             findPayPoint()
-            isLoading = true;
+            isLoading = true
         }
     }
 
-    private fun setSocket() {
-        viewModelScope.launch {
-            try {
-                managementSocketService = ManagementSocketService()
-                managementSocketService.init(listener)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    override fun onCleared() {
+        super.onCleared()
+        Log.e("watchViewModel", "onCleared")
+//        managementSocketService.disConnect()
+//        socketJob.cancel()
+    }
+
+    fun setSocket() {
+        socketJob = viewModelScope.launch {
+            isSocketConnect = SocketCode.LOADING
+            delay(1000)
+            managementSocketService = ManagementSocketService()
+            managementSocketService.init(listener)
         }
     }
     private val listener: WebSocketListener = object : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            super.onOpen(webSocket, response)
+            isSocketConnect = SocketCode.CONNECT
+        }
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            super.onFailure(webSocket, t, response)
+            isSocketConnect = SocketCode.DISCONNECT
+        }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
                 val managementResDto = Gson().fromJson(text, RealTimeResDto::class.java)

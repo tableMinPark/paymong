@@ -1,6 +1,5 @@
 package com.paymong.ui.app.collect
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -171,17 +169,5 @@ fun ComponentRow(
                 Component("", R.drawable.none)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CollectMapPreview() {
-//    val navController = rememberNavController()
-
-    PaymongTheme {
-//        CollectMap(navController)
-//        ComponentRow(0)
-//        Component("스타벅스", R.drawable.mp001)
     }
 }

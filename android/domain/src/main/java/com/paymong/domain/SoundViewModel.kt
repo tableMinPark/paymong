@@ -2,6 +2,7 @@ package com.paymong.domain
 
 import android.app.Application
 import android.media.SoundPool
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ class SoundViewModel (
 
 
     init {
+        Log.e("soundViewModel", "init")
         viewModelScope.launch(Dispatchers.Main) {
             mainButtonSound = soundPool.load(application, com.paymong.common.R.raw.button_sound, 1)
 
@@ -84,5 +86,11 @@ class SoundViewModel (
 
     private fun getSound(sound : Int) : Int {
         return soundPool.play(sound, 0.5f, 0.5f, 1, 0, 1.0f)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.e("soundViewModel", "onCleared")
+
     }
 }

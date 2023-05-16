@@ -38,15 +38,15 @@ fun Landing(
     // 로그인  (리프레시 있는 경우)
     when(watchLandingViewModel.loginState) {
          LandingCode.LOGIN_SUCCESS -> {
-            watchLandingViewModel.loginState = LandingCode.DONE
-            navController.navigate(WatchNavItem.Main.route){
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
-                // 스택 첫 화면 메인화면으로 변경
-                navController.graph.setStartDestination(WatchNavItem.Main.route)
-                launchSingleTop =true
-            }
+             watchLandingViewModel.loginState = LandingCode.DONE
+             navController.navigate(WatchNavItem.Main.route){
+                 popUpTo(navController.graph.id) {
+                     inclusive = true
+                 }
+                 // 스택 첫 화면 메인화면으로 변경
+                 navController.graph.setStartDestination(WatchNavItem.Main.route)
+                 launchSingleTop =true
+             }
         }
         // 로그인 실패 (리프레시 없음)
         LandingCode.LOGIN_FAIL -> {
@@ -71,7 +71,7 @@ fun Landing(
         when (watchLandingViewModel.landingCode) {
             LandingCode.NOT_INSTALL -> {
                 Text(
-                    text = "모바일 앱 설치 후\n설정이 필요합니다.\n\n터치해서\n모바일 앱 설치하기",
+                    text = "모바일 앱 설치 후\n설정이 필요합니다.\n\n터치해서\n\n모바일 앱 설치하기",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontFamily = dalmoori,
@@ -81,7 +81,7 @@ fun Landing(
             }
             LandingCode.INSTALL -> {
                 Text(
-                    text = "초기 설정이 필요합니다.\n\n터치해서\n모바일 앱에서 초기 설정하기",
+                    text = "초기 설정이 필요합니다.\n\n터치해서\n\n모바일 앱에서 초기 설정하기",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontFamily = dalmoori,

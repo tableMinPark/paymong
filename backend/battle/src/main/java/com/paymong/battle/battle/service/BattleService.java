@@ -8,6 +8,7 @@ import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.dto.response.FindMongBattleResDto;
 import com.paymong.battle.battle.dto.response.FindMongMasterResDto;
 import com.paymong.battle.battle.vo.common.BattleLog;
+import com.paymong.battle.battle.vo.common.BattleLog.FightType;
 import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.battle.vo.common.MongStats;
 import com.paymong.battle.global.client.InformationServiceClient;
@@ -20,7 +21,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -56,7 +56,8 @@ public class BattleService {
         battleRoomMap.remove(battleRoomId);
     }
 
-    public BattleMessageResDto battleActive(Integer nowTurn, MongStats statsA, MongStats statsB, BattleLog battleLog) {
+    public BattleMessageResDto battleActive(Integer nowTurn, MongStats statsA, MongStats statsB,
+        BattleLog battleLog) {
 
         /*
             - 몸무게 = 방어력  ///  근력 = 공격
@@ -73,35 +74,70 @@ public class BattleService {
 
         if (nowTurn % 2 != 0) {
             // A 공격
-            if (!isSameDirection(battleLog)) {
-                // B가 A의 공격을 받음
-                log.info("A 공격 : 다른방향");
-                Double powerA = 100.0 + statsA.getStrength();
-                Double defenseB = 100.0 + statsB.getWeight();
-                damageB = powerA * 100 / defenseB;
+
+            // 1명이라도 STAY 한 경우
+            if (isStay(battleLog)) {
+                // B만 STAY 인 경우
+                if (!battleLog.getSelectA().equals(FightType.STAY)) {
+                    log.info("A 공격 : B만 STAY. 무조건 공격 성공");
+                    damageB = attack(statsA, statsB);
+                }
+                // A만 STAY 이거나, A와 B 모두 STAY 인 경우
+                else {
+                    // B 수비 성공
+                    log.info("A 공격 : A만 STAY 이거나, A와 B 모두 STAY");
+                    damageA = 0.0;
+                    damageB = 0.0;
+                }
             } else {
-                log.info("A 공격 : 같은방향");
-                // B가 A의 공격을 회피함
-                damageA = 0.0;
-                damageB = 0.0;
+                if (!isSameDirection(battleLog)) {
+                    // B가 A의 공격을 받음
+                    log.info("A 공격 : 다른방향");
+                    damageB = attack(statsA, statsB);
+                } else {
+                    log.info("A 공격 : 같은방향");
+                    // B가 A의 공격을 회피함
+                    damageA = 0.0;
+                    damageB = 0.0;
+                }
             }
+
             nextAttacker = "B";
 
         } else {
             // B 공격
-            if (!isSameDirection(battleLog)) {
-                // A가 B의 공격을 받음
-                log.info("B 공격 : 다른방향");
-                Double powerB = 100.0 + statsB.getStrength();
-                Double defenseA = 100.0 + statsA.getWeight();
-                damageA = powerB * 100 / defenseA;
+
+            // 1명이라도 STAY 한 경우
+            if (isStay(battleLog)) {
+                // A만 STAY 인 경우
+                if (!battleLog.getSelectB().equals(FightType.STAY)) {
+                    log.info("B 공격 : A만 STAY. 무조건 공격 성공");
+                    damageA = attack(statsB, statsA);
+                }
+                // B만 STAY 이거나, A와 B 모두 STAY 인 경우
+                else {
+                    // A 수비 성공
+                    log.info("B 공격 : B만 STAY 이거나, A와 B 모두 STAY");
+                    damageA = 0.0;
+                    damageB = 0.0;
+                }
             } else {
-                // A가 B의 공격을 회피함
-                log.info("B 공격 : 같은방향");
-                damageA = 0.0;
-                damageB = 0.0;
+
+                if (!isSameDirection(battleLog)) {
+                    // A가 B의 공격을 받음
+                    log.info("B 공격 : 다른방향");
+                    damageA = attack(statsB, statsA);
+                } else {
+                    // A가 B의 공격을 회피함
+                    log.info("B 공격 : 같은방향");
+                    damageA = 0.0;
+                    damageB = 0.0;
+                }
+
             }
+
             nextAttacker = "A";
+
         }
         return BattleMessageResDto.builder()
             .nextAttacker(nextAttacker)
@@ -110,8 +146,23 @@ public class BattleService {
             .build();
     }
 
+    private Double attack(MongStats attackMong, MongStats defenceMong) {
+        Double power = 100.0 + attackMong.getStrength();
+        Double defense = 100.0 + defenceMong.getWeight();
+        return power * 100 / defense;
+    }
+
     private boolean isSameDirection(BattleLog battleLog) {
         if (battleLog.getSelectA().equals(battleLog.getSelectB())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isStay(BattleLog battleLog) {
+        if (battleLog.getSelectA().equals(FightType.STAY) || battleLog.getSelectB()
+            .equals(FightType.STAY)) {
             return true;
         } else {
             return false;
@@ -149,7 +200,8 @@ public class BattleService {
         log.info("earnMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
-            om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
+            om.convertValue(
+                informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
                 FindMongMasterResDto.class);
 
         AddPointReqDto addPointReqDto = AddPointReqDto.builder()
@@ -158,30 +210,34 @@ public class BattleService {
             .code("AT012")
             .build();
 
-        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()), addPointReqDto);
+        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()),
+            addPointReqDto);
     }
 
     public void spendMoney(Long mongId) {
         log.info("spendMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
-            om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
+            om.convertValue(
+                informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
                 FindMongMasterResDto.class);
 
         AddPointReqDto addPointReqDto = AddPointReqDto.builder()
-            .point(money*-1)
+            .point(money * -1)
             .content("배틀")
             .code("AT012")
             .build();
 
-        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()), addPointReqDto);
+        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()),
+            addPointReqDto);
     }
 
-    public void keepMoney(Long mongId){
+    public void keepMoney(Long mongId) {
         log.info("keepMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =
-            om.convertValue(informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
+            om.convertValue(
+                informationServiceClient.findMongMaster(new FindMongMasterReqDto(mongId)).getBody(),
                 FindMongMasterResDto.class);
 
         // point history 에 0원이라고 기록
@@ -191,6 +247,7 @@ public class BattleService {
             .code("AT012")
             .build();
 
-        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()), addPointReqDto);
+        memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()),
+            addPointReqDto);
     }
 }

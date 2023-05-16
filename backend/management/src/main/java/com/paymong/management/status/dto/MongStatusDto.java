@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,6 +18,8 @@ public class MongStatusDto {
     private String code;
     private String message;
     private Long mongId;
+    private String name;
+    private LocalDateTime born;
     private String mapCode;
     private String mongCode;
     private String stateCode;
@@ -40,6 +44,8 @@ public class MongStatusDto {
         this.code = webSocketCode.getCode();
         this.message = webSocketCode.getMessage();
         this.mongId = mong.getMongId();
+        this.name = mong.getName();
+        this.born = mong.getRegDt();
         this.stateCode = mong.getStateCode();
         this.mongCode = mong.getCode();
         this.weight = mong.getWeight();

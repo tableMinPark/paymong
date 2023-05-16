@@ -4,7 +4,6 @@ import com.paymong.common.code.ThingsCode
 import java.time.LocalDateTime
 
 data class FindMemberResDto(
-    val mongCode : String,
     val point : Int
 )
 

@@ -50,8 +50,8 @@ fun MainInteraction(
     var isBtnActive = true
     var sleepActive = true
 
-    if(watchViewModel.isClicked){
-        watchViewModel.isClicked = false
+    if(watchViewModel.isNavToMainClick){
+        watchViewModel.isNavToMainClick = false
         navController.navigate(WatchNavItem.Main.route) {
             coroutineScope.launch { pagerState.scrollToPage(1) }
             popUpTo(navController.graph.findStartDestination().id)
@@ -201,7 +201,7 @@ fun MainInteraction(
                     .clickable {
                         if (isBtnActive || sleepActive) {
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
-                            watchViewModel.isClicked = true
+                            watchViewModel.isNavToMainClick = true
                             animationState.value = AnimationCode.Sleep
                             watchViewModel.sleep()
                         }
@@ -238,7 +238,7 @@ fun MainInteraction(
                             soundViewModel.soundPlay(SoundCode.MAIN_BUTTON)
                             animationState.value = AnimationCode.Poop
                             watchViewModel.poop()
-                            watchViewModel.isClicked = true
+                            watchViewModel.isNavToMainClick = true
                         }
                         else {
                             showToast(context, ToastMessage.BUTTON_NOT_ACTIVE)

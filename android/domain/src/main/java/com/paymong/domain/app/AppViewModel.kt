@@ -37,7 +37,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var point by mutableStateOf(0)
     var mapCode by mutableStateOf(MapCode.MP000)
     var thingsCode by mutableStateOf(ThingsCode.ST999)
-    var isClick by mutableStateOf(false)
+    var evolutionisClick by mutableStateOf(false)
 
     // 몽 정보
     var mong by mutableStateOf(Mong())
@@ -78,27 +78,33 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
                 val managementResDto = Gson().fromJson(text, RealTimeResDto::class.java)
+                val gson = managementSocketService.getGsonInstance()
 
                 if (managementResDto.code != "201") {
                     Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
                         "200", "202", "203", "204", "205", "206", "207", "208" -> {
-                            val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
+                            val managementRealTimeResDto = gson.fromJson(text, ManagementRealTimeResDto::class.java)
                             stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
                             poopCount = managementRealTimeResDto.poopCount
+                            mong = Mong(
+                                managementRealTimeResDto.mongId,
+                                managementRealTimeResDto.name,
+                                MongCode.valueOf(managementRealTimeResDto.mongCode)
+                            )
                         }
                         "209" -> {
-                            val mapRealTimeResDto = Gson().fromJson(text, MapRealTimeResDto::class.java)
+                            val mapRealTimeResDto = gson.fromJson(text, MapRealTimeResDto::class.java)
                             Log.d("socket", mapRealTimeResDto.toString())
                             mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
                         }
                         "210" -> {
-                            val thingsRealTimeResDto = Gson().fromJson(text, ThingsRealTimeResDto::class.java)
+                            val thingsRealTimeResDto = gson.fromJson(text, ThingsRealTimeResDto::class.java)
                             Log.d("socket", thingsRealTimeResDto.toString())
                             thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
                         }
                         "211" -> {
-                            val payPointRealTimeResDto = Gson().fromJson(text, PayPointRealTimeResDto::class.java)
+                            val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
                             Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
                         }
@@ -164,18 +170,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     //진화
     fun evolution(){
         viewModelScope.launch(Dispatchers.IO) {
+            undomong = mong.mongCode
             managementRepository.evolution()
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{ data->
-                    undomong = mong.mongCode
-                    stateCode = MongStateCode.valueOf(data.stateCode)
-                    mong = Mong(
-                        mong.mongId,
-                        mong.name,
-                        MongCode.valueOf(data.mongCode)
-                    )
+                .collect {
+                    evolutionisClick = true
+                    delay(2000)
+                    evolutionisClick = false
                 }
         }
     }

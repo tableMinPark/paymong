@@ -1,8 +1,6 @@
 package com.paymong.domain.watch.socket
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.google.gson.Gson
+import com.google.gson.*
 import com.paymong.common.code.MessageType
 import com.paymong.data.model.request.BattleConnectReqDto
 import com.paymong.data.model.request.BattleMessageReqDto
@@ -19,11 +17,10 @@ class BattleSocketService {
             .build()
     }
 
-    private val url = "ws://dev.paymong.com:8080/battle"
+    private val url = "ws://dev.paymong.com:11050/battle"
     private lateinit var socket: OkHttpClient
     private lateinit var webSocket: WebSocket
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun init(listener: WebSocketListener){
         socket = OkHttpClientSingleton.instance
         val request: Request = Request.Builder().url(url).build()

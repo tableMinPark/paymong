@@ -102,7 +102,6 @@ fun MainInfo(
                                 color = Color.White,
                                 modifier = Modifier.clickable {
                                     watchViewModel.evolution()
-                                    watchViewModel.evolutionisClick = true
                                 }
                             )
                         } else {

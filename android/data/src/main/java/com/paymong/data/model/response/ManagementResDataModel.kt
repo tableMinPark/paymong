@@ -76,7 +76,11 @@ data class ManagementRealTimeResDto(
     val health: Double,
     val satiety: Double,
     val strength: Double,
-    val sleep: Double
+    val sleep: Double,
+    val mongId: Long,
+    val name: String,
+    val mongCode: String,
+    val born: LocalDateTime
 )
 
 data class MapRealTimeResDto(

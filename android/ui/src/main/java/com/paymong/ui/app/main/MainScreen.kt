@@ -70,8 +70,8 @@ fun Main(
 
 @Composable
 fun Help(navController: NavController,
-         soundViewModel: SoundViewModel)
-{
+         soundViewModel: SoundViewModel
+) {
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -534,7 +534,6 @@ fun MakeEgg(
                                 color = Color.White,
                                 modifier = Modifier.clickable {
                                     appViewModel.evolution()
-                                    appViewModel.isClick = true
                                 }
                             )
                         }
@@ -575,7 +574,7 @@ fun MakeEgg(
                             GraduationEffect(appViewModel)
                         }
                         else -> {
-                            if(appViewModel.isClick){
+                            if(appViewModel.evolutionisClick){
                                 Image(painter = painterResource(appViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
@@ -589,7 +588,7 @@ fun MakeEgg(
                                 )
                                 CreateImageList()
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    appViewModel.isClick = false
+                                    appViewModel.evolutionisClick = false
                                 }, 1800)
                             } else{
                                 val mongCodeNumber = appViewModel.mong.mongCode.code.split("CH")[1].toInt()

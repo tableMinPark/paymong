@@ -50,7 +50,7 @@ class WatchViewModel (
     var thingsCode by mutableStateOf(ThingsCode.ST999)
 
     var isHappy by mutableStateOf(false)
-    var isClicked by mutableStateOf(false)
+    var isNavToMainClick by mutableStateOf(false)
     var eating by mutableStateOf(false)
 
     // 몽 진화
@@ -93,12 +93,13 @@ class WatchViewModel (
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
                 val managementResDto = Gson().fromJson(text, RealTimeResDto::class.java)
+                val gson = managementSocketService.getGsonInstance()
 
                 if (managementResDto.code != "201") {
                     Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
                         "200", "202", "203", "204", "205", "206", "207", "208" -> {
-                            val managementRealTimeResDto = Gson().fromJson(text, ManagementRealTimeResDto::class.java)
+                            val managementRealTimeResDto = gson.fromJson(text, ManagementRealTimeResDto::class.java)
                             Log.d("socket", managementRealTimeResDto.toString())
                             stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
                             poopCount = managementRealTimeResDto.poopCount
@@ -108,14 +109,24 @@ class WatchViewModel (
                             val satiety = managementRealTimeResDto.satiety
                             val strength = managementRealTimeResDto.strength
                             val sleep = managementRealTimeResDto.sleep
+                            val mongId = managementRealTimeResDto.mongId
+                            val mongName = managementRealTimeResDto.name
+                            val mongCode = managementRealTimeResDto.mongCode
+                            val born = managementRealTimeResDto.born
+
+                            mong = Mong(
+                                mongId,
+                                mongName,
+                                MongCode.valueOf(mongCode)
+                            )
 
                             mongInfo = MongInfo(
                                 weight,
-                                mongInfo.born
+                                born
                             )
                             mongStats = MongStats(
-                                mongStats.mongId,
-                                mongStats.name,
+                                mongId,
+                                mongName,
                                 health.toFloat(),
                                 satiety.toFloat(),
                                 strength.toFloat(),
@@ -123,17 +134,17 @@ class WatchViewModel (
                             )
                         }
                         "209" -> {
-                            val mapRealTimeResDto = Gson().fromJson(text, MapRealTimeResDto::class.java)
+                            val mapRealTimeResDto = gson.fromJson(text, MapRealTimeResDto::class.java)
                             Log.d("socket", mapRealTimeResDto.toString())
                             mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
                         }
                         "210" -> {
-                            val thingsRealTimeResDto = Gson().fromJson(text, ThingsRealTimeResDto::class.java)
+                            val thingsRealTimeResDto = gson.fromJson(text, ThingsRealTimeResDto::class.java)
                             Log.d("socket", thingsRealTimeResDto.toString())
                             thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
                         }
                         "211" -> {
-                            val payPointRealTimeResDto = Gson().fromJson(text, PayPointRealTimeResDto::class.java)
+                            val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
                             Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
                         }
@@ -173,7 +184,8 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{ data ->
-                    point = data.point.toInt()
+                    Log.d("socket", data.toString())
+                    point = data.point
                 }
         }
     }
@@ -184,6 +196,7 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
+                    Log.d("socket", data.toString())
                     mong = Mong(
                         data.mongId,
                         data.name,
@@ -202,6 +215,7 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
+                    Log.d("socket", data.toString())
                     mongStats = MongStats(
                         data.mongId,
                         data.name,
@@ -220,6 +234,7 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
+                    Log.d("socket", data.toString())
                     mongInfo = MongInfo(
                         data.weight,
                         data.born
@@ -248,7 +263,6 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{ data ->
-                    // 쓰다듬기 성공
                     if(data.code == "200"){
                         isHappy = true
                         delay(2000)
@@ -275,21 +289,15 @@ class WatchViewModel (
     }
     fun evolution(){
         viewModelScope.launch(Dispatchers.IO) {
+            undomong = mong.mongCode
             managementRepository.evolution()
                 .catch {
                     it.printStackTrace()
                 }
                 .collect{
-                        data->
-                    undomong = mong.mongCode
-                    stateCode = MongStateCode.valueOf(data.stateCode)
-                    mong = Mong(
-                        mong.mongId,
-                        mong.name,
-                        MongCode.valueOf(data.mongCode),
-                    )
-                    delay(1800)
                     evolutionisClick = true
+                    delay(2000)
+                    evolutionisClick = false
                 }
         }
     }
@@ -299,13 +307,7 @@ class WatchViewModel (
                 .catch {
                     it.printStackTrace()
                 }
-                .collect{data->
-                    mong = Mong(
-                        mong.mongId,
-                        mong.name,
-                        MongCode.valueOf(data.mongCode),
-                    )
-                }
+                .collect{}
         }
     }
 }

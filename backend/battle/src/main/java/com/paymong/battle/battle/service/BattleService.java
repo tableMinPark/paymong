@@ -8,6 +8,7 @@ import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.dto.response.FindMongBattleResDto;
 import com.paymong.battle.battle.dto.response.FindMongMasterResDto;
 import com.paymong.battle.battle.vo.common.BattleLog;
+import com.paymong.battle.battle.vo.common.BattleLog.FightType;
 import com.paymong.battle.battle.vo.common.BattleRoom;
 import com.paymong.battle.battle.vo.common.MongStats;
 import com.paymong.battle.global.client.InformationServiceClient;
@@ -20,7 +21,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -73,6 +73,16 @@ public class BattleService {
 
         if (nowTurn % 2 != 0) {
             // A 공격
+
+            // 모두 STAY 인 경우
+            if (isTotalStay(battleLog)) {
+
+            }
+            // 공격자만 STAY 인 경우 : 공격 실패
+            else {
+
+            }
+
             if (!isSameDirection(battleLog)) {
                 // B가 A의 공격을 받음
                 log.info("A 공격 : 다른방향");
@@ -112,6 +122,14 @@ public class BattleService {
 
     private boolean isSameDirection(BattleLog battleLog) {
         if (battleLog.getSelectA().equals(battleLog.getSelectB())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isTotalStay(BattleLog battleLog) {
+        if (battleLog.getSelectA().equals(FightType.STAY) && battleLog.getSelectB().equals(FightType.STAY)) {
             return true;
         } else {
             return false;
@@ -169,7 +187,7 @@ public class BattleService {
                 FindMongMasterResDto.class);
 
         AddPointReqDto addPointReqDto = AddPointReqDto.builder()
-            .point(money*-1)
+            .point(money * -1)
             .content("배틀")
             .code("AT012")
             .build();
@@ -177,7 +195,7 @@ public class BattleService {
         memberServiceClient.addPoint(String.valueOf(findMongMasterResDto.getMemberId()), addPointReqDto);
     }
 
-    public void keepMoney(Long mongId){
+    public void keepMoney(Long mongId) {
         log.info("keepMoney Call : mongId - {}", mongId);
         ObjectMapper om = new ObjectMapper();
         FindMongMasterResDto findMongMasterResDto =

@@ -246,6 +246,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     }
                     break;
 
+                case STAY:
                 case LEFT:
                 case RIGHT:
                     // 방 찾아서 배틀 로직 진행

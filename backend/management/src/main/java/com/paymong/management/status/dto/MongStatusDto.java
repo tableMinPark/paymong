@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class MongStatusDto {
     private String code;
     private String message;
+    private Long mongId;
     private String mapCode;
     private String mongCode;
     private String stateCode;
@@ -38,6 +39,7 @@ public class MongStatusDto {
     public MongStatusDto(Mong mong, WebSocketCode webSocketCode){
         this.code = webSocketCode.getCode();
         this.message = webSocketCode.getMessage();
+        this.mongId = mong.getMongId();
         this.stateCode = mong.getStateCode();
         this.mongCode = mong.getCode();
         this.weight = mong.getWeight();

@@ -3,6 +3,7 @@ package com.paymong.battle.battle.vo.common;
 import com.paymong.battle.battle.dto.request.BattleMessageReqDto;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.service.BattleService;
+import com.paymong.battle.battle.vo.common.BattleLog.FightType;
 import com.paymong.battle.global.code.MessageType;
 import java.io.IOException;
 import java.util.HashMap;
@@ -53,17 +54,24 @@ public class BattleRoom {
         String order = battleMessageReqDto.getOrder();
 
         log.info(nowTurn + " : " + order + " 선택완료");
+        // LEFT, RIGHT, STAY 3가지 TYPE
         if (battleMessageReqDto.getType().equals(MessageType.LEFT)) {
             if (order.equals("A")) {
                 battleLog.setSelectA(BattleLog.FightType.LEFT);
             } else {
                 battleLog.setSelectB(BattleLog.FightType.LEFT);
             }
-        } else {
+        } else if (battleMessageReqDto.getType().equals(MessageType.RIGHT)) {
             if (order.equals("A")) {
                 battleLog.setSelectA(BattleLog.FightType.RIGHT);
             } else {
                 battleLog.setSelectB(BattleLog.FightType.RIGHT);
+            }
+        } else {
+            if (order.equals("A")) {
+                battleLog.setSelectA(BattleLog.FightType.STAY);
+            } else {
+                battleLog.setSelectB(BattleLog.FightType.STAY);
             }
         }
 

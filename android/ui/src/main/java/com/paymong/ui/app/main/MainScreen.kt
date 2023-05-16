@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,7 @@ import com.paymong.common.R
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.SoundCode
+import com.paymong.common.code.ThingsCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
@@ -37,6 +39,7 @@ import com.paymong.ui.theme.*
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.CharacterGif
 import com.paymong.ui.app.component.EmotionGif
+import com.paymong.ui.app.component.ThingsGif
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -377,7 +380,9 @@ fun SleepDialog(
                 Text(
                     text = "( 숫자를 스크롤해주세요 )",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp).background(color = PayMongBlue.copy(alpha = 0.4f)),
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .background(color = PayMongBlue.copy(alpha = 0.4f)),
                     color = Color.Black,
                     fontSize = 13.sp
                 )
@@ -424,7 +429,9 @@ fun WakeDialog(
                 Text(
                     text = "( 숫자를 스크롤해주세요 )",
                     fontFamily = dalmoori,
-                    modifier = Modifier.padding(bottom = 20.dp).background(color = PayMongBlue.copy(alpha = 0.4f)),
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .background(color = PayMongBlue.copy(alpha = 0.4f)),
                     color = Color.Black,
                     fontSize = 13.sp
                 )
@@ -505,6 +512,7 @@ fun MakeEgg(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
+        val density = LocalDensity.current.density
 
         if (appViewModel.retry || code >= 400) { // 알 생성
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
@@ -568,8 +576,7 @@ fun MakeEgg(
                         MongStateCode.CD006 -> { // 졸업
                             Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
                                 contentDescription = null,
-                                modifier = Modifier
-//                                    .height(250.dp)
+                                modifier = Modifier.size((480/density).dp)
                             )
                             GraduationEffect(appViewModel)
                         }
@@ -578,7 +585,7 @@ fun MakeEgg(
                                 Image(painter = painterResource(appViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
-//                                        .height(250.dp)
+                                        .size((480 / density).dp)
                                         .clickable(
                                             interactionSource = remember { MutableInteractionSource() },
                                             indication = null,
@@ -617,33 +624,58 @@ fun MakeEgg(
                                 }
 
                                 if(appViewModel.stateCode == MongStateCode.CD002){
-                                    Row(modifier = Modifier.fillMaxSize().background(color = Color.Black.copy(0.4f))) {
+                                    Row(modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(color = Color.Black.copy(0.4f))) {
                                     }
                                 }
-                            }
 
-                            val poopCount = appViewModel.poopCount
-                            val poopSize = 60
+                                val poopCount = appViewModel.poopCount
+                                val poopSize = 60
 
-                            when (poopCount) {
-                                1 -> {
-                                    Poops(0, 300, 150, 0, poopSize)
+                                when (poopCount) {
+                                    1 -> {
+                                        Poops(0, 300, 150, 0, poopSize)
+                                    }
+                                    2 -> {
+                                        Poops(0, 300, 150, 0, poopSize)
+                                        Poops(280, 0, 200, 0, poopSize)
+                                    }
+                                    3 -> {
+                                        Poops(0, 300, 150, 0, poopSize)
+                                        Poops(280, 0, 200, 0, poopSize)
+                                        Poops(150, 0, 300, 0, poopSize)
+                                    }
+                                    4 -> {
+                                        Poops(0, 300, 150, 0, poopSize)
+                                        Poops(280, 0, 200, 0, poopSize)
+                                        Poops(150, 0, 300, 0, poopSize)
+                                        Poops(0, 180, 320, 0, poopSize)
+                                    }
                                 }
-                                2 -> {
-                                    Poops(0, 300, 150, 0, poopSize)
-                                    Poops(280, 0, 200, 0, poopSize)
+
+                                when(appViewModel.thingsCode){
+                                    ThingsCode.ST000 -> {
+                                        ThingsGif(R.drawable.move_vacuum, 350)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            appViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    ThingsCode.ST001 -> {
+                                        ThingsGif(R.drawable.move_door, 400)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            appViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    ThingsCode.ST002 -> {
+                                        ThingsGif(R.drawable.charging, 200)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            appViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    else -> {}
                                 }
-                                3 -> {
-                                    Poops(0, 300, 150, 0, poopSize)
-                                    Poops(280, 0, 200, 0, poopSize)
-                                    Poops(150, 0, 300, 0, poopSize)
-                                }
-                                4 -> {
-                                    Poops(0, 300, 150, 0, poopSize)
-                                    Poops(280, 0, 200, 0, poopSize)
-                                    Poops(150, 0, 300, 0, poopSize)
-                                    Poops(0, 180, 320, 0, poopSize)
-                                }
+
                             }
                         }
                     }

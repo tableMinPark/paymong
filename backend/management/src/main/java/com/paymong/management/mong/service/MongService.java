@@ -130,7 +130,9 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
-
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),
                     new FindCommonCodeDto(commonCodeDto.getCode()));
@@ -151,6 +153,10 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
 
             if(findMongLevelCodeDto.getType() == 3){
                 // 타입 3이면 졸업
@@ -179,6 +185,10 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
 
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),

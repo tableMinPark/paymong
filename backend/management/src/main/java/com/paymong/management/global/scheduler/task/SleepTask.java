@@ -58,41 +58,74 @@ public class SleepTask {
                 .orElseThrow(() -> new NotFoundMongException());
 
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+        Integer tier = Integer.parseInt(mong.getCode().substring(3,4));
         // 3시간 이상일 경우
         int gauge = 0;
         if(expire >= 180L){
             // 풀피
             if(level == 2){
-                gauge = 30;
+                if(tier == 1){
+                    gauge = 30;
+                }else if(tier == 2){
+                    gauge = 35;
+                }else if(tier == 3){
+                    gauge = 40;
+                }else{
+                    gauge = 25;
+                }
+
             }else if(level == 3){
-                gauge = 40;
+                if(tier == 1){
+                    gauge = 40;
+                }else if(tier == 2){
+                    gauge = 45;
+                }else if(tier == 3){
+                    gauge = 50;
+                }else{
+                    gauge = 35;
+                }
             }else {
                 gauge = 20;
             }
             mong.setHealth(gauge);
-            mong.setSleep(20);
+            mong.setSleep(gauge);
         }else{
             double scale = 0;
             if(level == 2){
-                scale = 30.0/240.0;
+                if(tier == 1){
+                    scale = 30.0/240.0;
+                }else if(tier == 2){
+                    scale = 35.0/240.0;
+                }else if(tier == 3){
+                    scale = 40.0/240.0;
+                }else{
+                    scale = 25.0/240.0;
+                }
             }else if(level == 3){
-                scale = 40.0/240.0;
+                if(tier == 1){
+                    scale = 30.0/240.0;
+                }else if(tier == 2){
+                    scale = 35.0/240.0;
+                }else if(tier == 3){
+                    scale = 40.0/240.0;
+                }else{
+                    scale = 25.0/240.0;
+                }
             }else {
                 scale = 20.0/240.0;
             }
             gauge = Integer.parseInt(String.valueOf(Math.round(scale * expire)));
             mong.setHealth(mong.getHealth() + gauge);
             mong.setSleep(mong.getSleep() + gauge);
-
-            ActiveHistory activeHistory = ActiveHistory.builder()
-                    .activeCode(MongActiveCode.AWAKE.getCode())
-                    .activeTime(LocalDateTime.now())
-                    .mongId(mongId)
-                    .build();
-
-            activeHistoryRepository.save(activeHistory);
         }
 
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(MongActiveCode.AWAKE.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(mongId)
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
 
         MongConditionCode condition = statusService.checkCondition(mong);
         log.info("{}의 잠을 깨웁니다. 상태 : {}",mongId, condition.getMessage());

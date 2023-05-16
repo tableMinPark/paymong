@@ -293,6 +293,6 @@ public class SleepScheduler{
     }
 
     public Long getDelay() {
-        return 30L * 60L;
+        return 15L * 60L;
     }
 }

@@ -122,6 +122,7 @@ public class BattleRoom {
                 }
 
                 battleMessageResDto.setNowTurn(-1);
+                nowTurn = -1;
             } else {
                 nowTurn++;
                 battleLog.setSelectA(null);

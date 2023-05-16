@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,7 +35,8 @@ fun MainInfo(
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
 
-    val characterSize = if (screenWidthDp < 200) 110 else 120
+    val density = LocalDensity.current.density
+    val characterSize = 480/density
     val poopSize = if (screenWidthDp < 200) 25 else 35
     val boxTopPadding = if (screenWidthDp < 200) 65 else 75
     val graduationFontSize = if (screenWidthDp < 200 ) 10 else 12
@@ -134,32 +136,31 @@ fun MainInfo(
                                         EmotionGif(watchViewModel, 0, 0, 35  , 40)
                                     }
                                 }
+
+                                // 똥
+                                when (watchViewModel.poopCount) {
+                                    1 -> Poops(0, 100, 75, 0, poopSize)
+                                    2 -> {
+                                        Poops(0, 100, 75, 0, poopSize)
+                                        Poops(90, 0, 80, 0, poopSize)
+                                    }
+                                    3 -> {
+                                        Poops(0, 100, 75, 0, poopSize)
+                                        Poops(90, 0, 80, 0, poopSize)
+                                        Poops(30, 0, 92, 0, poopSize)
+                                    }
+                                    4 -> {
+                                        Poops(0, 100, 75, 0, poopSize)
+                                        Poops(90, 0, 80, 0, poopSize)
+                                        Poops(30, 0, 92, 0, poopSize)
+                                        Poops(0, 60, 95, 0, poopSize)
+                                    }
+                                }
                             }
                         }
                     }
                 }}
-
-                // 똥
-                when (watchViewModel.poopCount) {
-                    1 -> Poops(0, 100, 75, 0, poopSize)
-                    2 -> {
-                        Poops(0, 100, 75, 0, poopSize)
-                        Poops(90, 0, 80, 0, poopSize)
-                    }
-                    3 -> {
-                        Poops(0, 100, 75, 0, poopSize)
-                        Poops(90, 0, 80, 0, poopSize)
-                        Poops(30, 0, 92, 0, poopSize)
-                    }
-                    4 -> {
-                        Poops(0, 100, 75, 0, poopSize)
-                        Poops(90, 0, 80, 0, poopSize)
-                        Poops(30, 0, 92, 0, poopSize)
-                        Poops(0, 60, 95, 0, poopSize)
-                    }
-                }
             }
-
     }
 }
 

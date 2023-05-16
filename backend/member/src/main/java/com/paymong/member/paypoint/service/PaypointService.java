@@ -109,7 +109,7 @@ public class PaypointService {
         String action = addPointReqDto.getContent();
         Integer point = addPointReqDto.getPoint();
         String code = addPointReqDto.getCode();
-
+        System.out.println("addpoint! memberId : "+ memberIdStr+", point : "+point);
         //point반영
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException());

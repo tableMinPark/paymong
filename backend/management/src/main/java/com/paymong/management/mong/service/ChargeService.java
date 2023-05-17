@@ -55,7 +55,6 @@ public class ChargeService {
 
         activeHistoryRepository.save(activeHistory);
 
-        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
     }
 
     @Transactional

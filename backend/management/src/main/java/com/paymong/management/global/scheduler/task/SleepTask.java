@@ -10,6 +10,7 @@ import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
+import com.paymong.management.mong.service.ChargeService;
 import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class SleepTask {
     private final StatusService statusService;
     private final ActiveHistoryRepository activeHistoryRepository;
     private final WebSocketService webSocketService;
+    private final ChargeService chargeService;
 
     @Transactional
     public void sleepMong(Long mongId) throws NotFoundMongException, EvolutionReadyException {
@@ -38,6 +40,7 @@ public class SleepTask {
         }
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
 
+        chargeService.discharging(mong.getMemberId());
         mong.setStateCode(MongConditionCode.SLEEP.getCode());
 
         ActiveHistory activeHistory = ActiveHistory.builder()

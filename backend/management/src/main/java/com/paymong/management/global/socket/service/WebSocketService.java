@@ -83,7 +83,7 @@ public class WebSocketService {
                             }
                         });
                 members.get(mong.getMemberId()).removeIf(s-> !s.getSession().isOpen());
-
+                log.info("남은 세션수 : {} memberId : {}", members.get(mong.getMemberId()).size(), mong.getMemberId());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");
@@ -110,6 +110,7 @@ public class WebSocketService {
                             }
                         });
                 members.get(mapCodeWsDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+                log.info("남은 세션수 : {} memberId : {}", members.get(mapCodeWsDto.getMemberId()).size(), mapCodeWsDto.getMemberId());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");
@@ -136,6 +137,7 @@ public class WebSocketService {
                             }
                         });
                 members.get(sendThingsResDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+                log.info("남은 세션수 : {} memberId : {}", members.get(sendThingsResDto.getMemberId()).size(), sendThingsResDto.getMemberId());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");
@@ -162,6 +164,7 @@ public class WebSocketService {
                             }
                         });
                 members.get(sendPointResDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+                log.info("남은 세션수 : {} memberId : {}", members.get(sendPointResDto.getMemberId()).size(), sendPointResDto.getMemberId());
             }
         }catch (IOException e){
             log.info("메세지 생성 실패");

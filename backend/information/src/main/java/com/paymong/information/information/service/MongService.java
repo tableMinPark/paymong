@@ -64,7 +64,7 @@ public class MongService {
         FindMongStatusDto findMongStatusDto = new FindMongStatusDto(mong);
 
         int level = Integer.parseInt(mong.getCode().substring(2, 3));
-
+        int tier = Integer.parseInt(mong.getCode().substring(3,4));
         Double health = 0.0;
         Double satiety = 0.0;
         Double strength = 0.0;
@@ -76,16 +76,50 @@ public class MongService {
             strength = mong.getStrength() / 20.0;
             sleep = mong.getSleep() / 20.0;
         } else if (level == 2) {
-            health = mong.getHealth() / 30.0;
-            satiety = mong.getSatiety() / 30.0;
-            strength = mong.getStrength() / 30.0;
-            sleep = mong.getSleep() / 30.0;
+            if(tier == 1){
+                health = mong.getHealth() / 30.0;
+                satiety = mong.getSatiety() / 30.0;
+                strength = mong.getStrength() / 30.0;
+                sleep = mong.getSleep() / 30.0;
+            }else if(tier == 2){
+                health = mong.getHealth() / 35.0;
+                satiety = mong.getSatiety() / 35.0;
+                strength = mong.getStrength() / 35.0;
+                sleep = mong.getSleep() / 35.0;
+            }else if(tier == 3){
+                health = mong.getHealth() / 40.0;
+                satiety = mong.getSatiety() / 40.0;
+                strength = mong.getStrength() / 40.0;
+                sleep = mong.getSleep() / 40.0;
+            }else{
+                health = mong.getHealth() / 25.0;
+                satiety = mong.getSatiety() / 25.0;
+                strength = mong.getStrength() / 25.0;
+                sleep = mong.getSleep() / 25.0;
+            }
 
         } else if (level == 3) {
-            health = mong.getHealth() / 40.0;
-            satiety = mong.getSatiety() / 40.0;
-            strength = mong.getStrength() / 40.0;
-            sleep = mong.getSleep() / 40.0;
+            if(tier == 1){
+                health = mong.getHealth() / 40.0;
+                satiety = mong.getSatiety() / 40.0;
+                strength = mong.getStrength() / 40.0;
+                sleep = mong.getSleep() / 40.0;
+            }else if(tier == 2){
+                health = mong.getHealth() / 45.0;
+                satiety = mong.getSatiety() / 45.0;
+                strength = mong.getStrength() / 45.0;
+                sleep = mong.getSleep() / 45.0;
+            }else if(tier == 3){
+                health = mong.getHealth() / 50.0;
+                satiety = mong.getSatiety() / 50.0;
+                strength = mong.getStrength() / 50.0;
+                sleep = mong.getSleep() / 50.0;
+            }else{
+                health = mong.getHealth() / 35.0;
+                satiety = mong.getSatiety() / 35.0;
+                strength = mong.getStrength() / 35.0;
+                sleep = mong.getSleep() / 35.0;
+            }
         }
 
         findMongStatusDto.setHealth(Math.round(health * 100.0) / 100.0);

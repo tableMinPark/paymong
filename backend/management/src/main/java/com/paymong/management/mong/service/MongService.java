@@ -47,6 +47,7 @@ public class MongService {
     private final WebSocketService webSocketService;
     private final MapScheduler mapScheduler;
     private final SleepScheduler sleepScheduler;
+    private final ChargeService chargeService;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -346,9 +347,15 @@ public class MongService {
         mapScheduler.startScheduler(mapCodeWsDto.getMemberId());
     }
 
-    public void sendThing(SendThingsResDto sendThingsResDto){
+    public void sendThing(SendThingsResDto sendThingsResDto) throws NotFoundMongException {
         LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendThingsResDto.getMemberId());
-        webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
+        if(sendThingsResDto.getThingsCode().equals("ST002")){
+            chargeService.charging(sendThingsResDto.getMemberId());
+        }else if(sendThingsResDto.getThingsCode().equals("ST003")){
+            chargeService.discharging(sendThingsResDto.getMemberId());
+        }else {
+            webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
+        }
     }
 
     public void sendPoint(SendPointResDto sendPointResDto){

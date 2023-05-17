@@ -194,6 +194,45 @@ public class ThingsService {
     }
 
     @Transactional
+    public void alarmHubDischarge(String memberIdStr, String mongIdStr, String thingsCode){
+        Long memberId = Long.parseLong(memberIdStr);
+        if(mongIdStr.equals("") || mongIdStr == null) return;
+        Long mongId = Long.parseLong(mongIdStr);
+
+        //충전 완료 모션 요청 보내기
+        managementServiceClient.sendThings(memberIdStr, new SendThingsReqDto(thingsCode));
+
+        ThingsHistory prevThingsHistory = thingsHistoryRepository.findTopByMemberIdAndThingsCodeOrderByThingsHistoryIdDesc(memberId, thingsCode);
+
+        //2시간에 한번만
+        LocalDateTime twoHourAgo = LocalDateTime.now().minusHours(2);
+        if (!(prevThingsHistory == null || prevThingsHistory.getRegDt().isBefore(twoHourAgo)))
+            return;
+        ThingsHistory thingsHistory = ThingsHistory.builder()
+                .memberId(memberId)
+                .thingsCode(thingsCode)
+                .build();
+        thingsHistoryRepository.save(thingsHistory);
+
+        //보너스 적립
+        String action = "스마트싱스 허브충전 완료 보너스";
+        Integer point = 200;
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .action(action)
+                .memberId(memberId)
+                .code(thingsCode)
+                .build();
+        paypointRepository.save(pointHistory);
+
+        //가격 반영
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException());
+        Integer prePoint = member.getPoint();
+        member.setPoint(prePoint + point);
+    }
+
+    @Transactional
     public void alarmOpenDoor(String memberIdStr, String mongIdStr, String thingsCode){
         Long memberId = Long.parseLong(memberIdStr);
         if(mongIdStr.equals("") || mongIdStr == null) return;

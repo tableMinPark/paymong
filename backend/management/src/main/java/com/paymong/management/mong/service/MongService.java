@@ -353,9 +353,8 @@ public class MongService {
             chargeService.charging(sendThingsResDto.getMemberId());
         }else if(sendThingsResDto.getThingsCode().equals("ST003")){
             chargeService.discharging(sendThingsResDto.getMemberId());
-        }else {
-            webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
         }
+        webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
     }
 
     public void sendPoint(SendPointResDto sendPointResDto){

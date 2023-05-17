@@ -17,7 +17,8 @@ public enum WebSocketCode implements BasicCode{
     DEATH("208","죽었습니다."),
     MAP("209", "맵이 바뀝니다."),
     THINGS("210", "스마트 띵수 요청"),
-    POINT("211", "포인트 수정 등록")
+    POINT("211", "포인트 수정 등록"),
+    CHECK("300", "연결 체크")
     ;
     private final String code;
     private final String message;

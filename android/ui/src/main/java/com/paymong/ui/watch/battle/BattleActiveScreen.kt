@@ -169,7 +169,8 @@ fun BattleActive(
                             }
                         }
                     }
-                } else if ((battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) || (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn == -1)) {
+                } else if ((battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn % 2 == 0) ||
+                            (battleViewModel.battleActive.order == "B" && battleViewModel.battleActive.nowTurn == -1)) {
                     if (battleViewModel.battleActive.damageA > 0) {
                         Box{
                             Row {
@@ -269,7 +270,7 @@ fun BattleActive(
             Text(
                 text = String.format(
                     "%d/%d",
-                    battleViewModel.battleActive.nowTurn,
+                    if(battleViewModel.battleActive.nowTurn == -1) 10 else battleViewModel.battleActive.nowTurn,
                     battleViewModel.totalTurn
                 ),
                 textAlign = TextAlign.Center,

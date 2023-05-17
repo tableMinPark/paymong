@@ -134,8 +134,6 @@ class BattleViewModel (
                 val battleMessageResDto = Gson().fromJson(text, BattleMessageResDto::class.java)
 
                 if (battleMessageResDto.totalTurn == 0) {
-                    // 탈주
-//                    val battleErrorResDto = Gson().fromJson(text, BattleErrorResDto::class.java)
                     matchingState = MatchingCode.NOT_FOUND
                 } else {
                     println(battleMessageResDto.toString())

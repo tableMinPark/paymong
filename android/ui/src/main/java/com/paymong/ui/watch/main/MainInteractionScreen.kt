@@ -69,6 +69,10 @@ fun MainInteraction(
         isBtnActive = false
         sleepActive = true
     }
+    else if(watchViewModel.stateCode == MongStateCode.CD005){
+        isBtnActive = false
+        sleepActive = false
+    }
 
 
     Column(

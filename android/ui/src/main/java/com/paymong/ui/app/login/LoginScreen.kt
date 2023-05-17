@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Text
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.code.ToastMessage
@@ -26,6 +27,7 @@ import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Login(
     navController: NavController,
@@ -67,7 +69,7 @@ fun Login(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    var fontSize = if (screenWidthDp < 200) 12 else 15
+    val fontSize = if (screenWidthDp < 200) 12 else 15
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -88,7 +90,7 @@ fun Login(
                 horizontalArrangement = Arrangement.Center
             ){
                 Text(
-                    text = "등록된 웨어러블 기기가 없고\n주변에 등록 가능한 기기가 없습니다.",
+                    text = "등록된 웨어러블 기기가 없고\n\n주변에 등록 가능한 기기가 없습니다.",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontFamily = dalmoori,
@@ -124,7 +126,7 @@ fun Login(
                 horizontalArrangement = Arrangement.Center
             ){
                 Text(
-                    text = "등록 된 웨어러블 기기가 없습니다.\n터치하여 앱 설치하기",
+                    text = "등록 된 웨어러블 기기가 없습니다.\n\n터치하여 앱 설치하기",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontFamily = dalmoori,

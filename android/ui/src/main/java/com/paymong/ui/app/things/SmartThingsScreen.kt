@@ -1,6 +1,5 @@
 package com.paymong.ui.app.things
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +20,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.SmartThingsViewModel
 import com.paymong.ui.app.component.TopBar
@@ -46,7 +42,7 @@ import com.paymong.ui.theme.dalmoori
 fun SmartThings(
     navController: NavController,
     soundViewModel: SoundViewModel,
-    smartThingsViewModel: SmartThingsViewModel = viewModel(),
+    smartThingsViewModel: SmartThingsViewModel
 
 ) {
     Scaffold(
@@ -290,17 +286,7 @@ fun DeleteThings(
                         Text(text = "아니요", fontFamily = dalmoori, color = Color.Black)
                     }
                 }
-
             }
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun ThingsPreview() {
-    val smartThingsViewModel:SmartThingsViewModel = viewModel()
-    PaymongTheme {
-        ThingsList(smartThingsViewModel)
     }
 }

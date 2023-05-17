@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.LandingCode
 import com.paymong.common.navigation.AppNavItem
@@ -18,7 +19,7 @@ import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PaymongTheme
 import kotlinx.coroutines.delay
 
-
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Landing(
     navController: NavController,

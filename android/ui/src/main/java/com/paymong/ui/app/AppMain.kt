@@ -1,25 +1,34 @@
 package com.paymong.ui.app
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.wear.compose.material.Text
+import coil.annotation.ExperimentalCoilApi
+import com.paymong.common.R
+import com.paymong.common.code.SocketCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
-import com.paymong.domain.app.AppViewModel
-import com.paymong.domain.app.CollectMapViewModel
-import com.paymong.domain.app.AppLandinglViewModel
-import com.paymong.domain.app.CollectPayMongViewModel
+import com.paymong.domain.app.*
 import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.app.collect.CollectPayMong
 import com.paymong.ui.app.collect.CollectMap
 import com.paymong.ui.app.collect.MongMap
+import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.condition.Condition
 import com.paymong.ui.app.help.Help
 import com.paymong.ui.app.info_detail.InfoDetail
@@ -29,21 +38,107 @@ import com.paymong.ui.app.main.Main
 import com.paymong.ui.app.paypoint.PayPoint
 import com.paymong.ui.app.things.AddSmartThings
 import com.paymong.ui.app.things.SmartThings
+import com.paymong.ui.theme.PayMongRed200
+import com.paymong.ui.theme.PaymongTheme
+import com.paymong.ui.theme.dalmoori
+import com.paymong.ui.watch.common.LoadingGif
 
 @Composable
-fun AppMain(appLandinglViewModel : AppLandinglViewModel) {
-    Scaffold(
-    ) {
-        Box(Modifier.padding(it)){
-            AppMainNav(appLandinglViewModel)
+fun AppMain(
+    appLandingViewModel : AppLandinglViewModel
+) {
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
+    val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
+
+    PaymongTheme {
+        Scaffold(
+        ) {
+            Box(Modifier.padding(it)) {
+                if (appViewModel.isSocketConnect == SocketCode.CONNECT ||
+                    appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
+                    AppMainNav(appLandingViewModel)
+                } else {
+                    SocketError(appViewModel.isSocketConnect) {
+                        appViewModel.connectSocket()
+                    }
+                }
+            }
         }
     }
 }
+
+@OptIn(ExperimentalCoilApi::class)
+@Composable
+fun SocketError(
+    isSocketConnect : SocketCode,
+    setSocket : () -> Unit
+) {
+    BgGif()
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val fontSize = if (screenWidthDp < 200) 12 else 15
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { setSocket() },
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            val logo = painterResource(R.drawable.app_logo)
+            Image(
+                painter = logo, contentDescription = null, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(80.dp)
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (isSocketConnect == SocketCode.DISCONNECT) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "서버에 연결할 수 없습니다.\n\n터치해서 재 연결 시도하기",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        fontFamily = dalmoori,
+                        color = PayMongRed200,
+                        fontSize = fontSize.sp
+                    )
+                }
+            } else if (isSocketConnect == SocketCode.LOADING) {
+                val loadBarSize = 75
+                Box(
+                    modifier = Modifier
+                        .width(loadBarSize.dp)
+                        .height(loadBarSize.dp)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                ) {
+                    LoadingGif()
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun AppMainNav(appLandingViewModel : AppLandinglViewModel){
     val navController = rememberNavController()
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
+    val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
+    val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
+    val mapViewModel = viewModel<CollectMapViewModel>(viewModelStoreOwner)
+    val smartThingsViewModel = viewModel<SmartThingsViewModel>(viewModelStoreOwner)
 
     NavHost(
         navController = navController,
@@ -56,48 +151,36 @@ fun AppMainNav(appLandingViewModel : AppLandinglViewModel){
             Login(navController, appLandingViewModel)
         }
         composable(route = AppNavItem.Main.route){
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
             Main(navController, appViewModel, soundViewModel)
         }
         composable(route = AppNavItem.InfoDetail.route) {
-            val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
             InfoDetail(navController, appViewModel)
         }
         composable(route = AppNavItem.SmartThings.route){
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            SmartThings(navController, soundViewModel)
+            SmartThings(navController, soundViewModel, smartThingsViewModel)
         }
         composable(route = AppNavItem.AddSmartThings.route){
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
-            AddSmartThings(navController, soundViewModel)
+            AddSmartThings(navController, soundViewModel, smartThingsViewModel)
         }
         composable(route = AppNavItem.Condition.route) {
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             Condition(navController, soundViewModel)
         }
         composable(route = AppNavItem.PayPoint.route) {
             PayPoint(navController)
         }
         composable(route = AppNavItem.Help.route){
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             Help(navController, soundViewModel)
         }
         composable(route = AppNavItem.Collect.route) {
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             Collect(navController, soundViewModel)
         }
         composable(route = AppNavItem.CollectPayMong.route) {
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             CollectPayMong(navController, soundViewModel)
         }
         composable(route = AppNavItem.CollectMap.route) {
-            val mapViewModel = viewModel<CollectMapViewModel>(viewModelStoreOwner)
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             CollectMap(navController, mapViewModel, soundViewModel)
         }
         composable(route = AppNavItem.MongMap.route) {
-            val soundViewModel = viewModel<SoundViewModel>(viewModelStoreOwner)
             MongMap(navController, soundViewModel)
         }
     }

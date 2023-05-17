@@ -6,28 +6,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.paymong.common.code.MongCode
-import com.paymong.common.code.MapCode
-import com.paymong.common.code.MongStateCode
-import com.paymong.common.code.ThingsCode
+import com.paymong.common.code.*
 import com.paymong.data.model.request.AddMongReqDto
 import com.paymong.data.model.response.*
 import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.watch.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
-class AppViewModel(application: Application) : AndroidViewModel(application) {
+class AppViewModel(
+    application: Application
+) : AndroidViewModel(application) {
+    var isLoading by mutableStateOf(false)
+    var isSocketConnect by mutableStateOf(SocketCode.LOADING)
     // 몽 생성
     var mongname by mutableStateOf("")
     var mongsleepStart by mutableStateOf("")
@@ -49,32 +54,49 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var retry by mutableStateOf(false)
 
     // socket
-    private lateinit var socketJob : Job
-    private lateinit var managementSocketService: ManagementSocketService
+    lateinit var managementSocketService: ManagementSocketService
 
     private val memberRepository: MemberRepository = MemberRepository()
     private val informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
     // 메인화면 진입시 초기화
-    init {
+    fun init() {
+        Log.e("watchViewModel", "init")
         viewModelScope.launch(Dispatchers.Main) {
-            setSocket()
             findMong()
             findPoint()
+            isLoading = true
         }
     }
+    fun connectSocket() {
+        Log.e("watchViewModel", "connectSocket")
+        managementSocketService = ManagementSocketService()
+        managementSocketService.init(listener)
+    }
 
-    private fun setSocket() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                managementSocketService = ManagementSocketService()
-                managementSocketService.init(listener)
-            } catch (_: Exception) {}
-        }
+    fun disConnectSocket() {
+        Log.e("watchViewModel", "disConnectSocket")
+        managementSocketService.disConnect()
     }
 
     private val listener: WebSocketListener = object : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            super.onOpen(webSocket, response)
+            Log.e("watchViewModel", "onOpen")
+            isSocketConnect = SocketCode.CONNECT
+            init()
+        }
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            super.onFailure(webSocket, t, response)
+            isSocketConnect = SocketCode.DISCONNECT
+            Log.e("watchViewModel", "onFailure")
+        }
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            super.onClosing(webSocket, code, reason)
+            isSocketConnect = SocketCode.DISCONNECT
+            Log.e("watchViewModel", "onClosing")
+        }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
                 val managementResDto = Gson().fromJson(text, RealTimeResDto::class.java)
@@ -212,12 +234,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
         }
     }
+}
 
-    override fun onCleared() {
-        super.onCleared()
-        try {
-            managementSocketService.disConnect()
-            socketJob.cancel()
-        } catch (_: Exception) {}
+class AppViewModelFactory(
+    private val application: Application
+): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(AppViewModel::class.java)){
+            return AppViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel Class")
     }
 }

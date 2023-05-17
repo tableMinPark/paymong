@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,8 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
+import com.paymong.common.code.SocketCode
+import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
+import com.paymong.domain.watch.WatchViewModel
+import com.paymong.domain.watch.WatchViewModelFactory
 import com.paymong.ui.watch.WatchMain
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
@@ -29,8 +34,14 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
 
+    private lateinit var watchViewModelFactory: WatchViewModelFactory
+    private lateinit var watchViewModel: WatchViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 필수 권한 확인
+        isNotificationPermissionGranted()
 
         // 설치 여부 확인
         capabilityClient = Wearable.getCapabilityClient(this)
@@ -39,8 +50,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
 
-        // 필수 권한 확인
-        isNotificationPermissionGranted()
+        watchViewModelFactory = WatchViewModelFactory(this.application)
+        watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
 
         // 화면 켜짐 유지
 //        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -49,14 +60,25 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
             WatchMain(watchLandingViewModel)
         }
     }
-
     override fun onPause() {
         super.onPause()
-        capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
+        // 자원 할당 해제
+        try {
+            capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
+            if (::watchViewModel.isInitialized) watchViewModel.disConnectSocket()
+        } catch (_: Exception) {}
     }
     override fun onResume() {
         super.onResume()
-        capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
+        try {
+            capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
+            val dataApplicationRepository = DataApplicationRepository()
+            val accessToken = dataApplicationRepository.getValue("accessToken")
+            if (accessToken != "")
+                watchViewModel.connectSocket()
+            else
+                watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+        } catch (_: Exception) {}
     }
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
         watchLandingViewModel.androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()

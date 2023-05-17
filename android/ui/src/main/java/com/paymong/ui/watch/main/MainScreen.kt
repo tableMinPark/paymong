@@ -14,6 +14,7 @@ import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.SocketCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
@@ -32,6 +33,13 @@ fun Main(
     watchViewModel : WatchViewModel,
     soundViewModel: SoundViewModel
 ) {
+    LaunchedEffect(key1 = true) {
+        if (watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
+            watchViewModel.isSocketConnect = SocketCode.LOADING
+            watchViewModel.connectSocket()
+        }
+    }
+
     Background(false)
 
     if(watchViewModel.mapCode == MapCode.MP000){

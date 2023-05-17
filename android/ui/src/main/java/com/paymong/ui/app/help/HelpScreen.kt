@@ -57,7 +57,6 @@ fun Desc() {
             3-> Page4()
             4-> Page5()
         }
-
     }
 }
 
@@ -71,10 +70,12 @@ fun Page1(){
         Text("1. 페이몽 탄생", fontFamily = dalmoori, color = Color.White, fontSize = 35.sp, modifier = Modifier
             .background(color = Color.Black.copy(alpha = 0.4f))
             .padding(10.dp), letterSpacing = 3.sp)
-        Spacer(modifier = Modifier.height(100.dp))
-        Image(painterResource(R.drawable.ch004), contentDescription = null, modifier = Modifier.width(250.dp))
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(50.dp))
         Text("스마트폰에서 페이몽 탄생", fontFamily = dalmoori, color = PayMongGreen, fontSize = 20.sp, letterSpacing = 2.sp)
+        Spacer(modifier = Modifier.height(30.dp))
+        Text("알은 10분 후 부화 합니다.", fontFamily = dalmoori, color = PayMongRed, fontSize = 18.sp, letterSpacing = 2.sp)
+        Spacer(modifier = Modifier.height(50.dp))
+        Image(painterResource(R.drawable.ch004), contentDescription = null, modifier = Modifier.size(150.dp))
     }
 }
 

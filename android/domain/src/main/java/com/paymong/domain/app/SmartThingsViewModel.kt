@@ -27,12 +27,12 @@ class SmartThingsViewModel : ViewModel() {
 
     private var memberRepository: MemberRepository = MemberRepository()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO){
+    fun init() {
+        viewModelScope.launch(Dispatchers.Main){
             connectedThings()
         }
     }
-    fun connectedThings(){
+    private fun connectedThings(){
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findThings()
                 .catch {
@@ -72,6 +72,7 @@ class SmartThingsViewModel : ViewModel() {
                     it.printStackTrace()
                 }
                 .collect{
+                    connectedThings()
                 }
         }
     }

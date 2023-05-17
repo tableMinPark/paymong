@@ -28,10 +28,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
-import com.paymong.common.code.MapCode
-import com.paymong.common.code.MongStateCode
-import com.paymong.common.code.SoundCode
-import com.paymong.common.code.ThingsCode
+import com.paymong.common.code.*
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
@@ -40,6 +37,7 @@ import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.app.component.CharacterGif
 import com.paymong.ui.app.component.EmotionGif
 import com.paymong.ui.app.component.ThingsGif
+import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -53,6 +51,13 @@ fun Main(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ) {
+    LaunchedEffect(key1 = true) {
+        if (appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
+            appViewModel.isSocketConnect = SocketCode.LOADING
+            appViewModel.connectSocket()
+        }
+    }
+
     // 배경
     val findBgCode = appViewModel.mapCode
     val bg = painterResource(findBgCode.phoneCode)
@@ -66,9 +71,44 @@ fun Main(
                 .fillMaxHeight())
     }
 
-    Top(navController, appViewModel, soundViewModel)
-    MakeEgg(appViewModel,soundViewModel)
-    Btn(navController, appViewModel, soundViewModel)
+    if (!appViewModel.isLoading) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val logo = painterResource(R.drawable.app_logo)
+                Image(
+                    painter = logo, contentDescription = null, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(80.dp)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val loadBarSize = 75
+                Box(
+                    modifier = Modifier
+                        .width(loadBarSize.dp)
+                        .height(loadBarSize.dp)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                ) {
+                    LoadingGif()
+                }
+            }
+        }
+    } else {
+        Top(navController, appViewModel, soundViewModel)
+        MakeEgg(appViewModel,soundViewModel)
+        Btn(navController, appViewModel, soundViewModel)
+    }
+
 }
 
 @Composable

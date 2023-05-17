@@ -1,5 +1,7 @@
 package com.paymong.ui.watch.main
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +23,9 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.code.MongStateCode
+import com.paymong.common.code.ThingsCode
 import com.paymong.domain.watch.WatchViewModel
+import com.paymong.ui.app.component.ThingsGif
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.CharacterGif
 import com.paymong.ui.watch.common.EmotionGif
@@ -155,6 +159,34 @@ fun MainInfo(
                                         Poops(30, 0, 92, 0, poopSize)
                                         Poops(0, 60, 95, 0, poopSize)
                                     }
+                                }
+
+                                when(watchViewModel.thingsCode){
+                                    ThingsCode.ST000 -> {
+                                        ThingsGif(R.drawable.move_vacuum, 350)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            watchViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    ThingsCode.ST001 -> {
+                                        ThingsGif(R.drawable.move_door, 400)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            watchViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    ThingsCode.ST002 -> {
+                                        ThingsGif(R.drawable.charging, 200)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            watchViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    ThingsCode.ST003 -> {
+                                        ThingsGif(R.drawable.nocharging, 200)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            watchViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
+                                    else -> {}
                                 }
                             }
                         }

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 class ManagementSocketService {
     object OkHttpClientSingleton {
         val instance: OkHttpClient = OkHttpClient.Builder()
-            .pingInterval(10, TimeUnit.SECONDS)
+            .pingInterval(1, TimeUnit.SECONDS)
             .build()
     }
 
@@ -48,6 +48,10 @@ class ManagementSocketService {
                 .header("Authorization", String.format("Bearer %s", accessToken)).build()
             webSocket = socket.newWebSocket(request, listener)
         }
+    }
+
+    fun isOpen() : Boolean {
+        return ::webSocket.isInitialized
     }
 
     fun disConnect() {

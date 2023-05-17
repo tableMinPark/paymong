@@ -25,14 +25,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.domain.app.PayPointViewModel
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
+import com.paymong.domain.entity.Point
 import com.paymong.ui.app.component.BgGif
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.dalmoori
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun PayPoint(
     navController: NavController,
@@ -55,7 +58,10 @@ fun PayPoint(
             ),
         contentAlignment = Alignment.Center
     ) {
-        PayCard(payPointViewModel)
+        PayCard(
+            payPointViewModel.success,
+            payPointViewModel.payList
+        )
     }
 }
 
@@ -84,7 +90,10 @@ fun PointInfo(text:String, point: Int){
 }
 
 @Composable
-fun PayCard(payPointViewModel: PayPointViewModel) {
+fun PayCard(
+    success : Boolean,
+    payList : MutableList<Point>
+) {
     Card(elevation = 10.dp,
         modifier = Modifier
             .fillMaxSize()
@@ -105,9 +114,9 @@ fun PayCard(payPointViewModel: PayPointViewModel) {
                 .background(Color.White))
             Spacer(modifier = Modifier.height(40.dp))
             LazyColumn(){
-                if(payPointViewModel.success.value){
-                    items(payPointViewModel.payList.size){index ->
-                        PointInfo(text = payPointViewModel.payList[index].action, point = payPointViewModel.payList[index].point)
+                if(success){
+                    items(payList.size){index ->
+                        PointInfo(text = payList[index].action, point = payList[index].point)
                     }
                 }
                 else{
@@ -129,16 +138,5 @@ fun PayCard(payPointViewModel: PayPointViewModel) {
                 }
             }
         }
-    }
-}
-
-
-@Preview(showBackground = false)
-@Composable
-fun PayPointPreview() {
-    val navController = rememberNavController()
-    PaymongTheme {
-//        PayPoint(navController)
-        PointInfo("페이 결제", -240)
     }
 }

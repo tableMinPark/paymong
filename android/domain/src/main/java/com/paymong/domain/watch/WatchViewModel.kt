@@ -9,9 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.wear.remote.interactions.RemoteActivityHelper
-import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.MessageClient
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.MapCode
@@ -39,7 +36,7 @@ import java.time.temporal.ChronoUnit
 
 class WatchViewModel (
     application: Application
-): AndroidViewModel(application) {    
+): AndroidViewModel(application) {
     // 포인트 정보
     var isLoading by mutableStateOf(false)
     var isSocketConnect by mutableStateOf(SocketCode.LOADING)
@@ -66,17 +63,15 @@ class WatchViewModel (
     var evolutionisClick by mutableStateOf(false)
 
     // socket
-    private lateinit var socketJob : Job
     private lateinit var managementSocketService: ManagementSocketService
 
     private val memberRepository: MemberRepository = MemberRepository()
     private var informationRepository: InformationRepository = InformationRepository()
     private val managementRepository: ManagementRepository = ManagementRepository()
 
-    init {
+    fun init() {
         Log.e("watchViewModel", "init")
         viewModelScope.launch(Dispatchers.Main) {
-            setSocket()
             findMong()
             findMongCondition()
             findMongInfo()
@@ -85,29 +80,35 @@ class WatchViewModel (
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        Log.e("watchViewModel", "onCleared")
-//        managementSocketService.disConnect()
-//        socketJob.cancel()
-    }
-
-    fun setSocket() {
-        socketJob = viewModelScope.launch {
-            isSocketConnect = SocketCode.LOADING
-            delay(1000)
+    fun connectSocket() {
+        Log.e("watchViewModel", "connectSocket")
+        viewModelScope.launch {
             managementSocketService = ManagementSocketService()
             managementSocketService.init(listener)
         }
     }
+
+    fun disConnectSocket() {
+        Log.e("watchViewModel", "disConnectSocket")
+        managementSocketService.disConnect()
+    }
+
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             isSocketConnect = SocketCode.CONNECT
+            init()
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             isSocketConnect = SocketCode.DISCONNECT
+            Log.e("watchViewModel", "onFailure")
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            super.onClosing(webSocket, code, reason)
+            isSocketConnect = SocketCode.DISCONNECT
+            Log.e("watchViewModel", "onClosing")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -328,5 +329,16 @@ class WatchViewModel (
                 }
                 .collect{}
         }
+    }
+}
+
+class WatchViewModelFactory(
+    private val application: Application
+): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(WatchViewModel::class.java)){
+            return WatchViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel Class")
     }
 }

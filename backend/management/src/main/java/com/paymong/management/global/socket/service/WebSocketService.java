@@ -37,7 +37,9 @@ public class WebSocketService {
     public void connect(MongSocketDto mongSocketDto){
 
         if(members.containsKey(mongSocketDto.getMemberId())){
-            log.info("해당 id에 세션을 추가합니다. memberId : {} 세션 개수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size()+1);
+            log.info("해당 id에 세션을 추가합니다. memberId : {}", mongSocketDto.getMemberId());
+            members.get(mongSocketDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
+            log.info("죽은 세션을 제거합니다. memberId : {} 세션 개수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size() + 1);
             members.get(mongSocketDto.getMemberId()).add(mongSocketDto);
         }else{
             log.info("새로운 세션을 등록합니다. {}", mongSocketDto.getMemberId());

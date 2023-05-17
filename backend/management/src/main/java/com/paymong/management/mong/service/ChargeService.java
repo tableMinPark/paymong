@@ -36,10 +36,14 @@ public class ChargeService {
 
     @Transactional
     public void charging(Long memberId) throws NotFoundMongException {
+        if(startMap.containsKey(memberId)){
+            log.info("이미 충전 중입니다. memberId : {}", memberId);
+            return;
+        }
         Mong mong = mongRepository.findByMemberIdAndActive(memberId, true)
                 .orElseThrow(()-> new NotFoundMongException());
 
-        mong.setStateCode(MongConditionCode.CHARGING.getCode());
+       log.info("충전을 시작합니다. memberId : {}", memberId);
 
         startMap.put(memberId, LocalDateTime.now());
 

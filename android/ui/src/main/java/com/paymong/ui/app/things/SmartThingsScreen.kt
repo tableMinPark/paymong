@@ -18,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -204,21 +206,40 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                 }
             }
             LazyColumn(){
-                items(smartThingsViewModel.connectedThingsList.size){index ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(smartThingsViewModel.connectedThingsList[index].thingsName, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
-                        Text(smartThingsViewModel.connectedThingsList[index].routine, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
-                        Icon(Icons.Filled.Close, contentDescription = null, tint = Color.White, modifier = Modifier
-                            .weight(0.2f)
-                            .clickable {
-                                dialogOpen.value = true
-                                smartThingsViewModel.thingsId = smartThingsViewModel.connectedThingsList[index].thingsId
-                            })
+                if(smartThingsViewModel.success.value){
+                    items(smartThingsViewModel.connectedThingsList.size){index ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(smartThingsViewModel.connectedThingsList[index].thingsName, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                            Text(smartThingsViewModel.connectedThingsList[index].routine, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.4f))
+                            Icon(Icons.Filled.Close, contentDescription = null, tint = Color.White, modifier = Modifier
+                                .weight(0.2f)
+                                .clickable {
+                                    dialogOpen.value = true
+                                    smartThingsViewModel.thingsId = smartThingsViewModel.connectedThingsList[index].thingsId
+                                })
+                        }
+                    }
+                }
+                else{
+                    item(){
+                        val strokeWidth = 5.dp
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.drawBehind {
+                                drawCircle(
+                                    PayMongNavy,
+                                    radius = size.width / 2 - strokeWidth.toPx() / 2,
+                                    style = Stroke(strokeWidth.toPx())
+                                )
+                            },
+                            color = Color.LightGray,
+                            strokeWidth = strokeWidth
+                        )
                     }
                 }
             }

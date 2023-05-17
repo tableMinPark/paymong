@@ -23,6 +23,8 @@ class SmartThingsViewModel : ViewModel() {
     var thingsId:Long by mutableStateOf(0)
     var isDelete by mutableStateOf(false)
 
+    var success = mutableStateOf(false)
+
     private var memberRepository: MemberRepository = MemberRepository()
 
     init {
@@ -42,6 +44,7 @@ class SmartThingsViewModel : ViewModel() {
                     for(i in data.indices){
                         connectedThingsList.add(Things(data[i].thingsId, data[i].thingsCode, data[i].thingsName, data[i].routine, data[i].regDt))
                     }
+                    success.value = true
                 }
         }
     }
@@ -80,6 +83,7 @@ class SmartThingsViewModel : ViewModel() {
                     it.printStackTrace()
                 }
                 .collect{
+                    connectedThings()
                 }
         }
     }

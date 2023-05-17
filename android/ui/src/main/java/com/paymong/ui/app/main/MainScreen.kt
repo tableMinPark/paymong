@@ -673,9 +673,14 @@ fun MakeEgg(
                                             appViewModel.thingsCode = ThingsCode.ST999
                                         }, 5000)
                                     }
+                                    ThingsCode.ST003 -> {
+                                        ThingsGif(R.drawable.nocharging, 200)
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            appViewModel.thingsCode = ThingsCode.ST999
+                                        }, 5000)
+                                    }
                                     else -> {}
                                 }
-
                             }
                         }
                     }

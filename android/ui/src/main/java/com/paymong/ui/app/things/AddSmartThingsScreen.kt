@@ -1,6 +1,7 @@
 package com.paymong.ui.app.things
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierInfo
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
+import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.SmartThingsViewModel
@@ -98,7 +101,6 @@ fun AddSmartThings(
                                     }
 
                                     if(smartThingsViewModel.routine != "" && smartThingsViewModel.isSelect != -1){
-
                                         smartThingsViewModel.addThings()
                                         smartThingsViewModel.isAdd = true
                                     }
@@ -181,7 +183,8 @@ private fun AddThings(smartThingsViewModel:SmartThingsViewModel){
 @Composable
 private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
     var isOpen by remember { mutableStateOf(false)}
-    Box(modifier = Modifier
+    val context = LocalContext.current
+        Box(modifier = Modifier
         .clip(RoundedCornerShape(30.dp))
         .background(color = Color.White.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
@@ -224,6 +227,13 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
                                     indication = null,
                                     onClick = {
                                         isOpen = !isOpen
+                                        if(smartThingsViewModel.thingsList.size==0){
+                                            Toast.makeText(
+                                                context,
+                                                "연동할 기기 목록이 없습니다.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
                                 )
                                 .width(110.dp)

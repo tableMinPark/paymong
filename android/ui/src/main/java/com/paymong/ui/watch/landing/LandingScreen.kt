@@ -26,8 +26,8 @@ fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
     LaunchedEffect(key1 = true){
+        delay(3000)
         watchLandingViewModel.loginCheck()
-        delay(2000)
     }
     Background(true)
 

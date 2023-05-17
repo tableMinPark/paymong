@@ -12,6 +12,8 @@
     <!-- 배틀을 위한 GPS -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 산책을 위한 Wake_Lock -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application

@@ -85,25 +85,21 @@ class WatchViewModel (
     }
 
     fun connectSocket() {
-        viewModelScope.launch(Dispatchers.Main)  {
-            managementSocketService = ManagementSocketService()
-            managementSocketService.init(listener)
-            Log.d("watchViewModel", "connectSocket")
-        }
+        managementSocketService = ManagementSocketService()
+        managementSocketService.init(listener)
+        Log.d("watchViewModel", "connectSocket")
     }
 
     fun disConnectSocket() {
-        viewModelScope.launch(Dispatchers.Main)  {
-            managementSocketService.disConnect()
-            Log.d("watchViewModel", "disConnectSocket")
-        }
+        managementSocketService.disConnect()
+        Log.d("watchViewModel", "disConnectSocket")
     }
 
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            super.onOpen(webSocket, response)
             isSocketConnect = SocketCode.CONNECT
             Log.d("watchViewModel", "onOpen")
+            super.onOpen(webSocket, response)
             init()
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {

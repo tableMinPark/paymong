@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,12 +16,16 @@ import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.SocketCode
+import com.paymong.common.navigation.WatchNavItem
 import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.watch.WatchViewModelFactory
 import com.paymong.ui.watch.WatchMain
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
     companion object {
@@ -42,6 +48,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 필수 권한 확인
         isNotificationPermissionGranted()
 
+        DataApplicationRepository().setValue("playerId", "")
+
         // 설치 여부 확인
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
@@ -52,6 +60,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchViewModelFactory = WatchViewModelFactory(this.application)
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
 
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         setContent {
             WatchMain(watchLandingViewModel)
         }
@@ -59,26 +69,47 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
     override fun onPause() {
         super.onPause()
         try {
+            watchViewModel.isSocketConnect = SocketCode.LOADING
             capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
-            // 한번이라도 소켓에 연결되었다면 연결된 소켓 끊음ㄴ
+            // 한번이라도 소켓에 연결되었다면 연결된 소켓 끊음
             if (watchViewModel.isInitialized()) {
                 watchViewModel.disConnectSocket()
-                watchViewModel.isSocketConnect = SocketCode.FINISH
+                DataApplicationRepository().setValue("isPause", "true")
             }
+            Log.d("start", "onPause : " + DataApplicationRepository().getValue("isPause"))
         } catch (_: Exception) {}
     }
+
+    override fun onDestroy() {
+        DataApplicationRepository().setValue("isPause", "false")
+        Log.d("start", "onStop : " + DataApplicationRepository().getValue("isPause"))
+        super.onDestroy()
+    }
+
     override fun onResume() {
+        watchViewModel.isSocketConnect = SocketCode.LOADING
         super.onResume()
         try {
+            Log.d("start", "onResume : " + DataApplicationRepository().getValue("isPause"))
             capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
             val dataApplicationRepository = DataApplicationRepository()
             val accessToken = dataApplicationRepository.getValue("accessToken")
-            if (accessToken != "")
-                // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
-                watchViewModel.connectSocket()
-            else
+            CoroutineScope(Dispatchers.Main).launch {
+                if (accessToken != "") {
+                    // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
+                    watchViewModel.connectSocket()
+                    // 일시 정지 경우
+                    val isPause = DataApplicationRepository().getValue("isPause")
+                    Log.d("start", "isPause: $isPause, ${watchViewModel.isSocketConnect}")
+                    if (isPause == "true") {
+                        watchViewModel.isSocketConnect = SocketCode.CONNECT
+                        watchLandingViewModel.startDestination = WatchNavItem.Main.route
+                    }
+
+                } else
                 // 엑세스 토큰이 없어서 소켓 연결이 불가능한 경우 (로그인이 필요한 경우) -> 로그인 이후 메인 화면 로딩 시 소켓 연결
-                watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+                    watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+            }
         } catch (_: Exception) {}
     }
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {

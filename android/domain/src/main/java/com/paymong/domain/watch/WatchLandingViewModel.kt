@@ -11,6 +11,7 @@ import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.LandingCode
+import com.paymong.common.navigation.WatchNavItem
 import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
@@ -31,6 +32,7 @@ class WatchLandingViewModel(
         private const val ANDROID_MARKET_APP_URI = "market://details?id=com.paymong"
     }
 
+    var startDestination = WatchNavItem.Landing.route
     // 로그인 플래그
     var loginState by mutableStateOf(LandingCode.LOADING)
     private val authRepository: AuthRepository = AuthRepository()

@@ -77,10 +77,14 @@ fun SocketError(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { setSocket() },
+            .clickable {
+                if (isSocketConnect == SocketCode.DISCONNECT)
+                    setSocket()
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+
         if (isSocketConnect == SocketCode.DISCONNECT) {
             Text(
                 text = "서버에 연결할 수 없습니다.\n\n터치해서 재연결 시도하기",
@@ -121,7 +125,7 @@ fun NavGraph (
 
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = WatchNavItem.Landing.route
+        startDestination = watchLandingViewModel.startDestination
     ) {
         // Landing
         composable( route = WatchNavItem.Landing.route) {

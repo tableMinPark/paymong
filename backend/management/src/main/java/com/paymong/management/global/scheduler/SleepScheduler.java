@@ -2,6 +2,7 @@ package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.EvolutionReadyException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.redis.RedisMong;
 import com.paymong.management.global.redis.RedisService;
 import com.paymong.management.global.scheduler.dto.SchedulerDto;
@@ -91,7 +92,7 @@ public class SleepScheduler{
             Long expire = 60L * 3L;
             if(!dynamicSchedulerMap.containsKey(mongId)) {
                 log.info("{}는 자고있지 않습니다. 하지만 깨우겠습니다.", mongId);
-                sleepTask.awakeMong(mongId, expire);
+
             }else{
                 Duration diff = Duration.between(dynamicSchedulerMap.get(mongId).getStartTime(), LocalDateTime.now());
                 expire = diff.toMinutes();
@@ -112,6 +113,11 @@ public class SleepScheduler{
 
         }catch (NotFoundMongException e){
             log.info("{}의 몽이 없습니다.", mongId);
+            stopScheduler(mongId);
+        }catch (EvolutionReadyException e){
+            log.info("진화 대기 상태이므로 깰 수 없습니다. mongId : {}", mongId);
+        }catch (UnsuitableException e){
+            log.info("{}은 적절한 몽이 아닙니다.", mongId);
             stopScheduler(mongId);
         }
     }
@@ -241,9 +247,13 @@ public class SleepScheduler{
                 evolutionScheduler.pauseScheduler(mongId);
                 stopMinusScheduler(mongId);
             }catch (NotFoundMongException e){
+                log.info("{}의 몽이 없습니다.", mongId);
                 stopScheduler(mongId);
             }catch (EvolutionReadyException e){
                 log.info("진화 대기 상태이므로 잘 수 없습니다. mongId : {}", mongId);
+            }catch (UnsuitableException e){
+                log.info("{}은 적절한 몽이 아닙니다.", mongId);
+                stopScheduler(mongId);
             }
 
         };
@@ -278,6 +288,11 @@ public class SleepScheduler{
 
             }catch (NotFoundMongException e){
                 log.info("{}의 몽이 없습니다.", mongId);
+                stopScheduler(mongId);
+            }catch (EvolutionReadyException e){
+                log.info("진화 대기 상태이므로 깰 수 없습니다. mongId : {}", mongId);
+            }catch (UnsuitableException e){
+                log.info("{}은 적절한 몽이 아닙니다.", mongId);
                 stopScheduler(mongId);
             }
 

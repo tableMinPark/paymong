@@ -25,7 +25,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 .memberId(Long.parseLong(session.getHandshakeHeaders().get("memberid").get(0)))
                 .session(session)
                 .build();
-        mongSocketService.connect(socket);
+        mongSocketService.check(socket);
     }
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {

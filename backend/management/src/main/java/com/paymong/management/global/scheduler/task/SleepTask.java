@@ -5,6 +5,7 @@ import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.EvolutionReadyException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
@@ -31,12 +32,18 @@ public class SleepTask {
     private final ChargeService chargeService;
 
     @Transactional
-    public void sleepMong(Long mongId) throws NotFoundMongException, EvolutionReadyException {
+    public void sleepMong(Long mongId) throws NotFoundMongException, EvolutionReadyException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
         if(mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
             throw new EvolutionReadyException();
+        }
+        if(mong.getStateCode().equals(MongConditionCode.DIE.getCode())){
+            throw new UnsuitableException();
+        }
+        if(mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
         }
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
 
@@ -55,10 +62,22 @@ public class SleepTask {
     }
 
     @Transactional
-    public void awakeMong(Long mongId, Long expire) throws NotFoundMongException {
+    public void awakeMong(Long mongId, Long expire) throws NotFoundMongException, EvolutionReadyException, UnsuitableException {
         // expire 단위 분
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
+
+        if(mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            throw new EvolutionReadyException();
+        }
+
+        if(mong.getStateCode().equals(MongConditionCode.DIE.getCode())){
+            throw new UnsuitableException();
+        }
+
+        if(mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
 
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
         Integer tier = Integer.parseInt(mong.getCode().substring(3,4));

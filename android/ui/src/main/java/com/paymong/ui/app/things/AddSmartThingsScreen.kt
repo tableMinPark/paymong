@@ -44,7 +44,7 @@ fun AddSmartThings(
     smartThingsViewModel: SmartThingsViewModel
 ) {
     LaunchedEffect(key1 = true) {
-        smartThingsViewModel.init()
+        smartThingsViewModel.reset()
     }
 
     Scaffold(
@@ -59,8 +59,7 @@ fun AddSmartThings(
             if(dialogOpen.value){
                 Alert(
                     setShowDialog = { dialogOpen.value = it },
-                    msg.value,
-                    smartThingsViewModel
+                    msg.value
                 )
             }
             if(smartThingsViewModel.isAdd){
@@ -305,8 +304,7 @@ private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
 @Composable
 fun Alert(
     setShowDialog: (Boolean) -> Unit,
-    msg: String,
-    smartThingsViewModel: SmartThingsViewModel
+    msg: String
 ){
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
@@ -334,13 +332,5 @@ fun Alert(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun AddPreview(){
-    PaymongTheme {
-        Desc()
     }
 }

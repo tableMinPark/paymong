@@ -60,7 +60,7 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchViewModelFactory = WatchViewModelFactory(this.application)
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContent {
             WatchMain(watchLandingViewModel)

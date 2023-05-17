@@ -139,6 +139,7 @@ public class ChargeService {
         log.info("{}의 충전을 멈춥니다. 상태 : {}", mong.getMongId(), condition.getMessage());
         mong.setStateCode(condition.getCode());
 
+        startMap.remove(memberId);
         webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
     }
 }

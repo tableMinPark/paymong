@@ -67,7 +67,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", mong.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mong, webSocketCode)));
-                log.info("연결된 세션수 : {}",members.get(mong.getMemberId()).size());
+                log.info("연결된 세션수 : {} memberId : {}",members.get(mong.getMemberId()).size(), mong.getMemberId());
 
                 members.get(mong.getMemberId()).stream()
                         .filter(s -> s.getSession().isOpen())
@@ -95,7 +95,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", mapCodeWsDto.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new MongStatusDto(mapCodeWsDto, webSocketCode)));
-                log.info("연결된 세션수 : {}",members.get(mapCodeWsDto.getMemberId()).size());
+                log.info("연결된 세션수 : {} memberId : {}",members.get(mapCodeWsDto.getMemberId()).size(), mapCodeWsDto.getMemberId());
                 members.get(mapCodeWsDto.getMemberId()).stream()
                         .filter(s -> s.getSession().isOpen())
                         .forEach(s ->
@@ -121,7 +121,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", sendThingsResDto.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new ThingsDto(sendThingsResDto, webSocketCode)));
-                log.info("연결된 세션수 : {}",members.get(sendThingsResDto.getMemberId()).size());
+                log.info("연결된 세션수 : {} memberId : {}",members.get(sendThingsResDto.getMemberId()).size(), sendThingsResDto.getMemberId());
                 members.get(sendThingsResDto.getMemberId()).stream()
                         .filter(s -> s.getSession().isOpen())
                         .forEach(s ->
@@ -147,7 +147,7 @@ public class WebSocketService {
                 log.info("{}와 연결된 소켓이 없습니다.", sendPointResDto.getMemberId());
             }else{
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new PointDto(sendPointResDto, webSocketCode)));
-                log.info("연결된 세션수 : {}",members.get(sendPointResDto.getMemberId()).size());
+                log.info("연결된 세션수 : {} meberId : {}",members.get(sendPointResDto.getMemberId()).size(), sendPointResDto.getMemberId());
                 members.get(sendPointResDto.getMemberId()).stream()
                         .filter(s -> s.getSession().isOpen())
                         .forEach(s ->

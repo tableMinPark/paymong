@@ -24,6 +24,13 @@ public class SleepService {
     public Boolean sleepMong(Long mongId) throws Exception{
         Mong mong = mongRepository.findByMongId(mongId).orElseThrow(() -> new NotFoundMongException());
 
+        if(mong.getStateCode().equals(MongConditionCode.DIE.getCode()) ||
+           mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode()) ||
+           mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            log.info("지금은 재우거나 깨울 수 없습니다. mongId : {}", mongId);
+            return false;
+        }
+
         if(checkTime(mong.getSleepStart(),mong.getSleepEnd())){
             log.info("지금은 깨울 수 없습니다. mongId = {}", mongId);
             return false;

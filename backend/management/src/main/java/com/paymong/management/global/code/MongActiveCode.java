@@ -15,7 +15,10 @@ public enum MongActiveCode implements BasicCode {
     CLEAN("AT008", "청소"),
     EVOLUTION("AT009", "진화"),
     GRADUATION("AT010", "졸업"),
-    PENALTY("AT011", "패널티");
+    PENALTY("AT011", "패널티"),
+    BATTLE("AT012", "배틀"),
+    CHARGING("AT013", "충전중"),
+    DISCHARGING("AT014", "충전 중지");
     private final String code;
     private final String message;
 

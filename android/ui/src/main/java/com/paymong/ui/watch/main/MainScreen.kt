@@ -52,18 +52,21 @@ fun Main(
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val characterSize = if (screenWidthDp < 200) 80 else 100
+    val loadBarSize = if (screenWidthDp < 200) 80 else 100
+
     if (!watchViewModel.isLoading) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically)
-                .wrapContentWidth(Alignment.CenterHorizontally)
+                .wrapContentWidth(Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.Center,
         ) {
             Box(
                 modifier = Modifier
-                    .width(characterSize.dp)
-                    .height(characterSize.dp)
+                    .width(loadBarSize.dp)
+                    .height(loadBarSize.dp)
             ) {
                 LoadingGif()
             }

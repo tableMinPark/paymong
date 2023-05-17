@@ -40,7 +40,7 @@ fun Login(
         LandingCode.LOGIN_SUCCESS -> {
             appLandingViewModel.landingCode = LandingCode.DONE
             navController.navigate(AppNavItem.Main.route) {
-                popUpTo(navController.graph.id) {
+                popUpTo(AppNavItem.Main.route) {
                     inclusive = true
                 }
                 navController.graph.setStartDestination(AppNavItem.Main.route)

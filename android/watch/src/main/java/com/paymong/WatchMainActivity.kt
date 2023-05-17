@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -53,19 +52,19 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchViewModelFactory = WatchViewModelFactory(this.application)
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
 
-        // 화면 켜짐 유지
-//        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         setContent {
             WatchMain(watchLandingViewModel)
         }
     }
     override fun onPause() {
         super.onPause()
-        // 자원 할당 해제
         try {
             capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
-            if (::watchViewModel.isInitialized) watchViewModel.disConnectSocket()
+            // 한번이라도 소켓에 연결되었다면 연결된 소켓 끊음ㄴ
+            if (watchViewModel.isInitialized()) {
+                watchViewModel.disConnectSocket()
+                watchViewModel.isSocketConnect = SocketCode.FINISH
+            }
         } catch (_: Exception) {}
     }
     override fun onResume() {
@@ -75,8 +74,10 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
             val dataApplicationRepository = DataApplicationRepository()
             val accessToken = dataApplicationRepository.getValue("accessToken")
             if (accessToken != "")
+                // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
                 watchViewModel.connectSocket()
             else
+                // 엑세스 토큰이 없어서 소켓 연결이 불가능한 경우 (로그인이 필요한 경우) -> 로그인 이후 메인 화면 로딩 시 소켓 연결
                 watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
         } catch (_: Exception) {}
     }

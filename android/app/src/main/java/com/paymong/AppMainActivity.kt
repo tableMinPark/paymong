@@ -27,10 +27,7 @@ import com.paymong.domain.app.AppLandingViewModelFactory
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.AppViewModelFactory
-import com.paymong.domain.watch.WatchViewModel
-import com.paymong.domain.watch.WatchViewModelFactory
 import com.paymong.ui.app.AppMain
-import com.paymong.ui.theme.PaymongTheme
 
 
 class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
@@ -87,7 +84,10 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         super.onPause()
         try {
             capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
-            if (::appViewModel.isInitialized) appViewModel.disConnectSocket()
+            if (appViewModel.isInitialized()) {
+                appViewModel.disConnectSocket()
+                appViewModel.isSocketConnect = SocketCode.FINISH
+            }
         } catch (_: Exception) {}
     }
     // 앱 중지 해제 시 마다 리스너 추가

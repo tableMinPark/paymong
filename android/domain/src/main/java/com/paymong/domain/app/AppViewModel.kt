@@ -17,10 +17,8 @@ import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.watch.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -62,40 +60,52 @@ class AppViewModel(
 
     // 메인화면 진입시 초기화
     fun init() {
-        Log.e("watchViewModel", "init")
         viewModelScope.launch(Dispatchers.Main) {
             findMong()
             findPoint()
+            delay(1000)
             isLoading = true
+            Log.d("appViewModel", "init")
         }
     }
+
+    fun isInitialized() : Boolean {
+        return ::managementSocketService.isInitialized
+    }
+
     fun connectSocket() {
-        Log.e("watchViewModel", "connectSocket")
-        managementSocketService = ManagementSocketService()
-        managementSocketService.init(listener)
+        viewModelScope.launch(Dispatchers.Main) {
+            managementSocketService = ManagementSocketService()
+            managementSocketService.init(listener)
+            Log.d("appViewModel", "connectSocket")
+        }
     }
 
     fun disConnectSocket() {
-        Log.e("watchViewModel", "disConnectSocket")
-        managementSocketService.disConnect()
+        viewModelScope.launch(Dispatchers.Main) {
+            managementSocketService.disConnect()
+            Log.d("appViewModel", "disConnectSocket")
+        }
     }
 
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
-            Log.e("watchViewModel", "onOpen")
             isSocketConnect = SocketCode.CONNECT
             init()
+            Log.d("appViewModel", "onOpen")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
+            Thread.sleep(500)
             isSocketConnect = SocketCode.DISCONNECT
-            Log.e("watchViewModel", "onFailure")
+            Log.d("appViewModel", "onFailure")
         }
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
+            Thread.sleep(500)
             isSocketConnect = SocketCode.DISCONNECT
-            Log.e("watchViewModel", "onClosing")
+            Log.d("appViewModel", "onClosing")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -129,6 +139,9 @@ class AppViewModel(
                             val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
                             Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
+                        }
+                        "300" -> {
+                            webSocket.send("connect")
                         }
                         else -> {}
                     }

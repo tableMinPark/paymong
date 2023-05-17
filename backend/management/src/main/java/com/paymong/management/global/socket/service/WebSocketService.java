@@ -2,6 +2,7 @@ package com.paymong.management.global.socket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymong.management.global.code.WebSocketCode;
+import com.paymong.management.global.socket.dto.CheckDto;
 import com.paymong.management.global.socket.dto.PointDto;
 import com.paymong.management.mong.dto.MapCodeWsDto;
 import com.paymong.management.mong.dto.SendPointResDto;
@@ -34,13 +35,38 @@ public class WebSocketService {
         members = new HashMap<>();
     }
 
+    public void check(MongSocketDto mongSocketDto){
+        try {
+            if(members.containsKey(mongSocketDto.getMemberId())){
+                log.info("해당 id에 모든 세션을 체크합니다. memberId : {}, 현재 연결 세션 수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size());
+                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new CheckDto(WebSocketCode.CHECK)));
+                members.get(mongSocketDto.getMemberId()).stream()
+                        .forEach(s -> {
+                            try {
+                                log.info("{}에 체크 메세지를 보냅니다.", mongSocketDto.getMemberId());
+                                s.getSession().sendMessage(message);
+                            } catch (IOException e) {
+                                log.info("응 못보내");
+                            }
+                        });
+
+                members.remove(mongSocketDto.getMemberId());
+            }else{
+                log.info("새로운 세션을 체크합니다. {}", mongSocketDto.getMemberId());
+                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new CheckDto(WebSocketCode.CHECK)));
+                log.info("{}에 체크 메세지를 보냅니다.", mongSocketDto.getMemberId());
+                mongSocketDto.getSession().sendMessage(message);
+            }
+        }catch (IOException e){
+            log.info("메세지 생성 실패 !");
+        }
+
+    }
     public void connect(MongSocketDto mongSocketDto){
 
         if(members.containsKey(mongSocketDto.getMemberId())){
-            log.info("해당 id에 세션을 추가합니다. memberId : {}", mongSocketDto.getMemberId());
-            members.get(mongSocketDto.getMemberId()).removeIf(s-> !s.getSession().isOpen());
-            log.info("죽은 세션을 제거합니다. memberId : {} 세션 개수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size() + 1);
             members.get(mongSocketDto.getMemberId()).add(mongSocketDto);
+            log.info("해당 id에 세션을 추가합니다. memberId : {}, 세션 개수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size());
         }else{
             log.info("새로운 세션을 등록합니다. {}", mongSocketDto.getMemberId());
             List<MongSocketDto> list = new ArrayList<>();

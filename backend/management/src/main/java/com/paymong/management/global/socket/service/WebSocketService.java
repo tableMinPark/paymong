@@ -53,7 +53,7 @@ public class WebSocketService {
             if(members.get(mongSocketDto.getMemberId()).size() == 1){
                 members.remove(mongSocketDto.getMemberId());
             }else{
-                members.get(mongSocketDto.getMemberId()).remove(mongSocketDto.getSession());
+                members.get(mongSocketDto.getMemberId()).removeIf( s -> s.getSession().getId().equals(mongSocketDto.getSession().getId()));
             }
 
         }else{

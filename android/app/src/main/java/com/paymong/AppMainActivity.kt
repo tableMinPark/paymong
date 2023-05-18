@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
@@ -74,7 +75,7 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         // 포그라운드 서비스 실행
         val serviceIntent = Intent(this, ForegroundService::class.java)
         this.startForegroundService(serviceIntent)
-        
+
         setContent {
             AppMain(appLandinglViewModel)
         }
@@ -83,7 +84,10 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     override fun onPause() {
         super.onPause()
         try {
+            Log.d("appViewModel", "onPause")
+            // 리스너
             capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
+            // 소켓 제거
             if (appViewModel.isInitialized()) {
                 appViewModel.disConnectSocket()
                 appViewModel.isSocketConnect = SocketCode.FINISH
@@ -94,14 +98,13 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     override fun onResume() {
         super.onResume()
         try {
+            Log.d("appViewModel", "onResume")
+            // 리스너
             capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
 
             val dataApplicationRepository = DataApplicationRepository()
-            val accessToken = dataApplicationRepository.getValue("accessToken")
-            if (accessToken != "")
-                appViewModel.connectSocket()
-            else
-                appViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+            dataApplicationRepository.setValue("accessToken", "")
+            appViewModel.isSocketConnect = SocketCode.NOT_TOKEN
         } catch (_: Exception) {}
     }
     // 웨어러블 연결 여부 확인해서 연결 때마다 앱 설치 여부 확인

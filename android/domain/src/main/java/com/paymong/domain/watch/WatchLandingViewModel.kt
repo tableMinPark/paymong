@@ -32,7 +32,6 @@ class WatchLandingViewModel(
         private const val ANDROID_MARKET_APP_URI = "market://details?id=com.paymong"
     }
 
-    var startDestination = WatchNavItem.Landing.route
     // 로그인 플래그
     var loginState by mutableStateOf(LandingCode.LOADING)
     private val authRepository: AuthRepository = AuthRepository()

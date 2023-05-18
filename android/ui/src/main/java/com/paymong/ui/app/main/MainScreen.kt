@@ -2,6 +2,7 @@ package com.paymong.ui.app.main
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,6 +56,8 @@ fun Main(
         if (appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
             appViewModel.isSocketConnect = SocketCode.LOADING
             appViewModel.connectSocket()
+        } else if (appViewModel.isSocketConnect == SocketCode.CONNECT) {
+            appViewModel.init()
         }
     }
 

@@ -51,17 +51,21 @@ class AppLandinglViewModel(
     // 리프레시 토큰 로그인
     fun refreshLogin() {
         viewModelScope.launch(Dispatchers.IO) {
-            authRepository.reissue()
-                .catch {
-                    it.printStackTrace()
-                    landingCode = LandingCode.LOGIN_FAIL
-                }
-                .collect {values ->
-                    landingCode = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
-                }
+            try {
+                authRepository.reissue()
+                    .catch {
+                        it.printStackTrace()
+                        landingCode = LandingCode.CANT_LOGIN
+                    }
+                    .collect { values ->
+                        landingCode = if (values)
+                            LandingCode.LOGIN_SUCCESS
+                        else
+                            LandingCode.LOGIN_FAIL
+                    }
+            } catch (_: Exception) {
+                landingCode = LandingCode.CANT_LOGIN
+            }
         }
     }
     // 웨어러블 최초 등록 여부 확인
@@ -92,6 +96,7 @@ class AppLandinglViewModel(
             // 계정을 찾을 수 없음
             else {
                 Toast.makeText(getApplication(),ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message, Toast.LENGTH_LONG).show()
+                landingCode = LandingCode.CANT_LOGIN
             }
         }
     }
@@ -111,6 +116,7 @@ class AppLandinglViewModel(
             }
             // 계정을 찾을 수 없음
             else {
+                landingCode = LandingCode.CANT_LOGIN
                 Toast.makeText(getApplication(),ToastMessage.LOGIN_ACCOUNT_NOT_FOUND.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -118,16 +124,20 @@ class AppLandinglViewModel(
     // 로그인
     private fun login(playerId : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            authRepository.login(LoginReqDto(playerId))
-                .catch {
-                    landingCode = LandingCode.LOGIN_FAIL
-                }
-                .collect { values ->
-                    landingCode = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
-                }
+            try {
+                authRepository.login(LoginReqDto(playerId))
+                    .catch {
+                        landingCode = LandingCode.CANT_LOGIN
+                    }
+                    .collect { values ->
+                        landingCode = if (values)
+                            LandingCode.LOGIN_SUCCESS
+                        else
+                            LandingCode.CANT_LOGIN
+                    }
+            } catch (_: Exception) {
+                landingCode = LandingCode.CANT_LOGIN
+            }
         }
     }
     fun installCheck() {
@@ -183,7 +193,6 @@ class AppLandinglViewModel(
         }
     }
     fun openPlayStoreOnWearDevicesWithoutApp() {
-        Log.e("openPlayStoreOnWearDevicesWithoutApp()", "start")
         val wearNodesWithApp = wearNodesWithApp ?: return
         val allConnectedNodes = allConnectedNodes ?: return
         val nodesWithoutApp = allConnectedNodes - wearNodesWithApp

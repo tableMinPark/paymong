@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.*
+import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.FeedViewModel
 import com.paymong.common.code.SoundCode
@@ -29,7 +30,7 @@ fun Feed(
         feedViewModel.foodCategory = ""
         feedViewModel.currentFoodPosition = 0
     }
-    Background(true)
+    Background(MapCode.MP000, false)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

@@ -63,8 +63,6 @@ class AppViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             findMong()
             findPoint()
-            delay(1000)
-            isLoading = true
             Log.d("appViewModel", "init")
         }
     }
@@ -75,9 +73,20 @@ class AppViewModel(
 
     fun connectSocket() {
         viewModelScope.launch(Dispatchers.Main) {
+            delay(1000)
             managementSocketService = ManagementSocketService()
             managementSocketService.init(listener)
             Log.d("appViewModel", "connectSocket")
+        }
+    }
+
+    fun reconnectSocket() {
+        viewModelScope.launch(Dispatchers.Main) {
+            for (count in 1..10) {
+                if (isSocketConnect == SocketCode.CONNECT) break
+                connectSocket()
+                delay(5000)
+            }
         }
     }
 
@@ -91,8 +100,8 @@ class AppViewModel(
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
+            Thread.sleep(500)
             isSocketConnect = SocketCode.CONNECT
-            init()
             Log.d("appViewModel", "onOpen")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -177,6 +186,7 @@ class AppViewModel(
                     it.printStackTrace()
                 }
                 .collect { data ->
+                    Log.d("findMong", data.toString())
                     mong = Mong(
                         data.mongId,
                         data.name,
@@ -185,6 +195,8 @@ class AppViewModel(
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
                     mapCode = MapCode.valueOf(data.mapCode)
+                    isLoading = true
+                    Log.d("background", mapCode.code.toString())
                 }
         }
     }
@@ -197,7 +209,9 @@ class AppViewModel(
                     it.printStackTrace()
                 }
                 .collect { data ->
+                    Log.d("findPoint", data.toString())
                     point = data.point
+                    isLoading = true
                 }
         }
     }

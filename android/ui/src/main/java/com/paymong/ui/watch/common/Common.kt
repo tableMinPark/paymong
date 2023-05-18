@@ -2,6 +2,7 @@ package com.paymong.ui.watch.common
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,15 +26,19 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.size.OriginalSize
 import com.paymong.common.R
+import com.paymong.common.code.MapCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.WatchViewModel
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun Background(isGif: Boolean = false) {
-    val watchViewModel = viewModel<WatchViewModel>(checkNotNull(LocalViewModelStoreOwner.current))
-    val background = painterResource(watchViewModel.mapCode.code)
+fun Background(
+    mapCode: MapCode,
+    isGif: Boolean = false
+) {
+    val background = painterResource(mapCode.code)
     Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
     if (isGif) MainBackgroundGif()
 }

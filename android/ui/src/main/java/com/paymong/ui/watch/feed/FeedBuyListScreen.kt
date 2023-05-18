@@ -24,6 +24,7 @@ import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.FeedViewModel
 import com.paymong.common.R
 import com.paymong.common.code.FoodCode
+import com.paymong.common.code.MapCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
@@ -48,7 +49,7 @@ fun FeedBuyList(
     LaunchedEffect(key1 = true) {
         feedViewModel.getFoodList(watchViewModel.point)
     }
-    Background(true)
+    Background(watchViewModel.mapCode, false)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

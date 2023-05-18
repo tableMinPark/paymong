@@ -44,11 +44,11 @@ fun SmartThings(
     navController: NavController,
     soundViewModel: SoundViewModel,
     smartThingsViewModel: SmartThingsViewModel
+
 ) {
     LaunchedEffect(key1 = true) {
         smartThingsViewModel.init()
     }
-
     Scaffold(
         topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route, soundViewModel) },
         backgroundColor = PayMongNavy
@@ -206,7 +206,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                 }
             }
             LazyColumn(){
-                if(smartThingsViewModel.success.value){
+                if(smartThingsViewModel.success){
                     items(smartThingsViewModel.connectedThingsList.size){index ->
                         Row(
                             modifier = Modifier

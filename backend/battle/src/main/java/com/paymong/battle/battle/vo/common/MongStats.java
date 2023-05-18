@@ -8,6 +8,6 @@ import lombok.Data;
 public class MongStats {
     private Long mongId;
     private Double health;
-    private Integer strength;
-    private Integer weight;
+    private Double strength;
+    private Double weight;
 }

@@ -228,6 +228,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                 Long keepId = battleRoom.getStatsMap().get("B").getMongId();
                                 battleService.spendMoney(escapeId);
                                 battleService.earnMoney(keepId);
+                                battleRoom.getStatsMap().get("A").setHealth(0.0);
                             }else{
                                 // B가 탈주
                                 log.info("B가 탈주 함");
@@ -235,6 +236,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                 Long keepId = battleRoom.getStatsMap().get("A").getMongId();
                                 battleService.spendMoney(escapeId);
                                 battleService.earnMoney(keepId);
+                                battleRoom.getStatsMap().get("B").setHealth(0.0);
                             }
                         }
 

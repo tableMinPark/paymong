@@ -41,6 +41,7 @@ public class WebSocketService {
                 log.info("해당 id에 모든 세션을 체크합니다. memberId : {}, 현재 연결 세션 수 : {}", mongSocketDto.getMemberId(), members.get(mongSocketDto.getMemberId()).size());
                 TextMessage message = new TextMessage(objectMapper.writeValueAsString(new CheckDto(WebSocketCode.CHECK)));
                 members.get(mongSocketDto.getMemberId()).stream()
+                        .filter(s -> s.getSession().isOpen())
                         .forEach(s -> {
                             try {
                                 log.info("{}에 체크 메세지를 보냅니다.", mongSocketDto.getMemberId());

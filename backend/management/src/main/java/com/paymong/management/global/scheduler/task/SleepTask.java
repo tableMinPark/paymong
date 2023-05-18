@@ -3,12 +3,15 @@ package com.paymong.management.global.scheduler.task;
 import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.code.WebSocketCode;
+import com.paymong.management.global.exception.EvolutionReadyException;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
+import com.paymong.management.mong.service.ChargeService;
 import com.paymong.management.status.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +29,25 @@ public class SleepTask {
     private final StatusService statusService;
     private final ActiveHistoryRepository activeHistoryRepository;
     private final WebSocketService webSocketService;
+    private final ChargeService chargeService;
 
     @Transactional
-    public void sleepMong(Long mongId) throws NotFoundMongException {
+    public void sleepMong(Long mongId) throws NotFoundMongException, EvolutionReadyException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
+        if(mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            throw new EvolutionReadyException();
+        }
+        if(mong.getStateCode().equals(MongConditionCode.DIE.getCode())){
+            throw new UnsuitableException();
+        }
+        if(mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
         log.info("{}의 잠을 재웁니다. 이전 상태 : {}",mongId, MongConditionCode.codeOf(mong.getStateCode()).getMessage());
 
+        chargeService.discharging(mong.getMemberId());
         mong.setStateCode(MongConditionCode.SLEEP.getCode());
 
         ActiveHistory activeHistory = ActiveHistory.builder()
@@ -48,47 +62,92 @@ public class SleepTask {
     }
 
     @Transactional
-    public void awakeMong(Long mongId, Long expire) throws NotFoundMongException {
+    public void awakeMong(Long mongId, Long expire) throws NotFoundMongException, EvolutionReadyException, UnsuitableException {
         // expire 단위 분
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
 
+        if(mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            throw new EvolutionReadyException();
+        }
+
+        if(mong.getStateCode().equals(MongConditionCode.DIE.getCode())){
+            throw new UnsuitableException();
+        }
+
+        if(mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
+
         Integer level = Integer.parseInt(mong.getCode().substring(2,3));
+        Integer tier = Integer.parseInt(mong.getCode().substring(3,4));
         // 3시간 이상일 경우
         int gauge = 0;
         if(expire >= 180L){
             // 풀피
             if(level == 2){
-                gauge = 30;
+                if(tier == 1){
+                    gauge = 30;
+                }else if(tier == 2){
+                    gauge = 35;
+                }else if(tier == 3){
+                    gauge = 40;
+                }else{
+                    gauge = 25;
+                }
+
             }else if(level == 3){
-                gauge = 40;
+                if(tier == 1){
+                    gauge = 40;
+                }else if(tier == 2){
+                    gauge = 45;
+                }else if(tier == 3){
+                    gauge = 50;
+                }else{
+                    gauge = 35;
+                }
             }else {
                 gauge = 20;
             }
             mong.setHealth(gauge);
-            mong.setSleep(20);
+            mong.setSleep(gauge);
         }else{
             double scale = 0;
             if(level == 2){
-                scale = 30.0/240.0;
+                if(tier == 1){
+                    scale = 30.0/240.0;
+                }else if(tier == 2){
+                    scale = 35.0/240.0;
+                }else if(tier == 3){
+                    scale = 40.0/240.0;
+                }else{
+                    scale = 25.0/240.0;
+                }
             }else if(level == 3){
-                scale = 40.0/240.0;
+                if(tier == 1){
+                    scale = 30.0/240.0;
+                }else if(tier == 2){
+                    scale = 35.0/240.0;
+                }else if(tier == 3){
+                    scale = 40.0/240.0;
+                }else{
+                    scale = 25.0/240.0;
+                }
             }else {
                 scale = 20.0/240.0;
             }
             gauge = Integer.parseInt(String.valueOf(Math.round(scale * expire)));
             mong.setHealth(mong.getHealth() + gauge);
             mong.setSleep(mong.getSleep() + gauge);
-
-            ActiveHistory activeHistory = ActiveHistory.builder()
-                    .activeCode(MongActiveCode.AWAKE.getCode())
-                    .activeTime(LocalDateTime.now())
-                    .mongId(mongId)
-                    .build();
-
-            activeHistoryRepository.save(activeHistory);
         }
 
+        ActiveHistory activeHistory = ActiveHistory.builder()
+                .activeCode(MongActiveCode.AWAKE.getCode())
+                .activeTime(LocalDateTime.now())
+                .mongId(mongId)
+                .build();
+
+        activeHistoryRepository.save(activeHistory);
 
         MongConditionCode condition = statusService.checkCondition(mong);
         log.info("{}의 잠을 깨웁니다. 상태 : {}",mongId, condition.getMessage());
@@ -98,9 +157,15 @@ public class SleepTask {
     }
 
     @Transactional
-    public void minusSleep(Long mongId) throws NotFoundMongException {
+    public void minusSleep(Long mongId) throws NotFoundMongException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
+
+        if(mong.getStateCode().equals(MongConditionCode.SLEEP.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.DIE.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
 
         log.info("{}이 졸려 집니다.",mongId);
         Integer sleep = mong.getSleep();

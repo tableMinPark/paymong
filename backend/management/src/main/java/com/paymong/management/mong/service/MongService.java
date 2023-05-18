@@ -8,15 +8,13 @@ import com.paymong.management.global.dto.*;
 import com.paymong.management.global.exception.*;
 import com.paymong.management.global.scheduler.EvolutionScheduler;
 import com.paymong.management.global.scheduler.MapScheduler;
+import com.paymong.management.global.scheduler.SleepScheduler;
 import com.paymong.management.global.scheduler.dto.NextLevelDto;
 import com.paymong.management.global.scheduler.service.SchedulerService;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
-import com.paymong.management.mong.dto.EvolutionMongResDto;
-import com.paymong.management.mong.dto.GraduationMongResDto;
-import com.paymong.management.mong.dto.MapCodeDto;
-import com.paymong.management.mong.dto.MapCodeWsDto;
+import com.paymong.management.mong.dto.*;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
 import com.paymong.management.mong.vo.AddMongReqVo;
@@ -48,6 +46,8 @@ public class MongService {
     private final ActiveHistoryRepository activeHistoryRepository;
     private final WebSocketService webSocketService;
     private final MapScheduler mapScheduler;
+    private final SleepScheduler sleepScheduler;
+    private final ChargeService chargeService;
 
     @Transactional
     public AddMongResVo addMong(AddMongReqVo addMongReqVo) throws Exception{
@@ -104,11 +104,14 @@ public class MongService {
     public void startScheduler(Long mongId) throws NotFoundMongException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(()-> new NotFoundMongException());
+
         schedulerService.startScheduler(mong);
+        evolutionScheduler.startScheduler(mongId);
+        sleepScheduler.initScheduler(mongId, mong.getSleepStart(), mong.getSleepEnd());
     }
 
     @Transactional
-    public EvolutionMongResDto evolutionMong(Long mongId) throws NotFoundMongException, GatewayException, UnsuitableException {
+    public void evolutionMong(Long mongId) throws NotFoundMongException, GatewayException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(()-> new NotFoundMongException());
 
@@ -128,7 +131,9 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
-
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),
                     new FindCommonCodeDto(commonCodeDto.getCode()));
@@ -149,6 +154,10 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
 
             if(findMongLevelCodeDto.getType() == 3){
                 // 타입 3이면 졸업
@@ -177,6 +186,10 @@ public class MongService {
 
             mong.setCode(commonCodeDto.getCode());
             mong.setWeight(mong.getWeight() + 10 > 99 ? 99 : mong.getWeight() + 10);
+
+            if(mong.getWeight() == 99){
+                mong.setStrength(mong.getStrength() - 10 < 0 ? 0 : mong.getStrength() - 10);
+            }
 
             // collect service에 새로운 몽 추가
             clientService.addMong(String.valueOf(mong.getMemberId()),
@@ -211,12 +224,31 @@ public class MongService {
             activeHistoryRepository.save(activeHistory);
         }
 
+
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+    }
+
+    @Transactional
+    public EvolutionMongResDto mongSleepCheck(Long mongId) throws NotFoundMongException {
+        Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
+                .orElseThrow(()-> new NotFoundMongException());
+
         EvolutionMongResDto mongResDto = new EvolutionMongResDto();
         mongResDto.setWeight(mong.getWeight());
         mongResDto.setMongCode(mong.getCode());
         mongResDto.setStateCode(mong.getStateCode());
-        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+
+        if(!mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())
+        || !mong.getStateCode().equals(MongConditionCode.DIE.getCode())
+        || !mong.getStateCode().equals(MongConditionCode.EVOLUTION_READY.getCode())){
+            if(sleepScheduler.checkTime(mong.getSleepStart(), mong.getSleepEnd())){
+                sleepScheduler.getSleepRunnable(mongId).run();
+                mongResDto.setMongCode(MongConditionCode.SLEEP.getCode());
+            }
+        }
+
         return mongResDto;
+
     }
 
     @Transactional
@@ -313,5 +345,36 @@ public class MongService {
         LOGGER.info("새로운 map이 왔습니다. memberId : {}, mapCode : {}",mapCodeWsDto.getMemberId(), mapCodeWsDto.getMapCode());
         webSocketService.sendMap(mapCodeWsDto, WebSocketCode.MAP);
         mapScheduler.startScheduler(mapCodeWsDto.getMemberId());
+    }
+
+    public void sendThing(SendThingsResDto sendThingsResDto) throws NotFoundMongException {
+        LOGGER.info("things 코드를 전송합니다 : memberId : {}", sendThingsResDto.getMemberId());
+        if(sendThingsResDto.getThingsCode().equals("ST002")){
+            chargeService.charging(sendThingsResDto.getMemberId());
+        }else if(sendThingsResDto.getThingsCode().equals("ST003")){
+            chargeService.discharging(sendThingsResDto.getMemberId());
+        }
+        webSocketService.sendThings(sendThingsResDto, WebSocketCode.THINGS);
+    }
+
+    public void sendPoint(SendPointResDto sendPointResDto){
+        LOGGER.info("point 코드를 전송합니다 : memberId : {}", sendPointResDto.getMemberId());
+        webSocketService.sendPoint(sendPointResDto, WebSocketCode.POINT);
+    }
+
+    @Transactional
+    public void changeState(AdminStateDto adminStateDto){
+        Mong mong = mongRepository.findByMongId(adminStateDto.getMongId()).get();
+
+        mong.setStateCode(adminStateDto.getStateCode());
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+    }
+
+    @Transactional
+    public void changePoop(AdminPoopDto adminPoopDto){
+        Mong mong = mongRepository.findByMongId(adminPoopDto.getMongId()).get();
+
+        mong.setPoopCount(adminPoopDto.getPoopCount());
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
     }
 }

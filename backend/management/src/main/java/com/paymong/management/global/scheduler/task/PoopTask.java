@@ -4,6 +4,7 @@ import com.paymong.management.global.code.MongActiveCode;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.history.entity.ActiveHistory;
 import com.paymong.management.history.repository.ActiveHistoryRepository;
@@ -25,11 +26,16 @@ public class PoopTask {
     private final ActiveHistoryRepository activeHistoryRepository;
     private final WebSocketService webSocketService;
     @Transactional
-    public void addPoop(Long mongId) throws NotFoundMongException {
+    public void addPoop(Long mongId) throws NotFoundMongException, UnsuitableException {
 
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
-        if(!mong.getActive()) throw new NotFoundMongException();
+
+        if(mong.getStateCode().equals(MongConditionCode.SLEEP.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.DIE.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
         Integer poop = mong.getPoopCount();
         Integer penalty = mong.getPenalty();
         if(poop == 4){

@@ -15,7 +15,10 @@ public enum WebSocketCode implements BasicCode{
     EVOLUTION_READY("206","진화대기"),
     DEATH_READY("207","죽을 수도 있습니다."),
     DEATH("208","죽었습니다."),
-    MAP("209", "맵이 바뀝니다.")
+    MAP("209", "맵이 바뀝니다."),
+    THINGS("210", "스마트 띵수 요청"),
+    POINT("211", "포인트 수정 등록"),
+    CHECK("300", "연결 체크")
     ;
     private final String code;
     private final String message;

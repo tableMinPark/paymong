@@ -74,7 +74,7 @@ public class TrainingService {
 
         Integer cnt = walkingReqVo.getWalkingCount()/500;
 
-        Integer point = walkingReqVo.getWalkingCount()/100;
+        Integer point = walkingReqVo.getWalkingCount()/10;
 
         // auth 서비스로 전송
         clientService.addPoint(String.valueOf(walkingReqVo.getMemberId()), new AddPointDto(point * status.getPoint(), "산책", status.getCode()));

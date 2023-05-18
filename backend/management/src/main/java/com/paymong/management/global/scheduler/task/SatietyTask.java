@@ -3,6 +3,7 @@ package com.paymong.management.global.scheduler.task;
 import com.paymong.management.global.code.MongConditionCode;
 import com.paymong.management.global.code.WebSocketCode;
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.socket.service.WebSocketService;
 import com.paymong.management.mong.entity.Mong;
 import com.paymong.management.mong.repository.MongRepository;
@@ -19,9 +20,15 @@ public class SatietyTask {
     private final MongRepository mongRepository;
     private final WebSocketService webSocketService;
     @Transactional
-    public Boolean reduceSatiety(Long mongId) throws NotFoundMongException {
+    public Boolean reduceSatiety(Long mongId) throws NotFoundMongException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
+
+        if(mong.getStateCode().equals(MongConditionCode.SLEEP.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.DIE.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
 
         Integer poop = mong.getPoopCount();
         Integer satiety = mong.getSatiety();

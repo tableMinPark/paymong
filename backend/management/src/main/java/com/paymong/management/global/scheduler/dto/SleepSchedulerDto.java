@@ -14,9 +14,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 public class SleepSchedulerDto {
-    private LocalDateTime startTime;
-    private ThreadPoolTaskScheduler staticScheduler;
-    private ThreadPoolTaskScheduler dynamicScheduler;
-    private ThreadPoolTaskScheduler minusScheduler;
+
+    private LocalTime sleepStart;
+    private LocalTime sleepEnd;
+    private Long expire;
+    private ThreadPoolTaskScheduler scheduler;
 
 }

@@ -1,0 +1,11 @@
+package com.paymong.common.code
+
+enum class LandingCode {
+    LOADING,
+    INSTALL, NOT_INSTALL,
+    DONE,
+
+    LOGIN_SUCCESS, LOGIN_FAIL, CANT_LOGIN,
+    REGIST_WEARABLE_SUCCESS, REGIST_WEARABLE_FAIL,
+    HAS_WEARABLE_SUCCESS, HAS_WEARABLE_FAIL
+}

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class BattleSocketService {
     object OkHttpClientSingleton {
         val instance: OkHttpClient = OkHttpClient.Builder()
-            .pingInterval(10, TimeUnit.SECONDS)
+            .pingInterval(1, TimeUnit.SECONDS)
             .build()
     }
 

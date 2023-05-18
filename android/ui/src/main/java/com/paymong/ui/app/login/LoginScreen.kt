@@ -1,5 +1,6 @@
 package com.paymong.ui.app.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -34,8 +35,11 @@ fun Login(
     appLandingViewModel : AppLandinglViewModel
 ) {
     LaunchedEffect(key1 = true) {
-        appLandingViewModel.registCheck()
+        if (appLandingViewModel.landingCode == LandingCode.LOGIN_FAIL) {
+            appLandingViewModel.registCheck()
+        }
     }
+    Log.e("landing", "${appLandingViewModel.landingCode}")
     when (appLandingViewModel.landingCode) {
         LandingCode.LOGIN_SUCCESS -> {
             appLandingViewModel.landingCode = LandingCode.DONE
@@ -55,7 +59,7 @@ fun Login(
                 Toast.LENGTH_SHORT
             ).show()
         }
-        LandingCode.LOGIN_FAIL -> {
+        LandingCode.CANT_LOGIN -> {
             Toast.makeText(
                 LocalContext.current,
                 ToastMessage.LOGIN_FAIL.message,

@@ -186,7 +186,7 @@ private fun AddThings(smartThingsViewModel:SmartThingsViewModel){
 
 @Composable
 private fun SelectThingsList(smartThingsViewModel:SmartThingsViewModel){
-    var isOpen by remember { mutableStateOf(false)}
+    var isOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
         Box(modifier = Modifier
             .clip(RoundedCornerShape(30.dp))

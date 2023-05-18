@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
+import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PayMongRed
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
@@ -19,6 +20,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TrainingLanding(
     navController: NavHostController,
+    watchViewModel : WatchViewModel
 ) {
     LaunchedEffect(key1 = true){
         delay(1500)
@@ -28,7 +30,7 @@ fun TrainingLanding(
             }
         }
     }
-    Background(true)
+    Background(watchViewModel.mapCode, true)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

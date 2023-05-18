@@ -46,48 +46,58 @@ class WalkingViewModel (
     init {
         Log.d("walkingViewModel", "init")
 
-        try {
-            val walkingData = dataApplicationRepository.getValue("isWalking")
-            // 데이터가 있는 경우
-            if (walkingData == "true") {
-                isWalking = true
-                val countData = dataApplicationRepository.getValue("startCount")
-                val timeData = dataApplicationRepository.getValue("startTime")
-                // 걸음을 걷고 있는 경우
-                startCount =  countData.toInt()
-                startTime = LocalDateTime.parse(timeData, formatter)
-            }
-            // 데이터가 없는 경우
-            else {
-                startCount = -1
-                startTime = LocalDateTime.now()
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
         viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val walkingData = dataApplicationRepository.getValue("isWalking")
+                Log.d("walkingViewModel", "isWalking : $walkingData")
+                // 데이터가 있는 경우
+                if (walkingData == "true") {
+                    isWalking = true
+                    val countData = dataApplicationRepository.getValue("startCount")
+                    val timeData = dataApplicationRepository.getValue("startTime")
+                    Log.d("walkingViewModel", "countData : $countData")
+                    Log.d("walkingViewModel", "timeData : $timeData")
+                    // 걸음을 걷고 있는 경우
+                    startCount = countData.toInt()
+                    startTime = LocalDateTime.parse(timeData, formatter)
+                    walkingState = WalkingCode.WALKING
+                }
+                // 데이터가 없는 경우
+                else {
+                    isWalking = false
+                    delay(1000)
+                    walkingState = WalkingCode.PAUSE
+                }
+                Log.d("walkingViewModel", "isWalking : $walkingData")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             setSensor()
         }
     }
 
     private fun setSensor() {
         // 센서 설정
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             sensorManager = application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
             stepSensorEventListener = object : SensorEventListener {
                 override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
                 override fun onSensorChanged(event: SensorEvent) {
                     // 처음이면 이면 초기화
+                    Log.d("walkingViewModel", "isWalking : $isWalking")
                     if (!isWalking) {
                         startCount = event.values[0].toInt()
                         startTime = LocalDateTime.now()
-                        isWalking = true
                         dataApplicationRepository.setValue("startCount", startCount.toString())
                         dataApplicationRepository.setValue("startTime", startTime.toString())
                         dataApplicationRepository.setValue("isWalking", "true")
+                        Log.d("walkingViewModel", "startCount : $startCount")
+                        Log.d("walkingViewModel", "startTime : $startTime")
+                        Log.d("walkingViewModel", "isWalking : $isWalking")
+                        isWalking = true
+                        walkingState = WalkingCode.WALKING
                     }
                     val nowCount = event.values[0].toInt()
                     walkCount = nowCount - startCount
@@ -102,14 +112,17 @@ class WalkingViewModel (
         }
     }
     private fun walkTimerStart(){
-        walkingState = WalkingCode.WALKING
         viewModelScope.launch(Dispatchers.IO) {
+            var sec = 0L
             while(walkingState != WalkingCode.WALKING_END) {
                 if (walkingState == WalkingCode.PAUSE) {
                     delay(1000)
-                    Log.d("walkingViewModel", "PAUSE : $startTime")
-                    startTime = startTime.plusSeconds(1)
+                    sec++
+                    continue
+                } else if (sec > 0) {
+                    startTime = startTime.plusSeconds(sec)
                     dataApplicationRepository.setValue("startTime", startTime.toString())
+                    sec = 0
                 }
                 val nowTime = LocalDateTime.now()
                 walkMinute = ChronoUnit.MINUTES.between(startTime, nowTime)

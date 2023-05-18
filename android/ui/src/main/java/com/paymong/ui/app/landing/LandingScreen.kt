@@ -1,5 +1,6 @@
 package com.paymong.ui.app.landing
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ fun Landing(
     navController: NavController,
     appLandingViewModel : AppLandinglViewModel
 ) {
+
     LaunchedEffect(key1 = true){
         appLandingViewModel.refreshLogin()
         delay(2000)
@@ -45,7 +47,6 @@ fun Landing(
     }
     // 리프레시 로그인 실패
     else if (appLandingViewModel.landingCode == LandingCode.LOGIN_FAIL){
-        appLandingViewModel.landingCode = LandingCode.LOADING
         navController.navigate(AppNavItem.Login.route){
             popUpTo(navController.graph.id) {
                 inclusive = true

@@ -37,7 +37,7 @@ fun WalkingActive(
     soundViewModel: SoundViewModel,
     walkingViewModel: WalkingViewModel = viewModel()
 ) {
-    Background(false)
+    Background(watchViewModel.mapCode, false)
     WalkingBackgroundGif()
 
     val configuration = LocalConfiguration.current

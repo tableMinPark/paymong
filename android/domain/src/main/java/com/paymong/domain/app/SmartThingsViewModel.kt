@@ -23,13 +23,19 @@ class SmartThingsViewModel : ViewModel() {
     var thingsId:Long by mutableStateOf(0)
     var isDelete by mutableStateOf(false)
 
-    var success = mutableStateOf(false)
+    var success by mutableStateOf(false)
 
     private var memberRepository: MemberRepository = MemberRepository()
 
     fun init() {
         viewModelScope.launch(Dispatchers.Main){
+            isSelect = -1
+            routine = ""
+            isAdd = false
+            thingsId = 0
+            isDelete = false
             connectedThings()
+            toConnectThings()
         }
     }
     private fun connectedThings(){
@@ -44,7 +50,7 @@ class SmartThingsViewModel : ViewModel() {
                     for(i in data.indices){
                         connectedThingsList.add(Things(data[i].thingsId, data[i].thingsCode, data[i].thingsName, data[i].routine, data[i].regDt))
                     }
-                    success.value = true
+                    success = true
                 }
         }
     }
@@ -61,6 +67,8 @@ class SmartThingsViewModel : ViewModel() {
                     for(i in data.indices){
                         thingsList.add(AddThingsDevice(data[i].thingsCode, data[i].thingsName))
                     }
+                    connectedThings()
+                    toConnectThings()
                 }
         }
     }
@@ -73,6 +81,7 @@ class SmartThingsViewModel : ViewModel() {
                 }
                 .collect{
                     connectedThings()
+                    toConnectThings()
                 }
         }
     }
@@ -85,6 +94,7 @@ class SmartThingsViewModel : ViewModel() {
                 }
                 .collect{
                     connectedThings()
+                    toConnectThings()
                 }
         }
     }

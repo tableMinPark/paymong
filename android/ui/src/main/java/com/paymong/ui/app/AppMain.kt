@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -50,6 +51,11 @@ fun AppMain(
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
     val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
 
+    //appViewModel.isSocketConnect == SocketCode.LOADING ||
+    if (appViewModel.isSocketConnect == SocketCode.DISCONNECT) {
+        appViewModel.reconnectSocket()
+    }
+
     PaymongTheme {
         Scaffold(
         ) {
@@ -58,9 +64,7 @@ fun AppMain(
                     appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
                     AppMainNav(appLandingViewModel)
                 } else {
-                    SocketError(appViewModel.isSocketConnect) {
-                        appViewModel.connectSocket()
-                    }
+                    SocketError(appViewModel.isSocketConnect)
                 }
             }
         }
@@ -70,19 +74,18 @@ fun AppMain(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun SocketError(
-    isSocketConnect : SocketCode,
-    setSocket : () -> Unit
+    isSocketConnect : SocketCode
 ) {
     BgGif()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val fontSize = if (screenWidthDp < 200) 12 else 15
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { setSocket() },
+            .clickable {
+            },
         verticalArrangement = Arrangement.Center
     ) {
         Row(
@@ -100,21 +103,8 @@ fun SocketError(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            if (isSocketConnect == SocketCode.DISCONNECT) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "서버에 연결할 수 없습니다.\n\n터치해서 재 연결 시도하기",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                        fontFamily = dalmoori,
-                        color = PayMongRed200,
-                        fontSize = fontSize.sp
-                    )
-                }
-            } else if (isSocketConnect == SocketCode.LOADING) {
+            if (isSocketConnect == SocketCode.DISCONNECT ||
+                isSocketConnect == SocketCode.LOADING) {
                 val loadBarSize = 75
                 Box(
                     modifier = Modifier

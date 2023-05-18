@@ -42,6 +42,7 @@ import com.paymong.ui.watch.feed.Feed
 import com.paymong.ui.watch.feed.FeedBuyList
 import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
+import kotlinx.coroutines.android.HandlerDispatcher
 
 @Composable
 fun WatchMain(
@@ -55,9 +56,7 @@ fun WatchMain(
             watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
             NavGraph(watchLandingViewModel)
         } else {
-            SocketError(watchViewModel.isSocketConnect) {
-                watchViewModel.connectSocket()
-            }
+            SocketError(watchViewModel, watchViewModel.isSocketConnect)
         }
     }
 }
@@ -65,36 +64,23 @@ fun WatchMain(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun SocketError(
-    isSocketConnect : SocketCode,
-    setSocket : () -> Unit
+    watchViewModel: WatchViewModel,
+    isSocketConnect : SocketCode
 ) {
-    Background(true)
+    Background(watchViewModel.mapCode, true)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
-    val fontSize = if (screenWidthDp < 200) 12 else 15
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                if (isSocketConnect == SocketCode.DISCONNECT)
-                    setSocket()
-            },
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        if (isSocketConnect == SocketCode.LOADING ||
+            isSocketConnect == SocketCode.DISCONNECT) {
 
-        if (isSocketConnect == SocketCode.DISCONNECT) {
-            Text(
-                text = "서버에 연결할 수 없습니다.\n\n터치해서 재연결 시도하기",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                fontFamily = dalmoori,
-                color = PayMongRed200,
-                fontSize = fontSize.sp,
-            )
-        } else if (isSocketConnect == SocketCode.LOADING) {
             val loadBarSize = if (screenWidthDp < 200) 45 else 55
             Box(
                 modifier = Modifier
@@ -125,7 +111,7 @@ fun NavGraph (
 
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = watchLandingViewModel.startDestination
+        startDestination = WatchNavItem.Landing.route
     ) {
         // Landing
         composable( route = WatchNavItem.Landing.route) {
@@ -152,7 +138,7 @@ fun NavGraph (
             Activity(navController, watchViewModel, soundViewModel)
         }
         composable(route = WatchNavItem.TrainingLanding.route){
-            TrainingLanding(navController)
+            TrainingLanding(navController, watchViewModel)
         }
         composable(route = WatchNavItem.Training.route){
             TrainingActive(navController, watchViewModel, soundViewModel)

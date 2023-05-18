@@ -37,10 +37,12 @@ fun Main(
         if (watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
             watchViewModel.isSocketConnect = SocketCode.LOADING
             watchViewModel.connectSocket()
+        } else if (watchViewModel.isSocketConnect == SocketCode.CONNECT) {
+            watchViewModel.init()
         }
     }
 
-    Background(false)
+    Background(watchViewModel.mapCode, false)
 
     if(watchViewModel.mapCode == MapCode.MP000){
         MainBackgroundGif()

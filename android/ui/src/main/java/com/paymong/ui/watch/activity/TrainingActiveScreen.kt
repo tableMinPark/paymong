@@ -50,7 +50,7 @@ fun TrainingActive(
     val exitFontSize = if (screenWidthDp < 200) 11 else 13
     val infoFontSize = if (screenWidthDp < 200) 9 else 11
 
-    Background(true)
+    Background(watchViewModel.mapCode, true)
     if (!trainingViewModel.isTrainingEnd) LoadingGif()
 
     Column(

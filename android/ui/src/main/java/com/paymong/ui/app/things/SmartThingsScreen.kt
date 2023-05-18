@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,6 +46,9 @@ fun SmartThings(
     smartThingsViewModel: SmartThingsViewModel
 
 ) {
+    LaunchedEffect(key1 = true) {
+        smartThingsViewModel.init()
+    }
     Scaffold(
         topBar = { TopBar("스마트싱스", navController, AppNavItem.Main.route, soundViewModel) },
         backgroundColor = PayMongNavy
@@ -202,7 +206,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                 }
             }
             LazyColumn(){
-                if(smartThingsViewModel.success.value){
+                if(smartThingsViewModel.success){
                     items(smartThingsViewModel.connectedThingsList.size){index ->
                         Row(
                             modifier = Modifier

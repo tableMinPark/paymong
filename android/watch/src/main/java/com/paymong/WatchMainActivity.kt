@@ -48,8 +48,6 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 필수 권한 확인
         isNotificationPermissionGranted()
 
-        DataApplicationRepository().setValue("playerId", "")
-
         // 설치 여부 확인
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
@@ -61,7 +59,6 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
 
         setContent {
             WatchMain(watchLandingViewModel)
@@ -81,17 +78,11 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         super.onResume()
         try {
             capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
-            // 소켓
+
             val dataApplicationRepository = DataApplicationRepository()
-            val accessToken = dataApplicationRepository.getValue("accessToken")
-            if (accessToken != "") {
-                // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
-                watchViewModel.isSocketConnect = SocketCode.LOADING
-                watchViewModel.connectSocket()
-            } else{
-            // 엑세스 토큰이 없어서 소켓 연결이 불가능한 경우 (로그인이 필요한 경우) -> 로그인 이후 메인 화면 로딩 시 소켓 연결
-                watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
-            }
+            dataApplicationRepository.setValue("accessToken", "")
+            watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+
         } catch (_: Exception) {}
     }
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {

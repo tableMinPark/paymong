@@ -80,6 +80,16 @@ class WatchViewModel (
         }
     }
 
+    fun reconnectSocket() {
+        viewModelScope.launch(Dispatchers.Main) {
+            for (count in 1..10) {
+                if (isSocketConnect == SocketCode.CONNECT) break
+                connectSocket()
+                delay(5000)
+            }
+        }
+    }
+
     fun isInitialized() : Boolean {
         return ::managementSocketService.isInitialized
     }
@@ -100,7 +110,6 @@ class WatchViewModel (
             isSocketConnect = SocketCode.CONNECT
             Log.d("watchViewModel", "onOpen")
             super.onOpen(webSocket, response)
-            init()
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)

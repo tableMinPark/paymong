@@ -13,6 +13,8 @@ import androidx.navigation.NavController
 import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.LandingCode
+import com.paymong.common.code.MapCode
+import com.paymong.common.code.SocketCode
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
@@ -26,10 +28,10 @@ fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
     LaunchedEffect(key1 = true){
-        delay(3000)
+        delay(1000)
         watchLandingViewModel.loginCheck()
     }
-    Background(true)
+    Background(MapCode.MP000, false)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -39,8 +41,8 @@ fun Landing(
     when(watchLandingViewModel.loginState) {
          LandingCode.LOGIN_SUCCESS -> {
              watchLandingViewModel.loginState = LandingCode.DONE
-             navController.navigate(WatchNavItem.Main.route){
-                 popUpTo(navController.graph.id) {
+                     navController.navigate(WatchNavItem.Main.route){
+                         popUpTo(navController.graph.id) {
                      inclusive = true
                  }
                  // 스택 첫 화면 메인화면으로 변경
@@ -62,6 +64,7 @@ fun Landing(
                 if (watchLandingViewModel.landingCode == LandingCode.NOT_INSTALL) {
                     watchLandingViewModel.openAppInStoreOnPhone()
                 } else if (watchLandingViewModel.landingCode == LandingCode.INSTALL) {
+                    watchLandingViewModel.landingCode = LandingCode.LOADING
                     watchLandingViewModel.openAppOnPhone()
                 }
             },

@@ -137,7 +137,7 @@ public class EvolutionScheduler implements ManagementScheduler {
             schedulerDto.setMessage("evolution-");
             schedulerDto.setRunnable(getRunnable(redisMong.getMongId()));
             schedulerDto.initScheduler();
-            log.info("{}의 evolution 스케쥴러를 재시작합니다. 남은 기간 : {}", this.getClass().getSimpleName(), schedulerDto.getExpire());
+            log.info("{}의 evolution 스케쥴러를 재시작합니다. 남은 기간 : {}", redisMong.getMongId(), schedulerDto.getExpire());
 
             schedulerMap.put(redisMong.getMongId(), schedulerDto);
         }

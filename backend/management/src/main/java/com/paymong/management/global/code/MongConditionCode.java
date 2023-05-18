@@ -14,7 +14,7 @@ public enum MongConditionCode implements BasicCode{
     DIE("CD005","죽음"),
     GRADUATE("CD006","졸업"),
     EVOLUTION_READY("CD007","진화대기"),
-    EATING("CD008", "먹는중")
+    EATING("CD008", "먹는중"),
     ;
     private final String code;
     private final String message;

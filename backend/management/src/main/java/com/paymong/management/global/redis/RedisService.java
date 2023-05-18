@@ -1,6 +1,7 @@
 package com.paymong.management.global.redis;
 
 import com.paymong.management.global.scheduler.dto.SchedulerDto;
+import com.paymong.management.global.scheduler.dto.SleepSchedulerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -43,8 +44,14 @@ public class RedisService {
                     SchedulerDto scheduler = s.getValue();
 
                     Duration diff = Duration.between(scheduler.getStartTime(), LocalDateTime.now());
-                    Long expire =
-                            scheduler.getExpire() - diff.toSeconds() < 0 ? 0 : scheduler.getExpire() - diff.toSeconds();
+                    Long expire = 0L;
+                    if(type.equals("sleep")){
+                        expire =
+                                scheduler.getExpire() - diff.toMinutes() < 0 ? 0 : scheduler.getExpire() - diff.toSeconds();
+                    }else{
+                        expire =
+                                scheduler.getExpire() - diff.toSeconds() < 0 ? 0 : scheduler.getExpire() - diff.toSeconds();
+                    }
 
                     RedisMong redisMong = RedisMong.builder()
                             .mongId(key)
@@ -53,6 +60,7 @@ public class RedisService {
                     values.add(type, redisMong);
                 });
     }
+
 
     public List<RedisMong> getRedisMong(String key){
         SetOperations values = redisTemplate.opsForSet();

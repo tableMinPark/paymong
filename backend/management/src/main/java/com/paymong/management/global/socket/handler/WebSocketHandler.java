@@ -20,20 +20,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception{
-        log.info("연결중... {}", session.getHandshakeHeaders().get("mongid"));
+        log.info("체크중... {}", session.getHandshakeHeaders().get("mongid"));
         MongSocketDto socket = MongSocketDto.builder()
                 .memberId(Long.parseLong(session.getHandshakeHeaders().get("memberid").get(0)))
                 .session(session)
                 .build();
-        mongSocketService.connect(socket);
+        mongSocketService.check(socket);
     }
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        log.info("payload : {}", payload);
 
-        TextMessage initialGreeting = new TextMessage("Welcome to Mong Management Server ~O_O~");
-        session.sendMessage(initialGreeting);
+        log.info("payload : {}", payload);
+        if(payload.equals("connect")){
+            log.info("연결중... {}", session.getHandshakeHeaders().get("mongid"));
+            MongSocketDto socket = MongSocketDto.builder()
+                    .memberId(Long.parseLong(session.getHandshakeHeaders().get("memberid").get(0)))
+                    .session(session)
+                    .build();
+            mongSocketService.connect(socket);
+        }
+//        TextMessage initialGreeting = new TextMessage("Welcome to Mong Management Server ~O_O~");
+//        session.sendMessage(initialGreeting);
     }
 
     @Override

@@ -35,7 +35,6 @@ fun Main(
 ) {
     LaunchedEffect(key1 = true) {
         if (watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
-            watchViewModel.isSocketConnect = SocketCode.LOADING
             watchViewModel.connectSocket()
         } else if (watchViewModel.isSocketConnect == SocketCode.CONNECT) {
             watchViewModel.init()

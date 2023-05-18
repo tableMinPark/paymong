@@ -1,5 +1,6 @@
 package com.paymong.ui.watch.landing
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -28,7 +29,6 @@ fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
     LaunchedEffect(key1 = true){
-        delay(1000)
         watchLandingViewModel.loginCheck()
     }
     Background(MapCode.MP000, false)
@@ -40,11 +40,10 @@ fun Landing(
     // 로그인  (리프레시 있는 경우)
     when(watchLandingViewModel.loginState) {
          LandingCode.LOGIN_SUCCESS -> {
-             watchLandingViewModel.loginState = LandingCode.DONE
-                     navController.navigate(WatchNavItem.Main.route){
-                         popUpTo(navController.graph.id) {
-                     inclusive = true
-                 }
+                 navController.navigate(WatchNavItem.Main.route){
+                     popUpTo(navController.graph.id) {
+                        inclusive = true
+                     }
                  // 스택 첫 화면 메인화면으로 변경
                  navController.graph.setStartDestination(WatchNavItem.Main.route)
                  launchSingleTop =true
@@ -85,6 +84,16 @@ fun Landing(
             LandingCode.INSTALL -> {
                 Text(
                     text = "초기 설정이 필요합니다.\n\n터치해서\n\n모바일 앱에서 초기 설정하기",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontFamily = dalmoori,
+                    color = PayMongRed200,
+                    fontSize = fontSize.sp,
+                )
+            }
+            LandingCode.CANT_LOGIN -> {
+                Text(
+                    text = "서버에 접속할 수 없습니다.\n\n네트워크 접속 확인 후\n\n재접속 해주세요.",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontFamily = dalmoori,

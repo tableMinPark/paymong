@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 class ManagementSocketService {
     object OkHttpClientSingleton {
         val instance: OkHttpClient = OkHttpClient.Builder()
-//            .pingInterval(15, TimeUnit.SECONDS)
+            .pingInterval(15, TimeUnit.SECONDS)
             .build()
     }
 

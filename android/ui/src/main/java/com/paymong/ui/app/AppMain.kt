@@ -51,7 +51,6 @@ fun AppMain(
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
     val appViewModel = viewModel<AppViewModel>(viewModelStoreOwner)
 
-    //appViewModel.isSocketConnect == SocketCode.LOADING ||
     if (appViewModel.isSocketConnect == SocketCode.DISCONNECT) {
         appViewModel.reconnectSocket()
     }
@@ -77,9 +76,6 @@ fun SocketError(
     isSocketConnect : SocketCode
 ) {
     BgGif()
-
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
 
     Column(
         modifier = Modifier

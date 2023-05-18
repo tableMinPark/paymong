@@ -53,6 +53,7 @@ fun Login(
         }
         // 돈없어서 워치 없는 친구들 여기야 여기!
         LandingCode.REGIST_WEARABLE_FAIL -> {
+            appLandingViewModel.landingCode = LandingCode.DONE
             Toast.makeText(
                 LocalContext.current,
                 ToastMessage.REGIST_WEARABLE_FAIL.message,
@@ -60,6 +61,7 @@ fun Login(
             ).show()
         }
         LandingCode.CANT_LOGIN -> {
+            appLandingViewModel.landingCode = LandingCode.DONE
             Toast.makeText(
                 LocalContext.current,
                 ToastMessage.LOGIN_FAIL.message,

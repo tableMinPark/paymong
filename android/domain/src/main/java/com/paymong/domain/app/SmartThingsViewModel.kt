@@ -78,8 +78,6 @@ class SmartThingsViewModel : ViewModel() {
                     for(i in data.indices){
                         thingsList.add(AddThingsDevice(data[i].thingsCode, data[i].thingsName))
                     }
-                    connectedThings()
-                    toConnectThings()
                 }
         }
     }

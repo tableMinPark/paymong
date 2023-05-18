@@ -68,12 +68,17 @@ class WatchLandingViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val playerId = dataApplicationRepository.getValue("playerId")
             authRepository.watchLogin(LoginReqDto(playerId))
-                .catch { loginState = LandingCode.LOGIN_FAIL }
+                .catch {
+                    loginState = LandingCode.CANT_LOGIN
+                    landingCode = LandingCode.CANT_LOGIN
+                }
                 .collect { values ->
-                    loginState = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
+                    if (values)
+                        loginState = LandingCode.LOGIN_SUCCESS
+                    else {
+                        loginState = LandingCode.CANT_LOGIN
+                        landingCode = LandingCode.CANT_LOGIN
+                    }
                 }
         }
     }

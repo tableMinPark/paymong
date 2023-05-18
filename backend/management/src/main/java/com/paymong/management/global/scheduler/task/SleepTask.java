@@ -157,9 +157,15 @@ public class SleepTask {
     }
 
     @Transactional
-    public void minusSleep(Long mongId) throws NotFoundMongException {
+    public void minusSleep(Long mongId) throws NotFoundMongException, UnsuitableException {
         Mong mong = mongRepository.findByMongIdAndActive(mongId, true)
                 .orElseThrow(() -> new NotFoundMongException());
+
+        if(mong.getStateCode().equals(MongConditionCode.SLEEP.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.DIE.getCode()) ||
+                mong.getStateCode().equals(MongConditionCode.GRADUATE.getCode())){
+            throw new UnsuitableException();
+        }
 
         log.info("{}이 졸려 집니다.",mongId);
         Integer sleep = mong.getSleep();

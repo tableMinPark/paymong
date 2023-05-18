@@ -1,6 +1,7 @@
 package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.scheduler.task.PoopTask;
 import com.paymong.management.poop.service.PoopService;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,10 @@ public class PoopScheduler implements ManagementScheduler {
                 poopTask.addPoop(mongId);
                 stopAndRunScheduler(mongId);
             } catch (NotFoundMongException e) {
+                LOGGER.info("없는 몽입니다. mongId : {}" ,mongId);
+                stopScheduler(mongId);
+            }catch (UnsuitableException e) {
+                LOGGER.info("옳지 않은 몽입니다. mongId : {}" ,mongId);
                 stopScheduler(mongId);
             }
 

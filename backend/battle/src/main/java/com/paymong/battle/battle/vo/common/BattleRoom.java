@@ -4,17 +4,18 @@ import com.paymong.battle.battle.dto.request.BattleMessageReqDto;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.service.BattleService;
 import com.paymong.battle.global.code.MessageType;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
-import java.util.*;
-
 @Slf4j
 @Getter
 public class BattleRoom {
+
     private Integer totalTurn;
     private String battleRoomId;
     private Map<String, WebSocketSession> sessions;
@@ -22,43 +23,61 @@ public class BattleRoom {
     private BattleLog battleLog;
     private Integer nowTurn = 0;
 
+
     @Builder
     public BattleRoom(Integer totalTurn,
-                      String battleRoomId,
-                      WebSocketSession sessionA,
-                      WebSocketSession sessionB,
-                      MongStats statsA,
-                      MongStats statsB
+        String battleRoomId,
+        WebSocketSession sessionA,
+        WebSocketSession sessionB,
+        MongStats statsA,
+        MongStats statsB
     ) {
         this.totalTurn = totalTurn;
         this.battleRoomId = battleRoomId;
-        this.sessions = new HashMap<>() {{ put("A", sessionA); put("B", sessionB); }};
-        this.statsMap = new HashMap<>() {{ put("A", statsA); put("B", statsB); }};
+        this.sessions = new HashMap<>() {{
+            put("A", sessionA);
+            put("B", sessionB);
+        }};
+        this.statsMap = new HashMap<>() {{
+            put("A", statsA);
+            put("B", statsB);
+        }};
         this.battleLog = new BattleLog();
         this.nowTurn = 1;
     }
 
     // A 가 먼저 공격 (A는 기본적으로 먼저 방만든 사람이 됨)
-    public void handlerActions(BattleMessageReqDto battleMessageReqDto, BattleService battleService) throws IOException, RuntimeException {
+    public void handlerActions(BattleMessageReqDto battleMessageReqDto, BattleService battleService)
+        throws IOException, RuntimeException {
 
         String order = battleMessageReqDto.getOrder();
 
         log.info(nowTurn + " : " + order + " 선택완료");
-        if (battleMessageReqDto.getType().equals(MessageType.LEFT)){
-            if (order.equals("A"))
+        // LEFT, RIGHT, STAY 3가지 TYPE
+        if (battleMessageReqDto.getType().equals(MessageType.LEFT)) {
+            if (order.equals("A")) {
                 battleLog.setSelectA(BattleLog.FightType.LEFT);
-            else
+            } else {
                 battleLog.setSelectB(BattleLog.FightType.LEFT);
-        } else {
-            if (order.equals("A"))
+            }
+        } else if (battleMessageReqDto.getType().equals(MessageType.RIGHT)) {
+            if (order.equals("A")) {
                 battleLog.setSelectA(BattleLog.FightType.RIGHT);
-            else
+            } else {
                 battleLog.setSelectB(BattleLog.FightType.RIGHT);
+            }
+        } else {
+            if (order.equals("A")) {
+                battleLog.setSelectA(BattleLog.FightType.STAY);
+            } else {
+                battleLog.setSelectB(BattleLog.FightType.STAY);
+            }
         }
 
         // 한턴이 끝났는지 확인
         Boolean isOver = false;
-        if ((order.equals("A") && battleLog.getSelectB() != null) || (order.equals("B") && battleLog.getSelectA() != null)) {
+        if ((order.equals("A") && battleLog.getSelectB() != null) || (order.equals("B")
+            && battleLog.getSelectA() != null)) {
             isOver = true;
         }
 
@@ -69,7 +88,7 @@ public class BattleRoom {
             MongStats statsB = statsMap.get("B");
 
             BattleMessageResDto battleMessageResDto
-                    = battleService.battleActive(nowTurn, statsA, statsB, battleLog);
+                = battleService.battleActive(nowTurn, statsA, statsB, battleLog);
 
             Double healthA = statsA.getHealth() - battleMessageResDto.getDamageA();
             Double healthB = statsB.getHealth() - battleMessageResDto.getDamageB();
@@ -88,8 +107,29 @@ public class BattleRoom {
             statsMap.get("B").setHealth(healthB);
 
             // 마지막 턴인지 확인
-            if (totalTurn.equals(nowTurn) || healthA <= 0 || healthB <= 0){
+            if (totalTurn.equals(nowTurn) || healthA <= 0 || healthB <= 0) {
+                // point 갱신 해야함
+
+                // 1. 동점
+                if (healthA == 0 && healthB == 0) {
+                    battleService.keepMoney(statsA.getMongId());
+                    battleService.keepMoney(statsB.getMongId());
+                }
+
+                // 2. A 우승
+                else if (healthA > healthB) {
+                    battleService.earnMoney(statsA.getMongId());
+                    battleService.spendMoney(statsB.getMongId());
+                }
+
+                // 3. B 우승
+                else if (healthB > healthA) {
+                    battleService.spendMoney(statsA.getMongId());
+                    battleService.earnMoney(statsB.getMongId());
+                }
+
                 battleMessageResDto.setNowTurn(-1);
+                nowTurn = -1;
             } else {
                 nowTurn++;
                 battleLog.setSelectA(null);
@@ -103,26 +143,26 @@ public class BattleRoom {
         }
     }
 
-    private BattleMessageResDto endMessage() {
+    private BattleMessageResDto endMessage(String escape) {
         return BattleMessageResDto.builder()
-                .battleRoomId(battleRoomId)
-                .mongCodeA("")
-                .mongCodeB("")
-                .nowTurn(-1)
-                .totalTurn(totalTurn)
-                .nextAttacker("-")
-                .order("-")
-                .damageA(0.0)
-                .damageB(0.0)
-                .healthA(statsMap.get("A").getHealth())
-                .healthB(statsMap.get("B").getHealth())
-                .build();
+            .battleRoomId(battleRoomId)
+            .mongCodeA("")
+            .mongCodeB("")
+            .nowTurn(-1)
+            .totalTurn(totalTurn)
+            .nextAttacker("-")
+            .order(escape)
+            .damageA(0.0)
+            .damageB(0.0)
+            .healthA(statsMap.get("A").getHealth())
+            .healthB(statsMap.get("B").getHealth())
+            .build();
     }
 
 
-    public void endBattle(BattleService battleService, String battleRoomId) {
+    public void endBattle(BattleService battleService, String battleRoomId, String escape) {
         log.info("배틀 종료");
         sessions.values().parallelStream()
-                .forEach(session -> battleService.sendMessage(session, endMessage()));
+            .forEach(session -> battleService.sendMessage(session, endMessage(escape)));
     }
 }

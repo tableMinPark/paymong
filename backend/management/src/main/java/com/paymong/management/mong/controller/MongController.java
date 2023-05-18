@@ -205,4 +205,16 @@ public class MongController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ManagementStateCode.NULL_POINT));
         }
     }
+
+    @GetMapping("/admin/change/state")
+    public ResponseEntity<Object> changeState(AdminStateDto adminStateDto){
+        mongService.changeState(adminStateDto);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
+
+    @GetMapping("/admin/change/poop")
+    public ResponseEntity<Object> changeState(AdminPoopDto adminPoopDto){
+        mongService.changePoop(adminPoopDto);
+        return ResponseEntity.ok().body(new ErrorResponse(ManagementStateCode.SUCCESS));
+    }
 }

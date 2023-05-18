@@ -230,7 +230,11 @@ public class SleepScheduler{
         return () -> {
             try {
                 sleepTask.minusSleep(mongId);
-            }catch (NotFoundMongException e){
+            }catch (NotFoundMongException e) {
+                log.info("없는 몽입니다. mongId : {}" ,mongId);
+                stopScheduler(mongId);
+            }catch (UnsuitableException e) {
+                log.info("옳지 않은 몽입니다. mongId : {}" ,mongId);
                 stopScheduler(mongId);
             }
         };

@@ -62,6 +62,7 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+
         setContent {
             WatchMain(watchLandingViewModel)
         }
@@ -69,46 +70,27 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
     override fun onPause() {
         super.onPause()
         try {
-            watchViewModel.isSocketConnect = SocketCode.LOADING
             capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
-            // 한번이라도 소켓에 연결되었다면 연결된 소켓 끊음
             if (watchViewModel.isInitialized()) {
                 watchViewModel.disConnectSocket()
-                DataApplicationRepository().setValue("isPause", "true")
             }
-            Log.d("start", "onPause : " + DataApplicationRepository().getValue("isPause"))
         } catch (_: Exception) {}
     }
 
-    override fun onDestroy() {
-        DataApplicationRepository().setValue("isPause", "false")
-        Log.d("start", "onStop : " + DataApplicationRepository().getValue("isPause"))
-        super.onDestroy()
-    }
-
     override fun onResume() {
-        watchViewModel.isSocketConnect = SocketCode.LOADING
         super.onResume()
         try {
-            Log.d("start", "onResume : " + DataApplicationRepository().getValue("isPause"))
             capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
+            // 소켓
             val dataApplicationRepository = DataApplicationRepository()
             val accessToken = dataApplicationRepository.getValue("accessToken")
-            CoroutineScope(Dispatchers.Main).launch {
-                if (accessToken != "") {
-                    // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
-                    watchViewModel.connectSocket()
-                    // 일시 정지 경우
-                    val isPause = DataApplicationRepository().getValue("isPause")
-                    Log.d("start", "isPause: $isPause, ${watchViewModel.isSocketConnect}")
-                    if (isPause == "true") {
-                        watchViewModel.isSocketConnect = SocketCode.CONNECT
-                        watchLandingViewModel.startDestination = WatchNavItem.Main.route
-                    }
-
-                } else
-                // 엑세스 토큰이 없어서 소켓 연결이 불가능한 경우 (로그인이 필요한 경우) -> 로그인 이후 메인 화면 로딩 시 소켓 연결
-                    watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+            if (accessToken != "") {
+                // 엑세스 토큰이 있어서 바로 소켓 연결 가능한 경우 (로그인을 이미 한 경우)
+                watchViewModel.isSocketConnect = SocketCode.LOADING
+                watchViewModel.connectSocket()
+            } else{
+            // 엑세스 토큰이 없어서 소켓 연결이 불가능한 경우 (로그인이 필요한 경우) -> 로그인 이후 메인 화면 로딩 시 소켓 연결
+                watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
             }
         } catch (_: Exception) {}
     }

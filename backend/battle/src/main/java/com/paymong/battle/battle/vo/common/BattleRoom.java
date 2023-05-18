@@ -3,7 +3,6 @@ package com.paymong.battle.battle.vo.common;
 import com.paymong.battle.battle.dto.request.BattleMessageReqDto;
 import com.paymong.battle.battle.dto.response.BattleMessageResDto;
 import com.paymong.battle.battle.service.BattleService;
-import com.paymong.battle.battle.vo.common.BattleLog.FightType;
 import com.paymong.battle.global.code.MessageType;
 import java.io.IOException;
 import java.util.HashMap;
@@ -144,7 +143,7 @@ public class BattleRoom {
         }
     }
 
-    private BattleMessageResDto endMessage() {
+    private BattleMessageResDto endMessage(String escape) {
         return BattleMessageResDto.builder()
             .battleRoomId(battleRoomId)
             .mongCodeA("")
@@ -152,7 +151,7 @@ public class BattleRoom {
             .nowTurn(-1)
             .totalTurn(totalTurn)
             .nextAttacker("-")
-            .order("-")
+            .order(escape)
             .damageA(0.0)
             .damageB(0.0)
             .healthA(statsMap.get("A").getHealth())
@@ -161,9 +160,9 @@ public class BattleRoom {
     }
 
 
-    public void endBattle(BattleService battleService, String battleRoomId) {
+    public void endBattle(BattleService battleService, String battleRoomId, String escape) {
         log.info("배틀 종료");
         sessions.values().parallelStream()
-            .forEach(session -> battleService.sendMessage(session, endMessage()));
+            .forEach(session -> battleService.sendMessage(session, endMessage(), escape));
     }
 }

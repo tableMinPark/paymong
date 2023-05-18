@@ -95,8 +95,9 @@ public class ThingsController {
             }else if (thingsCode.equals("ST002")){ //허브무선충전
                 thingsService.alarmHubCharge(memberIdStr, mongIdStr, thingsCode);
             }
-            //else if (thingsCode.equals("ST003")){ //스마트버튼
-            //}
+            else if (thingsCode.equals("ST003")){ //허브무선충전완료
+                thingsService.alarmHubDischarge(memberIdStr, mongIdStr, thingsCode);
+            }
             else{
                 throw new NotFoundThingsCodeException();
             }

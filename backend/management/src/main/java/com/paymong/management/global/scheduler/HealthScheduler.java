@@ -1,6 +1,7 @@
 package com.paymong.management.global.scheduler;
 
 import com.paymong.management.global.exception.NotFoundMongException;
+import com.paymong.management.global.exception.UnsuitableException;
 import com.paymong.management.global.scheduler.task.HealthTask;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -65,6 +66,10 @@ public class HealthScheduler implements ManagementScheduler {
                 }
                 ;
             } catch (NotFoundMongException e) {
+                LOGGER.info("없는 몽입니다. mongId : {}" ,mongId);
+                stopScheduler(mongId);
+            }catch (UnsuitableException e) {
+                LOGGER.info("옳지 않은 몽입니다. mongId : {}" ,mongId);
                 stopScheduler(mongId);
             }
 

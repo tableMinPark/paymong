@@ -361,4 +361,20 @@ public class MongService {
         LOGGER.info("point 코드를 전송합니다 : memberId : {}", sendPointResDto.getMemberId());
         webSocketService.sendPoint(sendPointResDto, WebSocketCode.POINT);
     }
+
+    @Transactional
+    public void changeState(AdminStateDto adminStateDto){
+        Mong mong = mongRepository.findByMongId(adminStateDto.getMongId()).get();
+
+        mong.setStateCode(adminStateDto.getStateCode());
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+    }
+
+    @Transactional
+    public void changePoop(AdminPoopDto adminPoopDto){
+        Mong mong = mongRepository.findByMongId(adminPoopDto.getMongId()).get();
+
+        mong.setPoopCount(adminPoopDto.getPoopCount());
+        webSocketService.sendStatus(mong, WebSocketCode.SUCCESS);
+    }
 }

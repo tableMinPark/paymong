@@ -111,7 +111,7 @@ public class Pay {
     public static String isDelvery(String brand){
         if( brand.contains("요기요") )
             return "요기요";
-        if( brand.contains("배달의민족") || brand.contains("우아한형제들"))
+        if( (brand.contains("배달의") && brand.contains("민족")) || (brand.contains("우아한") && brand.contains("형제들")) )
             return "배달의민족";
         if( brand.contains("쿠팡") || brand.contains("coupang"))
             return "쿠팡";

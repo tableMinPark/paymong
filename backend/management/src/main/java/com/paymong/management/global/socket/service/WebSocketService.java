@@ -51,12 +51,12 @@ public class WebSocketService {
                         });
 
                 members.remove(mongSocketDto.getMemberId());
-            }else{
-                log.info("새로운 세션을 체크합니다. {}", mongSocketDto.getMemberId());
-                TextMessage message = new TextMessage(objectMapper.writeValueAsString(new CheckDto(WebSocketCode.CHECK)));
-                log.info("{}에 체크 메세지를 보냅니다.", mongSocketDto.getMemberId());
-                mongSocketDto.getSession().sendMessage(message);
             }
+            log.info("새로운 세션을 체크합니다. {}", mongSocketDto.getMemberId());
+            TextMessage message = new TextMessage(objectMapper.writeValueAsString(new CheckDto(WebSocketCode.CHECK)));
+            log.info("{}에 체크 메세지를 보냅니다.", mongSocketDto.getMemberId());
+            mongSocketDto.getSession().sendMessage(message);
+
         }catch (IOException e){
             log.info("메세지 생성 실패 !");
         }

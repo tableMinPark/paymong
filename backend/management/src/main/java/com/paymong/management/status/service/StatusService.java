@@ -51,7 +51,7 @@ public class StatusService {
         Integer satiety = checkLevel(level, tier, mong.getSatiety(), statusResDto.getSatiety());
 
         // sleep 최대 20
-        Integer sleep = checkLevel(level == 0 ? 0 : 1, tier, mong.getSleep(), statusResDto.getSleep());
+        Integer sleep = checkLevel(level, tier, mong.getSleep(), statusResDto.getSleep());
         // weight 레벨별 최소 5 15 25 35 최대 99
         Integer weight = checkWeight(level, mong.getWeight(), statusResDto.getWeight());
 

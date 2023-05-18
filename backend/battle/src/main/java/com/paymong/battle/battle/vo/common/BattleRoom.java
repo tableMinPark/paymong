@@ -163,6 +163,6 @@ public class BattleRoom {
     public void endBattle(BattleService battleService, String battleRoomId, String escape) {
         log.info("배틀 종료");
         sessions.values().parallelStream()
-            .forEach(session -> battleService.sendMessage(session, endMessage(), escape));
+            .forEach(session -> battleService.sendMessage(session, endMessage(escape)));
     }
 }

@@ -56,15 +56,15 @@
 
 - 삼성페이 연동
 
-![Untitled](assets/Untitled 1.png)
+<img src="assets/Untitled 1.png" width="300">
 
 - 삼성 스마트싱스 연동
 
-![Untitled](assets/Untitled 2.png)
+<img src="assets/Untitled 2.png" width="300">
 
 - 도움말
 
-![Untitled](assets/Untitled 3.png)
+<img src="assets/Untitled 3.png" width="300">
 
 ---
 
@@ -146,39 +146,40 @@
 
 ## 7️⃣ 기능 개요
 
-![Screenshot_20230516_091743.png](assets/Screenshot_20230516_091743.png)
+<img src="assets/Screenshot_20230516_091743.png" width="300">
 
 ### 🍎 식사
 
-![Screenshot_20230516_091825.png](assets/Screenshot_20230516_091825.png)
+<img src="assets/Screenshot_20230516_091825.png" width="300">
 
 ### 🧻 화장실
 
-![Untitled](assets/Untitled 8.png)
+
+<img src="assets/Untitled 8.png" width="300">
 
 ### 🏋️ 훈련
 
-![Untitled](assets/Untitled 9.png)
+<img src="assets/Untitled 9.png" width="300">
 
 ### 👣 산책
 
-![Untitled](assets/Untitled 10.png)
+<img src="assets/Untitled 10.png" width="300">
 
 ### 😴 수면
 
-![Untitled](assets/Untitled 11.png)
+<img src="assets/Untitled 11.png" width="300">
 
 ### 🥊 배틀
 
-![Untitled](assets/Untitled 12.png)
+<img src="assets/Untitled 12.png" width="300">
 
 ### 😍 쓰다듬기 (행복)
 
-![Untitled](assets/Untitled 13.png)
+<img src="assets/Untitled 13.png" width="300">
 
 ### ℹ️ 캐릭터 정보 확인
 
-![Untitled](assets/Untitled 14.png)
+<img src="assets/Untitled 14.png" width="300">
 
 ---
 
@@ -197,13 +198,13 @@
 
 - **총 4단계**
 
-![ch004g.gif](assets/ch004g.gif)
+<img src="assets/ch004g.gif" width="150">
 
-![ch100g.GIF](assets/ch100g.gif)
+<img src="assets/ch100g.gif" width="150">
 
-![ch230g.GIF](assets/ch230g.gif)
+<img src="assets/ch230g.gif" width="150">
 
-![ch320g.GIF](assets/ch320g.gif)
+<img src="assets/ch320g.gif" width="150">
 
 ***→ 페이몽 대표 캐릭터***
 

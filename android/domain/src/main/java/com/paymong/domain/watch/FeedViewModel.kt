@@ -38,7 +38,6 @@ class FeedViewModel (
         isCanBuy = false
         foodList.clear()
         currentFoodPosition = 0
-
         isClick = false
     }
 

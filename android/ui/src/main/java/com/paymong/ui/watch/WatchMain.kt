@@ -1,5 +1,6 @@
 package com.paymong.ui.watch
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,14 +20,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
+import com.paymong.common.code.LandingCode
+import com.paymong.common.code.MapCode
 import com.paymong.common.code.SocketCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.SoundViewModel
@@ -37,12 +43,14 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
 import com.paymong.ui.watch.common.Background
+import com.paymong.ui.watch.common.Loading
 import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.feed.Feed
 import com.paymong.ui.watch.feed.FeedBuyList
 import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
-import kotlinx.coroutines.android.HandlerDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 
 @Composable
 fun WatchMain(
@@ -52,54 +60,58 @@ fun WatchMain(
     val watchViewModel = viewModel<WatchViewModel>(viewModelStoreOwner)
 
     PaymongTheme {
-        if (watchViewModel.isSocketConnect == SocketCode.CONNECT ||
-            watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
-            NavGraph(watchLandingViewModel)
+        if (watchLandingViewModel.landingCode == LandingCode.SUCCESS) {
+            when(watchViewModel.socketState) {
+                SocketCode.DISCONNECT -> {
+                    SocketError(watchViewModel)
+                }
+                SocketCode.LOADING -> {
+                    LaunchedEffect(true) {
+                        delay(1000)
+                        watchViewModel.socketConnect()
+                    }
+                    Loading()
+                }
+                else -> {
+                    NavGraph()
+                }
+            }
         } else {
-            SocketError(watchViewModel, watchViewModel.isSocketConnect)
+            Landing(watchLandingViewModel)
         }
     }
 }
-
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun SocketError(
-    watchViewModel: WatchViewModel,
-    isSocketConnect : SocketCode
+    watchViewModel: WatchViewModel
 ) {
-    Background(watchViewModel.mapCode, true)
+    Background(MapCode.MP000, true)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
+    val fontSize = if (screenWidthDp < 200) 12 else 15
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .clickable { watchViewModel.socketState = SocketCode.LOADING },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (isSocketConnect == SocketCode.LOADING ||
-            isSocketConnect == SocketCode.DISCONNECT) {
-
-            val loadBarSize = if (screenWidthDp < 200) 45 else 55
-            Box(
-                modifier = Modifier
-                    .width(loadBarSize.dp)
-                    .height(loadBarSize.dp)
-                    .wrapContentHeight(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            ) {
-                LoadingGif()
-            }
-        }
+        Text(
+            text = "서버에 연결할 수 없습니다.\n\n터치해서\n\n재연결 시도 하기",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            fontFamily = dalmoori,
+            color = PayMongRed200,
+            fontSize = fontSize.sp,
+        )
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NavGraph (
-    watchLandingViewModel : WatchLandingViewModel
-){
+fun NavGraph (){
     val animationState = remember { mutableStateOf(AnimationCode.Normal) }
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState(1)
@@ -111,13 +123,8 @@ fun NavGraph (
 
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = WatchNavItem.Landing.route
+        startDestination = WatchNavItem.Main.route
     ) {
-        // Landing
-        composable( route = WatchNavItem.Landing.route) {
-            Landing(navController, watchLandingViewModel)
-        }
-
         // Main
         composable( route = WatchNavItem.Main.route) {
             Main(animationState, pagerState, coroutineScope, navController, watchViewModel, soundViewModel)

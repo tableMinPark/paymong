@@ -22,7 +22,7 @@ import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
 import com.paymong.domain.entity.MongInfo
 import com.paymong.domain.entity.MongStats
-import com.paymong.domain.watch.socket.ManagementSocketService
+import com.paymong.data.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -36,9 +36,12 @@ import java.time.temporal.ChronoUnit
 class WatchViewModel (
     application: Application
 ): AndroidViewModel(application) {
+    var findMongLoadingState by mutableStateOf(false)
+    var findMongConditionLoadingState by mutableStateOf(false)
+    var findMongInfoLoadingState by mutableStateOf(false)
+    var findPayPointLoadingState by mutableStateOf(false)
+    var socketState by mutableStateOf(SocketCode.LOADING)
     // 포인트 정보
-    var isLoading by mutableStateOf(false)
-    var isSocketConnect by mutableStateOf(SocketCode.LOADING)
     var point by mutableStateOf(0)
     // 몽 기본정보 (이름, 아이디, 몽 코드)
     var mong by mutableStateOf(Mong())
@@ -74,55 +77,42 @@ class WatchViewModel (
             findMongCondition()
             findMongInfo()
             findPayPoint()
-            delay(1000)
-            isLoading = true
-            Log.d("watchViewModel", "init")
         }
     }
 
-    fun reconnectSocket() {
-        viewModelScope.launch(Dispatchers.Main) {
-            for (count in 1..10) {
-                if (isSocketConnect == SocketCode.CONNECT) break
-                connectSocket()
-                delay(5000)
-            }
-        }
-    }
-
-    fun isInitialized() : Boolean {
-        return ::managementSocketService.isInitialized
-    }
-
-    fun connectSocket() {
+    // socket
+    fun socketConnect() {
         managementSocketService = ManagementSocketService()
         managementSocketService.init(listener)
-        Log.d("watchViewModel", "connectSocket")
+    }
+
+    fun socketReconnect(){
+        viewModelScope.launch(Dispatchers.Main) {
+            Log.d("socketReconnect", socketState.toString())
+            delay(5000)
+            socketConnect()
+        }
     }
 
     fun disConnectSocket() {
         managementSocketService.disConnect()
-        Log.d("watchViewModel", "disConnectSocket")
+        socketState = SocketCode.DISCONNECT
     }
-
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            isSocketConnect = SocketCode.CONNECT
-            Log.d("watchViewModel", "onOpen")
             super.onOpen(webSocket, response)
+            socketState = SocketCode.CONNECT
+            Log.d("watchViewModel", "CONNECT")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            Thread.sleep(800)
-            isSocketConnect = SocketCode.DISCONNECT
-            Log.d("watchViewModel", "onFailure")
+            socketState = SocketCode.DISCONNECT
+            Log.d("watchViewModel", "DISCONNECT")
         }
-
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
-            Thread.sleep(800)
-            isSocketConnect = SocketCode.DISCONNECT
-            Log.d("watchViewModel", "onClosing")
+            socketState = SocketCode.DISCONNECT
+            Log.d("watchViewModel", "DISCONNECT")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -191,6 +181,7 @@ class WatchViewModel (
             } catch (_: Exception) {}
         }
     }
+    // mong
     fun updateStates(managementResDto: ManagementResDto) {
         stateCode = MongStateCode.valueOf(managementResDto.stateCode)
         poopCount = managementResDto.poopCount
@@ -214,38 +205,26 @@ class WatchViewModel (
             sleep.toFloat()
         )
     }
-    private fun findPayPoint(){
-        viewModelScope.launch(Dispatchers.IO) {
-            memberRepository.findMember()
-                .catch {
-                    it.printStackTrace()
-                }
-                .collect{ data ->
-                    Log.d("socket", data.toString())
-                    point = data.point
-                }
-        }
+    // api
+    private suspend fun findMong() {
+        informationRepository.findMong()
+            .catch {
+                it.printStackTrace()
+            }
+            .collect { data ->
+                Log.d("socket", data.toString())
+                mong = Mong(
+                    data.mongId,
+                    data.name,
+                    MongCode.valueOf(data.mongCode)
+                )
+                stateCode = MongStateCode.valueOf(data.stateCode)
+                poopCount = data.poopCount
+                mapCode = MapCode.valueOf(data.mapCode)
+                findMongLoadingState = true
+            }
     }
-    private fun findMong() {
-        viewModelScope.launch(Dispatchers.IO) {
-            informationRepository.findMong()
-                .catch {
-                    it.printStackTrace()
-                }
-                .collect { data ->
-                    Log.d("socket", data.toString())
-                    mong = Mong(
-                        data.mongId,
-                        data.name,
-                        MongCode.valueOf(data.mongCode)
-                    )
-                    stateCode = MongStateCode.valueOf(data.stateCode)
-                    poopCount = data.poopCount
-                    mapCode = MapCode.valueOf(data.mapCode)
-                }
-        }
-    }
-    private fun findMongCondition() {
+    private suspend fun findMongCondition() {
         viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongStats()
                 .catch {
@@ -261,10 +240,11 @@ class WatchViewModel (
                         data.strength,
                         data.sleep,
                     )
+                    findMongConditionLoadingState = true
                 }
         }
     }
-    private fun findMongInfo() {
+    private suspend fun findMongInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             informationRepository.findMongInfo()
                 .catch {
@@ -277,9 +257,24 @@ class WatchViewModel (
                         data.born
                     )
                     age = calcAge()
+                    findMongInfoLoadingState = true
                 }
         }
     }
+    private suspend fun findPayPoint(){
+        viewModelScope.launch(Dispatchers.IO) {
+            memberRepository.findMember()
+                .catch {
+                    it.printStackTrace()
+                }
+                .collect{ data ->
+                    Log.d("socket", data.toString())
+                    point = data.point
+                    findPayPointLoadingState = true
+                }
+        }
+    }
+
     private fun calcAge(): String {
         var ageStr = ""
         try {

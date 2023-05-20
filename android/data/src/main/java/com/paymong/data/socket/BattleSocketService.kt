@@ -1,4 +1,4 @@
-package com.paymong.domain.watch.socket
+package com.paymong.data.socket
 
 import com.google.gson.*
 import com.paymong.common.code.MessageType

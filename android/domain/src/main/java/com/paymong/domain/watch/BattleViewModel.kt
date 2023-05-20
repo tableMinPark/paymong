@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.domain.watch.socket.BattleSocketService
+import com.paymong.data.socket.BattleSocketService
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode

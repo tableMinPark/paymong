@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.ThingsCode
 import com.paymong.domain.watch.WatchViewModel
@@ -70,7 +71,7 @@ fun MainInfo(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-                if (watchViewModel.mong.mongCode.code == "CH444") {
+                if (watchViewModel.mong.mongCode == MongCode.CH444) {
                     Text(
                         text = "스마트폰에서\n알을 생성해주세요.",
                         textAlign = TextAlign.Center,

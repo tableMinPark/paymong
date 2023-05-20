@@ -6,21 +6,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
-import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.SocketCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.watch.common.Background
-import com.paymong.ui.watch.common.LoadingGif
-import com.paymong.ui.watch.common.MainBackgroundGif
+import com.paymong.ui.watch.common.Loading
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
@@ -33,46 +30,23 @@ fun Main(
     watchViewModel : WatchViewModel,
     soundViewModel: SoundViewModel
 ) {
-    LaunchedEffect(key1 = true) {
-        if (watchViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
-            watchViewModel.connectSocket()
-        } else if (watchViewModel.isSocketConnect == SocketCode.CONNECT) {
-            watchViewModel.init()
-        }
+    LaunchedEffect(true) {
+        // 초기 정보 조회
+        watchViewModel.init()
     }
 
-    Background(watchViewModel.mapCode, false)
-
-    if(watchViewModel.mapCode == MapCode.MP000){
-        MainBackgroundGif()
-    } else if (pagerState.currentPage != 1){
+    Background(watchViewModel.mapCode, isGif = false, isMainGif = true)
+    if (pagerState.currentPage != 1) {
         Box( modifier = Modifier
             .fillMaxSize()
             .background(color = Color.Black.copy(alpha = 0.4f)) )
     }
 
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    val loadBarSize = if (screenWidthDp < 200) 80 else 100
-
-    if (!watchViewModel.isLoading) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .wrapContentHeight(Alignment.CenterVertically)
-                .wrapContentWidth(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(loadBarSize.dp)
-                    .height(loadBarSize.dp)
-            ) {
-                LoadingGif()
-            }
-        }
-    } else {
+    // 4가지의 정보를 모두 조회했을 경우에만 다음 메인화면 출력
+    if (watchViewModel.findMongLoadingState &&
+        watchViewModel.findMongConditionLoadingState &&
+        watchViewModel.findMongInfoLoadingState &&
+        watchViewModel.findPayPointLoadingState) {
         MainSwipe(
             animationState,
             pagerState,
@@ -81,6 +55,8 @@ fun Main(
             watchViewModel,
             soundViewModel
         )
+    } else {
+        Loading()
     }
 }
 

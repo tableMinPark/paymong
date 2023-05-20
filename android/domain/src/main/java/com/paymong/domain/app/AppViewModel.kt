@@ -17,7 +17,7 @@ import com.paymong.data.repository.ManagementRepository
 import com.paymong.data.repository.InformationRepository
 import com.paymong.data.repository.MemberRepository
 import com.paymong.domain.entity.Mong
-import com.paymong.domain.watch.socket.ManagementSocketService
+import com.paymong.data.socket.ManagementSocketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch

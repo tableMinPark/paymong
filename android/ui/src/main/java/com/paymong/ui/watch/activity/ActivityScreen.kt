@@ -56,11 +56,11 @@ fun Activity(
             Button(
                 onClick = {
                     soundViewModel.soundPlay(SoundCode.TRAINING_BUTTON)
-
-                    if (watchViewModel.point < 50)
+                    if (watchViewModel.point < 50){
                         showToast(context, ToastMessage.TRAINING_NOT_POINT)
-                    else
+                    } else{
                         navController.navigate(WatchNavItem.TrainingLanding.route)
+                    }
                 },
                 modifier = Modifier
                     .size(width = 200.dp, height = buttonHeight.dp)
@@ -89,8 +89,8 @@ fun Activity(
                         fontSize = fontSize.sp,
                         color= Color.White,
                         modifier = Modifier.padding(start = 4.dp),
-                    )}
-
+                    )
+                }
             }
         }
         // * Line *

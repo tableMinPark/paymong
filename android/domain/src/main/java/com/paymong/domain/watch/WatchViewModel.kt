@@ -54,7 +54,7 @@ class WatchViewModel (
     // 몽 상태, 똥 갯수, 맵 코드
     var stateCode by mutableStateOf(MongStateCode.CD000)
     var poopCount by mutableStateOf(0)
-    var mapCode by mutableStateOf(MapCode.MP000)
+    var mapCode by mutableStateOf(MapCode.MP037)
     var thingsCode by mutableStateOf(ThingsCode.ST999)
 
     var isHappy by mutableStateOf(false)
@@ -86,18 +86,11 @@ class WatchViewModel (
         managementSocketService.init(listener)
     }
 
-    fun socketReconnect(){
-        viewModelScope.launch(Dispatchers.Main) {
-            Log.d("socketReconnect", socketState.toString())
-            delay(5000)
-            socketConnect()
-        }
-    }
-
     fun disConnectSocket() {
         managementSocketService.disConnect()
         socketState = SocketCode.DISCONNECT
     }
+
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
@@ -212,7 +205,7 @@ class WatchViewModel (
                 it.printStackTrace()
             }
             .collect { data ->
-                Log.d("socket", data.toString())
+                // 첫 몽 생성하는 경우 (기존의 mongId가 없음)
                 mong = Mong(
                     data.mongId,
                     data.name,

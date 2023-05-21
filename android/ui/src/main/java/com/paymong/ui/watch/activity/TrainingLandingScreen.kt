@@ -30,7 +30,7 @@ fun TrainingLanding(
             }
         }
     }
-    Background(watchViewModel.mapCode, true)
+    Background()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.landing
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -10,13 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.wear.compose.material.Text
-import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.LandingCode
-import com.paymong.common.code.MapCode
 import com.paymong.domain.watch.WatchLandingViewModel
-import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
@@ -26,7 +21,7 @@ import com.paymong.ui.watch.common.Logo
 fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
-    Background(MapCode.MP000, false)
+    Background()
 
     LaunchedEffect(key1 = true){
         // 로그인 확인

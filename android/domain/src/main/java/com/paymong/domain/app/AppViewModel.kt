@@ -29,8 +29,9 @@ import okhttp3.WebSocketListener
 class AppViewModel(
     application: Application
 ) : AndroidViewModel(application) {
-    var isLoading by mutableStateOf(false)
-    var isSocketConnect by mutableStateOf(SocketCode.LOADING)
+    var findMongLoadingState by mutableStateOf(false)
+    var findPayPointLoadingState by mutableStateOf(false)
+    var socketState by mutableStateOf(SocketCode.LOADING)
     // 몽 생성
     var mongname by mutableStateOf("")
     var mongsleepStart by mutableStateOf("")
@@ -62,58 +63,35 @@ class AppViewModel(
     fun init() {
         viewModelScope.launch(Dispatchers.Main) {
             findMong()
-            findPoint()
-            Log.d("appViewModel", "init")
+            findPayPoint()
         }
     }
 
-    fun isInitialized() : Boolean {
-        return ::managementSocketService.isInitialized
-    }
-
-    fun connectSocket() {
-        viewModelScope.launch(Dispatchers.Main) {
-            delay(1000)
-            managementSocketService = ManagementSocketService()
-            managementSocketService.init(listener)
-            Log.d("appViewModel", "connectSocket")
-        }
-    }
-
-    fun reconnectSocket() {
-        viewModelScope.launch(Dispatchers.Main) {
-            for (count in 1..10) {
-                if (isSocketConnect == SocketCode.CONNECT) break
-                connectSocket()
-                delay(5000)
-            }
-        }
+    // socket
+    fun socketConnect() {
+        managementSocketService = ManagementSocketService()
+        managementSocketService.init(listener)
     }
 
     fun disConnectSocket() {
-        viewModelScope.launch(Dispatchers.Main) {
-            managementSocketService.disConnect()
-            Log.d("appViewModel", "disConnectSocket")
-        }
+        managementSocketService.disConnect()
+        socketState = SocketCode.DISCONNECT
     }
 
     private val listener: WebSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
-            Thread.sleep(500)
-            isSocketConnect = SocketCode.CONNECT
+            socketState = SocketCode.CONNECT
             Log.d("appViewModel", "onOpen")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
-            Thread.sleep(500)
-            isSocketConnect = SocketCode.DISCONNECT
+            socketState = SocketCode.DISCONNECT
             Log.d("appViewModel", "onFailure")
         }
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
-            Thread.sleep(500)
-            isSocketConnect = SocketCode.DISCONNECT
+            socketState = SocketCode.DISCONNECT
             Log.d("appViewModel", "onClosing")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -186,7 +164,8 @@ class AppViewModel(
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("findMong", data.toString())
+                    Log.d("landing", "findMong : $data")
+                    // 첫 몽 생성하는 경우 (기존의 mongId가 없음)
                     mong = Mong(
                         data.mongId,
                         data.name,
@@ -195,23 +174,22 @@ class AppViewModel(
                     stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
                     mapCode = MapCode.valueOf(data.mapCode)
-                    isLoading = true
-                    Log.d("background", mapCode.code.toString())
+                    findMongLoadingState = true
                 }
         }
     }
 
     // 포인트
-    private fun findPoint() {
+    private fun findPayPoint() {
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findMember()
                 .catch {
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("findPoint", data.toString())
+                    Log.d("landing", "findPayPoint : $data")
                     point = data.point
-                    isLoading = true
+                    findPayPointLoadingState = true
                 }
         }
     }

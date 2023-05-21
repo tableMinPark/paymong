@@ -22,9 +22,8 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.common.code.MapCode
 import com.paymong.domain.SoundViewModel
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable

@@ -15,7 +15,6 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
-import com.paymong.common.code.MapCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
@@ -32,7 +31,6 @@ fun BattleEnd(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel,
 ) {
-    Background(MapCode.MP000, false)
     BattleBackgroundGif()
 
     when (battleViewModel.matchingState) {

@@ -12,7 +12,7 @@ enum class LandingCode {
     NOT_CONFIG, NOT_INSTALL,
     SUCCESS, FAIL,
 
-    INSTALL,
+    NOT_HAS_WEARABLE,
     DONE,
 
     LOGIN_SUCCESS, LOGIN_FAIL, CANT_LOGIN,

@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.media.MediaScannerConnection
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,7 +30,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,15 +45,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.paymong.common.R
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.MongCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.CollectMapViewModel
 import com.paymong.domain.app.CollectPayMongViewModel
-import com.paymong.domain.entity.Collect
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.dalmoori
 import java.io.ByteArrayOutputStream
@@ -195,6 +191,7 @@ fun MongMap(
                             val stream = ByteArrayOutputStream()
                             mergedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                             val bytes = stream.toByteArray()
+                            // 폴더생성에서 터짐
                             val fileOutputStream = FileOutputStream(imagePath)
                             fileOutputStream.write(bytes)
                             fileOutputStream.close()

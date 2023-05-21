@@ -1,38 +1,26 @@
 package com.paymong.ui.watch
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.LandingCode
-import com.paymong.common.code.MapCode
 import com.paymong.common.code.SocketCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.SoundViewModel
@@ -44,12 +32,10 @@ import com.paymong.ui.watch.activity.*
 import com.paymong.ui.watch.battle.*
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.Loading
-import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.feed.Feed
 import com.paymong.ui.watch.feed.FeedBuyList
 import com.paymong.ui.watch.landing.Landing
 import com.paymong.ui.watch.main.Main
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
 @Composable
@@ -73,7 +59,7 @@ fun WatchMain(
                     Loading()
                 }
                 else -> {
-                    NavGraph()
+                    WatchNavGraph()
                 }
             }
         } else {
@@ -85,7 +71,7 @@ fun WatchMain(
 fun SocketError(
     watchViewModel: WatchViewModel
 ) {
-    Background(MapCode.MP000, true)
+    Background()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -111,7 +97,7 @@ fun SocketError(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NavGraph (){
+fun WatchNavGraph (){
     val animationState = remember { mutableStateOf(AnimationCode.Normal) }
     val navController = rememberSwipeDismissableNavController()
     val pagerState = rememberPagerState(1)

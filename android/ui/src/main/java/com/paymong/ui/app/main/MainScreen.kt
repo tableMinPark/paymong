@@ -2,7 +2,6 @@ package com.paymong.ui.app.main
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,11 +33,12 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.ui.theme.*
-import com.paymong.ui.app.component.BgGif
-import com.paymong.ui.app.component.CharacterGif
-import com.paymong.ui.app.component.EmotionGif
-import com.paymong.ui.app.component.ThingsGif
-import com.paymong.ui.watch.common.LoadingGif
+import com.paymong.ui.app.common.BgGif
+import com.paymong.ui.app.common.CharacterGif
+import com.paymong.ui.app.common.EmotionGif
+import com.paymong.ui.app.common.Loading
+import com.paymong.ui.app.common.LoadingBar
+import com.paymong.ui.app.common.ThingsGif
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -52,13 +52,8 @@ fun Main(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ) {
-    LaunchedEffect(key1 = true) {
-        if (appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
-            appViewModel.isSocketConnect = SocketCode.LOADING
-            appViewModel.connectSocket()
-        } else if (appViewModel.isSocketConnect == SocketCode.CONNECT) {
-            appViewModel.init()
-        }
+    LaunchedEffect(true) {
+        appViewModel.init()
     }
 
     // 배경
@@ -69,49 +64,17 @@ fun Main(
         BgGif()
     } else {
         Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight())
+                modifier = Modifier.fillMaxWidth().fillMaxHeight())
     }
 
-    if (!appViewModel.isLoading) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val logo = painterResource(R.drawable.app_logo)
-                Image(
-                    painter = logo, contentDescription = null, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(80.dp)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val loadBarSize = 75
-                Box(
-                    modifier = Modifier
-                        .width(loadBarSize.dp)
-                        .height(loadBarSize.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    LoadingGif()
-                }
-            }
-        }
-    } else {
+    if (appViewModel.findMongLoadingState &&
+        appViewModel.findPayPointLoadingState) {
         Top(navController, appViewModel, soundViewModel)
-        MakeEgg(appViewModel,soundViewModel)
+        MakeEgg(appViewModel, soundViewModel)
         Btn(navController, appViewModel, soundViewModel)
+    } else {
+        LoadingBar()
     }
-
 }
 
 @Composable
@@ -171,8 +134,6 @@ fun Things(
     navController: NavController,
     soundViewModel: SoundViewModel
 ){
-
-
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -210,7 +171,6 @@ fun Point(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ){
-
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -253,7 +213,6 @@ fun Top(
     navController: NavController,
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
-
 ){
     Row(
         modifier = Modifier
@@ -263,7 +222,7 @@ fun Top(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        Row (    horizontalArrangement = Arrangement.SpaceBetween){
+        Row (horizontalArrangement = Arrangement.SpaceBetween){
             Help(navController, soundViewModel)
             Info(navController, soundViewModel)
             Things(navController, soundViewModel)
@@ -443,6 +402,7 @@ fun SleepDialog(
         }
     }
 }
+
 @Composable
 fun WakeDialog(
     setWakeValue: (LocalTime) -> Unit,
@@ -554,10 +514,9 @@ fun MakeEgg(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
         val density = LocalDensity.current.density
 
-        if (appViewModel.retry || code >= 400) { // 알 생성
+        if (appViewModel.retry || appViewModel.mong.mongCode == MongCode.CH444) { // 알 생성
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
                 fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White,
                 modifier = Modifier.clickable(
@@ -739,7 +698,6 @@ fun Btn(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ){
-
     Row(
         modifier = Modifier
             .fillMaxWidth()

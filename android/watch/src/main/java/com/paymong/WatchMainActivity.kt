@@ -30,13 +30,14 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         private const val CAPABILITY_PHONE_APP = "app_paymong"
     }
 
+    // 모바일-워치 간 연결
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
     private lateinit var messageClient: MessageClient
-
+    // 로그인을 위한 viewModel
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
-
+    // watchViewModel
     private lateinit var watchViewModelFactory: WatchViewModelFactory
     private lateinit var watchViewModel: WatchViewModel
 
@@ -46,19 +47,16 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 필수 권한 확인
         isNotificationPermissionGranted()
 
-        // 설치 여부 확인
+        // 모바일-워치 간 연결
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
         messageClient = Wearable.getMessageClient(this)
-
         // watchLandingViewModel 생성
         watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
-
         // watchViewModel 생성
         watchViewModelFactory = WatchViewModelFactory(this.application)
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
-
         // 화면 켜짐 유지
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 

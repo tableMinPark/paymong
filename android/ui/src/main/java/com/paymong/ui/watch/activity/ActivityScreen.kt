@@ -18,7 +18,6 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import com.paymong.common.R
-import com.paymong.common.code.MapCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.WatchNavItem
@@ -34,7 +33,7 @@ fun Activity(
     watchViewModel: WatchViewModel,
     soundViewModel: SoundViewModel
 ) {
-    Background(MapCode.MP000, true)
+    Background()
 
     val context = LocalContext.current
     val configuration = LocalConfiguration.current

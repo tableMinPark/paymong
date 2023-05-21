@@ -102,6 +102,32 @@ fun WalkingBackgroundGif() {
 
 @ExperimentalCoilApi
 @Composable
+fun TrainingBackgroundGif() {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder(context))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberImagePainter(
+            imageLoader = imageLoader,
+            data = R.drawable.training_bg_gif,
+            builder = {
+                size(OriginalSize)
+            }
+        ),
+        contentDescription = null,
+        modifier = Modifier
+    )
+}
+
+@ExperimentalCoilApi
+@Composable
 fun BattleBackgroundGif() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)

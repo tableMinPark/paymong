@@ -22,21 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.SmartThingsViewModel
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongBlue
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable

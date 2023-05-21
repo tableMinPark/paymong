@@ -1,6 +1,5 @@
 package com.paymong.ui.app.collect
 
-import android.media.SoundPool
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -9,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori

@@ -21,8 +21,8 @@ import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
-import com.paymong.ui.app.component.BgGif
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.BgGif
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.*
 
 @Composable

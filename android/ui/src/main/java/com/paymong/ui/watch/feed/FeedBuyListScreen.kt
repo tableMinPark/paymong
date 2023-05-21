@@ -49,7 +49,7 @@ fun FeedBuyList(
     LaunchedEffect(key1 = true) {
         feedViewModel.getFoodList(watchViewModel.point)
     }
-    Background(watchViewModel.mapCode, false)
+    Background()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

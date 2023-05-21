@@ -1,4 +1,4 @@
-package com.paymong.ui.app.component
+package com.paymong.ui.app.common
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.*
@@ -17,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
-import com.paymong.ui.app.collect.Collect
 import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori

@@ -22,11 +22,10 @@ import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
-import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.ConditionViewModel
 import com.paymong.ui.theme.*
-import com.paymong.ui.app.component.BgGif
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.BgGif
+import com.paymong.ui.app.common.TopBar
 
 @Composable
 fun Condition(

@@ -111,6 +111,7 @@ interface Api {
                         authRepository.reissue()
                         // 토큰 재발급 성공 시 기존 요청 재전송
                         val accessToken = DataApplication.prefs.getString("accessToken", "")
+                        Log.d("accessToken", accessToken)
                         val token = "Bearer $accessToken"
                         val newRequest = chain.request().newBuilder()
                             .addHeader("Authorization", token)

@@ -27,7 +27,7 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.InfoDetailViewModel
 import com.paymong.ui.theme.*
-import com.paymong.ui.app.component.BgGif
+import com.paymong.ui.app.common.BgGif
 
 @Composable
 fun InfoDetail(

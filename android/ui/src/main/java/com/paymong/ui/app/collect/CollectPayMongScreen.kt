@@ -27,7 +27,7 @@ import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.CollectPayMongViewModel
 import com.paymong.domain.entity.Collect
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PayMongPurple
 import com.paymong.ui.theme.PaymongTheme

@@ -29,6 +29,7 @@ import com.paymong.domain.SoundViewModel
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
+import com.paymong.ui.watch.common.TrainingBackgroundGif
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -50,7 +51,7 @@ fun TrainingActive(
     val exitFontSize = if (screenWidthDp < 200) 11 else 13
     val infoFontSize = if (screenWidthDp < 200) 9 else 11
 
-    Background(watchViewModel.mapCode, true)
+    TrainingBackgroundGif()
     if (!trainingViewModel.isTrainingEnd) LoadingGif()
 
     Column(
@@ -59,7 +60,7 @@ fun TrainingActive(
         modifier = Modifier
             .fillMaxHeight()
             .clickable {
-                if(!trainingViewModel.isTrainingEnd) {
+                if (!trainingViewModel.isTrainingEnd) {
                     trainingViewModel.addCount()
                 }
             }

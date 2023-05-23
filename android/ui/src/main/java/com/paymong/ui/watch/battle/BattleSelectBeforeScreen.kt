@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.watch.BattleViewModel
@@ -22,6 +23,7 @@ fun BattleSelectBefore(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
+    Background(BackgroundCode.BG000)
     BattleBackgroundGif()
 
     val configuration = LocalConfiguration.current

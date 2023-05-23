@@ -13,57 +13,51 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.InfoDetailViewModel
+import com.paymong.ui.app.common.Background
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.common.BgGif
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun InfoDetail(
     navController: NavController,
     appViewModel : AppViewModel
 ) {
-    val findBgCode = appViewModel.mapCode
-    val bg = painterResource(findBgCode.code)
-
-    if(findBgCode == MapCode.MP000){
+    if(appViewModel.mapCode == MapCode.MP000){
         BgGif()
     } else {
-        Image(
-            painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        )
+        Background(appViewModel.mapCode)
     }
+
     Box(
-        modifier = Modifier.fillMaxSize().clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = {
-                navController.navigate(AppNavItem.Main.route) {
-                    popUpTo("main") {
-                        inclusive = true
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {
+                    navController.navigate(AppNavItem.Main.route) {
+                        popUpTo("main") {
+                            inclusive = true
+                        }
                     }
                 }
-            }
-        ),
+            ),
         contentAlignment = Alignment.Center
     ){
         Card(appViewModel)
     }
-
 }
 
 @Composable
@@ -103,8 +97,6 @@ fun Card(appViewModel : AppViewModel){
         ) {
         }
         Info(appViewModel)
-        // appViewModel.mongInfo.name, appViewModel.mongInfo.mongCode, appViewModel.getAge(), appViewModel.mongInfo.weight
-        // name: String, mongCode: CharacterCode, age: String, weight: Number
     }
 }
 
@@ -124,16 +116,5 @@ fun Info(
         )
         Text(text = infoDetailViewModel.age, fontFamily = dalmoori, fontSize = 20.sp, modifier = Modifier.padding(vertical = 20.dp))
         Text(text = String.format("%dg", infoDetailViewModel.mongInfo.weight), fontFamily = dalmoori, fontSize = 20.sp)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun InfoDetailPreview() {
-    val navController = rememberNavController()
-    val viewModel : AppViewModel = viewModel()
-    PaymongTheme {
-//        InfoDetail(navController)
-//        Info(viewModel.name, viewModel.characterId, viewModel.age, viewModel.weight)
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
+import com.paymong.common.code.MapCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.ToastMessage
@@ -19,14 +20,13 @@ import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.common.showToast
 
-
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleWait(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
-    Background()
+    Background(MapCode.MP000)
     LoadingGif()
 
     val configuration = LocalConfiguration.current

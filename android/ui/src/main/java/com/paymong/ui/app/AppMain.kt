@@ -45,6 +45,7 @@ import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun AppMain(
     appLandingViewModel : AppLandinglViewModel
@@ -56,6 +57,7 @@ fun AppMain(
         Scaffold {
             Box(Modifier.padding(it)) {
                 BgGif()
+
                 if (appLandingViewModel.landingCode == LandingCode.SUCCESS) {
                     Log.d("landing", "landingCode : ${appLandingViewModel.landingCode} / socketState : ${appViewModel.socketState}")
                     when(appViewModel.socketState) {
@@ -73,7 +75,6 @@ fun AppMain(
                             AppNavGraph()
                         }
                     }
-
                 } else {
                     Landing(appLandingViewModel)
                 }
@@ -82,7 +83,6 @@ fun AppMain(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun SocketError(
     appViewModel: AppViewModel

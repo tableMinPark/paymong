@@ -13,12 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
@@ -27,6 +26,7 @@ import com.paymong.ui.theme.*
 import com.paymong.ui.app.common.BgGif
 import com.paymong.ui.app.common.TopBar
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Condition(
     navController: NavController,
@@ -38,8 +38,6 @@ fun Condition(
         backgroundColor = PayMongNavy
     ) {
         Box(Modifier.padding(it)){
-//            val bg = painterResource(R.drawable.main_bg)
-//            Image(bg, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
             BgGif()
             Column(
                 modifier = Modifier.padding(30.dp)
@@ -87,7 +85,7 @@ fun Component(img: Painter, condition: Float, color: Color) { //이미지, 지�
             Image(painter = img, contentDescription = null, modifier = Modifier.size(50.dp))
             Text("${(condition*100).toInt()} %", fontFamily = dalmoori, fontSize = 22.sp, color = Color.White)
         }
-        Box() {
+        Box {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(35.dp)
@@ -101,16 +99,5 @@ fun Component(img: Painter, condition: Float, color: Color) { //이미지, 지�
                     .padding(8.dp)) {}
             }
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun ConditionPreview() {
-    val navController = rememberNavController()
-    PaymongTheme {
-//        Condition(navController)
-        val healthImg = painterResource(R.drawable.health)
-        Component(healthImg, 0.35f, PayMongRed200)
     }
 }

@@ -100,8 +100,7 @@ class WatchLandingViewModel(
                 remoteActivityHelper.startRemoteActivity(intent).await()
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
-            } catch (throwable: Throwable) {
-            }
+            } catch (_: Exception) {}
         }
     }
     // 초기 설정을 위해 원격으로 모바일 앱 실행하는 함수
@@ -120,10 +119,7 @@ class WatchLandingViewModel(
                     }
                 }.awaitAll()
 
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
         }
     }
 }

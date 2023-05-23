@@ -22,12 +22,12 @@ import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
 import com.google.android.gms.wearable.Wearable
 import com.paymong.common.code.SocketCode
+import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.app.AppLandingViewModelFactory
 import com.paymong.domain.app.AppLandinglViewModel
 import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.AppViewModelFactory
 import com.paymong.ui.app.AppMain
-
 
 class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
     companion object {
@@ -101,8 +101,9 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     }
     // 웨어러블 연결 여부 확인해서 연결 때마다 앱 설치 여부 확인
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        appLandinglViewModel.wearNodesWithApp = capabilityInfo.nodes
-        appLandinglViewModel.checkWearable()
+        if (DataApplicationRepository().getValue("watchId") == "") {
+            appLandinglViewModel.checkWearable()
+        }
     }
     // 필요 권한 동의 확인 함수
     private fun isNotificationPermissionGranted(): Boolean {

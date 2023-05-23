@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,13 +33,16 @@ fun CollectMap(
     collectMapViewModel : CollectMapViewModel = viewModel(),
     soundViewModel: SoundViewModel,
 ) {
-    collectMapViewModel.map()
+    LaunchedEffect(true) {
+        collectMapViewModel.init()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
         Scaffold(
-            topBar = {TopBar("Map", navController, AppNavItem.Collect.route, soundViewModel)},
+            topBar = { TopBar("Map", navController, AppNavItem.Collect.route, soundViewModel) },
             backgroundColor = PayMongNavy
         ) {
             Box(Modifier.padding(it)) {
@@ -46,21 +50,21 @@ fun CollectMap(
                     Modifier.fillMaxSize()
                 ) {
                     var cnt = collectMapViewModel.mapList.size / 2
-                    if(collectMapViewModel.mapList.size%2 == 1){
+                    if (collectMapViewModel.mapList.size % 2 == 1) {
                         cnt += 1
                     }
-                    if(collectMapViewModel.success.value) {
+                    if (collectMapViewModel.isLoading.value) {
                         items(cnt) { index ->
                             ComponentRow(index = index * 2, collectMapViewModel)
                         }
-                    } else{
-                        item(){
+                    } else {
+                        item {
                             val strokeWidth = 10.dp
 
                             Row(
                                 horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxSize()
-                            ){
+                            ) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
                                         .drawBehind {

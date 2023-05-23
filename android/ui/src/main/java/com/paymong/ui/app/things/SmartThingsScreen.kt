@@ -111,7 +111,7 @@ private fun Desc(){
                 Spacer(modifier = Modifier.width(20.dp))
                 Image(painterResource(R.drawable.rightbnt) , contentDescription = null, modifier = Modifier.size(30.dp))
                 Spacer(modifier = Modifier.width(20.dp))
-                Column() {
+                Column {
                     Text("페이몽도\n자동 청소", textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 13.sp, color = Color.White, lineHeight = 20.sp)
                     Spacer(modifier = Modifier.height(10.dp))
                     Image(painterResource(R.drawable.ch100), contentDescription = null, modifier = Modifier.size(80.dp))
@@ -202,7 +202,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                     Text("", fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.2f))
                 }
             }
-            LazyColumn(){
+            LazyColumn{
                 if(smartThingsViewModel.success){
                     items(smartThingsViewModel.connectedThingsList.size){index ->
                         Row(
@@ -223,7 +223,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                     }
                 }
                 else{
-                    item(){
+                    item{
                         val strokeWidth = 5.dp
 
                         CircularProgressIndicator(
@@ -264,7 +264,7 @@ fun DeleteThings(
                 Text("삭제하시겠습니까?",
                     fontFamily = dalmoori,
                     color = Color.Black)
-                Row(){
+                Row{
                     Button(
                         onClick = {
                             setShowDialog(false)

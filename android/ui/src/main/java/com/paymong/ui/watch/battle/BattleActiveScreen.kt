@@ -24,6 +24,7 @@ import com.paymong.ui.theme.*
 import android.os.Handler
 import android.os.Looper
 import coil.annotation.ExperimentalCoilApi
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.watch.common.AttackGif
@@ -38,6 +39,7 @@ fun BattleActive(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
+    Background(BackgroundCode.BG000)
     BattleBackgroundGif()
 
     val configuration = LocalConfiguration.current

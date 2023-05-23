@@ -28,12 +28,11 @@ import com.paymong.ui.theme.dalmoori
 fun Landing(
     appLandingViewModel : AppLandinglViewModel
 ) {
-    BgGif()
-
     LaunchedEffect(key1 = true){
         // 로그인 확인
         appLandingViewModel.googlePlayLogin()
     }
+    BgGif()
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

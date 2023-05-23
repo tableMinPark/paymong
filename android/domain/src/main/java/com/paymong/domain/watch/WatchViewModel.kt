@@ -95,17 +95,14 @@ class WatchViewModel (
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             socketState = SocketCode.CONNECT
-            Log.d("watchViewModel", "CONNECT")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             socketState = SocketCode.DISCONNECT
-            Log.d("watchViewModel", "DISCONNECT")
         }
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
             socketState = SocketCode.DISCONNECT
-            Log.d("watchViewModel", "DISCONNECT")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -113,11 +110,9 @@ class WatchViewModel (
                 val gson = managementSocketService.getGsonInstance()
 
                 if (managementResDto.code != "201") {
-                    Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
                         "200", "202", "203", "204", "205", "206", "207", "208" -> {
                             val managementRealTimeResDto = gson.fromJson(text, ManagementRealTimeResDto::class.java)
-                            Log.d("socket", managementRealTimeResDto.toString())
                             stateCode = MongStateCode.valueOf(managementRealTimeResDto.stateCode)
                             poopCount = managementRealTimeResDto.poopCount
 
@@ -155,17 +150,14 @@ class WatchViewModel (
                         }
                         "209" -> {
                             val mapRealTimeResDto = gson.fromJson(text, MapRealTimeResDto::class.java)
-                            Log.d("socket", mapRealTimeResDto.toString())
                             mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
                         }
                         "210" -> {
                             val thingsRealTimeResDto = gson.fromJson(text, ThingsRealTimeResDto::class.java)
-                            Log.d("socket", thingsRealTimeResDto.toString())
                             thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
                         }
                         "211" -> {
                             val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
-                            Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
                             findPayPointLoadingState = true
                         }
@@ -223,7 +215,6 @@ class WatchViewModel (
                     mapCode = MapCode.valueOf(data.mapCode)
                 }
                 findMongLoadingState = true
-                Log.d("findMong", "$data / $findMongLoadingState")
             }
     }
     private suspend fun findMongCondition() {
@@ -233,7 +224,6 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("socket", data.toString())
                     mongStats = MongStats(
                         data.mongId,
                         data.name,
@@ -253,7 +243,6 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("socket", data.toString())
                     mongInfo = MongInfo(
                         data.weight,
                         data.born
@@ -270,7 +259,6 @@ class WatchViewModel (
                     it.printStackTrace()
                 }
                 .collect{ data ->
-                    Log.d("socket", data.toString())
                     point = data.point
                     findPayPointLoadingState = true
                 }

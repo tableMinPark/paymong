@@ -85,8 +85,9 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         } catch (_: Exception) {}
     }
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        watchLandingViewModel.androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
-        watchLandingViewModel.checkIfPhoneHasApp()
+        if (DataApplicationRepository().getValue("playerId") == "") {
+            watchLandingViewModel.checkIfPhoneHasApp()
+        }
     }
     // 필수 권한 확인
     private fun isNotificationPermissionGranted() {

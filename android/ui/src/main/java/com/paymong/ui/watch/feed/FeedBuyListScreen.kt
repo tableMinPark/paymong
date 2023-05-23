@@ -32,7 +32,6 @@ import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
@@ -46,10 +45,10 @@ fun FeedBuyList(
     soundViewModel: SoundViewModel,
     feedViewModel: FeedViewModel
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         feedViewModel.getFoodList(watchViewModel.point)
     }
-    Background()
+    Background(MapCode.MP000)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

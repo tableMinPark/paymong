@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,12 +16,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.paymong.common.R
 import com.paymong.common.code.MongCode
 import com.paymong.common.navigation.AppNavItem
@@ -30,7 +29,6 @@ import com.paymong.domain.entity.Collect
 import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.theme.PayMongPurple
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,7 +38,10 @@ fun CollectPayMong(
     soundViewModel: SoundViewModel,
     collectPayMongViewModel: CollectPayMongViewModel = viewModel()
 ) {
-    collectPayMongViewModel.mong()
+    LaunchedEffect(true) {
+        collectPayMongViewModel.init()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -48,9 +49,9 @@ fun CollectPayMong(
         Scaffold(
             topBar = {TopBar("PayMong", navController, AppNavItem.Collect.route, soundViewModel)},
             backgroundColor = PayMongNavy
-        ) {
-            Box(Modifier.padding(it)) {
-                if(collectPayMongViewModel.success.value) {
+        ) { paddingValues ->
+            Box(Modifier.padding(paddingValues)) {
+                if(collectPayMongViewModel.isLoading.value) {
                     val grouped =
                         collectPayMongViewModel.mongList.groupBy { it.code!!.substring(2, 3) }
                     LazyColumn(
@@ -58,19 +59,22 @@ fun CollectPayMong(
                     ) {
                         grouped.forEach { (level, mongforLevel) ->
                             stickyHeader {
-                                var title = ""
-                                title =
-                                    if (level == "0") "알" else if (level == "1") "1단계" else if (level == "2") "2단계" else "3단계"
+                                val title =
+                                    when(level) {
+                                        "0" -> "알"
+                                        "1" -> "1단계"
+                                        "2" -> "2단계"
+                                        else -> "3단계"
+                                    }
                                 PayMongHeader(title)
                             }
 
-                            var cnt = 0
-                            cnt = if (mongforLevel.size % 3 == 0) {
-                                mongforLevel.size / 3
-                            } else {
-                                mongforLevel.size / 3 + 1
-                            }
-
+                            val cnt =
+                                if (mongforLevel.size % 3 == 0) {
+                                    mongforLevel.size / 3
+                                } else {
+                                    mongforLevel.size / 3 + 1
+                                }
                             items(cnt) { mong ->
                                 ImageList(mongforLevel, mong * 3)
                             }
@@ -106,7 +110,7 @@ fun CollectPayMong(
 
 @Composable
 fun PayMongHeader(title : String){
-    Column() {
+    Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -170,15 +174,5 @@ fun ImageList(list : List<Collect>, index:Int){
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CollectPayMongPreview() {
-    val navController = rememberNavController()
-    val soundViewModel: SoundViewModel = viewModel()
-    PaymongTheme {
-        CollectPayMong(navController, soundViewModel)
     }
 }

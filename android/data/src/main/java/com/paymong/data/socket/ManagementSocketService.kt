@@ -1,9 +1,7 @@
 package com.paymong.data.socket
 
 import android.content.res.Resources
-import android.util.Log
 import com.google.gson.*
-import com.paymong.data.DataApplication
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
 import okhttp3.Interceptor

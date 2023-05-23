@@ -26,11 +26,9 @@
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
-
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="false" />
-
         <service
             android:name="com.paymong.WatchDataLayerListenerService"
             android:exported="true">
@@ -41,7 +39,6 @@
                 <data android:pathPrefix="/start-activity"/>
             </intent-filter>
         </service>
-
         <activity
             android:name=".WatchMainActivity"
             android:exported="true"

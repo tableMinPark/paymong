@@ -21,6 +21,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.LandingCode
+import com.paymong.common.code.MapCode
 import com.paymong.common.code.SocketCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.domain.SoundViewModel
@@ -71,7 +72,7 @@ fun WatchMain(
 fun SocketError(
     watchViewModel: WatchViewModel
 ) {
-    Background()
+    Background(MapCode.MP000)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -131,7 +132,7 @@ fun WatchNavGraph (){
             Activity(navController, watchViewModel, soundViewModel)
         }
         composable(route = WatchNavItem.TrainingLanding.route){
-            TrainingLanding(navController, watchViewModel)
+            TrainingLanding(navController)
         }
         composable(route = WatchNavItem.Training.route){
             TrainingActive(navController, watchViewModel, soundViewModel)

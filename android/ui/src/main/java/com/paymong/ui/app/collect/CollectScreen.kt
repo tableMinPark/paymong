@@ -10,18 +10,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
@@ -66,16 +62,5 @@ fun Btn(navController: NavController, btnText: String, route: String, soundViewM
         Text(text = btnText, textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 40.sp, fontWeight = FontWeight.Bold,
         color = Color.White
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CollectPreview() {
-    val navController = rememberNavController()
-    val soundViewModel:SoundViewModel = viewModel()
-    PaymongTheme {
-//        Collect(navController)
-        Btn(navController, "PayMong", AppNavItem.CollectPayMong.route, soundViewModel)
     }
 }

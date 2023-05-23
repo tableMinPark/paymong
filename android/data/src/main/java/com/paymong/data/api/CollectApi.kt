@@ -9,6 +9,7 @@ import retrofit2.http.GET
 interface CollectApi {
     @GET("/collect/map")
     suspend fun map() : Response<List<MapResDto>>
+
     @GET("/collect/mong")
     suspend fun mong() : Response<List<MongResDto>>
 }

@@ -36,15 +36,15 @@ fun AddSmartThings(
     soundViewModel: SoundViewModel,
     smartThingsViewModel: SmartThingsViewModel
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         smartThingsViewModel.reset()
     }
 
     Scaffold(
         topBar = { TopBar("스마트싱스", navController, AppNavItem.SmartThings.route, soundViewModel) },
         backgroundColor = PayMongNavy
-    ) {
-        Box(Modifier.padding(it)) {
+    ) { paddingValue ->
+        Box(Modifier.padding(paddingValue)) {
             smartThingsViewModel.toConnectThings()
 
             val dialogOpen = remember { mutableStateOf(false) }

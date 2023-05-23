@@ -58,7 +58,7 @@ class BattleViewModel (
     var totalTurn = 10
     var nextAttacker by mutableStateOf("A")
     var battleSelectTime by mutableStateOf(0.0)
-    var selectState by mutableStateOf(MessageType.STAY)
+    private var selectState by mutableStateOf(MessageType.STAY)
 
     // Battle - 끝
     var win by mutableStateOf(false)

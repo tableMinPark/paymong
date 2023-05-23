@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
 import com.paymong.common.code.LandingCode
+import com.paymong.common.code.MapCode
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.ui.theme.PayMongRed200
 import com.paymong.ui.theme.dalmoori
@@ -21,12 +22,10 @@ import com.paymong.ui.watch.common.Logo
 fun Landing(
     watchLandingViewModel : WatchLandingViewModel
 ){
-    Background()
-
-    LaunchedEffect(key1 = true){
-        // 로그인 확인
+    LaunchedEffect(true){
         watchLandingViewModel.login()
     }
+    Background(MapCode.MP000)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

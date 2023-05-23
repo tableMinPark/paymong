@@ -10,7 +10,6 @@ import java.io.IOException
 class AuthRepository (
     private val api: AuthApi = Api.getInstance().create(AuthApi::class.java)
 ) {
-
     @Throws(IOException::class)
     fun login(loginReqDto: LoginReqDto): Flow<Boolean> = flow {
         val response = api.login(loginReqDto)

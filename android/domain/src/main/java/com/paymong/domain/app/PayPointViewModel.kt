@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class PayPointViewModel : ViewModel() {
     var payList = mutableListOf<Point>()
     var success by mutableStateOf(false)
+
     private val memberRepository: MemberRepository = MemberRepository()
 
     init {

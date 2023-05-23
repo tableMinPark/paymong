@@ -1,6 +1,5 @@
 package com.paymong.ui.watch.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -33,14 +32,15 @@ fun Main(
     soundViewModel: SoundViewModel
 ) {
     LaunchedEffect(true) {
-        // 초기 정보 조회
         watchViewModel.init()
     }
 
     // 4가지의 정보를 모두 조회했을 경우에만 다음 메인화면 출력
     if (watchViewModel.findMongLoadingState &&
         watchViewModel.findPayPointLoadingState &&
-        ( watchViewModel.mong.mongId == 0L || (watchViewModel.findMongConditionLoadingState && watchViewModel.findMongInfoLoadingState) )
+        ( watchViewModel.mong.mongId == 0L ||
+                (watchViewModel.findMongConditionLoadingState && watchViewModel.findMongInfoLoadingState)
+        )
     ) {
         if (watchViewModel.mapCode == MapCode.MP000) {
             MainBackgroundGif()

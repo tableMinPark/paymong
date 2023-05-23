@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.MongCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.navigation.WatchNavItem
@@ -52,10 +52,7 @@ fun TrainingActive(
     val exitFontSize = if (screenWidthDp < 200) 11 else 13
     val infoFontSize = if (screenWidthDp < 200) 9 else 11
 
-
-    val background = painterResource(R.drawable.training_bg)
-    Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
-
+    Background(BackgroundCode.BG001)
     TrainingBackgroundGif()
     if (!trainingViewModel.isTrainingEnd) LoadingGif()
 

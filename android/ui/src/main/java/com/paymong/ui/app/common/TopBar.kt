@@ -47,13 +47,3 @@ fun TopBar(
         elevation = 40.dp
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TopBarPreview() {
-    val navController = rememberNavController()
-    val soundViewModel:SoundViewModel = viewModel()
-    PaymongTheme {
-        TopBar("MSG", navController, AppNavItem.Main.route, soundViewModel)
-    }
-}

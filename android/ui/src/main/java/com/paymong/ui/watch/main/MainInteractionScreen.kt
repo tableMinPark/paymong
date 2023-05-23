@@ -78,7 +78,7 @@ fun MainInteraction(
 
     Column(
         modifier = Modifier
-            .padding(15.dp)//, bottom = 15.dp)
+            .padding(15.dp)
             .fillMaxSize(1f)
     ) {
         Box  {
@@ -103,8 +103,7 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(buttonSize.dp),
+                        modifier = Modifier.size(buttonSize.dp),
                         contentAlignment = Alignment.Center
                     )
                     {

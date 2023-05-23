@@ -1,7 +1,6 @@
 package com.paymong.domain.app
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -82,17 +81,14 @@ class AppViewModel(
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             socketState = SocketCode.CONNECT
-            Log.d("appViewModel", "onOpen")
         }
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
             socketState = SocketCode.DISCONNECT
-            Log.d("appViewModel", "onFailure")
         }
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
             socketState = SocketCode.DISCONNECT
-            Log.d("appViewModel", "onClosing")
         }
         override fun onMessage(webSocket: WebSocket, text: String) {
             try {
@@ -100,7 +96,6 @@ class AppViewModel(
                 val gson = managementSocketService.getGsonInstance()
 
                 if (managementResDto.code != "201") {
-                    Log.d("socket", managementResDto.toString())
                     when(managementResDto.code) {
                         "200", "202", "203", "204", "205", "206", "207", "208" -> {
                             val managementRealTimeResDto = gson.fromJson(text, ManagementRealTimeResDto::class.java)
@@ -114,17 +109,14 @@ class AppViewModel(
                         }
                         "209" -> {
                             val mapRealTimeResDto = gson.fromJson(text, MapRealTimeResDto::class.java)
-                            Log.d("socket", mapRealTimeResDto.toString())
                             mapCode = MapCode.valueOf(mapRealTimeResDto.mapCode)
                         }
                         "210" -> {
                             val thingsRealTimeResDto = gson.fromJson(text, ThingsRealTimeResDto::class.java)
-                            Log.d("socket", thingsRealTimeResDto.toString())
                             thingsCode = ThingsCode.valueOf(thingsRealTimeResDto.thingsCode)
                         }
                         "211" -> {
                             val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
-                            Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
                         }
                         "300" -> {
@@ -164,7 +156,6 @@ class AppViewModel(
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("landing", "findMong : $data")
                     // 첫 몽 생성하는 경우 (기존의 mongId가 없음)
                     mong = Mong(
                         data.mongId,
@@ -191,7 +182,6 @@ class AppViewModel(
                     it.printStackTrace()
                 }
                 .collect { data ->
-                    Log.d("landing", "findPayPoint : $data")
                     point = data.point
                     findPayPointLoadingState = true
                 }

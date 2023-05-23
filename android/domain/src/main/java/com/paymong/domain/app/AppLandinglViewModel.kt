@@ -1,10 +1,9 @@
 package com.paymong.domain.app
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +16,6 @@ import com.google.android.gms.games.PlayersClient
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.LandingCode
-import com.paymong.common.code.ToastMessage
 import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
@@ -44,14 +42,14 @@ class AppLandinglViewModel(
     private val authRepository: AuthRepository = AuthRepository()
 
     var landingCode by mutableStateOf(LandingCode.LOADING)
-    var playerId by mutableStateOf("")
-    var wearNodesWithApp: Set<Node>? = null
+    private var wearNodesWithApp: Set<Node>? = null
+    private var playerId by mutableStateOf("")
     private var allConnectedNodes: List<Node>? = null
 
     // 구글 플레이 로그인 (playerId 획득)
+    @SuppressLint("VisibleForTests")
     fun googlePlayLogin() {
         viewModelScope.launch(Dispatchers.Main) {
-            Log.d("landing", "googlePlayLogin - start")
             // 구글 로그인
             gamesSignInClient.signIn()
             // 로그인 리스너
@@ -69,13 +67,11 @@ class AppLandinglViewModel(
                     landingCode = LandingCode.LOGIN_FAIL
                 }
             }
-            Log.d("landing", "googlePlayLogin - end / landingCode : $landingCode")
         }
     }
     // 페이몽 서버 로그인 (playerId를 이용해 페이몽 서버 로그인 - 토큰 획득)
     fun login() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("landing", "login - start")
             try {
                 authRepository.login(LoginReqDto(playerId))
                     .catch { landingCode = LandingCode.LOGIN_FAIL }
@@ -89,12 +85,10 @@ class AppLandinglViewModel(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            Log.d("landing", "login - end / landingCode : $landingCode")
         }
     }
     // 웨어러블 기기 등록 확인
     private fun checkRegisterWearable() {
-        Log.d("landing", "checkRegisterWearable - start")
         val watchId = DataApplicationRepository().getValue("watchId")
         if (watchId != "") {
             landingCode = LandingCode.SUCCESS
@@ -102,12 +96,10 @@ class AppLandinglViewModel(
             // 기기 보유 여부, 설치 여부 확인
             checkWearable()
         }
-        Log.d("landing", "checkRegisterWearable - end / landingCode : $landingCode")
     }
     // 웨어러블 등록 여부 (근처에 있는지), 웨어러블 기기에 앱 설치 여부 확인 함수
     fun checkWearable() {
         viewModelScope.launch {
-            Log.d("landing", "checkWearable - start")
             launch {
                 findWearDevicesWithApp()
             }
@@ -146,18 +138,22 @@ class AppLandinglViewModel(
         if (wearNodesWithApp == null || wearNodes == null)
             return
 
+        val isInstall = wearNodesWithApp.isNotEmpty()
+        val hasWearable = wearNodes.isNotEmpty()
+
         // 연결된 기기가 있고 설치된 경우
-        if (wearNodesWithApp.isNotEmpty() && wearNodes.isNotEmpty()) {
-            landingCode = LandingCode.NOT_CONFIG
-        }
-        // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
-        else if (wearNodesWithApp.isEmpty() && wearNodes.isNotEmpty()) {
-            landingCode = LandingCode.NOT_INSTALL
-        }
-        // 연결된 기기가 없는경우 (최초 등록 여부는 앞에서 확인하기 때문에 여기까지 온 경우는 최초 등록 X, 기기없음의 경우)
-        else if (wearNodes.isEmpty()) {
-            landingCode = LandingCode.NOT_HAS_WEARABLE
-        }
+        landingCode =
+            if (isInstall && hasWearable) {
+                LandingCode.NOT_CONFIG
+            }
+            // 연결된 웨어러블 기기에 앱이 설치되지 않은 경우
+            else if (!isInstall && hasWearable) {
+                LandingCode.NOT_INSTALL
+            }
+            // 연결된 기기가 없는경우 (최초 등록 여부는 앞에서 확인하기 때문에 여기까지 온 경우는 최초 등록 X, 기기없음의 경우)
+            else {
+                LandingCode.NOT_HAS_WEARABLE
+            }
     }
     // 웨어러블 앱 설치를 위해 원격으로 스토어를 실행하는 함수
     fun openPlayStoreOnWearDevicesWithoutApp() {

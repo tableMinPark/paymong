@@ -22,21 +22,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.ToastMessage
 
 @Composable
 fun Background(
-    mapCode: MapCode = MapCode.MP000
+    mapCode: MapCode
 ) {
     val background = painterResource(mapCode.code)
+    Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
+}
+
+@Composable
+fun Background(
+    bgCode: BackgroundCode
+) {
+    val background = painterResource(bgCode.code)
     Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Loading() {
-    Background()
+    Background(MapCode.MP000)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

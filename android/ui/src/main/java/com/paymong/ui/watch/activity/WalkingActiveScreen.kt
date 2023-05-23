@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.WalkingCode
 import com.paymong.common.navigation.WatchNavItem
@@ -38,9 +38,7 @@ fun WalkingActive(
     soundViewModel: SoundViewModel,
     walkingViewModel: WalkingViewModel = viewModel()
 ) {
-    val background = painterResource(R.drawable.walking_bg)
-    Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
-
+    Background(BackgroundCode.BG002)
     WalkingBackgroundGif()
 
     val configuration = LocalConfiguration.current

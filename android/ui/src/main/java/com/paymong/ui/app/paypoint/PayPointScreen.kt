@@ -39,6 +39,7 @@ fun PayPoint(
     payPointViewModel: PayPointViewModel = viewModel()
 ) {
     BgGif()
+
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -29,6 +29,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,8 +61,6 @@ import java.io.FileOutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class Option(val id:Int, val label: String, val code: String)
-
 @Composable
 fun MongMap(
     navController: NavController,
@@ -69,8 +68,11 @@ fun MongMap(
     collectMapViewModel: CollectMapViewModel = viewModel(),
     collectPayMongViewModel: CollectPayMongViewModel = viewModel()
 ) {
-    collectMapViewModel.map()
-    collectPayMongViewModel.mong()
+    LaunchedEffect(true) {
+        collectMapViewModel.init()
+        collectPayMongViewModel.init()
+    }
+
     Scaffold(
         topBar = { TopBar("MongMap", navController, AppNavItem.Collect.route, soundViewModel) },
         backgroundColor = PayMongNavy
@@ -91,7 +93,7 @@ fun MongMap(
                 mongOptions.add(Option(i, collectPayMongViewModel.openList[i].name!!, collectPayMongViewModel.openList[i].code!!))
             }
 
-            Column() {
+            Column {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -298,3 +300,9 @@ fun SelectBox(options: MutableList<Option>, selectedOption: MutableState<Option?
         }
     }
 }
+
+data class Option(
+    val id:Int,
+    val label: String,
+    val code: String
+)

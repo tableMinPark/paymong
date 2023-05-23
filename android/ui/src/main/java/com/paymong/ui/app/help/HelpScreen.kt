@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -25,6 +25,7 @@ import com.paymong.ui.app.common.BgGif
 import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.*
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Help(
     navController: NavController,
@@ -36,7 +37,6 @@ fun Help(
     ) {
         Box(Modifier.padding(it)){
             BgGif()
-
             Desc()
         }
     }
@@ -212,13 +212,5 @@ fun Page5(){
             .padding(horizontal = 50.dp))
         Spacer(modifier = Modifier.height(40.dp))
         Text("결제한 장소의 맵을 모아보세요!", fontFamily = dalmoori, color = PayMongGreen, fontSize = 20.sp, letterSpacing = 2.sp)
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun HelpPreview() {
-    PaymongTheme {
-        Page5()
     }
 }

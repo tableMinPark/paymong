@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
+import com.paymong.common.code.MapCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.ToastMessage
 import com.paymong.domain.watch.BattleViewModel
@@ -33,10 +34,10 @@ fun BattleLanding(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-    LaunchedEffect(key1 = 0) {
+    LaunchedEffect(true) {
         battleViewModel.mongId = watchViewModel.mong.mongId
     }
-    Background()
+    Background(MapCode.MP000)
 
     val context = LocalContext.current
     val configuration = LocalConfiguration.current

@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -32,11 +31,11 @@ import com.paymong.common.code.*
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
+import com.paymong.ui.app.common.Background
 import com.paymong.ui.theme.*
 import com.paymong.ui.app.common.BgGif
 import com.paymong.ui.app.common.CharacterGif
 import com.paymong.ui.app.common.EmotionGif
-import com.paymong.ui.app.common.Loading
 import com.paymong.ui.app.common.LoadingBar
 import com.paymong.ui.app.common.ThingsGif
 import kotlinx.coroutines.delay
@@ -56,15 +55,10 @@ fun Main(
         appViewModel.init()
     }
 
-    // 배경
-    val findBgCode = appViewModel.mapCode
-    val bg = painterResource(findBgCode.phoneCode)
-
-    if(findBgCode == MapCode.MP000){
+    if(appViewModel.mapCode == MapCode.MP000){
         BgGif()
     } else {
-        Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().fillMaxHeight())
+        Background(appViewModel.mapCode)
     }
 
     if (appViewModel.findMongLoadingState &&

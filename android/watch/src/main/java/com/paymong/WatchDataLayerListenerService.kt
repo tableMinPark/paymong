@@ -20,7 +20,6 @@ class WatchDataLayerListenerService : WearableListenerService() {
             START_WEAR_ACTIVITY_PATH -> {
                 // 모바일 기기와 연동시 playId 저장 후 앱 실행
                 val playerId = messageEvent.data.decodeToString()
-                Log.d("landing", playerId)
                 dataApplicationRepository.setValue("accessToken", "")
                 dataApplicationRepository.setValue("refreshToken", "")
                 dataApplicationRepository.setValue("playerId", playerId)

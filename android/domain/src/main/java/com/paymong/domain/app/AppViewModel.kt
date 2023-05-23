@@ -171,9 +171,13 @@ class AppViewModel(
                         data.name,
                         MongCode.valueOf(data.mongCode)
                     )
-                    stateCode = MongStateCode.valueOf(data.stateCode)
                     poopCount = data.poopCount
-                    mapCode = MapCode.valueOf(data.mapCode)
+                    if (data.stateCode != "") {
+                        stateCode = MongStateCode.valueOf(data.stateCode)
+                    }
+                    if (data.mapCode != "") {
+                        mapCode = MapCode.valueOf(data.mapCode)
+                    }
                     findMongLoadingState = true
                 }
         }

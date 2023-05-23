@@ -14,12 +14,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.common.code.MongStateCode
-import com.paymong.common.code.SoundCode
-import com.paymong.common.code.ToastMessage
+import com.paymong.common.code.*
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.*
@@ -62,6 +59,10 @@ fun MainInteraction(
     val interactionBnt = painterResource(R.drawable.interaction_bnt)
 
     if (eggState.slice(0..3) == "CH00") {
+        isBtnActive = false
+        sleepActive = false
+    }
+    else if (watchViewModel.mong.mongCode == MongCode.CH444) {
         isBtnActive = false
         sleepActive = false
     }

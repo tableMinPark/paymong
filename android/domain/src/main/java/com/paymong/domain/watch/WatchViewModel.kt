@@ -149,6 +149,9 @@ class WatchViewModel (
                                 strength.toFloat(),
                                 sleep.toFloat()
                             )
+                            findMongLoadingState = true
+                            findMongInfoLoadingState = true
+                            findMongConditionLoadingState = true
                         }
                         "209" -> {
                             val mapRealTimeResDto = gson.fromJson(text, MapRealTimeResDto::class.java)
@@ -164,6 +167,7 @@ class WatchViewModel (
                             val payPointRealTimeResDto = gson.fromJson(text, PayPointRealTimeResDto::class.java)
                             Log.d("socket", payPointRealTimeResDto.toString())
                             point = payPointRealTimeResDto.point
+                            findPayPointLoadingState = true
                         }
                         "300" -> {
                             webSocket.send("connect")
@@ -211,10 +215,15 @@ class WatchViewModel (
                     data.name,
                     MongCode.valueOf(data.mongCode)
                 )
-                stateCode = MongStateCode.valueOf(data.stateCode)
                 poopCount = data.poopCount
-                mapCode = MapCode.valueOf(data.mapCode)
+                if (data.stateCode != "") {
+                    stateCode = MongStateCode.valueOf(data.stateCode)
+                }
+                if (data.mapCode != "") {
+                    mapCode = MapCode.valueOf(data.mapCode)
+                }
                 findMongLoadingState = true
+                Log.d("findMong", "$data / $findMongLoadingState")
             }
     }
     private suspend fun findMongCondition() {

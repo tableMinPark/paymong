@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +38,9 @@ fun WalkingActive(
     soundViewModel: SoundViewModel,
     walkingViewModel: WalkingViewModel = viewModel()
 ) {
+    val background = painterResource(R.drawable.walking_bg)
+    Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
+
     WalkingBackgroundGif()
 
     val configuration = LocalConfiguration.current

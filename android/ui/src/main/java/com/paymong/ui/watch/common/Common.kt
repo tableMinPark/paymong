@@ -25,12 +25,10 @@ import com.paymong.common.R
 import com.paymong.common.code.MapCode
 import com.paymong.common.code.ToastMessage
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun Background(
     mapCode: MapCode = MapCode.MP000
 ) {
-    Log.d("background", mapCode.toString())
     val background = painterResource(mapCode.code)
     Image(painter = background, contentDescription = null, contentScale = ContentScale.Crop)
 }

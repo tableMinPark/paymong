@@ -126,7 +126,7 @@
 
 ***스타벅스, 버거킹 등 38가지의 다양한 브랜드 제품 결제시 해당 맵으로 1시간 동안 게임의 배경 변경***
 
-![Untitled](assets/Untitled 5.png)
+![Untitled](assets/payMap.png)
 
 🌕 **삼성 스마트싱스 연동**
 

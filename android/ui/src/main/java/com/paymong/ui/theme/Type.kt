@@ -30,3 +30,5 @@ val Typography = Typography(
 )
 
 val dalmoori = FontFamily(Font(R.font.dalmoori))
+val iyagiBoldFace = FontFamily(Font(R.font.iyagi))
+val samsungOneKorean = FontFamily(Font(R.font.samsungonekorean))

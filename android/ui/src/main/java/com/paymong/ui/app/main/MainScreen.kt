@@ -1,5 +1,6 @@
 package com.paymong.ui.app.main
 
+import android.graphics.fonts.Font
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -447,6 +449,41 @@ fun WakeDialog(
     }
 }
 
+@Composable
+fun GraduationEventDialog(
+    setShowWakeDialog: (Boolean) -> Unit
+){
+    Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "제목  ",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(bottom = 15.dp),
+                    fontSize = 30.sp,
+                    color = Color.Black
+                )
+                Text(
+                    text =  "본문",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MakeEgg(
@@ -456,6 +493,7 @@ fun MakeEgg(
     val dialogOpen = remember {mutableStateOf(false)}
     val sleepDialogOpen = remember {mutableStateOf(false)}
     val wakeDialogOpen = remember {mutableStateOf(false)}
+    val graduationEventDialogOpen = remember {mutableStateOf(true)}
     val selectedTime = remember { mutableStateOf(LocalDateTime.now()) }
     val name = remember{ mutableStateOf("") }
 
@@ -487,6 +525,11 @@ fun MakeEgg(
             name.value,
             appViewModel,
             soundViewModel
+        )
+    }
+    if(graduationEventDialogOpen.value){
+        GraduationEventDialog(
+            setShowWakeDialog = { graduationEventDialogOpen.value = it }
         )
     }
 
@@ -570,11 +613,12 @@ fun MakeEgg(
                             )
                         }
                         MongStateCode.CD006 -> { // 졸업
-                            Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                            Image(
+                                painter = painterResource(appViewModel.mong.mongCode.resourceCode),
                                 contentDescription = null,
-                                modifier = Modifier.size((480/density).dp)
+                                modifier = Modifier.size((480 / density).dp)
                             )
-                            GraduationEffect(appViewModel)
+                            GraduationEffect(appViewModel, graduationEventDialogOpen)
                         }
                         else -> {
                             if(appViewModel.evolutionisClick){
@@ -794,7 +838,8 @@ fun CreateImageList() {
 
 @Composable
 fun GraduationEffect(
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    graduationEventDialogOpen : MutableState<Boolean>,
 ) {
     val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
 
@@ -833,6 +878,7 @@ fun GraduationEffect(
                         indication = null,
                         onClick = {
                             appViewModel.graduation()
+                            graduationEventDialogOpen.value = true
                         }
                     )
             )

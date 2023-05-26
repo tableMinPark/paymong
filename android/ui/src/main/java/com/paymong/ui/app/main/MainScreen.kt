@@ -40,6 +40,7 @@ import com.paymong.ui.app.common.LoadingBar
 import com.paymong.ui.app.common.ThingsGif
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
@@ -473,19 +474,85 @@ fun GraduationEventDialog(
                 modifier = Modifier.padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Image(painterResource(R.drawable.ssafy), contentDescription = null, modifier = Modifier.size(100.dp).padding(bottom = 15.dp))
+                Image(painterResource(R.drawable.ssafy), contentDescription = null, modifier = Modifier
+                    .size(120.dp)
+                    .padding(15.dp))
                 Text(
-                    text = "SSAFY 8기 여러분\n" +
-                            "졸업 축하드립니다!\n" +
-                            "여기까지 올 수 있도록\n" +
-                            "아낌없이 지원해주신\n" +
-                            "싸피 사무국과 삼성 전자 여러분께\n" +
-                            "감사드립니다!",
+                    text = "SSAFY 8기 교육생분들",
                     fontFamily = samsungOneKorean,
-                    modifier = Modifier.padding(bottom = 15.dp),
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
+                )
+
+
+                Row {
+                    Image(painterResource(R.drawable.bomb_r), contentDescription = null)
+                    Text(
+                        text = "수료를 축하합니다!",
+                        fontFamily = samsungOneKorean,
+                        modifier = Modifier.padding(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                    Image(painterResource(R.drawable.bomb_l), contentDescription = null)
+                }
+                Text(
+                    text =  "아낌없이 지원해주신",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
+                )
+                Row {
+                    Text(
+                        text =  "사무국과 ",
+                        fontFamily = samsungOneKorean,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                    Text(
+                        text =  "삼성전자",
+                        fontFamily = samsungOneKorean,
+                        modifier = Modifier
+                            .background(color = PayMongBlue.copy(alpha = 0.4f)),
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.ExtraBold,
+                        lineHeight = 36.sp
+                    )
+                    Text(
+                        text =  " 여러분께",
+                        fontFamily = samsungOneKorean,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                }
+                Text(
+                    text =  "감사드립니다!",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
                 )
             }
         }
@@ -501,7 +568,7 @@ fun MakeEgg(
     val dialogOpen = remember {mutableStateOf(false)}
     val sleepDialogOpen = remember {mutableStateOf(false)}
     val wakeDialogOpen = remember {mutableStateOf(false)}
-    val graduationEventDialogOpen = remember {mutableStateOf(true)}
+    val graduationEventDialogOpen = remember {mutableStateOf(false)}
     val selectedTime = remember { mutableStateOf(LocalDateTime.now()) }
     val name = remember{ mutableStateOf("") }
 
@@ -886,7 +953,10 @@ fun GraduationEffect(
                         indication = null,
                         onClick = {
                             appViewModel.graduation()
-                            graduationEventDialogOpen.value = true
+                            Thread.sleep(1000)
+//                            if (LocalDate.now() == LocalDate.of(2023, 5, 30)) {
+                                graduationEventDialogOpen.value = true
+//                            }
                         }
                     )
             )

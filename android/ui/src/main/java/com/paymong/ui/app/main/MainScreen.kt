@@ -1,6 +1,5 @@
 package com.paymong.ui.app.main
 
-import android.graphics.fonts.Font
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
@@ -22,7 +21,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -57,10 +55,20 @@ fun Main(
         appViewModel.init()
     }
 
+    Background(appViewModel.mapCode)
     if(appViewModel.mapCode == MapCode.MP000){
         BgGif()
-    } else {
-        Background(appViewModel.mapCode)
+    } else if (
+        appViewModel.mong.mongCode == MongCode.CH444 ||
+        appViewModel.stateCode == MongStateCode.CD005 ||
+        appViewModel.stateCode == MongStateCode.CD006 ||
+        appViewModel.stateCode == MongStateCode.CD007
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Black.copy(alpha = 0.4f))
+        )
     }
 
     if (appViewModel.findMongLoadingState &&
@@ -458,26 +466,26 @@ fun GraduationEventDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            shape = RoundedCornerShape(size = 10.dp),
+            shape = RoundedCornerShape(size = 20.dp),
             color = Color.White
         ) {
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier.padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Image(painterResource(R.drawable.ssafy), contentDescription = null, modifier = Modifier.size(100.dp).padding(bottom = 15.dp))
                 Text(
-                    text = "제목  ",
+                    text = "SSAFY 8기 여러분\n" +
+                            "졸업 축하드립니다!\n" +
+                            "여기까지 올 수 있도록\n" +
+                            "아낌없이 지원해주신\n" +
+                            "싸피 사무국과 삼성 전자 여러분께\n" +
+                            "감사드립니다!",
                     fontFamily = samsungOneKorean,
                     modifier = Modifier.padding(bottom = 15.dp),
-                    fontSize = 30.sp,
-                    color = Color.Black
-                )
-                Text(
-                    text =  "본문",
-                    fontFamily = samsungOneKorean,
-                    modifier = Modifier.padding(bottom = 20.dp),
+                    textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    color = Color.Black,
+                    color = Color.Black
                 )
             }
         }

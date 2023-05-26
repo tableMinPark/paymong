@@ -61,6 +61,7 @@ interface Api {
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
                 val url = chain.request().url().toString()
+                Log.d("api", "url : $url, request : ${chain.request()}")
                 // 재발급 경우
                 if (REISSUE_URL == url) {
                     val refreshToken = DataApplication.prefs.getString("refreshToken", "")

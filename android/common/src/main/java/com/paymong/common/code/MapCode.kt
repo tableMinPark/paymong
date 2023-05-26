@@ -44,5 +44,10 @@ enum class MapCode(
     MP035(R.drawable.mp035, R.drawable.mp035_p),
     MP036(R.drawable.mp036, R.drawable.mp036_p),
     MP037(R.drawable.mp037, R.drawable.mp037_p),
-    MP038(R.drawable.mp038, R.drawable.mp038_p)
+    MP038(R.drawable.mp038, R.drawable.mp038_p),
+    MP039(R.drawable.mp039, R.drawable.mp039_p),
+    MP040(R.drawable.mp040, R.drawable.mp040_p),
+    MP041(R.drawable.mp041, R.drawable.mp041_p),
+    MP042(R.drawable.mp042, R.drawable.mp042_p),
+    MP043(R.drawable.mp043, R.drawable.mp043_p)
 }

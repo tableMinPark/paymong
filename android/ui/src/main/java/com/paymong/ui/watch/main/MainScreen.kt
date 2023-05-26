@@ -12,9 +12,11 @@ import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.pager.*
 import com.paymong.common.code.AnimationCode
 import com.paymong.common.code.MapCode
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
+import com.paymong.domain.entity.MongStats
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.Loading
@@ -42,17 +44,22 @@ fun Main(
                 (watchViewModel.findMongConditionLoadingState && watchViewModel.findMongInfoLoadingState)
         )
     ) {
+        Background(watchViewModel.mapCode)
         if (watchViewModel.mapCode == MapCode.MP000) {
             MainBackgroundGif()
-        } else {
-            Background(watchViewModel.mapCode)
-            if (pagerState.currentPage != 1) {
-                Box( modifier = Modifier
+        } else if (
+            pagerState.currentPage != 1 ||
+            watchViewModel.mong.mongCode == MongCode.CH444 ||
+            watchViewModel.stateCode == MongStateCode.CD005 ||
+            watchViewModel.stateCode == MongStateCode.CD006 ||
+            watchViewModel.stateCode == MongStateCode.CD007
+        ) {
+            Box(
+                modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.Black.copy(alpha = 0.4f)) )
-            }
+                    .background(color = Color.Black.copy(alpha = 0.4f))
+            )
         }
-
         MainSwipe(
             animationState,
             pagerState,

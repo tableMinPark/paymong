@@ -59,7 +59,6 @@ fun AppMain(
                 BgGif()
 
                 if (appLandingViewModel.landingCode == LandingCode.SUCCESS) {
-                    Log.d("landing", "landingCode : ${appLandingViewModel.landingCode} / socketState : ${appViewModel.socketState}")
                     when(appViewModel.socketState) {
                         SocketCode.DISCONNECT -> {
                             SocketError(appViewModel)

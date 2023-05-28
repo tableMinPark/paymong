@@ -1,7 +1,7 @@
 package com.paymong.common.code
 
 enum class ThingsCode(
-    val thingsname: String
+    val thingsName: String
 ) {
     ST999("없음"),
     ST000("청소기"),

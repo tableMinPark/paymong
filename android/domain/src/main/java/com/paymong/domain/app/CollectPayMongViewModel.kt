@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class CollectPayMongViewModel : ViewModel() {
-
+    var isLoading = mutableStateOf(false)
     var mongList = mutableListOf<Collect>()
     var openList = mutableListOf<Collect>()
-    var success = mutableStateOf(false)
+
     private var collectRepository: CollectRepository = CollectRepository()
 
-    fun mong(){
+    fun init(){
         viewModelScope.launch(Dispatchers.IO){
             collectRepository.mong().catch {
                 it.printStackTrace()
@@ -30,7 +30,7 @@ class CollectPayMongViewModel : ViewModel() {
                         openList.add(Collect(data[i].isOpen, data[i].name, data[i].characterCode))
                     }
                 }
-                success.value = true
+                isLoading.value = true
             }
         }
     }

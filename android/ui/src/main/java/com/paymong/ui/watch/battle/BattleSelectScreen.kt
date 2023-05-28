@@ -26,7 +26,7 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.ProgressIndicatorDefaults
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
-import com.paymong.common.code.MapCode
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.MessageType
 import com.paymong.common.code.SoundCode
@@ -43,7 +43,7 @@ fun BattleSelect(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
-    Background(MapCode.MP000, false)
+    Background(BackgroundCode.BG000)
     BattleBackgroundGif()
 
     val configuration = LocalConfiguration.current

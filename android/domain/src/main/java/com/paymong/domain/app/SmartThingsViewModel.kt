@@ -1,6 +1,5 @@
 package com.paymong.domain.app
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -49,7 +48,6 @@ class SmartThingsViewModel : ViewModel() {
     }
 
     private fun connectedThings(){
-        Log.d("smartThingsViewModel", "connectedThings")
         viewModelScope.launch(Dispatchers.IO) {
             memberRepository.findThings()
                 .catch {

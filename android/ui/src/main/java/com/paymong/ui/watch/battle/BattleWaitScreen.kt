@@ -20,14 +20,13 @@ import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.LoadingGif
 import com.paymong.ui.watch.common.showToast
 
-
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun BattleWait(
     navController: NavHostController,
     battleViewModel: BattleViewModel
 ) {
-    Background(MapCode.MP000, false)
+    Background(MapCode.MP000)
     LoadingGif()
 
     val configuration = LocalConfiguration.current

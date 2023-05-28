@@ -14,10 +14,12 @@ import androidx.wear.compose.material.ButtonDefaults
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.MatchingCode
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.watch.BattleViewModel
 import com.paymong.domain.SoundViewModel
+import com.paymong.ui.watch.common.Background
 import com.paymong.ui.watch.common.BattleBackgroundGif
 
 @OptIn(ExperimentalCoilApi::class)
@@ -27,9 +29,12 @@ fun BattleFind(
     soundViewModel: SoundViewModel,
     battleViewModel: BattleViewModel
 ) {
+    LaunchedEffect(true) {
+        soundViewModel.soundPlay(SoundCode.BATTLE_FIND_SOUND)
+    }
+    Background(BackgroundCode.BG000)
     BattleBackgroundGif()
 
-    soundViewModel.soundPlay(SoundCode.BATTLE_FIND_SOUND)
     val playerResourceCodeA = painterResource(battleViewModel.playerCodeA.resourceCode)
     val playerResourceCodeB = painterResource(battleViewModel.playerCodeB.resourceCode)
 

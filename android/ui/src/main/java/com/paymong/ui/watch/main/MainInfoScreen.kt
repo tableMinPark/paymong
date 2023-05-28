@@ -22,10 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.MongCode
 import com.paymong.common.code.MongStateCode
 import com.paymong.common.code.ThingsCode
 import com.paymong.domain.watch.WatchViewModel
-import com.paymong.ui.app.component.ThingsGif
+import com.paymong.ui.app.common.ThingsGif
 import com.paymong.ui.theme.dalmoori
 import com.paymong.ui.watch.common.CharacterGif
 import com.paymong.ui.watch.common.EmotionGif
@@ -70,7 +71,7 @@ fun MainInfo(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-                if (watchViewModel.mong.mongCode.code == "CH444") {
+                if (watchViewModel.mong.mongCode == MongCode.CH444) {
                     Text(
                         text = "스마트폰에서\n알을 생성해주세요.",
                         textAlign = TextAlign.Center,
@@ -80,19 +81,23 @@ fun MainInfo(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-                } else if (watchViewModel.stateCode == MongStateCode.CD005 ) { // 죽음
+                } else if (watchViewModel.stateCode == MongStateCode.CD005) { // 죽음
                     Box(contentAlignment = Alignment.Center) {
-                        Image(painter = painterResource(R.drawable.rip),
+                        Image(
+                            painter = painterResource(R.drawable.rip),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(characterSize.dp))
+                                .size(characterSize.dp)
+                        )
                     }
                 } else if (watchViewModel.stateCode == MongStateCode.CD006) { // 졸업
                     Box(contentAlignment = Alignment.Center) {
-                        Image(painter = painterResource(watchViewModel.mong.mongCode.resourceCode), // 졸업 이미지 넣기
+                        Image(
+                            painter = painterResource(watchViewModel.mong.mongCode.resourceCode), // 졸업 이미지 넣기
                             contentDescription = null,
                             modifier = Modifier
-                                .size(characterSize.dp))
+                                .size(characterSize.dp)
+                        )
                         GraduationEffect(watchViewModel, graduationFontSize)
                     }
                 } else {
@@ -112,10 +117,12 @@ fun MainInfo(
                             )
                         } else {
                             if (watchViewModel.evolutionisClick) {
-                                Image(painter = painterResource(watchViewModel.undomong.resourceCode),
+                                Image(
+                                    painter = painterResource(watchViewModel.undomong.resourceCode),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(characterSize.dp))
+                                        .size(characterSize.dp)
+                                )
 
                                 Box(modifier = Modifier.scale(2f)) {
                                     CreateImageList()
@@ -123,21 +130,21 @@ fun MainInfo(
                             } else {
                                 CharacterGif(watchViewModel)
                                 val code = watchViewModel.mong.mongCode.code.split("CH")[1].toInt()
-                                if(code / 100 == 1){
+                                if (code / 100 == 1) {
                                     EmotionGif(watchViewModel, 0, 0, 0, 40)
-                                } else if(code / 100 == 2){
+                                } else if (code / 100 == 2) {
                                     val end = code % 10
-                                    if(end == 1){ //2_1
+                                    if (end == 1) { //2_1
                                         EmotionGif(watchViewModel, 0, 25, 40, 40)
                                     } else { //2_0, 2_2
                                         EmotionGif(watchViewModel, 0, 0, 50, 40)
                                     }
-                                } else if(code / 100 == 3){
+                                } else if (code / 100 == 3) {
                                     val end = code % 10
-                                    if(end == 1){ //3_1
+                                    if (end == 1) { //3_1
                                         EmotionGif(watchViewModel, 0, 50, 40, 40)
-                                    } else{ //3_0, 3_2
-                                        EmotionGif(watchViewModel, 0, 0, 35  , 40)
+                                    } else { //3_0, 3_2
+                                        EmotionGif(watchViewModel, 0, 0, 35, 40)
                                     }
                                 }
 
@@ -148,11 +155,13 @@ fun MainInfo(
                                         Poops(0, 100, 75, 0, poopSize)
                                         Poops(90, 0, 80, 0, poopSize)
                                     }
+
                                     3 -> {
                                         Poops(0, 100, 75, 0, poopSize)
                                         Poops(90, 0, 80, 0, poopSize)
                                         Poops(30, 0, 92, 0, poopSize)
                                     }
+
                                     4 -> {
                                         Poops(0, 100, 75, 0, poopSize)
                                         Poops(90, 0, 80, 0, poopSize)
@@ -161,38 +170,43 @@ fun MainInfo(
                                     }
                                 }
 
-                                when(watchViewModel.thingsCode){
+                                when (watchViewModel.thingsCode) {
                                     ThingsCode.ST000 -> {
                                         ThingsGif(R.drawable.move_vacuum, 350)
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             watchViewModel.thingsCode = ThingsCode.ST999
                                         }, 5000)
                                     }
+
                                     ThingsCode.ST001 -> {
                                         ThingsGif(R.drawable.move_door, 400)
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             watchViewModel.thingsCode = ThingsCode.ST999
                                         }, 5000)
                                     }
+
                                     ThingsCode.ST002 -> {
                                         ThingsGif(R.drawable.charging, 200)
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             watchViewModel.thingsCode = ThingsCode.ST999
                                         }, 5000)
                                     }
+
                                     ThingsCode.ST003 -> {
                                         ThingsGif(R.drawable.nocharging, 200)
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             watchViewModel.thingsCode = ThingsCode.ST999
                                         }, 5000)
                                     }
+
                                     else -> {}
                                 }
                             }
                         }
                     }
-                }}
+                }
             }
+        }
     }
 }
 

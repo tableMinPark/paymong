@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class CollectMapViewModel : ViewModel() {
+    var isLoading = mutableStateOf(false)
     var mapList = mutableListOf<Collect>()
     var openList = mutableListOf<Collect>()
-    var success = mutableStateOf(false)
+
     private var collectRepository: CollectRepository = CollectRepository()
 
-    fun map(){
+    fun init(){
         viewModelScope.launch(Dispatchers.IO){
             collectRepository.map().catch {
                 it.printStackTrace()
@@ -29,7 +30,7 @@ class CollectMapViewModel : ViewModel() {
                         openList.add(Collect(data[i].isOpen, data[i].name, data[i].mapCode))
                     }
                 }
-                success.value = true
+                isLoading.value = true
             }
         }
     }

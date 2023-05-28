@@ -3,12 +3,13 @@ package com.paymong.domain.watch
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Looper
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.paymong.domain.watch.socket.BattleSocketService
+import com.paymong.data.socket.BattleSocketService
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.paymong.common.code.MongCode
@@ -40,6 +41,7 @@ class BattleViewModel (
     var battleActive: BattleActive by mutableStateOf(BattleActive())
 
     var mongCode by mutableStateOf(MongCode.CH444)
+    var isLoading by mutableStateOf(false)
     private val informationRepository: InformationRepository = InformationRepository()
 
     // gps
@@ -58,13 +60,14 @@ class BattleViewModel (
     var totalTurn = 10
     var nextAttacker by mutableStateOf("A")
     var battleSelectTime by mutableStateOf(0.0)
-    var selectState by mutableStateOf(MessageType.STAY)
+    private var selectState by mutableStateOf(MessageType.STAY)
 
     // Battle - 끝
     var win by mutableStateOf(false)
 
-    init {
+    fun init() {
         viewModelScope.launch(Dispatchers.Main) {
+            isLoading = false
             findMong()
         }
     }
@@ -80,6 +83,7 @@ class BattleViewModel (
                 }
                 .collect { data ->
                     mongCode = MongCode.valueOf(data.mongCode)
+                    isLoading = true
                 }
         }
     }
@@ -111,6 +115,8 @@ class BattleViewModel (
             // 위치 한번 받고 업데이트 요청 종료
             val latitude = locationResult.lastLocation.latitude
             val longitude = locationResult.lastLocation.longitude
+
+            Log.d("battle", "latitude : $latitude, longitude : $longitude")
 
             mFusedLocationProviderClient.removeLocationUpdates(this)
 

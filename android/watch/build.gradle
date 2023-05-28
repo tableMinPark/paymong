@@ -11,8 +11,8 @@ android {
         applicationId "com.paymong"
         minSdk 30
         targetSdk 33
-        versionCode 22
-        versionName "2.1"
+        versionCode 30
+        versionName "2.5"
         vectorDrawables {
             useSupportLibrary true
         }

@@ -11,7 +11,6 @@ import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.LandingCode
-import com.paymong.common.navigation.WatchNavItem
 import com.paymong.data.model.request.LoginReqDto
 import com.paymong.data.repository.AuthRepository
 import com.paymong.data.repository.DataApplicationRepository
@@ -33,88 +32,57 @@ class WatchLandingViewModel(
     }
 
     // 로그인 플래그
-    var loginState by mutableStateOf(LandingCode.LOADING)
     private val authRepository: AuthRepository = AuthRepository()
     private val dataApplicationRepository = DataApplicationRepository()
 
     var landingCode by mutableStateOf(LandingCode.LOADING)
     var androidPhoneNodeWithApp: Node? = null
 
-
-    // 랜딩화면 로그인 확인
-    fun loginCheck() {
+    // 로그인 시도 함수
+    fun login() {
         viewModelScope.launch(Dispatchers.IO) {
-            authRepository.reissue()
-                .catch {
-                    loginState = LandingCode.LOGIN_FAIL
-                }
-                .collect {values ->
-                    loginState = if (values)
-                        LandingCode.LOGIN_SUCCESS
-                    else
-                        LandingCode.LOGIN_FAIL
-                }
-        }
-    }
-    fun installCheck() {
-        viewModelScope.launch {
-            launch {
+            val playerId = dataApplicationRepository.getValue("playerId")
+
+            // 초기 설정 됨
+            if (playerId != "") {
+                // 로그인 진행
+                authRepository.watchLogin(LoginReqDto(playerId))
+                    .catch {
+                        landingCode = LandingCode.FAIL
+                    }
+                    .collect { data ->
+                        landingCode = if (data) {
+                            LandingCode.SUCCESS
+                        } else LandingCode.FAIL
+                    }
+            }
+            // 초기 설정 안됨
+            else {
+                // 설치 여부 확인
                 checkIfPhoneHasApp()
             }
         }
     }
-    // 로그인
-    private fun login() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val playerId = dataApplicationRepository.getValue("playerId")
-            authRepository.watchLogin(LoginReqDto(playerId))
-                .catch {
-                    loginState = LandingCode.CANT_LOGIN
-                    landingCode = LandingCode.CANT_LOGIN
-                }
-                .collect { values ->
-                    if (values)
-                        loginState = LandingCode.LOGIN_SUCCESS
-                    else {
-                        loginState = LandingCode.CANT_LOGIN
-                        landingCode = LandingCode.CANT_LOGIN
+    // 모바일 앱 설치 여부 확인 함수
+    fun checkIfPhoneHasApp() {
+        viewModelScope.launch {
+            try {
+                val capabilityInfo = capabilityClient
+                    .getCapability(CAPABILITY_PHONE_APP, CapabilityClient.FILTER_ALL)
+                    .await()
+                withContext(Dispatchers.Main) {
+                    androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
+                    // 모바일 앱 설치 안됨
+                    landingCode = if (androidPhoneNodeWithApp == null) {
+                        LandingCode.NOT_INSTALL
+                    } else {
+                        LandingCode.NOT_CONFIG
                     }
                 }
+            } catch (_: Exception) {}
         }
     }
-    private suspend fun checkIfPhoneHasApp() {
-        try {
-            val capabilityInfo = capabilityClient
-                .getCapability(CAPABILITY_PHONE_APP, CapabilityClient.FILTER_ALL)
-                .await()
-            withContext(Dispatchers.Main) {
-                androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
-                mobileAppInstallRequest()
-            }
-        } catch (_: CancellationException) {
-        } catch (_: Throwable) {
-        }
-    }
-    private fun mobileAppInstallRequest() {
-        val androidPhoneNodeWithApp = androidPhoneNodeWithApp
-
-        val dataApplicationRepository = DataApplicationRepository()
-        val playId = dataApplicationRepository.getValue("playerId")
-
-        if (playId == "") {
-            // 폰 연결 O & 설치 안됨
-            if (androidPhoneNodeWithApp == null) {
-                landingCode = LandingCode.NOT_INSTALL
-            }
-            // 폰 연결 O & 설치 됨
-            else {
-                landingCode = LandingCode.INSTALL
-            }
-        } else {
-            // 이미 한번 로그인한 사람
-            login()
-        }
-    }
+    // 모바일 앱 설치를 위해 원격으로 스토어를 실행하는 함수
     fun openAppInStoreOnPhone() {
         val intent = when (PhoneTypeHelper.getPhoneDeviceType(getApplication())) {
             PhoneTypeHelper.DEVICE_TYPE_ANDROID -> {
@@ -132,11 +100,10 @@ class WatchLandingViewModel(
                 remoteActivityHelper.startRemoteActivity(intent).await()
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
-            } catch (throwable: Throwable) {
-            }
+            } catch (_: Exception) {}
         }
     }
-    
+    // 초기 설정을 위해 원격으로 모바일 앱 실행하는 함수
     fun openAppOnPhone() {
         viewModelScope.launch {
             try {
@@ -144,8 +111,6 @@ class WatchLandingViewModel(
                     .getCapability(CAPABILITY_PHONE_APP, CapabilityClient.FILTER_REACHABLE)
                     .await()
                     .nodes
-
-                // Send a message to all nodes in parallel
                 nodes.map { node ->
                     async {
                         messageClient.sendMessage(node.id,
@@ -154,10 +119,7 @@ class WatchLandingViewModel(
                     }
                 }.awaitAll()
 
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
         }
     }
 }

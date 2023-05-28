@@ -15,7 +15,6 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class InfoDetailViewModel : ViewModel() {
-
     var mongInfo by mutableStateOf(MongInfo())
     var age by mutableStateOf("")
 

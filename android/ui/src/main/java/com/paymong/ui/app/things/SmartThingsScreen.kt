@@ -22,21 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.app.SmartThingsViewModel
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.PayMongNavy
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.PayMongBlue
-import com.paymong.ui.theme.PaymongTheme
 import com.paymong.ui.theme.dalmoori
 
 @Composable
@@ -114,7 +111,7 @@ private fun Desc(){
                 Spacer(modifier = Modifier.width(20.dp))
                 Image(painterResource(R.drawable.rightbnt) , contentDescription = null, modifier = Modifier.size(30.dp))
                 Spacer(modifier = Modifier.width(20.dp))
-                Column() {
+                Column {
                     Text("페이몽도\n자동 청소", textAlign = TextAlign.Center, fontFamily = dalmoori, fontSize = 13.sp, color = Color.White, lineHeight = 20.sp)
                     Spacer(modifier = Modifier.height(10.dp))
                     Image(painterResource(R.drawable.ch100), contentDescription = null, modifier = Modifier.size(80.dp))
@@ -205,7 +202,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                     Text("", fontFamily = dalmoori, fontSize = 15.sp, color = Color.White, modifier = Modifier.weight(0.2f))
                 }
             }
-            LazyColumn(){
+            LazyColumn{
                 if(smartThingsViewModel.success){
                     items(smartThingsViewModel.connectedThingsList.size){index ->
                         Row(
@@ -226,7 +223,7 @@ private fun ThingsList(smartThingsViewModel:SmartThingsViewModel){
                     }
                 }
                 else{
-                    item(){
+                    item{
                         val strokeWidth = 5.dp
 
                         CircularProgressIndicator(
@@ -267,7 +264,7 @@ fun DeleteThings(
                 Text("삭제하시겠습니까?",
                     fontFamily = dalmoori,
                     color = Color.Black)
-                Row(){
+                Row{
                     Button(
                         onClick = {
                             setShowDialog(false)

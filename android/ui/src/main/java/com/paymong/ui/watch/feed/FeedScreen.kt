@@ -26,11 +26,11 @@ fun Feed(
     soundViewModel: SoundViewModel,
     feedViewModel: FeedViewModel
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         feedViewModel.foodCategory = ""
         feedViewModel.currentFoodPosition = 0
     }
-    Background(MapCode.MP000, false)
+    Background(MapCode.MP000)
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp

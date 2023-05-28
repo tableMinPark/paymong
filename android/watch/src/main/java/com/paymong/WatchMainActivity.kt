@@ -16,16 +16,13 @@ import com.paymong.common.code.ToastMessage
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.*
 import com.paymong.common.code.SocketCode
-import com.paymong.common.navigation.WatchNavItem
 import com.paymong.data.repository.DataApplicationRepository
 import com.paymong.domain.watch.WatchLandingViewModel
 import com.paymong.domain.watch.WatchLandingViewModelFactory
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.watch.WatchViewModelFactory
 import com.paymong.ui.watch.WatchMain
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
     companion object {
@@ -33,12 +30,14 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         private const val CAPABILITY_PHONE_APP = "app_paymong"
     }
 
+    // 모바일-워치 간 연결
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var remoteActivityHelper: RemoteActivityHelper
     private lateinit var messageClient: MessageClient
+    // 로그인을 위한 viewModel
     private lateinit var watchLandingViewModelFactory : WatchLandingViewModelFactory
     private lateinit var watchLandingViewModel : WatchLandingViewModel
-
+    // watchViewModel
     private lateinit var watchViewModelFactory: WatchViewModelFactory
     private lateinit var watchViewModel: WatchViewModel
 
@@ -48,16 +47,17 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         // 필수 권한 확인
         isNotificationPermissionGranted()
 
-        // 설치 여부 확인
+        // 모바일-워치 간 연결
         capabilityClient = Wearable.getCapabilityClient(this)
         remoteActivityHelper = RemoteActivityHelper(this)
         messageClient = Wearable.getMessageClient(this)
+        // watchLandingViewModel 생성
         watchLandingViewModelFactory = WatchLandingViewModelFactory(capabilityClient, remoteActivityHelper, messageClient, this.application)
         watchLandingViewModel = ViewModelProvider(this@WatchMainActivity, watchLandingViewModelFactory)[WatchLandingViewModel::class.java]
-
+        // watchViewModel 생성
         watchViewModelFactory = WatchViewModelFactory(this.application)
         watchViewModel = ViewModelProvider(this@WatchMainActivity, watchViewModelFactory)[WatchViewModel::class.java]
-
+        // 화면 켜짐 유지
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContent {
@@ -68,7 +68,8 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         super.onPause()
         try {
             capabilityClient.removeListener(this, CAPABILITY_PHONE_APP)
-            if (watchViewModel.isInitialized()) {
+            if (watchViewModel.socketState == SocketCode.CONNECT) {
+                Thread.sleep(1000)
                 watchViewModel.disConnectSocket()
             }
         } catch (_: Exception) {}
@@ -78,16 +79,15 @@ class WatchMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChan
         super.onResume()
         try {
             capabilityClient.addListener(this, CAPABILITY_PHONE_APP)
-
-            val dataApplicationRepository = DataApplicationRepository()
-            dataApplicationRepository.setValue("accessToken", "")
-            watchViewModel.isSocketConnect = SocketCode.NOT_TOKEN
-
+            if (watchViewModel.socketState == SocketCode.DISCONNECT) {
+                watchViewModel.socketConnect()
+            }
         } catch (_: Exception) {}
     }
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        watchLandingViewModel.androidPhoneNodeWithApp = capabilityInfo.nodes.firstOrNull()
-        watchLandingViewModel.installCheck()
+        if (DataApplicationRepository().getValue("playerId") == "") {
+            watchLandingViewModel.checkIfPhoneHasApp()
+        }
     }
     // 필수 권한 확인
     private fun isNotificationPermissionGranted() {

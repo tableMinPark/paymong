@@ -2,7 +2,6 @@ package com.paymong.ui.app.main
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -33,14 +31,16 @@ import com.paymong.common.code.*
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.AppViewModel
+import com.paymong.ui.app.common.Background
 import com.paymong.ui.theme.*
-import com.paymong.ui.app.component.BgGif
-import com.paymong.ui.app.component.CharacterGif
-import com.paymong.ui.app.component.EmotionGif
-import com.paymong.ui.app.component.ThingsGif
-import com.paymong.ui.watch.common.LoadingGif
+import com.paymong.ui.app.common.BgGif
+import com.paymong.ui.app.common.CharacterGif
+import com.paymong.ui.app.common.EmotionGif
+import com.paymong.ui.app.common.LoadingBar
+import com.paymong.ui.app.common.ThingsGif
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
@@ -52,66 +52,34 @@ fun Main(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ) {
-    LaunchedEffect(key1 = true) {
-        if (appViewModel.isSocketConnect == SocketCode.NOT_TOKEN) {
-            appViewModel.isSocketConnect = SocketCode.LOADING
-            appViewModel.connectSocket()
-        } else if (appViewModel.isSocketConnect == SocketCode.CONNECT) {
-            appViewModel.init()
-        }
+    LaunchedEffect(true) {
+        appViewModel.init()
     }
 
-    // 배경
-    val findBgCode = appViewModel.mapCode
-    val bg = painterResource(findBgCode.phoneCode)
-
-    if(findBgCode == MapCode.MP000){
+    Background(appViewModel.mapCode)
+    if(appViewModel.mapCode == MapCode.MP000){
         BgGif()
-    } else {
-        Image(painter = bg, contentDescription = null, contentScale = ContentScale.Crop,
+    } else if (
+        appViewModel.mong.mongCode == MongCode.CH444 ||
+        appViewModel.stateCode == MongStateCode.CD005 ||
+        appViewModel.stateCode == MongStateCode.CD006 ||
+        appViewModel.stateCode == MongStateCode.CD007
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight())
+                .fillMaxSize()
+                .background(color = Color.Black.copy(alpha = 0.4f))
+        )
     }
 
-    if (!appViewModel.isLoading) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val logo = painterResource(R.drawable.app_logo)
-                Image(
-                    painter = logo, contentDescription = null, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(80.dp)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val loadBarSize = 75
-                Box(
-                    modifier = Modifier
-                        .width(loadBarSize.dp)
-                        .height(loadBarSize.dp)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                ) {
-                    LoadingGif()
-                }
-            }
-        }
-    } else {
+    if (appViewModel.findMongLoadingState &&
+        appViewModel.findPayPointLoadingState) {
         Top(navController, appViewModel, soundViewModel)
-        MakeEgg(appViewModel,soundViewModel)
+        MakeEgg(appViewModel, soundViewModel)
         Btn(navController, appViewModel, soundViewModel)
+    } else {
+        LoadingBar()
     }
-
 }
 
 @Composable
@@ -171,8 +139,6 @@ fun Things(
     navController: NavController,
     soundViewModel: SoundViewModel
 ){
-
-
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -210,7 +176,6 @@ fun Point(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ){
-
     Box(
         contentAlignment = Alignment.Center
     ){
@@ -253,7 +218,6 @@ fun Top(
     navController: NavController,
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
-
 ){
     Row(
         modifier = Modifier
@@ -263,7 +227,7 @@ fun Top(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        Row (    horizontalArrangement = Arrangement.SpaceBetween){
+        Row (horizontalArrangement = Arrangement.SpaceBetween){
             Help(navController, soundViewModel)
             Info(navController, soundViewModel)
             Things(navController, soundViewModel)
@@ -443,6 +407,7 @@ fun SleepDialog(
         }
     }
 }
+
 @Composable
 fun WakeDialog(
     setWakeValue: (LocalTime) -> Unit,
@@ -493,6 +458,107 @@ fun WakeDialog(
     }
 }
 
+@Composable
+fun GraduationEventDialog(
+    setShowWakeDialog: (Boolean) -> Unit
+){
+    Dialog(onDismissRequest = { setShowWakeDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 20.dp),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(painterResource(R.drawable.ssafy), contentDescription = null, modifier = Modifier
+                    .size(120.dp)
+                    .padding(15.dp))
+                Text(
+                    text = "SSAFY 8기 교육생분들",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
+                )
+
+
+                Row {
+                    Image(painterResource(R.drawable.bomb_r), contentDescription = null)
+                    Text(
+                        text = "수료를 축하합니다!",
+                        fontFamily = samsungOneKorean,
+                        modifier = Modifier.padding(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                    Image(painterResource(R.drawable.bomb_l), contentDescription = null)
+                }
+                Text(
+                    text =  "아낌없이 지원해주신",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
+                )
+                Row {
+                    Text(
+                        text =  "사무국과 ",
+                        fontFamily = samsungOneKorean,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                    Text(
+                        text =  "삼성전자",
+                        fontFamily = samsungOneKorean,
+                        modifier = Modifier
+                            .background(color = PayMongBlue.copy(alpha = 0.4f)),
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.ExtraBold,
+                        lineHeight = 36.sp
+                    )
+                    Text(
+                        text =  " 여러분께",
+                        fontFamily = samsungOneKorean,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 36.sp
+                    )
+                }
+                Text(
+                    text =  "감사드립니다!",
+                    fontFamily = samsungOneKorean,
+                    modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 36.sp
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MakeEgg(
@@ -502,6 +568,7 @@ fun MakeEgg(
     val dialogOpen = remember {mutableStateOf(false)}
     val sleepDialogOpen = remember {mutableStateOf(false)}
     val wakeDialogOpen = remember {mutableStateOf(false)}
+    val graduationEventDialogOpen = remember {mutableStateOf(false)}
     val selectedTime = remember { mutableStateOf(LocalDateTime.now()) }
     val name = remember{ mutableStateOf("") }
 
@@ -535,6 +602,11 @@ fun MakeEgg(
             soundViewModel
         )
     }
+    if(graduationEventDialogOpen.value){
+        GraduationEventDialog(
+            setShowWakeDialog = { graduationEventDialogOpen.value = it }
+        )
+    }
 
     if(appViewModel.isHappy) {
         Box(
@@ -554,10 +626,9 @@ fun MakeEgg(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val code = appViewModel.mong.mongCode.code.split("CH")[1].toInt()
         val density = LocalDensity.current.density
 
-        if (appViewModel.retry || code >= 400) { // 알 생성
+        if (appViewModel.retry || appViewModel.mong.mongCode == MongCode.CH444) { // 알 생성
             Text(text = "알을 생성하려면\n화면을 터치해주세요.", textAlign = TextAlign.Center, lineHeight = 50.sp,
                 fontFamily = dalmoori, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White,
                 modifier = Modifier.clickable(
@@ -617,11 +688,12 @@ fun MakeEgg(
                             )
                         }
                         MongStateCode.CD006 -> { // 졸업
-                            Image(painter = painterResource(appViewModel.mong.mongCode.resourceCode),
+                            Image(
+                                painter = painterResource(appViewModel.mong.mongCode.resourceCode),
                                 contentDescription = null,
-                                modifier = Modifier.size((480/density).dp)
+                                modifier = Modifier.size((480 / density).dp)
                             )
-                            GraduationEffect(appViewModel)
+                            GraduationEffect(appViewModel, graduationEventDialogOpen)
                         }
                         else -> {
                             if(appViewModel.evolutionisClick){
@@ -739,7 +811,6 @@ fun Btn(
     appViewModel: AppViewModel,
     soundViewModel: SoundViewModel
 ){
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -842,7 +913,8 @@ fun CreateImageList() {
 
 @Composable
 fun GraduationEffect(
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    graduationEventDialogOpen : MutableState<Boolean>,
 ) {
     val imageList = listOf(R.drawable.star_1, R.drawable.star_2, R.drawable.star_3, R.drawable.graduation)
 
@@ -881,6 +953,10 @@ fun GraduationEffect(
                         indication = null,
                         onClick = {
                             appViewModel.graduation()
+                            Thread.sleep(1000)
+//                            if (LocalDate.now() == LocalDate.of(2023, 5, 30)) {
+                                graduationEventDialogOpen.value = true
+//                            }
                         }
                     )
             )

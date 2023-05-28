@@ -1,40 +1,33 @@
 package com.paymong.ui.app.things
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.paymong.common.R
 import com.paymong.common.code.SoundCode
-import com.paymong.common.code.ToastMessage
 import com.paymong.common.navigation.AppNavItem
 import com.paymong.domain.SoundViewModel
 import com.paymong.domain.app.SmartThingsViewModel
-import com.paymong.ui.app.component.TopBar
+import com.paymong.ui.app.common.TopBar
 import com.paymong.ui.theme.*
 
 @Composable
@@ -43,15 +36,15 @@ fun AddSmartThings(
     soundViewModel: SoundViewModel,
     smartThingsViewModel: SmartThingsViewModel
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         smartThingsViewModel.reset()
     }
 
     Scaffold(
         topBar = { TopBar("스마트싱스", navController, AppNavItem.SmartThings.route, soundViewModel) },
         backgroundColor = PayMongNavy
-    ) {
-        Box(Modifier.padding(it)) {
+    ) { paddingValue ->
+        Box(Modifier.padding(paddingValue)) {
             smartThingsViewModel.toConnectThings()
 
             val dialogOpen = remember { mutableStateOf(false) }

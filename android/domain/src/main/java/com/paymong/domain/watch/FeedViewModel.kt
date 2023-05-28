@@ -1,7 +1,6 @@
 package com.paymong.domain.watch
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -38,7 +37,6 @@ class FeedViewModel (
         isCanBuy = false
         foodList.clear()
         currentFoodPosition = 0
-
         isClick = false
     }
 
@@ -50,7 +48,6 @@ class FeedViewModel (
                 }
                 .collect { data ->
                     for (i in data.indices) {
-                        Log.d("FoodList", data.toString())
                         foodList.add(
                             Food(
                                 data[i].name,

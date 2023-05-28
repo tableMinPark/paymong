@@ -10,7 +10,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 class AppDataLayerListenerService : WearableListenerService() {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val dataApplicationRepository: DataApplicationRepository = DataApplicationRepository()
 

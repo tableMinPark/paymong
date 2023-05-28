@@ -14,12 +14,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.paymong.common.code.AnimationCode
 import com.paymong.common.navigation.WatchNavItem
 import com.paymong.common.R
-import com.paymong.common.code.MongStateCode
-import com.paymong.common.code.SoundCode
-import com.paymong.common.code.ToastMessage
+import com.paymong.common.code.*
 import com.paymong.domain.watch.WatchViewModel
 import com.paymong.domain.SoundViewModel
 import com.paymong.ui.theme.*
@@ -65,6 +62,10 @@ fun MainInteraction(
         isBtnActive = false
         sleepActive = false
     }
+    else if (watchViewModel.mong.mongCode == MongCode.CH444) {
+        isBtnActive = false
+        sleepActive = false
+    }
     else if(watchViewModel.stateCode == MongStateCode.CD002){
         isBtnActive = false
         sleepActive = true
@@ -77,7 +78,7 @@ fun MainInteraction(
 
     Column(
         modifier = Modifier
-            .padding(15.dp)//, bottom = 15.dp)
+            .padding(15.dp)
             .fillMaxSize(1f)
     ) {
         Box  {
@@ -102,8 +103,7 @@ fun MainInteraction(
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(buttonSize.dp),
+                        modifier = Modifier.size(buttonSize.dp),
                         contentAlignment = Alignment.Center
                     )
                     {

@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.Text
 import coil.annotation.ExperimentalCoilApi
 import com.paymong.common.R
+import com.paymong.common.code.BackgroundCode
 import com.paymong.common.code.SoundCode
 import com.paymong.common.code.WalkingCode
 import com.paymong.common.navigation.WatchNavItem
@@ -37,7 +38,7 @@ fun WalkingActive(
     soundViewModel: SoundViewModel,
     walkingViewModel: WalkingViewModel = viewModel()
 ) {
-    Background(watchViewModel.mapCode, false)
+    Background(BackgroundCode.BG002)
     WalkingBackgroundGif()
 
     val configuration = LocalConfiguration.current

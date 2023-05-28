@@ -61,6 +61,7 @@ interface Api {
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
                 val url = chain.request().url().toString()
+                Log.d("api", "url : $url, request : ${chain.request()}")
                 // 재발급 경우
                 if (REISSUE_URL == url) {
                     val refreshToken = DataApplication.prefs.getString("refreshToken", "")
@@ -111,6 +112,7 @@ interface Api {
                         authRepository.reissue()
                         // 토큰 재발급 성공 시 기존 요청 재전송
                         val accessToken = DataApplication.prefs.getString("accessToken", "")
+                        Log.d("accessToken", accessToken)
                         val token = "Bearer $accessToken"
                         val newRequest = chain.request().newBuilder()
                             .addHeader("Authorization", token)

@@ -6,7 +6,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,20 +43,14 @@ class WalkingViewModel (
     private var dataApplicationRepository : DataApplicationRepository = DataApplicationRepository()
 
     init {
-        Log.d("walkingViewModel", "init")
-
-
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val walkingData = dataApplicationRepository.getValue("isWalking")
-                Log.d("walkingViewModel", "isWalking : $walkingData")
                 // 데이터가 있는 경우
                 if (walkingData == "true") {
                     isWalking = true
                     val countData = dataApplicationRepository.getValue("startCount")
                     val timeData = dataApplicationRepository.getValue("startTime")
-                    Log.d("walkingViewModel", "countData : $countData")
-                    Log.d("walkingViewModel", "timeData : $timeData")
                     // 걸음을 걷고 있는 경우
                     startCount = countData.toInt()
                     startTime = LocalDateTime.parse(timeData, formatter)
@@ -69,7 +62,6 @@ class WalkingViewModel (
                     delay(1000)
                     walkingState = WalkingCode.PAUSE
                 }
-                Log.d("walkingViewModel", "isWalking : $walkingData")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -86,16 +78,12 @@ class WalkingViewModel (
                 override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
                 override fun onSensorChanged(event: SensorEvent) {
                     // 처음이면 이면 초기화
-                    Log.d("walkingViewModel", "isWalking : $isWalking")
                     if (!isWalking) {
                         startCount = event.values[0].toInt()
                         startTime = LocalDateTime.now()
                         dataApplicationRepository.setValue("startCount", startCount.toString())
                         dataApplicationRepository.setValue("startTime", startTime.toString())
                         dataApplicationRepository.setValue("isWalking", "true")
-                        Log.d("walkingViewModel", "startCount : $startCount")
-                        Log.d("walkingViewModel", "startTime : $startTime")
-                        Log.d("walkingViewModel", "isWalking : $isWalking")
                         isWalking = true
                         walkingState = WalkingCode.WALKING
                     }

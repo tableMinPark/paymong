@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationManagerCompat
@@ -30,11 +29,11 @@ import com.paymong.domain.app.AppViewModel
 import com.paymong.domain.app.AppViewModelFactory
 import com.paymong.ui.app.AppMain
 
-
 class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChangedListener {
     companion object {
         private const val CAPABILITY_WEAR_APP = "watch_paymong"
     }
+
     // 모바일-워치 간 연결
     private lateinit var capabilityClient: CapabilityClient
     private lateinit var nodeClient: NodeClient
@@ -46,14 +45,14 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     // 로그인을 위한 viewModel
     private lateinit var appLandingViewModelFactory : AppLandingViewModelFactory
     private lateinit var appLandinglViewModel : AppLandinglViewModel
-
+    // appViewModel
     private lateinit var appViewModelFactory: AppViewModelFactory
     private lateinit var appViewModel: AppViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 필요 권한 동의 확인
+        // 필수 권한 확인
         if (!isNotificationPermissionGranted()) startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
 
         // 모바일-워치 간 연결
@@ -68,10 +67,9 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
         // 로그인을 위한 viewModel
         appLandingViewModelFactory = AppLandingViewModelFactory(capabilityClient, nodeClient, remoteActivityHelper, messageClient, gamesSignInClient, playersClient, this.application)
         appLandinglViewModel = ViewModelProvider(this@AppMainActivity, appLandingViewModelFactory)[AppLandinglViewModel::class.java]
-
+        // appViewModel
         appViewModelFactory = AppViewModelFactory(this.application)
         appViewModel = ViewModelProvider(this@AppMainActivity, appViewModelFactory)[AppViewModel::class.java]
-
         // 포그라운드 서비스 실행
         val serviceIntent = Intent(this, ForegroundService::class.java)
         this.startForegroundService(serviceIntent)
@@ -84,33 +82,28 @@ class AppMainActivity : ComponentActivity(), CapabilityClient.OnCapabilityChange
     override fun onPause() {
         super.onPause()
         try {
-            Log.d("appViewModel", "onPause")
-            // 리스너
             capabilityClient.removeListener(this, CAPABILITY_WEAR_APP)
-            // 소켓 제거
-            if (appViewModel.isInitialized()) {
+            if (appViewModel.socketState == SocketCode.CONNECT) {
+                Thread.sleep(1000)
                 appViewModel.disConnectSocket()
-                appViewModel.isSocketConnect = SocketCode.FINISH
             }
         } catch (_: Exception) {}
     }
-    // 앱 중지 해제 시 마다 리스너 추가
     override fun onResume() {
         super.onResume()
         try {
-            Log.d("appViewModel", "onResume")
             // 리스너
             capabilityClient.addListener(this, CAPABILITY_WEAR_APP)
-
-            val dataApplicationRepository = DataApplicationRepository()
-            dataApplicationRepository.setValue("accessToken", "")
-            appViewModel.isSocketConnect = SocketCode.NOT_TOKEN
+            if (appViewModel.socketState == SocketCode.DISCONNECT) {
+                appViewModel.socketConnect()
+            }
         } catch (_: Exception) {}
     }
     // 웨어러블 연결 여부 확인해서 연결 때마다 앱 설치 여부 확인
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        appLandinglViewModel.wearNodesWithApp = capabilityInfo.nodes
-        appLandinglViewModel.installCheck()
+        if (DataApplicationRepository().getValue("watchId") == "") {
+            appLandinglViewModel.checkWearable()
+        }
     }
     // 필요 권한 동의 확인 함수
     private fun isNotificationPermissionGranted(): Boolean {

@@ -66,7 +66,6 @@ fun MainCondition(
                     indicatorColor = PayMongYellow,
                 )
             }
-
         }
 
         Row(

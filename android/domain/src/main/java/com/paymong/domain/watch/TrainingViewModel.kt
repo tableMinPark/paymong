@@ -18,7 +18,7 @@ class TrainingViewModel (
     application: Application
 ): AndroidViewModel(application) {
     companion object {
-        private const val MAX_TIME : Long = 10000
+        private const val MAX_TIME : Long = 7000
     }
 
     var isTrainingEnd by mutableStateOf(false)

@@ -1,8 +1,11 @@
+# 🥇 삼성 청년 SW 아카데미 8기 프로젝트 전국 1등 🥇
+
 ![슬라이드10.PNG](assets/1.png)
 
 ![Untitled](assets/Untitled.png)
 
 # 🌕 내 손 안의 작은 펫, PayMong 🌕
+
 
 [PayMong - Google Play 앱](https://play.google.com/store/apps/details?id=com.paymong&hl=ko)
 

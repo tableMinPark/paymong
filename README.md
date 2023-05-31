@@ -101,7 +101,7 @@
 ---
 
 ### 4️⃣ 아키텍처
-<img src="assets/Untitled 4.png" width="300">  
+<img src="assets/Untitled 4.png">  
 
 
 ---
@@ -136,9 +136,9 @@
 
 ![슬라이드24.PNG](assets/7.png)
 
-<img src="assets/Untitled 6.png" width="300">  
+<img src="assets/Untitled 6.png">  
 
-<img src="assets/Untitled 7.png" width="300">
+<img src="assets/Untitled 7.png">
 
 ***청소기 / 문 열림 센서 / 충전기와 연동한 예시***
 

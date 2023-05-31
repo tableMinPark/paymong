@@ -101,8 +101,8 @@
 ---
 
 ### 4️⃣ 아키텍처
+<img src="assets/Untitled 4.png" width="300">  
 
-![Untitled](assets/Untitled 4.png)
 
 ---
 
@@ -126,7 +126,7 @@
 
 ***스타벅스, 버거킹 등 38가지의 다양한 브랜드 제품 결제시 해당 맵으로 1시간 동안 게임의 배경 변경***
 
-![Untitled](assets/브랜드 결제 이미지.png)
+<img src="assets/브랜드 결제 이미지.png" width="300">  
 
 🌕 **삼성 스마트싱스 연동**
 
@@ -136,9 +136,9 @@
 
 ![슬라이드24.PNG](assets/7.png)
 
-![Untitled](assets/Untitled 6.png)
+<img src="assets/Untitled 6.png" width="300">  
 
-![Untitled](assets/Untitled 7.png)
+<img src="assets/Untitled 7.png" width="300">
 
 ***청소기 / 문 열림 센서 / 충전기와 연동한 예시***
 

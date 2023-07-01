@@ -2,12 +2,14 @@ package com.paymong.information.information.dto;
 
 import com.paymong.information.information.entity.Mong;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FindMongDto {
 
     private Long mongId;
